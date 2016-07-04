@@ -1,7 +1,48 @@
 cmake_minimum_required(VERSION 3.5)
-project(biomark)
+project(Longitudina)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++0x")
+set(MANIFOLDS
+        Manifolds
+        Manifolds/AbstractManifold
+        Manifolds/MultivariateLogisticManifold)
 
-set(SOURCE_FILES main.cpp subject.cpp subject.h parameter.cpp parameter.h tools.cpp tools.h tools.cpp MCMC.cpp MCMC.h random_variable.cpp random_variable.h geodesic.cpp geodesic.h GibbsSampler.cpp GibbsSampler.h)
-add_executable(biomark ${SOURCE_FILES})
+set(MODEL
+        Model
+        Model/LongitudinalModel)
+
+set(RANDOMVARIABLES
+        RandomVariables
+        RandomVariables/AbstractRandomVariable
+        RandomVariables/GaussianRandomVariable
+        RandomVariables/LaplaceRandomVariable)
+
+set(ALGORITHM
+        Algorithm
+        Algorithm/Algorithm)
+
+set(SAMPLERS
+        Samplers
+        Samplers/AbstractSampler
+        Samplers/HastingMetropolisWithinGibbs)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+
+set(SOURCE_FILES
+        main.cpp
+        )
+
+include_directories(
+        ${MANIFOLDS}
+        ${MODEL}
+        ${RANDOMVARIABLES}
+        ${ALGORITHM}
+)
+
+add_executable(Longitudina
+        ${SOURCE_FILES}
+        ${MANIFOLDS}
+        ${MODEL}
+        ${RANDOMVARIABLES}
+        ${ALGORITHM}
+        ${SAMPLERS}
+        )
