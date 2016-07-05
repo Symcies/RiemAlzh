@@ -57,16 +57,28 @@ protected:
     // Sampler
     AbstractSampler *m_Sampler;
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // MCMC SAEM Attribute(s) :
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // Initiate the model; need the data and model to be set
     bool m_InitiateModel;
 
-    // Sufficient statistics of the MCMC SAEM algorithm
+    // Sufficient statistics of the MCMC SAEM algorithm S( y, z(k) )
     std::vector<std::vector<double>> m_SufficientStatistics;
+
+    // Stochastic sufficient statistic approximation S_j(k)
+    std::vector<std::vector<double>> m_StochasticSufficientStatistics;
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // MCMC SAEM Methods :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Compute the updates epsilon(k) to learn the stochastic sufficient statistics
+    double DecreasingStepSize(int k, int NoMemory);
 
     // Compute the first step : simulation step
     void ComputeSimulationStep();
@@ -75,7 +87,7 @@ protected:
     void ComputeSufficientStatistics();
 
     // Compute the third step : Compute the stochastic approximation step
-    void ComputeStochasticApproximation();
+    void ComputeStochasticApproximation(int );
 
     // Compute the fourth step : Maximization step
     void MaximizationStep();

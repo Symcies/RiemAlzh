@@ -429,3 +429,213 @@ LongitudinalModel
 
     return norm;
 }
+
+std::vector<std::vector< double >>
+LongitudinalModel
+::InitializeSufficientStochasticStatistics()
+{
+
+    int K = 0;
+    for(Data::iterator it = m_Data->begin() ; it != m_Data->end() ; ++it)
+    {
+        K += it->size();
+    }
+
+    std::vector<double> S1(K);
+    std::vector<double> S2(K);
+    std::vector<double> S3(m_Data->size());
+    std::vector<double> S4(m_Data->size());
+    std::vector<double> S5(1);
+    std::vector<double> S6(1);
+    std::vector<double> S7(1);
+    std::vector<double> S8(m_Manifold->GetNumberOfDimension());
+    std::vector<double> S9((m_Manifold->GetNumberOfDimension() - 1)*m_Manifold->GetNumberOfIndependentComponents());
+
+    std::vector<std::vector<double>> S;
+    S.push_back(S1);
+    S.push_back(S2);
+    S.push_back(S3);
+    S.push_back(S4);
+    S.push_back(S5);
+    S.push_back(S6);
+    S.push_back(S7);
+    S.push_back(S8);
+    S.push_back(S9);
+
+    return S;
+
+}
+
+
+std::vector<std::vector<double>>
+LongitudinalModel
+::ComputeSufficientStatistics()
+{
+    std::vector<std::vector<double>> SufficientStatistics;
+
+    // Compute S1 and S2
+    std::vector<double> S1;
+    std::vector<double> S2;
+
+    int i = 0;
+    for(Data::iterator it = m_Data->begin() ; it != m_Data->end() ; ++it)
+    {
+        for(std::vector<std::pair<double, std::vector<double>>>::iterator it2 = it->begin(); it2 != it->end(); ++it2)
+        {
+            std::vector<double> ParallelTransport = ComputeParallelTransport(i, it2->first);
+            double SumS1 = 0;
+            double SumS2 = 0;
+            int j = 0;
+            for(std::vector<double>::iterator it3 = ParallelTransport.begin() ; it3 != ParallelTransport.end() ; ++it3)
+            {
+                SumS1 += *it3 * it2->second[j];
+                SumS2 += *it3 * *it3;
+                j += 1;
+            }
+            S1.push_back(SumS1);
+            S2.push_back(SumS2);
+        }
+        i += 1;
+    }
+    SufficientStatistics.push_back(S1);
+    SufficientStatistics.push_back(S2);
+
+
+    // Compute S3
+    std::vector<double> S3;
+
+    std::vector<std::shared_ptr< GaussianRandomVariable >>::iterator it;
+    for(it = m_PreAccelerationFactor.begin() ; it != m_PreAccelerationFactor.end() ; ++it)
+    {
+        double vect = it->get()->GetCurrentState() * it->get()->GetCurrentState();
+        S3.push_back(vect);
+    }
+    SufficientStatistics.push_back(S3);
+
+
+    // Compute S4
+    std::vector<double> S4;
+
+    std::vector<std::shared_ptr< GaussianRandomVariable >>::iterator it2;
+    for(it2 = m_TimeShift.begin() ; it2 != m_TimeShift.end() ; ++it2)
+    {
+        double vect = it2->get()->GetCurrentState() * it2->get()->GetCurrentState();
+        S4.push_back(vect);
+    }
+    SufficientStatistics.push_back(S4);
+
+
+    // Compute S5, S6 and S7
+    std::vector<double> S5, S6, S7;
+    S5.push_back(m_P0->GetCurrentState());
+    S6.push_back(m_T0->GetCurrentState());
+    S7.push_back(m_V0->GetCurrentState());
+
+    SufficientStatistics.push_back(S5);
+    SufficientStatistics.push_back(S6);
+    SufficientStatistics.push_back(S7);
+
+
+    //Compute S8
+    std::vector<double> S8;
+    std::vector<std::shared_ptr< GaussianRandomVariable >>::iterator it3;
+    for(it3 = m_PropagationCoefficient.begin() ; it3 != m_PropagationCoefficient.end() ; ++it3)
+    {
+        S8.push_back(it3->get()->GetCurrentState());
+    }
+    SufficientStatistics.push_back(S8);
+
+    // Compute S9
+    std::vector<double> S9;
+    std::vector<std::shared_ptr< GaussianRandomVariable >>::iterator it4;
+    for(it4 = m_AMatrixCoefficient.begin() ; it4 != m_AMatrixCoefficient.end() ; ++it4)
+    {
+        S9.push_back( it4->get()->GetCurrentState() );
+    }
+    SufficientStatistics.push_back(S9);
+
+    return SufficientStatistics;
+}
+
+void
+LongitudinalModel
+::ComputeMaximizationStep(std::vector<std::vector<double>> S)
+{
+    // Update P0_mean, T0_Mean, V0_Mean
+    m_P0->SetMean(S[4][0]);
+    m_T0->SetMean(S[5][0]);
+    m_V0->SetMean(S[6][0]);
+
+    // Update delta(k)_mean
+    int i = 0;
+    for(std::vector<double>::iterator it = S[7].begin() ; it != S[7].end() ; ++it)
+    {
+        m_PropagationCoefficient[i]->SetMean(*it);
+        i += 1;
+    }
+
+    // Update beta(k)_mean
+    int j=0;
+    for(std::vector<double>::iterator it = S[8].begin() ; it != S[8].end() ; ++it)
+    {
+        m_AMatrixCoefficient[j]->SetMean(*it);
+        j += 1;
+    }
+
+    // Update Ksi_Variance
+    double Value = 0;
+    for(std::vector<double>::iterator it = S[2].begin() ; it != S[2].end() ; ++it)
+    {
+        Value += *it;
+    }
+    Value = Value/(double)S[2].size();
+    for(std::vector<std::shared_ptr< GaussianRandomVariable >>::iterator it = m_PreAccelerationFactor.begin() ; it != m_PreAccelerationFactor.end() ; ++it)
+    {
+        it->get()->SetVariance(Value);
+    }
+
+    // Update tau_Variance
+    Value = 0;
+    for(std::vector<double>::iterator it = S[3].begin() ; it != S[3].end() ; ++it)
+    {
+        Value += *it;
+    }
+    Value = Value/(double)S[3].size();
+    for(std::vector<std::shared_ptr< GaussianRandomVariable >>::iterator it = m_TimeShift.begin() ; it != m_TimeShift.end() ; ++it)
+    {
+        it->get()->SetVariance(Value);
+    }
+
+    // Update the uncertainty variance
+    Value = 0;
+    int K = 0;
+    for(Data::iterator it = m_Data->begin() ; it != m_Data->end() ; ++it)
+    {
+        for(std::vector<std::pair<double, std::vector<double>>>::iterator it2 = it->begin() ; it2 != it->end() ; ++it2)
+        {
+            K += 1;
+            for(std::vector<double>::iterator it3 = it2->second.begin() ; it3 != it2->second.end() ; ++it3)
+            {
+                // ACTUALLY THIS VALUE CAN BE COMPUTED ONLY ONCE
+                Value += *it3;
+            }
+        }
+    }
+
+    for(std::vector<double>::iterator it = S[0].begin() ; it != S[0].end() ; ++it)
+    {
+        Value -= 2* *it;
+    }
+
+    for(std::vector<double>::iterator it = S[1].begin() ; it != S[1].end() ; ++it)
+    {
+        Value += *it;
+    }
+
+    Value = Value / (K * m_Data->size());
+    Value = sqrt(Value);
+
+    *m_UncertaintyVariance = Value;
+
+}
+

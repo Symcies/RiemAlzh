@@ -3,6 +3,7 @@
 
 #include <stdexcept>            // throw
 #include <memory>               // unique_ptr and smart_ptr
+#include <cmath>
 
 #include <AbstractManifold.h>
 #include <AbstractRandomVariable.h>
@@ -33,8 +34,6 @@ public:
     // Get the parameters for the algorithm
     AlgorithmParameters GetAlgorithmParametersBYVALUE() { return m_AlgorithmParameters; }
 
-
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +49,17 @@ public:
 
     // Get the random variable to sample
     std::vector<RandomVariableToSample> GetRandomVariableToSample();
+
+
+    // Initialize the sufficient statistics
+    std::vector<std::vector< double >> InitializeSufficientStochasticStatistics();
+
+    // Compute the sufficient statistics
+    std::vector<std::vector<double>> ComputeSufficientStatistics();
+
+    // Update the parameters thanks to the MCMC SAEM maximization step
+    void ComputeMaximizationStep(std::vector<std::vector<double>> StochasticSufficientStatistics);
+
 
 
 

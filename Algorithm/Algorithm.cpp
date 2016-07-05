@@ -33,7 +33,7 @@ Algorithm
 
     if(m_InitiateModel)
     {
-       m_Model->UpdateSubjectSpecificParameters(*m_Data);
+       m_Model->UpdateSubjectSpecificParameters(m_Data);
     }
     else
     {
@@ -49,7 +49,7 @@ Algorithm
 
     if(m_InitiateModel)
     {
-        m_Model->UpdateSubjectSpecificParameters(*m_Data);
+        m_Model->UpdateSubjectSpecificParameters(m_Data);
     }
     else
     {
@@ -67,13 +67,34 @@ Algorithm
 void
 Algorithm
 ::ComputeMCMCSAEM() {
-    // TO DO
+    // The parameters and random variables are updated automatically in the model
+
+    // Need to initialize S
+    m_Model->InitializeSufficientStochasticStatistics();
+
+    // Epsilon(k) is calculated at each time step thanks to the DecreasingStepSize function
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // MCMC SAEM Methods :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+double
+Algorithm
+::DecreasingStepSize(int k, int NoMemory)
+{
+
+    if(k<=NoMemory)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1 / pow((k-NoMemory), 0.6);
+    }
+}
+
 
 void
 Algorithm
@@ -92,40 +113,41 @@ void
 Algorithm
 ::ComputeSufficientStatistics()
 {
-    m_SufficientStatistics.clear();
+    m_SufficientStatistics = m_Model->ComputeSufficientStatistics();
+}
 
-    // Compute S1 and S2
-    std::vector<double> S1;
-    std::vector<double> S2;
+void
+Algorithm
+::ComputeStochasticApproximation(int k)
+{
+    double StepSize = DecreasingStepSize(k, 100);
 
     int i = 0;
-    for(Data::iterator it = m_Data->begin() ; it != m_Data->end() ; ++it)
+    std::vector<std::vector< double >> NewStochasticStatistics;
+    for(std::vector<std::vector<double>>::iterator it = m_StochasticSufficientStatistics.begin() ; it != m_StochasticSufficientStatistics.end() ; ++it)
     {
-        for(std::vector<std::pair<double, std::vector<double>>>::iterator it2 = it->begin(); it2 != it->end(); ++it2)
+        std::vector<double> Coordinate;
+        int j = 0;
+        for(std::vector<double>::iterator it2 = it->begin() ; it2 != it->end() ; ++it2)
         {
-            std::vector<double> ParallelTransport = m_Model->ComputeParallelTransport(i, it2->first);
-            double SumS1 = 0;
-            int j = 0;
-            for(std::vector<double>::iterator it3 = ParallelTransport.begin() ; it3 != ParallelTransport.end() ; ++it3)
-            {
-                SumS1 += *it3 * it2->second[j];
-                j += 1;
-            }
-            S1.push_back(SumS1);
+            double Value = *it2 + StepSize * (m_SufficientStatistics[i][j] - *it2);
+            Coordinate.push_back(Value);
+            j += 1;
         }
+        NewStochasticStatistics.push_back(Coordinate);
         i += 1;
     }
-    m_SufficientStatistics.push_back(S1);
 
-    // Compute S2
-    std::vector<double> S2;
+    m_StochasticSufficientStatistics = NewStochasticStatistics;
 
 }
 
-
-
-
-
+void
+Algorithm
+::MaximizationStep()
+{
+    m_Model->ComputeMaximizationStep(m_StochasticSufficientStatistics);
+}
 
 
 
