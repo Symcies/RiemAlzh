@@ -24,10 +24,10 @@ public:
     inline double GetVariance() const { return m_Variance; };
 
     // Set the mean of the gaussian distribution
-    inline void SetMean(double Mean) ;
+    inline void SetMean(double Mean) {m_Mean = Mean;};
 
     // Set the variance of the gaussian distribution
-    inline void SetVariance(double Variance);
+    inline void SetVariance(double Variance) { m_Variance = Variance; };
 
     // Get the density estimation
     inline double GetDensity() const;

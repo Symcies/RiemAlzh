@@ -7,72 +7,45 @@
 Algorithm
 ::Algorithm()
 {
-    m_InitiateModel = false;
+    m_Data = nullptr;
 }
 
 Algorithm
 ::~Algorithm()
 {
-    delete m_Model;
     delete m_Data;
-    delete m_Sampler;
-
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Getter(s) and Setter(s) :
+// Public method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
 Algorithm
-::SetModel(LongitudinalModel *M)
+::Initialize()
 {
-    m_Model = M;
+    // Initialize the Longitudinal model
+    m_Model->SetData(m_Data);
+    m_Model->Initialize();
+    m_Model->Update();
 
-    if(m_InitiateModel)
-    {
-       m_Model->UpdateSubjectSpecificParameters(m_Data);
-    }
-    else
-    {
-        m_InitiateModel = true;
-    }
+    // Initialize stochastic sufficient statistics
+    m_StochasticSufficientStatistics = m_Model->InitializeSufficientStochasticStatistics();
 }
 
 void
 Algorithm
-::SetData(Data *D)
-{
-    m_Data = D;
+::ComputeMCMCSAEM(int NumberOfIterations) {
 
-    if(m_InitiateModel)
+    for(int k = 0; k < NumberOfIterations ; ++k)
     {
-        m_Model->UpdateSubjectSpecificParameters(m_Data);
+        std::cout << k << std::endl;
+        ComputeSimulationStep();
+        ComputeSufficientStatistics();
+        ComputeStochasticApproximation(k);
+        ComputeMaximizationStep();
     }
-    else
-    {
-        m_InitiateModel = true;
-    }
-}
-
-void
-Algorithm
-::SetSampler(AbstractSampler *S)
-{
-    m_Sampler = S;
-}
-
-void
-Algorithm
-::ComputeMCMCSAEM() {
-    // The parameters and random variables are updated automatically in the model
-
-    // Need to initialize S
-    m_Model->InitializeSufficientStochasticStatistics();
-
-    // Epsilon(k) is calculated at each time step thanks to the DecreasingStepSize function
 }
 
 
@@ -95,7 +68,6 @@ Algorithm
     }
 }
 
-
 void
 Algorithm
 ::ComputeSimulationStep()
@@ -104,7 +76,11 @@ Algorithm
 
     for(std::vector<RandomVariableToSample>::iterator it = RVToSample.begin() ; it != RVToSample.end() ; ++it)
     {
-        m_Sampler->Sample(*it->first, *it->second, *m_Model);
+        bool q = m_Sampler->Sample(*it->first, *it->second, *m_Model);
+        if(q)
+        {
+            m_Model->Update();
+        }
     }
 
 }
@@ -124,6 +100,7 @@ Algorithm
 
     int i = 0;
     std::vector<std::vector< double >> NewStochasticStatistics;
+
     for(std::vector<std::vector<double>>::iterator it = m_StochasticSufficientStatistics.begin() ; it != m_StochasticSufficientStatistics.end() ; ++it)
     {
         std::vector<double> Coordinate;
@@ -144,7 +121,7 @@ Algorithm
 
 void
 Algorithm
-::MaximizationStep()
+::ComputeMaximizationStep()
 {
     m_Model->ComputeMaximizationStep(m_StochasticSufficientStatistics);
 }

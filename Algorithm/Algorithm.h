@@ -9,11 +9,6 @@ typedef std::vector<std::vector<std::pair<double, std::vector<double>>>> Data;
 
 class Algorithm {
 public:
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // typedef :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,22 +20,28 @@ public:
     // Getter(s) and Setter(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // Get algorithm Parameters
+    inline std::vector<double> GetParameters() const { return m_Model->GetAlgorithmParameters(); }
+
     // Set the longitudinal model used
-    void SetModel(LongitudinalModel *M);
+    inline void SetModel(std::shared_ptr<LongitudinalModel> M) { m_Model = M; };
 
     // Set the data
-    void SetData(Data *D);
+    inline void SetData(Data *D) { m_Data = D; };
 
     // Set the sampler
-    void SetSampler(AbstractSampler *S);
+    inline void SetSampler(std::shared_ptr<AbstractSampler> S) { m_Sampler = S; };
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // Initialize all the attributes, in the Algo class as well as Longitudinal Model and Manifold
+    void Initialize();
+
     // Simulation step of the MCMC SAEM
-    void ComputeMCMCSAEM();
+    void ComputeMCMCSAEM(int NumberOfIterations);
 
 protected:
 
@@ -49,28 +50,24 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Longitudinal model
-    LongitudinalModel *m_Model;
+    std::shared_ptr<LongitudinalModel> m_Model;
 
     // Data
     Data *m_Data;
 
     // Sampler
-    AbstractSampler *m_Sampler;
+    std::shared_ptr<AbstractSampler> m_Sampler;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // MCMC SAEM Attribute(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Initiate the model; need the data and model to be set
-    bool m_InitiateModel;
-
     // Sufficient statistics of the MCMC SAEM algorithm S( y, z(k) )
     std::vector<std::vector<double>> m_SufficientStatistics;
 
     // Stochastic sufficient statistic approximation S_j(k)
     std::vector<std::vector<double>> m_StochasticSufficientStatistics;
-
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +87,7 @@ protected:
     void ComputeStochasticApproximation(int );
 
     // Compute the fourth step : Maximization step
-    void MaximizationStep();
+    void ComputeMaximizationStep();
 
 };
 

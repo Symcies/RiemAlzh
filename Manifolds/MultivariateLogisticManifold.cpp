@@ -1,10 +1,14 @@
 #include "MultivariateLogisticManifold.h"
+#include <iostream>
 
 MultivariateLogisticManifold
-::MultivariateLogisticManifold()
+::MultivariateLogisticManifold(int DimensionNumber, int NumberOfIndependentComponents)
 {
+    m_DimensionNumber = DimensionNumber;
+    m_NumberOfIndependentComponents = NumberOfIndependentComponents;
 
 }
+
 
 void
 MultivariateLogisticManifold

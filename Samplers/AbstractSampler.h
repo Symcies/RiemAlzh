@@ -30,7 +30,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Sampler
-    virtual void Sample(AbstractRandomVariable& CurrentState, AbstractRandomVariable &CandidateRandomVariable, LongitudinalModel &LM) = 0;
+    virtual bool Sample(AbstractRandomVariable& CurrentState, AbstractRandomVariable &CandidateRandomVariable, LongitudinalModel &LM) = 0;
 
 
 protected:

@@ -32,7 +32,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Sampler
-    void Sample(AbstractRandomVariable &CurrentState, AbstractRandomVariable &CandidateRandomVariable, LongitudinalModel &LM);
+    bool Sample(AbstractRandomVariable &CurrentState, AbstractRandomVariable &CandidateRandomVariable, LongitudinalModel &LM);
 
 
 protected:

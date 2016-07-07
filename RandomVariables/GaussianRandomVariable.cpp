@@ -9,21 +9,6 @@ GaussianRandomVariable
     Sample();
 }
 
-
-void
-GaussianRandomVariable
-::SetMean(double Mean)
-{
-    m_Mean = Mean;
-}
-
-void
-GaussianRandomVariable
-::SetVariance(double Variance)
-{
-    m_Variance = Variance;
-}
-
 void
 GaussianRandomVariable
 ::Sample()

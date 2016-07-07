@@ -1,7 +1,71 @@
 #include "LongitudinalModel.h"
+#include <iostream>
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Constructor(s) / Destructor :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 LongitudinalModel
 ::LongitudinalModel()
+{
+
+    m_Data = new Data;
+
+}
+
+
+LongitudinalModel
+::~LongitudinalModel()
+{
+    delete m_Data;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Getter(s) and Setter(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+std::vector<double>
+LongitudinalModel
+::GetAlgorithmParameters()
+{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // In the parameters to return:
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    std::vector<double> AlgorithmParameters;
+
+    // Add the initial position mean
+    AlgorithmParameters.push_back(m_P0->GetMean());
+
+    // Add the initial time mean
+    AlgorithmParameters.push_back(m_T0->GetMean());
+
+    // Add the initial velocity mean
+    AlgorithmParameters.push_back(m_V0->GetMean());
+
+    // Add the pre acceleration factor variance
+    AlgorithmParameters.push_back(m_PreAccelerationFactor[0]->GetMean());
+
+    // Add the time shift variance
+    AlgorithmParameters.push_back(m_TimeShift[0]->GetMean());
+
+    // Add the uncertainty variance
+    AlgorithmParameters.push_back(*m_UncertaintyVariance);
+
+    return AlgorithmParameters;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Other method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void
+LongitudinalModel
+::Initialize()
 {
     // Initialize initial position
     double P0Mean = 1.0;
@@ -30,6 +94,8 @@ LongitudinalModel
         m_PropagationCoefficient.push_back(Delta);
     }
 
+    // Initialize the propagation coefficient in the manifold
+    m_Manifold->SetPropagationCoefficient(m_PropagationCoefficient);
 
     // Initialize initial A Matrix coefficient
     double BetaVariance = 1.0;
@@ -41,24 +107,20 @@ LongitudinalModel
         m_AMatrixCoefficient.push_back(Beta);
     }
 
-
     // Initialize the first Orthonormal basis (B1, ..., B(n-1)Ns)
     InitializeOrthonormalBasis();
 
-}
+    // Initialize the uncertainty variance
+    m_UncertaintyVariance = std::make_shared<double>(1.0);
 
-void
-LongitudinalModel
-::UpdateSubjectSpecificParameters(Data *D)
-{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Subject Specific parameters :
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Set the number of subjects
-    m_NumberOfSubjects = (int)D->size();
+    // Set the number of number of subjects
+    m_NumberOfSubjects = (int)m_Data->size();
 
-    // Initiate the data
-    m_Data = D;
-
-    // Initialize Pre acceleration factor
+    // Initialize the pre acceleration factor
     double KsiVariance = 1.0;
     double KsiMean = 0.0;  // Always equal to 0
     for(int i=0; i<m_NumberOfSubjects ; ++i)
@@ -66,7 +128,6 @@ LongitudinalModel
         auto Ksi = std::make_shared<GaussianRandomVariable>(KsiMean, KsiVariance);
         m_PreAccelerationFactor.push_back(Ksi);
     }
-
 
     // Initialize time shifts
     double TauVariance = 1.0;
@@ -76,11 +137,6 @@ LongitudinalModel
         auto Tau = std::make_shared< GaussianRandomVariable>(TauMean, TauVariance);
         m_TimeShift.push_back(Tau);
     }
-
-
-    // Initialize the uncertainty
-    m_UncertaintyVariance = std::make_shared<double>(1.0);
-
 
     // Initialize space shift coefficient Sij
     m_SpaceShiftCoefficient.clear();
@@ -97,6 +153,17 @@ LongitudinalModel
         }
         m_SpaceShiftCoefficient.push_back(SpaceShiftCoefficient);
     }
+
+
+}
+
+void
+LongitudinalModel
+::Update()
+{
+    ComputeOrthonormalBasis();
+    ComputeAMatrix();
+    ComputeSpaceShifts();
 
 }
 
@@ -238,33 +305,6 @@ LongitudinalModel
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void
-LongitudinalModel
-::SetAlgorithmParametersBYVALUE()
-{
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // In the parameters to return:
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    m_AlgorithmParameters.clear();
-
-    // Add the initial position mean
-    m_AlgorithmParameters.push_back(m_P0->GetMean());
-
-    // Add the initial time mean
-    m_AlgorithmParameters.push_back(m_T0->GetMean());
-
-    // Add the initial velocity mean
-    m_AlgorithmParameters.push_back(m_V0->GetMean());
-
-    // Add the pre acceleration factor variance
-    m_AlgorithmParameters.push_back(m_PreAccelerationFactor[0]->GetMean());
-
-    // Add the time shift variance
-    m_AlgorithmParameters.push_back(m_TimeShift[0]->GetMean());
-
-    // Add the uncertainty variance
-    m_AlgorithmParameters.push_back(*m_UncertaintyVariance);
-}
 
 void
 LongitudinalModel
@@ -299,6 +339,7 @@ LongitudinalModel
     ///// <=> (v0, e2, ..., eN) is a basis
     ////////////////////////////////////////////////////////////////////////////
 
+
     m_OrthonormalBasis = FirstBasis;
 }
 
@@ -321,25 +362,23 @@ LongitudinalModel
     /// So that it is a basis of the N-dimensional manifold
     std::vector<std::vector<double>> OrthogonalBasis = m_OrthonormalBasis;
     std::vector<double> VectorV0;
-
     for(int i = 0; i<m_Manifold->GetNumberOfDimension(); ++i) VectorV0.push_back(m_V0->GetCurrentState());
-
     OrthogonalBasis.insert(OrthogonalBasis.begin(), VectorV0);
 
     for(int k=0; k<m_Manifold->GetNumberOfDimension(); ++k)
     {
         std::vector<double> w = OrthogonalBasis[k];
         double r = 0;
-        for(int j=0; k-1; ++j)
+        for(int j=0; j<k-1; ++j)
         {
             for(int i=0; i<m_Manifold->GetNumberOfDimension(); ++i)
             {
-                r += NewOrthogonalBasis[j][i]*w[i];
+                r += OrthogonalBasis[j][i]*w[i];
             }
 
             for(int i=0; i<m_Manifold->GetNumberOfDimension(); ++i)
             {
-                w[i] -= r*NewOrthogonalBasis[j][i];
+                w[i] -= r*OrthogonalBasis[j][i];
             }
         }
 
@@ -372,21 +411,23 @@ LongitudinalModel
 
     m_AMatrix.clear();
 
-    int Dimension = m_Manifold->GetNumberOfDimension();
+    int Dim = m_Manifold->GetNumberOfDimension();
+    int Indep = m_Manifold->GetNumberOfIndependentComponents();
 
-    for(int i = 0; i<Dimension; ++i)
+    for(int j = 0; j<Dim ; ++j)
     {
-        for(int j = 0; j<m_Manifold->GetNumberOfIndependentComponents() ; ++j)
+        for(int i = 0 ; i<Indep ; ++i)
         {
             double val = 0;
-            for(int k = 0; k<Dimension-1; ++k)
+            for(int k = 0; k<Dim-1; ++k)
             {
-                val += m_AMatrixCoefficient[k+j*Dimension]->GetCurrentState() * m_OrthonormalBasis[k][i];
+                val += m_AMatrixCoefficient[k+i*(Dim-1)]->GetCurrentState() * m_OrthonormalBasis[k][j];
             }
             m_AMatrix.push_back(val);
         }
-
     }
+
+
 }
 
 void
@@ -395,22 +436,24 @@ LongitudinalModel
 {
     m_SpaceShift.clear();
 
+    int Indep = m_Manifold->GetNumberOfIndependentComponents();
+
     for(int i = 0; i<m_NumberOfSubjects ; ++i)
     {
         std::vector< std::shared_ptr<LaplaceRandomVariable> > SpaceShiftCoefficient = m_SpaceShiftCoefficient[i];
         std::vector<double> IndividualSpaceShift;
-        for(int j = 0; j<m_Manifold->GetNumberOfDimension(); ++j)
+        for(int j = 0; j<m_Manifold->GetNumberOfDimension() ; ++j)
         {
             double val = 0.0;
-            for(int k = 0; k<m_Manifold->GetNumberOfIndependentComponents(); ++k)
+            for(int k = 0; k<Indep ; ++k)
             {
-                val += m_AMatrix[i + j*m_Manifold->GetNumberOfDimension()] * SpaceShiftCoefficient[j]->GetCurrentState();
+                val += m_AMatrix[k+j*Indep] * SpaceShiftCoefficient[k]->GetCurrentState();
             }
             IndividualSpaceShift.push_back(val);
-
         }
         m_SpaceShift.push_back(IndividualSpaceShift);
     }
+
 }
 
 double

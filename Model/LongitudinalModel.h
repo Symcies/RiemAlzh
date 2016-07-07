@@ -26,20 +26,32 @@ public:
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     LongitudinalModel();
+    ~LongitudinalModel();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Getter(s) and Setter(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Get the parameters for the algorithm
-    AlgorithmParameters GetAlgorithmParametersBYVALUE() { return m_AlgorithmParameters; }
+    // Set the manifold
+    inline void SetManifold(std::shared_ptr<MultivariateLogisticManifold> M) {m_Manifold = M; };
+
+    // Set the data
+    inline void SetData(Data *D) { m_Data = D; };
+
+    // Get the parameters to send back to the algorithm
+    std::vector<double> GetAlgorithmParameters();
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Update the parameters that are subjects specific : can be done only when the algorithm has initialize its longitudinal model
-    void UpdateSubjectSpecificParameters(Data *D);
+    // Initialize all the parameters related to the data - and manifold
+    void Initialize();
+
+    // Update parameters : Orthonormal basis (B_1, ..., B_(N-1)Ns), A and the space shifts
+    void Update();
 
     // Compute the likelihood
     double ComputeLikelihood();
@@ -114,18 +126,12 @@ protected:
     // A Matrix to construct the time shifts: N rows, Ns column
     std::vector<double> m_AMatrix;
 
-    // Parameters to send to the algorithm class
-    // FIGURE OUT IF IT WOULD BE BETTER TO PASS AS VARIABLES NOT TO UPDATE IT AT EACH STEP
-    AlgorithmParameters m_AlgorithmParameters;
-
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Set the parameters to send back to the algorithm
-    void SetAlgorithmParametersBYVALUE();
 
     // Initialize the first orthonormal basis
     void InitializeOrthonormalBasis();

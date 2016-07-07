@@ -8,9 +8,7 @@ HastingMetropolisWithinGibbs
 }
 
 
-
-
-void
+bool
 HastingMetropolisWithinGibbs
 ::Sample(AbstractRandomVariable &CurrentRandomVariable, AbstractRandomVariable &CandidateRandomVariable, LongitudinalModel &LM)
 {
@@ -44,6 +42,12 @@ HastingMetropolisWithinGibbs
     if(unif > Tau)
     {
         CurrentRandomVariable.SetCurrentState(CurrentState);
+        return false;
     }
+    else
+    {
+        return true;
+    }
+
 
 }
