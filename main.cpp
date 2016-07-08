@@ -2,7 +2,6 @@
 
 #include <GaussianRandomVariable.h>
 #include <LongitudinalModel.h>
-#include <MultivariateLogisticManifold.h>
 #include <Algorithm.h>
 #include "Samplers/HastingMetropolisWithinGibbs.h"
 
@@ -17,29 +16,6 @@ int main() {
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Initialisation Data:
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    pair <double, vector<double>> Obs1S1 (70.2, vector<double> (5,10));
-    pair <double, vector<double>> Obs2S1 (84.7, vector<double> (5,9));
-    vector<std::pair<double, std::vector<double>>> S1;
-    S1.push_back(Obs1S1);
-    S1.push_back(Obs2S1);
-
-    pair <double, vector<double>> Obs1S2 (81.1, vector<double> (5,8));
-    pair <double, vector<double>> Obs2S2 (83.6, vector<double> (5,6));
-    pair <double, vector<double>> Obs3S2 (87.5, vector<double> (5,3));
-    vector<pair<double, vector<double>>> S2;
-    S2.push_back(Obs1S2);
-    S2.push_back(Obs2S2);
-    S2.push_back(Obs3S2);
-
-    Data *D = new Data;
-    D->push_back(S1);
-    D->push_back(S2);
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Initialisation Manifold:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     auto Manifold = std::make_shared<MultivariateLogisticManifold>(DimensionNumber, NumberOfIndependentComponents);
@@ -51,6 +27,41 @@ int main() {
     auto LM = std::make_shared<LongitudinalModel>();
     LM->SetManifold(Manifold);
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Initialisation Data:
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    std::vector<std::vector<double>> TimePoint;
+
+    // First subject
+    std::vector<double> T1;
+    T1.push_back(70.2);
+    T1.push_back(72.3);
+    T1.push_back(77.8);
+    T1.push_back(80.2);
+
+    // Second subject
+    std::vector<double> T2;
+    T2.push_back(55.2);
+    T2.push_back(59.8);
+
+    // Second subject
+    std::vector<double> T3;
+    T3.push_back(60.9);
+    T3.push_back(65.3);
+    T3.push_back(67.8);
+    T3.push_back(69.0);
+    T3.push_back(71.0);
+    T3.push_back(75.8);
+
+    TimePoint.push_back(T1);
+    TimePoint.push_back(T2);
+    TimePoint.push_back(T3);
+
+
+    Data *D =  new Data;
+    *D = LM->SimulateSpecificData(TimePoint);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Initialisation Sampler:
@@ -74,18 +85,21 @@ int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    A->ComputeMCMCSAEM(300);
+    A->ComputeMCMCSAEM(500);
 
     std::vector<double> Parameters = A->GetParameters();
-    cout << Parameters.size();
-    cout << Parameters[0];
-    cout << Parameters[1];
-    cout << Parameters[2];
-    cout << Parameters[3];
+    cout << Parameters.size() << endl;
+    cout << Parameters[0] << endl;
+    cout << Parameters[1] << endl;
+    cout << Parameters[2] << endl;
+    cout << Parameters[3] << endl;
 
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Deletes
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    delete D;
 
-    cout << "END";
 
 
 

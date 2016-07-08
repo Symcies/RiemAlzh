@@ -87,6 +87,7 @@ LongitudinalModel
 
     // Initialize initial propagation coefficient
     double DeltaVariance = 1.0;
+    m_PropagationCoefficient.clear();
     for(int i = 0; i<m_Manifold->GetNumberOfDimension() ; ++i)
     {
         double DeltaMean = (double)i;
@@ -98,6 +99,7 @@ LongitudinalModel
     m_Manifold->SetPropagationCoefficient(m_PropagationCoefficient);
 
     // Initialize initial A Matrix coefficient
+    m_AMatrixCoefficient.clear();
     double BetaVariance = 1.0;
     int ArraySize = (m_Manifold->GetNumberOfDimension() - 1)*m_Manifold->GetNumberOfIndependentComponents();
     for(int i = 0; i<ArraySize ; ++i)
@@ -123,6 +125,7 @@ LongitudinalModel
     // Initialize the pre acceleration factor
     double KsiVariance = 1.0;
     double KsiMean = 0.0;  // Always equal to 0
+    m_PreAccelerationFactor.clear();
     for(int i=0; i<m_NumberOfSubjects ; ++i)
     {
         auto Ksi = std::make_shared<GaussianRandomVariable>(KsiMean, KsiVariance);
@@ -130,6 +133,7 @@ LongitudinalModel
     }
 
     // Initialize time shifts
+    m_TimeShift.clear();
     double TauVariance = 1.0;
     double TauMean = 0.0; // always equal to 0
     for(int i=0; i<m_NumberOfSubjects ; ++i)
@@ -298,6 +302,101 @@ LongitudinalModel
     return RVToSample;
 
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Debugging Method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Data
+LongitudinalModel
+::SimulateSpecificData(std::vector<std::vector<double>> TimePoint)
+{
+
+    //////////////////////////////////////////////////////////////////////////
+    // Model Parameters
+    //////////////////////////////////////////////////////////////////////////
+
+    int NumberOfSubjects = (int)TimePoint.size();
+    m_NumberOfSubjects= NumberOfSubjects;
+
+    m_P0 = std::make_shared<GaussianRandomVariable>(10.0, 5.0);
+    m_T0 = std::make_shared<GaussianRandomVariable>(10.0, 5.0);
+    m_V0 = std::make_shared<GaussianRandomVariable>(10.0, 5.0);
+
+    m_PropagationCoefficient.clear();
+    for(int i = 0; i< m_Manifold->GetNumberOfDimension(); ++i)
+    {
+        m_PropagationCoefficient.push_back(std::make_shared<GaussianRandomVariable>((double)i, 3.0));
+    }
+
+    m_Manifold->SetPropagationCoefficient(m_PropagationCoefficient);
+
+    m_AMatrixCoefficient.clear();
+    for(int i = 0; i<(m_Manifold->GetNumberOfDimension()-1)*m_Manifold->GetNumberOfIndependentComponents() ; ++i)
+    {
+        m_AMatrixCoefficient.push_back(std::make_shared<GaussianRandomVariable>((double)i, 2.0));
+    }
+
+    m_PreAccelerationFactor.clear();
+    m_TimeShift.clear();
+    for(int i = 0; i<NumberOfSubjects; ++i)
+    {
+        m_PreAccelerationFactor.push_back(std::make_shared<GaussianRandomVariable>((double)i, 5.0));
+        m_TimeShift.push_back(std::make_shared<GaussianRandomVariable>((double)i, 3.0));
+    }
+
+    m_UncertaintyVariance = std::make_shared<double>(3.0);
+
+    m_SpaceShiftCoefficient.clear();
+    for(int i =0; i<NumberOfSubjects; ++i)
+    {
+        std::vector<std::shared_ptr< LaplaceRandomVariable >> Coord;
+        for(int j = 0; j<m_Manifold->GetNumberOfDimension(); ++j)
+        {
+            Coord.push_back(std::make_shared<LaplaceRandomVariable>(0.0, 1.0/2.0));
+        }
+        m_SpaceShiftCoefficient.push_back(Coord);
+    }
+
+    InitializeOrthonormalBasis();
+    ComputeOrthonormalBasis();
+    ComputeAMatrix();
+    ComputeSpaceShifts();
+
+    //////////////////////////////////////////////////////////////////////////
+    // Simulate Data
+    //////////////////////////////////////////////////////////////////////////
+
+    Data D;
+
+    std::random_device RD;
+    std::default_random_engine Generator(RD());
+    std::normal_distribution<double> Distribution(0, *m_UncertaintyVariance.get());
+
+    int i = 0;
+    for(std::vector<std::vector<double>>::iterator it = TimePoint.begin() ; it != TimePoint.end() ; ++it)
+    {
+        std::vector<std::pair<double, std::vector<double>>> SubjectData;
+        for(std::vector<double>::iterator it2 = it->begin() ; it2 != it->end(); ++it2)
+        {
+            std::vector<double> Observation;
+
+            std::vector<double> Eta = ComputeParallelTransport(i,  *it2);
+            for(std::vector<double>::iterator it3 = Eta.begin() ; it3 != Eta.end(); ++it3)
+            {
+                Observation.push_back(*it3 + Distribution(Generator));
+            }
+            SubjectData.push_back(std::pair<double, std::vector<double>> (*it2, Observation));
+
+        }
+        D.push_back(SubjectData);
+        i+= 1;
+    }
+
+
+    return D;
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

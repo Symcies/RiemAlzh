@@ -80,7 +80,7 @@ protected:
     // Compute the first step : simulation step
     void ComputeSimulationStep();
 
-    // Compute the seccond step : Compute the sufficient statistics
+    // Compute the second step : Compute the sufficient statistics
     void ComputeSufficientStatistics();
 
     // Compute the third step : Compute the stochastic approximation step

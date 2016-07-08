@@ -43,7 +43,6 @@ MultivariateLogisticManifold
 {
     std::vector<double> ParallelTransport;
     int i = 0;
-
     for(std::vector<double>::iterator it = W0.begin() ; it != W0.end() ; ++it)
     {
         double PropagCoeff = m_PropagationCoefficient[i]->GetCurrentState();

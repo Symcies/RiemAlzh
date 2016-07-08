@@ -40,11 +40,11 @@ Algorithm
 
     for(int k = 0; k < NumberOfIterations ; ++k)
     {
-        std::cout << k << std::endl;
         ComputeSimulationStep();
         ComputeSufficientStatistics();
         ComputeStochasticApproximation(k);
         ComputeMaximizationStep();
+        GetParameters();
     }
 }
 
