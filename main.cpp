@@ -1,11 +1,37 @@
-#include <iostream>
+#include <iostream> // cout
+#include <limits>
 
 #include <GaussianRandomVariable.h>
 #include <LongitudinalModel.h>
 #include <Algorithm.h>
+#include <algorithm>
 #include "Samplers/HastingMetropolisWithinGibbs.h"
 
 using namespace std;
+
+std::vector< std::vector< double >>
+SimulateTimePoint(int NumberOfSubjects, int MinObs, int MaxObs)
+{
+    random_device RD;
+    mt19937 RNG(RD());
+    uniform_int_distribution<int> Uni(MinObs, MaxObs);
+    normal_distribution<double> Normal(70, 6);
+
+    vector< vector< double >> TimePoint;
+    for(int i = 0; i<NumberOfSubjects; ++i)
+    {
+        vector<double> SubjectTimePoint;
+        for(int j = 0; j < Uni(RNG) ; ++j)
+        {
+            SubjectTimePoint.push_back( Normal(RNG));
+        }
+        sort(SubjectTimePoint.begin(), SubjectTimePoint.end());
+        TimePoint.push_back(SubjectTimePoint);
+    }
+
+    return TimePoint;
+}
+
 
 int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,33 +58,7 @@ int main() {
     // Initialisation Data:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::vector<std::vector<double>> TimePoint;
-
-    // First subject
-    std::vector<double> T1;
-    T1.push_back(70.2);
-    T1.push_back(72.3);
-    T1.push_back(77.8);
-    T1.push_back(80.2);
-
-    // Second subject
-    std::vector<double> T2;
-    T2.push_back(55.2);
-    T2.push_back(59.8);
-
-    // Second subject
-    std::vector<double> T3;
-    T3.push_back(60.9);
-    T3.push_back(65.3);
-    T3.push_back(67.8);
-    T3.push_back(69.0);
-    T3.push_back(71.0);
-    T3.push_back(75.8);
-
-    TimePoint.push_back(T1);
-    TimePoint.push_back(T2);
-    TimePoint.push_back(T3);
-
+    std::vector<std::vector<double>> TimePoint = SimulateTimePoint(4, 2, 6);
 
     Data *D =  new Data;
     *D = LM->SimulateSpecificData(TimePoint);
@@ -85,14 +85,15 @@ int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    A->ComputeMCMCSAEM(500);
+    A->ComputeMCMCSAEM(5);
 
     std::vector<double> Parameters = A->GetParameters();
-    cout << Parameters.size() << endl;
-    cout << Parameters[0] << endl;
-    cout << Parameters[1] << endl;
-    cout << Parameters[2] << endl;
-    cout << Parameters[3] << endl;
+    std::cout << "P0_Mean : " << Parameters[0] << std::endl;
+    std::cout << "T0_Mean : " << Parameters[1] << std::endl;
+    std::cout << "V0_Mean : " << Parameters[2] << std::endl;
+    std::cout << "Ksi_0_Mean : " << Parameters[3] << std::endl;
+    std::cout << "Tau_0_Mean : " << Parameters[4] << std::endl;
+    std::cout << "Uncertainty_Var : " << Parameters[5] << std::endl;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,5 +133,6 @@ int main() {
     //
     //               佛祖保佑         永无BUG
     //
+
     return 0;
 }

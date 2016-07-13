@@ -32,6 +32,12 @@ public:
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // Compute the Riemannian metric
+    virtual double ComputeMetric(std::vector<double> u, std::vector<double> v, std::vector<double> p) = 0;
+
+    // Compute geodesic
+    virtual std::vector<double> ComputeGeodesic(double P0, double T0, double V0, double T) = 0;
+
     // Compute parallel Curve
     virtual std::vector<double> ComputeParallelCurve(double P0, double T0, double V0, std::vector<double> W0, double T) = 0;
 
@@ -50,8 +56,6 @@ protected:
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Compute geodesic
-    virtual double ComputeGeodesic(double P0, double T0, double V0, double T) = 0;
 
     // Compute parallel transport of vector W0
     virtual std::vector<double> ComputeParallelTransport(double P0, double T0, double V0, std::vector<double> W0, double T) = 0;

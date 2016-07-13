@@ -38,8 +38,15 @@ public:
     // Set the data
     inline void SetData(Data *D) { m_Data = D; };
 
+    // Get the current likelihood
+    double GetCurrentLikelihood() { return m_Likelihood; }
+
+    // Set the current likelihood
+    void SetCurrentLikelihood(double NewLikelihood) { m_Likelihood = NewLikelihood; }
+
     // Get the parameters to send back to the algorithm
     std::vector<double> GetAlgorithmParameters();
+
 
 
 
@@ -134,14 +141,14 @@ protected:
     std::vector<double> m_AMatrix;
 
 
+    // Model likelihood
+    double m_Likelihood;
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    // Initialize the first orthonormal basis
-    void InitializeOrthonormalBasis();
 
     // Calculate the orthonomal basis thanks to Gram Schmidt
     void ComputeOrthonormalBasis();

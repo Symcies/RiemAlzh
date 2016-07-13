@@ -67,26 +67,33 @@ void
 LongitudinalModel
 ::Initialize()
 {
+
     // Initialize initial position
-    double P0Mean = 1.0;
-    double P0Variance = 1.0;
+    double P0Mean = 0.5;
+    double P0Variance = 0.01;
     m_P0 = std::make_shared< GaussianRandomVariable >(P0Mean, P0Variance);
+
+    if(m_P0->GetCurrentState() < 0.0 or m_P0->GetCurrentState() > 1.0)
+    {
+        throw std::invalid_argument(" P0 should be initialize within ]0,1[");
+    }
+
 
 
     // Initialize initial time
-    double T0Mean = 1.0;
-    double T0Variance = 1.0;
+    double T0Mean = 2.0;
+    double T0Variance = 0.01;
     m_T0 = std::make_shared< GaussianRandomVariable >(T0Mean, T0Variance);
 
 
     // Initialize initial velocity
-    double V0Mean = 1.0;
-    double V0Variance = 1.0;
+    double V0Mean = 2.0;
+    double V0Variance = 0.01;
     m_V0 = std::make_shared< GaussianRandomVariable >(V0Mean, V0Variance);
 
 
     // Initialize initial propagation coefficient
-    double DeltaVariance = 1.0;
+    double DeltaVariance = 0.01;
     m_PropagationCoefficient.clear();
     for(int i = 0; i<m_Manifold->GetNumberOfDimension() ; ++i)
     {
@@ -100,7 +107,7 @@ LongitudinalModel
 
     // Initialize initial A Matrix coefficient
     m_AMatrixCoefficient.clear();
-    double BetaVariance = 1.0;
+    double BetaVariance = 0.01;
     int ArraySize = (m_Manifold->GetNumberOfDimension() - 1)*m_Manifold->GetNumberOfIndependentComponents();
     for(int i = 0; i<ArraySize ; ++i)
     {
@@ -110,10 +117,11 @@ LongitudinalModel
     }
 
     // Initialize the first Orthonormal basis (B1, ..., B(n-1)Ns)
-    InitializeOrthonormalBasis();
+    ComputeOrthonormalBasis();
 
     // Initialize the uncertainty variance
-    m_UncertaintyVariance = std::make_shared<double>(1.0);
+    m_UncertaintyVariance = std::make_shared<double>(0.1);
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Subject Specific parameters :
@@ -123,7 +131,7 @@ LongitudinalModel
     m_NumberOfSubjects = (int)m_Data->size();
 
     // Initialize the pre acceleration factor
-    double KsiVariance = 1.0;
+    double KsiVariance = 0.02;
     double KsiMean = 0.0;  // Always equal to 0
     m_PreAccelerationFactor.clear();
     for(int i=0; i<m_NumberOfSubjects ; ++i)
@@ -134,7 +142,7 @@ LongitudinalModel
 
     // Initialize time shifts
     m_TimeShift.clear();
-    double TauVariance = 1.0;
+    double TauVariance = 0.02;
     double TauMean = 0.0; // always equal to 0
     for(int i=0; i<m_NumberOfSubjects ; ++i)
     {
@@ -157,6 +165,9 @@ LongitudinalModel
         }
         m_SpaceShiftCoefficient.push_back(SpaceShiftCoefficient);
     }
+
+    // Compute the first likelihood
+    m_Likelihood = ComputeLikelihood();
 
 
 }
@@ -193,15 +204,19 @@ LongitudinalModel
         {
             double TimePoint = AccFactor * (it2->first - T0 - TimeShift) + T0;
             std::vector<double> ParallelCurve = m_Manifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint);
-            std::vector<double> Biomarkers = it2->second;
+            std::vector<double> Observation = it2->second;
 
-            Likelihood += ObservationDifferenceNorm(ParallelCurve, Biomarkers);
+            Likelihood += ObservationDifferenceNorm(Observation, ParallelCurve);
+            //std::cout << Likelihood << " - ";
         }
 
         SubjectNumber +=1;
     }
 
-    return exp( - 1.0/(2.0 * *m_UncertaintyVariance) * Likelihood);
+
+    if(isnan(Likelihood)) std::cout << "Nan likelihood" << std::endl;
+    Likelihood = exp( - 1.0/(2.0 * *m_UncertaintyVariance) * Likelihood);
+    return Likelihood;
 
 }
 
@@ -227,28 +242,28 @@ LongitudinalModel
 
 
     // Sample P0 and its proposition distribution
-    double P0CandidateVariance = 1.0;
+    double P0CandidateVariance = 0.01;
     auto P0Candidate = std::make_shared<GaussianRandomVariable>(m_P0->GetCurrentState(), P0CandidateVariance);
     RandomVariableToSample P0 (m_P0, P0Candidate);
     RVToSample.push_back(P0);
 
 
     // Sample T0 and its proposition distribution
-    double T0CandidateVariance = 1.0;
+    double T0CandidateVariance = 0.01;
     auto T0Candidate = std::make_shared<GaussianRandomVariable>(m_T0->GetCurrentState(), T0CandidateVariance);
     RandomVariableToSample T0 (m_T0, T0Candidate);
     RVToSample.push_back(T0);
 
 
     // Sample V0 and its proposition distribution
-    double V0CandidateVariance = 1.0;
+    double V0CandidateVariance = 0.01;
     auto V0Candidate = std::make_shared<GaussianRandomVariable>(m_V0->GetCurrentState(), V0CandidateVariance);
     RandomVariableToSample V0 (m_V0, V0Candidate);
     RVToSample.push_back(V0);
 
 
     // Sample propagation coefficients and their proposition distribution
-    double DeltaCandidateVariance = 1.0;
+    double DeltaCandidateVariance = 0.01;
     for(std::vector<std::shared_ptr<GaussianRandomVariable>>::iterator it = m_PropagationCoefficient.begin() ; it != m_PropagationCoefficient.end() ; ++it)
     {
         auto DeltaCandidate = std::make_shared<GaussianRandomVariable>((*it)->GetCurrentState(), DeltaCandidateVariance);
@@ -258,7 +273,7 @@ LongitudinalModel
 
 
     // Sample the A Matrix coefficient
-    double BetaCandidateVariance = 1.0;
+    double BetaCandidateVariance = 0.01;
     for(std::vector<std::shared_ptr<GaussianRandomVariable>>::iterator it = m_AMatrixCoefficient.begin() ; it != m_AMatrixCoefficient.end() ; ++it)
     {
         auto BetaCandidate = std::make_shared<GaussianRandomVariable>((*it)->GetCurrentState(), BetaCandidateVariance);
@@ -268,7 +283,7 @@ LongitudinalModel
 
 
     // Sample the pre-acceleration factors
-    double KsiCandidateVariance = 1.0;
+    double KsiCandidateVariance = 0.01;
     for(std::vector<std::shared_ptr<GaussianRandomVariable>>::iterator it = m_PreAccelerationFactor.begin(); it != m_PreAccelerationFactor.end() ; ++it)
     {
         auto KsiCandidate = std::make_shared<GaussianRandomVariable>((*it)->GetCurrentState(), KsiCandidateVariance);
@@ -278,7 +293,7 @@ LongitudinalModel
 
 
     // Sample the time shift
-    double TauCandidateVariance = 1.0;
+    double TauCandidateVariance = 0.01;
     for(std::vector<std::shared_ptr<GaussianRandomVariable>>::iterator it = m_TimeShift.begin() ; it != m_TimeShift.end() ; ++it)
     {
         auto TauCandidate = std::make_shared<GaussianRandomVariable>((*it)->GetCurrentState(), TauCandidateVariance);
@@ -288,7 +303,7 @@ LongitudinalModel
 
 
     // Sample the Space shift coefficient
-    double SCandidateVariance = 1.0;
+    double SCandidateVariance = 0.01;
     for(std::vector<std::vector<std::shared_ptr< LaplaceRandomVariable>>>::iterator it = m_SpaceShiftCoefficient.begin() ; it != m_SpaceShiftCoefficient.end() ; ++it)
     {
         for(std::vector<std::shared_ptr<LaplaceRandomVariable>>::iterator it2 = it->begin() ; it2 != it->end() ; ++it2)
@@ -303,6 +318,7 @@ LongitudinalModel
 
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Debugging Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,6 +328,7 @@ LongitudinalModel
 ::SimulateSpecificData(std::vector<std::vector<double>> TimePoint)
 {
 
+
     //////////////////////////////////////////////////////////////////////////
     // Model Parameters
     //////////////////////////////////////////////////////////////////////////
@@ -319,14 +336,14 @@ LongitudinalModel
     int NumberOfSubjects = (int)TimePoint.size();
     m_NumberOfSubjects= NumberOfSubjects;
 
-    m_P0 = std::make_shared<GaussianRandomVariable>(10.0, 5.0);
-    m_T0 = std::make_shared<GaussianRandomVariable>(10.0, 5.0);
-    m_V0 = std::make_shared<GaussianRandomVariable>(10.0, 5.0);
+    m_P0 = std::make_shared<GaussianRandomVariable>(0.5, 0.01);
+    m_T0 = std::make_shared<GaussianRandomVariable>(1.0, 0.01);
+    m_V0 = std::make_shared<GaussianRandomVariable>(1.0, 0.01);
 
     m_PropagationCoefficient.clear();
     for(int i = 0; i< m_Manifold->GetNumberOfDimension(); ++i)
     {
-        m_PropagationCoefficient.push_back(std::make_shared<GaussianRandomVariable>((double)i, 3.0));
+        m_PropagationCoefficient.push_back(std::make_shared<GaussianRandomVariable>((double)i, 0.01));
     }
 
     m_Manifold->SetPropagationCoefficient(m_PropagationCoefficient);
@@ -334,21 +351,21 @@ LongitudinalModel
     m_AMatrixCoefficient.clear();
     for(int i = 0; i<(m_Manifold->GetNumberOfDimension()-1)*m_Manifold->GetNumberOfIndependentComponents() ; ++i)
     {
-        m_AMatrixCoefficient.push_back(std::make_shared<GaussianRandomVariable>((double)i, 2.0));
+        m_AMatrixCoefficient.push_back(std::make_shared<GaussianRandomVariable>((double)i, 0.01));
     }
 
     m_PreAccelerationFactor.clear();
     m_TimeShift.clear();
     for(int i = 0; i<NumberOfSubjects; ++i)
     {
-        m_PreAccelerationFactor.push_back(std::make_shared<GaussianRandomVariable>((double)i, 5.0));
-        m_TimeShift.push_back(std::make_shared<GaussianRandomVariable>((double)i, 3.0));
+        m_PreAccelerationFactor.push_back(std::make_shared<GaussianRandomVariable>(0.0, 0.01));
+        m_TimeShift.push_back(std::make_shared<GaussianRandomVariable>(0.0, 0.01));
     }
 
-    m_UncertaintyVariance = std::make_shared<double>(3.0);
+    m_UncertaintyVariance = std::make_shared<double>(0.1);
 
     m_SpaceShiftCoefficient.clear();
-    for(int i =0; i<NumberOfSubjects; ++i)
+    for(int i = 0; i<NumberOfSubjects; ++i)
     {
         std::vector<std::shared_ptr< LaplaceRandomVariable >> Coord;
         for(int j = 0; j<m_Manifold->GetNumberOfDimension(); ++j)
@@ -358,7 +375,6 @@ LongitudinalModel
         m_SpaceShiftCoefficient.push_back(Coord);
     }
 
-    InitializeOrthonormalBasis();
     ComputeOrthonormalBasis();
     ComputeAMatrix();
     ComputeSpaceShifts();
@@ -384,7 +400,8 @@ LongitudinalModel
             std::vector<double> Eta = ComputeParallelTransport(i,  *it2);
             for(std::vector<double>::iterator it3 = Eta.begin() ; it3 != Eta.end(); ++it3)
             {
-                Observation.push_back(*it3 + Distribution(Generator));
+                double Gen = Distribution(Generator);
+                Observation.push_back(*it3 + Gen);
             }
             SubjectData.push_back(std::pair<double, std::vector<double>> (*it2, Observation));
 
@@ -404,102 +421,73 @@ LongitudinalModel
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-void
-LongitudinalModel
-::InitializeOrthonormalBasis()
-{
-    if(m_V0->GetCurrentState() == 0.0)
-    {
-        throw std::invalid_argument(" V0 equals zero : impossible to calculate the orthogonal basis");
-    }
-
-    std::vector<std::vector<double>> FirstBasis;
-
-    for(int i=1; i<m_Manifold->GetNumberOfDimension() ; ++i)
-    {
-        std::vector<double> vector;
-        for(int j = 0; j<m_Manifold->GetNumberOfDimension() ; ++j)
-        {
-            if(i==j)
-            {
-                vector.push_back(1.0);
-            }
-            else
-            {
-                vector.push_back(0.0);
-            }
-        }
-        FirstBasis.push_back(vector);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    ///// JUST NEED TO CHECK THAT (e2, e3, ..., eN) is a basis of Orthogonal(V0)
-    ///// <=> (v0, e2, ..., eN) is a basis
-    ////////////////////////////////////////////////////////////////////////////
-
-
-    m_OrthonormalBasis = FirstBasis;
-}
-
 void
 LongitudinalModel
 ::ComputeOrthonormalBasis()
 {
-    if(m_V0->GetCurrentState() == 0.0)
+    double P0 = m_P0->GetCurrentState();
+    double T0 = m_T0->GetCurrentState();
+    double V0 = m_V0->GetCurrentState();
+    std::vector<double> GammaDerivative0 = m_Manifold->ComputeGeodesicDerivative(P0, T0, V0, T0);
+
+    bool null = true;
+    for(std::vector<double>::iterator it = GammaDerivative0.begin(); it != GammaDerivative0.end() ; ++it)
     {
-        throw std::invalid_argument(" V0 equals zero : impossible to calculate the orthogonal basis");
+        if(*it != 0)
+        {
+            null = false;
+            break;
+        }
+    }
+    if(null)
+    {
+        throw std::invalid_argument(" Gamma derivative equals zero : impossible to calculate the orthogonal basis");
     }
 
-    /// Modified Gram-Schmidt Process
-    /// http://cavern.uark.edu/~arnold/4353/CGSMGS.pdf
-    /// http://ocw.mit.edu/courses/mathematics/18-335j-introduction-to-numerical-methods-fall-2010/lecture-notes/MIT18_335JF10_lec10a_hand.pdf
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// HouseHolder reflection / transformation to get the first basis
+    /// https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::vector<std::vector<double>> NewOrthogonalBasis;
+    // GammaDerivative0, calculated earlier, is the base/ground vector to use the Householder reflection
+    std::vector<std::vector<double>> OrthogonalBasis;
 
-    /// Copy the existing orthonormal basis and adding v0 to it at first place
-    /// So that it is a basis of the N-dimensional manifold
-    std::vector<std::vector<double>> OrthogonalBasis = m_OrthonormalBasis;
-    std::vector<double> VectorV0;
-    for(int i = 0; i<m_Manifold->GetNumberOfDimension(); ++i) VectorV0.push_back(m_V0->GetCurrentState());
-    OrthogonalBasis.insert(OrthogonalBasis.begin(), VectorV0);
+    // NormDerivative is the norm of the ground vector
+    double NormDerivative = m_Manifold->ComputeMetric(GammaDerivative0, GammaDerivative0, m_Manifold->ComputeGeodesic(P0, T0, V0, T0));
+    NormDerivative = sqrt(NormDerivative*NormDerivative);
 
-    for(int k=0; k<m_Manifold->GetNumberOfDimension(); ++k)
+    // Change the value of the first coordinate of the ground vector
+    GammaDerivative0[0] -= copysign(NormDerivative, GammaDerivative0[0]);
+
+    // Normalize the ground vector
+    double GroundVectorNorm = m_Manifold->ComputeMetric(GammaDerivative0, GammaDerivative0, m_Manifold->ComputeGeodesic(P0, T0, V0, T0));
+    for(std::vector<double>::iterator it = GammaDerivative0.begin() ; it != GammaDerivative0.end() ; ++it)
     {
-        std::vector<double> w = OrthogonalBasis[k];
-        double r = 0;
-        for(int j=0; j<k-1; ++j)
-        {
-            for(int i=0; i<m_Manifold->GetNumberOfDimension(); ++i)
-            {
-                r += OrthogonalBasis[j][i]*w[i];
-            }
-
-            for(int i=0; i<m_Manifold->GetNumberOfDimension(); ++i)
-            {
-                w[i] -= r*OrthogonalBasis[j][i];
-            }
-        }
-
-        std::vector<double> NewBasisVector;
-        double norm = 0;
-        for(int j = 0; j<m_Manifold->GetNumberOfDimension(); ++j)
-        {
-            norm += w[j]*w[j];
-        }
-        norm = sqrt(norm);
-        for(int j = 0; j<m_Manifold->GetNumberOfDimension(); ++j)
-        {
-            NewBasisVector.push_back(w[j]/norm);
-        }
-        NewOrthogonalBasis.push_back(NewBasisVector);
+        *it = *it/GroundVectorNorm;
     }
 
-    /// Erase the V0 vector
-    NewOrthogonalBasis.erase(NewOrthogonalBasis.begin());
-    m_OrthonormalBasis = NewOrthogonalBasis;
+    // Compute the Orthogonal basis
+    for(std::vector<double>::iterator it = GammaDerivative0.begin() ; it != GammaDerivative0.end(); ++it)
+    {
+        std::vector<double> BasisCoordinate;
+        for(std::vector<double>::iterator it2 = GammaDerivative0.begin() ; it2 != GammaDerivative0.end() ; ++it2)
+        {
+            BasisCoordinate.push_back(- 2 * *it * *it2);
+        }
+        OrthogonalBasis.push_back(BasisCoordinate);
+    }
+
+    // Add the identity
+    for(int i = 0; i<OrthogonalBasis.size() ; ++i)
+    {
+        OrthogonalBasis[i][i] += 1;
+    }
+
+    // Drop the first vector, which is colinear to Gamma0Derivative
+    OrthogonalBasis.erase(OrthogonalBasis.begin());
 
 
+    m_OrthonormalBasis = OrthogonalBasis;
 
 }
 
@@ -566,6 +554,7 @@ LongitudinalModel
             i.first != Observation.end() && i.second != ParallelCurve.end();
             ++i.first, ++i.second)
     {
+        //if(isnan(*i.first)) std::cout << " Observation " << *i.second << std::endl;
         norm += (*i.first - *i.second) * (*i.first - *i.second) ;
     }
 

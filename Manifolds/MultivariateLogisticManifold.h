@@ -2,6 +2,7 @@
 #define _MultivariateLogisticManifold_h
 
 
+#include <stdexcept>            // throw
 #include <memory>
 #include <GaussianRandomVariable.h>
 #include "AbstractManifold.h"
@@ -34,8 +35,17 @@ public:
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // Compute the Riemannian metric
+    double ComputeMetric(std::vector<double> u,std::vector<double> v, std::vector<double> p);
+
     // Compute parallel Curve
     std::vector<double> ComputeParallelCurve(double P0, double T0, double V0, std::vector<double> W0, double T);
+
+    // Compute geodesic
+    std::vector<double> ComputeGeodesic(double P0, double T0, double V0, double T);
+
+    // Compute double Geodesic Derivative
+    std::vector<double> ComputeGeodesicDerivative(double P0, double T0, double V0, double T);
 
 
 protected:
@@ -55,14 +65,15 @@ protected:
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Compute geodesic
-    double ComputeGeodesic(double P0, double T0, double V0, double T);
-
-    // Compute Geodesic Derivative
-    double ComputeGeodesicDerivative(double P0, double T0, double V0, double T);
+    // Compute one dimensional geodesic
+    double ComputeOneDimensionalGeodesic(double P0, double T0, double V0, double T);
 
     // Compute parallel transport of vector W0
     std::vector<double> ComputeParallelTransport(double P0, double T0, double V0, std::vector<double> W0, double T) ;
+
+    // Compute one dimensionsional geodesic derivative
+    double ComputeOneDimensionalGeodesicDerivative(double P0, double T0, double V0, double T);
+
 
 };
 

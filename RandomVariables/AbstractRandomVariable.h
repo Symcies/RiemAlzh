@@ -2,6 +2,7 @@
 #define _AbstractRandomVariable_h
 
 #include <random>       // random_device
+#include <iostream>     // cout
 
 class AbstractRandomVariable {
 public:

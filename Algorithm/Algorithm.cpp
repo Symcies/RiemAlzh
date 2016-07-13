@@ -38,14 +38,38 @@ void
 Algorithm
 ::ComputeMCMCSAEM(int NumberOfIterations) {
 
+    double SimulationTime = 0;
+    double SuffStatTime = 0;
+    double StochApproxTime = 0;
+    double MaxStepTime = 0;
+
     for(int k = 0; k < NumberOfIterations ; ++k)
     {
+        auto t1 = std::chrono::system_clock::now();
         ComputeSimulationStep();
+        auto t2 = std::chrono::system_clock::now();
         ComputeSufficientStatistics();
+        auto t3 = std::chrono::system_clock::now();
         ComputeStochasticApproximation(k);
+        auto t4 = std::chrono::system_clock::now();
         ComputeMaximizationStep();
-        GetParameters();
+        auto t5 = std::chrono::system_clock::now();
+        //GetParameters();
+
+        auto p1 = t2 - t1;
+        auto p2 = t3 - t2;
+        auto p3 = t4 - t3;
+        auto p4 = t5 - t4;
+        SimulationTime += std::chrono::duration_cast<std::chrono::nanoseconds>(p1).count();
+        SuffStatTime += std::chrono::duration_cast<std::chrono::nanoseconds>(p2).count();
+        StochApproxTime += std::chrono::duration_cast<std::chrono::nanoseconds>(p3).count();
+        MaxStepTime += std::chrono::duration_cast<std::chrono::nanoseconds>(p4).count();
     }
+
+    std::cout << "Simulation Time : " << SimulationTime/1000 << std::endl;
+    std::cout << "Sufficient Time : " << SuffStatTime/1000 << std::endl;
+    std::cout << "Stochastic Time : " << StochApproxTime/1000 << std::endl;
+    std::cout << "Maximizati Time : " << MaxStepTime/1000 << std::endl;
 }
 
 
@@ -72,8 +96,8 @@ void
 Algorithm
 ::ComputeSimulationStep()
 {
-    std::vector<RandomVariableToSample> RVToSample = m_Model->GetRandomVariableToSample();
 
+    std::vector<RandomVariableToSample> RVToSample = m_Model->GetRandomVariableToSample();
     for(std::vector<RandomVariableToSample>::iterator it = RVToSample.begin() ; it != RVToSample.end() ; ++it)
     {
         bool q = m_Sampler->Sample(*it->first, *it->second, *m_Model);
@@ -81,7 +105,9 @@ Algorithm
         {
             m_Model->Update();
         }
+        std::cout << "-----------" << q << "-------------------" << std::endl;
     }
+    std::cout << "----------------------------------------------------------------------------------------" << std::endl;
 
 }
 
@@ -96,7 +122,7 @@ void
 Algorithm
 ::ComputeStochasticApproximation(int k)
 {
-    double StepSize = DecreasingStepSize(k, 100);
+    double StepSize = DecreasingStepSize(k, 50);
 
     int i = 0;
     std::vector<std::vector< double >> NewStochasticStatistics;

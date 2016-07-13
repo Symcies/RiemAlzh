@@ -22,7 +22,7 @@ LaplaceRandomVariable
 ::Sample()
 {
     std::random_device RD;
-    std::default_random_engine Generator(RD());
+    std::mt19937_64 Generator(RD());
     std::uniform_real_distribution<double> Distribution(1/2, 1/2);
 
     double UniDraw = Distribution(Generator);

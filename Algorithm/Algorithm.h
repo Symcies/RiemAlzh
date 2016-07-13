@@ -3,6 +3,7 @@
 
 #include <LongitudinalModel.h>
 #include "../Samplers/AbstractSampler.h"
+#include <chrono>
 
 typedef std::vector<std::vector<std::pair<double, std::vector<double>>>> Data;
 
