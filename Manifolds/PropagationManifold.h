@@ -1,40 +1,43 @@
-#ifndef _Algorithm_h
-#define _Algorithm_h
+
+#ifndef _PropagationManifold_h
+#define _PropagationManifold_h
 
 
-#include "../Models/AbstractModel.h"
+#include "AbstractManifold.h"
 
-class Algorithm {
+
+class PropagationManifold : public AbstractManifold {
 public:
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::vector< std::vector< std::pair< std::vector<double>, unsigned int> > > Data;
-    typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
-    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+
+    typedef std::vector<std::shared_ptr< AbstractRandomVariable >> PointersVector;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Algorithm();
-    ~Algorithm();
-
+    PropagationManifold(unsigned int NumberDimension);
+    ~PropagationManifold();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    inline void SetModel(std::shared_ptr<AbstractModel> M ) { m_Model = M; }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Compute the MCMC SAEM algorithm
-    void ComputeMCMCSAEM(std::shared_ptr<Data> D);
+    /// Initialize the random variables related to the manifold
+    virtual void InitializeRandomVariables();
+
+    /// Compute the parallel transport
+    virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, std::map<std::string, double> Realization);
+
 
 
 protected:
@@ -42,20 +45,17 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Initialize the realization of the model (and related manifold) random variables
-    void InitializeRealization(unsigned int NbIndividuals);
+    /// Compute the one dimensional geodesic
+    double ComputeOneDimensionalGeodesic(double P0, double T0, double V0, double T);
+
+    /// Compute the one dimensional geodesic derivative
+    double ComputeOneDimensionalGeodesicDerivative(double P0, double T0, double V0, double T);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Abstract Model
-    std::shared_ptr<AbstractModel> m_Model;
-
-    /// Realisation of the random variables of the model
-    std::map<std::string, double> m_Realization;
-
 };
 
 
-#endif //_Algorithm_h
+#endif //_PropagationManifold_h

@@ -1,60 +1,48 @@
-#ifndef _GaussianRandomvariable_h
-#define _GaussianRandomvariable_h
+#ifndef _GaussianRandomVariable_h
+#define _GaussianRandomVariable_h
 
 
 #include "AbstractRandomVariable.h"
 
-
 class GaussianRandomVariable : public AbstractRandomVariable{
 public:
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Constructor(s) / Destructor
+    // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+
     GaussianRandomVariable(double Mean, double Variance);
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Getter(s) and Setter(s):
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // Get the mean of the gaussian distribution
-    inline double GetMean() const {return m_Mean;};
-
-    // Get the variance of the gaussian distribution
-    inline double GetVariance() const { return m_Variance; };
-
-    // Set the mean of the gaussian distribution
-    inline void SetMean(double Mean) {m_Mean = Mean;};
-
-    // Set the variance of the gaussian distribution
-    inline void SetVariance(double Variance) { m_Variance = Variance; };
-
-    // Get the density estimation
-    inline double GetDensity() const;
-
-
+    ~GaussianRandomVariable();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Other Method(s) :
+    // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Sample to update the current state
-    void Sample();
+    /// Draw a sample
+    virtual double Sample();
+
+    /// Compute the likelihood given a current state
+    virtual double Likelihood(double X);
+
 
 
 protected:
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Method(s) :
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Attribute(s) :
+    // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Mean of the Gaussian
+    /// Mean of the Gaussian
     double m_Mean;
 
-    // Variance of the Gaussian
+    /// Variance of the Gaussian
     double m_Variance;
 
 };
 
 
-#endif //_GaussianRandomvariable_h
+#endif //_GaussianRandomVariable_h

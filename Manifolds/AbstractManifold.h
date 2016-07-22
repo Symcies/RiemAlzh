@@ -1,10 +1,12 @@
 #ifndef _AbstractManifold_h
 #define _AbstractManifold_h
 
-#include <vector>
-#include <cmath>        // exp
-#include <iostream>     //cout
 
+#include <memory>
+#include <string>
+#include "../RandomVariables/GaussianRandomVariable.h"
+#include "../RandomVariables/AbstractRandomVariable.h"
+#include <map>
 
 class AbstractManifold {
 public:
@@ -13,6 +15,10 @@ public:
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
+    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -20,46 +26,42 @@ public:
     AbstractManifold();
     ~AbstractManifold();
 
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Getter(s) and Setter(s) :
+    // Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Get the number of dimension of the manifold
-    int GetNumberOfDimension() {return m_DimensionNumber; };
+    inline const double GetDimension() { return m_Dimension; }
 
+    inline RandomVariableMap GetManifoldRandomVariables() { return m_ManifoldRandomVariables; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Compute the Riemannian metric
-    virtual double ComputeMetric(std::vector<double> u, std::vector<double> v, std::vector<double> p) = 0;
+    /// Initialize the random variables related to the manifold
+    virtual void InitializeRandomVariables() = 0;
 
-    // Compute geodesic
-    virtual std::vector<double> ComputeGeodesic(double P0, double T0, double V0, double T) = 0;
-
-    // Compute parallel Curve
-    virtual std::vector<double> ComputeParallelCurve(double P0, double T0, double V0, std::vector<double> W0, double T) = 0;
-
+    /// Compute the parallel curve
+    virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, std::map<std::string, double> Realization) = 0;
 
 protected:
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Attribute(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // Dimension of the manifold
-    int m_DimensionNumber;
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Other method(s) :
+    // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    // Compute parallel transport of vector W0
-    virtual std::vector<double> ComputeParallelTransport(double P0, double T0, double V0, std::vector<double> W0, double T) = 0;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Attribute(s)
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Dimension of the Riemanian Manifold
+    unsigned int m_Dimension;
+
+
+    /// Random variables related to the manifold to be sent to the model
+    RandomVariableMap m_ManifoldRandomVariables;
 };
 
 

@@ -1,20 +1,13 @@
-#include "AbstractSampler.h"
-
-
+#include "AbstractModel.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-AbstractSampler
-::AbstractSampler()
-{
+AbstractManifold
+::AbstractManifold()
+{ }
 
-};
-
-
-AbstractSampler
-::~AbstractSampler()
-{
-
-};
+AbstractManifold
+::~AbstractManifold()
+{ }

@@ -1,14 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(Longitudina)
-
-set(MANIFOLDS
-        Manifolds
-        Manifolds/AbstractManifold
-        Manifolds/MultivariateLogisticManifold)
-
-set(MODEL
-        Model
-        Model/LongitudinalModel)
+project(Longitudina2)
 
 set(RANDOMVARIABLES
         RandomVariables
@@ -16,33 +7,27 @@ set(RANDOMVARIABLES
         RandomVariables/GaussianRandomVariable
         RandomVariables/LaplaceRandomVariable)
 
+set(MANIFOLDS
+        Manifolds
+        Manifolds/AbstractManifold
+        Manifolds/PropagationManifold)
+
+set(MODELS
+        Models
+        Models/AbstractModel
+        Models/LongitudinalModel)
+
 set(ALGORITHM
         Algorithm
         Algorithm/Algorithm)
 
-set(SAMPLERS
-        Samplers
-        Samplers/AbstractSampler
-        Samplers/HastingMetropolisWithinGibbs)
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
-set(SOURCE_FILES
-        main.cpp
-        )
+set(SOURCE_FILES main.cpp)
 
-include_directories(
-        ${MANIFOLDS}
-        ${MODEL}
-        ${RANDOMVARIABLES}
-        ${ALGORITHM}
-)
-
-add_executable(Longitudina
+add_executable(Longitudina2
         ${SOURCE_FILES}
-        ${MANIFOLDS}
-        ${MODEL}
         ${RANDOMVARIABLES}
+        ${MODELS}
         ${ALGORITHM}
-        ${SAMPLERS}
-        )
+        ${MANIFOLDS})

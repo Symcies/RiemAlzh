@@ -1,23 +1,26 @@
 #include "LaplaceRandomVariable.h"
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Constructor(s) / Destructor :
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 LaplaceRandomVariable
 ::LaplaceRandomVariable(double Location, double Scale)
 {
     m_Location = Location;
     m_Scale = Scale;
-    Sample();
 }
 
 LaplaceRandomVariable
 ::~LaplaceRandomVariable()
-{
-
-}
+{ }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
+double
 LaplaceRandomVariable
 ::Sample()
 {
@@ -26,14 +29,14 @@ LaplaceRandomVariable
     std::uniform_real_distribution<double> Distribution(1/2, 1/2);
 
     double UniDraw = Distribution(Generator);
-    double Draw = m_Location - m_Scale*copysign( 1.0, UniDraw) * log( 1 - 2*fabs(UniDraw) );
+    return m_Location - m_Scale*copysign( 1.0, UniDraw) * log( 1 - 2*fabs(UniDraw) );
 
-    m_CurrentState = Draw;
 }
+
 
 double
 LaplaceRandomVariable
-::GetDensity() const
+::Likelihood(double X)
 {
-    return exp( - fabs(m_CurrentState - m_Location) / m_Scale) / (2*m_Scale) ;
+    return exp( - fabs(X - m_Location) / m_Scale) / (2*m_Scale) ;
 }
