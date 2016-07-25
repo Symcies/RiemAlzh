@@ -24,10 +24,15 @@ int main() {
     /// Data
     shared_ptr<Data> D = make_shared<Data>();
 
+    /// Sampler
+    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbs>();
+
     /// Algo
     auto Algo = make_shared<Algorithm>();
     Algo->SetModel(Model);
+    Algo->SetSampler(Sampler);
     Algo->ComputeMCMCSAEM(D);
+
 
     cout << "Hello, World!" << endl;
     return 0;

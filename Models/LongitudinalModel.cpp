@@ -27,7 +27,212 @@ LongitudinalModel
 {
     InitializePopulationRandomVariables();
     InitializeIndividualRandomVariables();
+    InitializePropositionRandomVariables();
 }
+
+SufficientStatistics
+LongitudinalModel
+::GetSufficientStatistics(const Realizations& R, const Data& D)
+{
+    std::vector< std::vector< double >> SufficientStatistics;
+
+    /////////////////////////
+    /// Compute S1 and S2
+    /////////////////////////
+    std::vector< double > S1, S2;
+    std::pair<Data, int> 
+
+    /// Get population wide attribute , then, Loop over all the subjects
+    double T0 = R.at("T0");
+
+    for(std::pair<Data, int> i(D.begin(), 0) ;
+        i.first != D.end() && i.second < D.size() ;
+        ++i.first, ++i.second)
+    {
+        /// Given a particular subject, get its attributes, then, loop over its observation
+        std::string KsiI = "Ksi" + i.second; 
+        double Ksi = R.at(KsiI);    // TODO : Check if cannot be "Ksi" + (string)i.second; 
+
+        std::string TauI = "Tau" + i.second;
+        double Tau = R.at(TauI);
+        std::vector< double > SpaceShift = m_SpaceShifts[i.second]
+
+        for(IndividualData::iterator it = i.first.begin() ; it != i.first.end() ; ++it)
+        {
+            double TimePoint = exp(Ksi) * ( *it.second - T0 - Tau) + T0;
+
+            std::vector<double> ParallelCurve = m_Manifold->ComputeParallelCurve(TimePoint, SpaceShift, R);
+            std::vector<double> Observation = *it.first;
+
+            S1.push_back( ComputeEuclidianScalarProduct(ParallelCurve, Observation ) );
+            S2.push_back( ComputeEuclidianScalarProduct(ParallelCurve, ParallelCurve) );
+        }
+    }
+
+    SufficientStatistics.push_back(S1);
+    SufficientStatistics.push_back(S2);
+
+
+    /////////////////////////
+    /// Compute S3 and S4
+    /////////////////////////
+    std::vector< double > S3, S4;
+
+    for(int i = 0; i < D.size() ; ++i )
+    {
+        std::string KsiI = "Ksi" + i;
+        Ksi = R.at(KsiI);   // TODO : Check if cannot be "Ksi" + (string)i.second; 
+        std::string TauI = "Tau" + i;
+        Tau = R.at(TauI);
+
+        S3.push_back(Ksi * Ksi);
+        S4.push_back(Tau * Tau); 
+    }
+
+    SufficientStatistics.push_back(S3);
+    SufficientStatistics.push_back(S4);
+
+    /////////////////////////
+    /// Compute S5, S6 and S7
+    /////////////////////////
+    std::vector< double > S5, S6, S7;
+    S5.push_back( S.at("P0") );
+    S6.push_back( S.at("T0") );
+    S7.push_back( S.at("V0") );
+
+    SufficientStatistics.push_back(S5);
+    SufficientStatistics.push_back(S6);
+    SufficientStatistics.push_back(S7);
+
+
+    /////////////////////////
+    /// Compute S8
+    /////////////////////////
+    std::vector< double > S8;
+    for(int i = 0; i<m_Manifold->GetDimension() ; ++i)
+    {
+        string DeltaI = "Delta" + i; 
+        double Delta = R.at(DeltaI) // TODO : try at(Delta + (string)i)
+        S8.push_back(Delta)
+    }
+    
+    SufficientStatistics.push_back(S8);
+
+
+    /////////////////////////
+    /// Compute S9
+    /////////////////////////
+    std::vector< double > S9;
+    for(int i = 0; i < (m_Manifold->GetDimension()) * m_NbIndependentComponents; ++i)
+    {
+        string = BetaI = "Beta" + i;
+        double Beta = R.at(BetaI); // TODO : try strings
+        S9.push_back(Beta);
+    }
+
+    SufficientStatistics.push_back(S9);
+
+
+    return SufficientStatistics;
+    
+}
+
+
+
+void
+LongitudinalModel
+::UpdateRandomVariables(const std::vector< std::vector< double >>& SufficientStatistics, const Data& D)
+{
+
+    /// Update P0(mean)
+    auto P0 = m_PopulationRandomVariables.at("P0");
+    P0->SetMean(SufficientStatistics[4][0]);
+
+    /// Update T0(mean)
+    auto T0 = m_PopulationRandomVariables.at("T0");
+    T0->SetMean(SufficientStatistics[5][0]);
+
+    /// Update V0(mean)
+    auto V0 = m_PopulationRandomVariables.at("V0");
+    V0->SetMean(SufficientStatistics[6][0]);
+
+    /// Update Delta(k)(mean)
+    for(std::pair< std::vector< double >, int> i(SufficientStatistics[7].begin(), 0) ;
+        i.first != SufficientStatistics[7].end() && i.second < SufficientStatistics[7].size() ;
+        ++i.first, ++i.second)
+    {
+        string DeltaI = "Delta" + i;
+        auto Delta = m_PopulationRandomVariables.at(DeltaI) ;
+        Delta->SetMean(*i.first) ;
+    }
+
+    /// Update Beta(k)(mean)
+    for(std::pair< std::vector< double >, int> i(SufficientStatistics[8].begin(), 0) ;
+        i.first != SufficientStatistics[8].end() && i.second < SufficientStatistics.[8].size() ;
+        ++i.first, ++i.second )
+    {
+        string BetaI = "Beta" + i;
+        auto Beta = m_PopulationRandomVariables.at(BetaI);
+        Beta->SetMean(*i.first);
+    }
+
+    /// Update Ksi
+    double VarianceKsi = 0;
+    for(std:vector< double >::iterator it = SufficientStatistics[2].begin() ; it != SufficientStatistics[2].end() : ++it)
+    {
+        VarianceKsi += *it;
+    }
+    VarianceKsi /= SufficientStatistics[2].size(); // TODO : CHECK IF SIZE EQUAL TO NUMBER OF PEOPLE
+
+    auto Ksi = m_IndividualRandomVariables.at("Ksi");
+    Ksi->SetVariance(VarianceKsi)
+
+
+    /// Update Tau
+    double VarianceTau = 0;
+    for(std::vector<double>::iterator it = SufficientStatistics[3].begin() ; it != SufficientStatistics[3].end() ; ++it)
+    {
+        VarianceTau += *it;
+    }
+    VarianceTau /= SufficientStatistics[3].size(); // TODO : CHECK IF SIZE EQUAL TO NUMBER OF PEOPLE
+
+    auto Tau = m_IndividualRandomVariables.at("Tau");
+    Tau->SetVariance(VarianveTau0);
+
+
+    /// Update Uncertainty variance
+
+    /// Sum Yijk²
+    double NoiseVariance;
+    for(Data::iterator it = D.begin() ; it != D.end() ; ++it)
+    {
+        for(IndividualData::iterator it2 = it.begin() ; it2 != it.end() ; ++it2)
+        {
+            for(std::vector<double>::iterator it3 = it2.first.begin() ; it3 != it2.second.begin() ; ++it3)
+            {
+                NoiseVariance += *it3 * *it3;
+            }
+        }
+    }
+
+    /// Sum -2 S1
+    for(std::vector< double >::iterator it = SufficientStatistics[0].begin() ; it != SufficientStatistics[0].end() ; ++it)
+    {
+        NoiseVariance -= 2* *it;
+    }
+
+    /// Sum S2
+    for(std::vector< double >::iterator it = SufficientStatistics[1].begin() ; it != SufficientStatistics[1].end(); ++it)
+    {
+        NoiseVariance += *it;
+    }
+
+
+    m_Noise->SetVariance(NoiseVariance);
+
+
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,13 +283,11 @@ LongitudinalModel
         m_PopulationRandomVariables.insert(*it);
     }
 
-    // Initial uncertainty
-    double UncertaintyMean = 0.0;
-    double UncertaintyVariance = 0.01;
-    auto Epsilon = std::make_shared< GaussianRandomVariable >(UncertaintyMean, UncertaintyVariance);
-    RandomVariable Epsilon_("Epsilon", Epsilon);
-    m_PopulationRandomVariables.insert(Epsilon_);
-
+    // Noise
+    double NoiseMean = 0.0;
+    double NoiseVariance = 0.01;
+    m_Noise = std::make_shared< GaussianRandomVariable >(NoiseMean, NoiseVariance);
+    
 }
 
 
@@ -115,5 +318,5 @@ LongitudinalModel
     {
         m_PopulationRandomVariables.insert(S_);
     }
-}
 
+}

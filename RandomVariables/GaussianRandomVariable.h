@@ -18,6 +18,11 @@ public:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    inline void SetMean(double Mean) { m_Mean = Mean};
+
+    inline void SetVariance(double Variance) {m_Variance = Variance };
+
+
     /// Draw a sample
     virtual double Sample();
 

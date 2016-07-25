@@ -1,72 +1,57 @@
-#ifndef _LongitudinalModel_h
-#define _LongitudinalModel_h
+#ifndef _AbstractManifold_h
+#define _AbstractManifold_h
 
 
-#include "AbstractModel.h"
-#include "../Utilities/MatrixFunctions.cpp"
+#include <memory>
+#include <string>
+#include "../RandomVariables/GaussianRandomVariable.h"
+#include "../RandomVariables/AbstractRandomVariable.h"
+#include <map>
 
-class LongitudinalModel : public AbstractModel {
+class HMWithinGibbsSampler {
 public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
+    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    LongitudinalModel(unsigned int NbIndependentComponents);
-    ~LongitudinalModel();
-
+    HMWithinGibbsSampler();
+    ~HMWithinGibbsSampler();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Initialize the random variables : Population-wide and subject-specific
-    virtual void InitializeRandomVariables();
-
-     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatistics GetSufficientStatistics(const Realizations& R, const Data& D);
-
-    /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& SufficientStatistics, const Data& D);
-
-
+    // Sample a new variable thanks to the sampler
+    virtual void Sample(RandomVariable CurrentRV, double& CurrentRealization, RandomVariable CandidateRV, double& CandidateRealization); 
+   
+   
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Initialize Population random variables
-    void InitializePopulationRandomVariables();
-
-    /// Initialize Individual random variables
-    void InitializeIndividualRandomVariables();
-
-
-    /// Space shifts w(i) of the model
-    std::map< std::string, std::vector< double >> m_SpaceShifts; // TODO : Compute them & Initialize
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Number of independent components
-    unsigned int m_NbIndependentComponents;
-
-    /// Noise model
-    shared_ptr< GaussianRAndomVariable > m_Noise;
 
 };
 
 
-#endif //_LongitudinalModel_h
+#endif //_AbstractManifold_h
