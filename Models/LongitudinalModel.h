@@ -3,7 +3,7 @@
 
 
 #include "AbstractModel.h"
-#include "../Utilities/MatrixFunctions.cpp"
+#include "../Utilities/MatrixFunctions.h"
 
 class LongitudinalModel : public AbstractModel {
 public:
@@ -11,7 +11,6 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,11 +33,10 @@ public:
     virtual void InitializeRandomVariables();
 
      /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatistics GetSufficientStatistics(const Realizations& R, const Data& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Data& D);
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& SufficientStatistics, const Data& D);
-
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SufficientStatistics, const Data& D);
 
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,9 +49,11 @@ protected:
     /// Initialize Individual random variables
     void InitializeIndividualRandomVariables();
 
+    /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
+    void ComputeOrthonormalBasis( const Realizations& R);
 
-    /// Space shifts w(i) of the model
-    std::map< std::string, std::vector< double >> m_SpaceShifts; // TODO : Compute them & Initialize
+    /// Compute the A Matrix used to get the space shifts
+    void ComputeAMatrix( const Realizations& R);
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,14 @@ protected:
     unsigned int m_NbIndependentComponents;
 
     /// Noise model
-    shared_ptr< GaussianRAndomVariable > m_Noise;
+    std::shared_ptr< GaussianRandomVariable > m_Noise;
+
+    /// Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns> (Basis orthogonal to gamma0_deriv(T0)
+    std::vector< std::vector< double >> m_OrthogonalBasis;
+
+    /// Space shifts w(i) of the model
+    std::map< std::string, std::vector< double >> m_SpaceShifts; // TODO : Compute them & Initialize
+
 
 };
 

@@ -11,10 +11,55 @@ PropagationManifold
 }
 
 
-PropagationManifold
-::~PropagationManifold()
-{ }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Encapsulation method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+const std::vector<double>
+PropagationManifold
+::GetGeodesicDerivative(double TimePoint, const Realizations& R)
+{
+    /// Get the data from the realisation
+    double P0 = R.at("P0");
+    double T0 = R.at("T0");
+    double V0 = R.at("V0");
+
+
+
+    /// Compute the geodesic derivative
+    std::vector<double> GeodesicDerivative;
+    for(int i = 0; i < m_Dimension ; ++i)
+    {
+        double Coordinate = ComputeOneDimensionalGeodesicDerivative(P0, T0, V0, TimePoint);
+        GeodesicDerivative.push_back( Coordinate );
+    }
+
+    return GeodesicDerivative;
+}
+
+const std::vector<double>
+PropagationManifold
+::GetGeodesic(double TimePoint, const Realizations& R)
+{
+    /// Get the data from the realisation
+    double P0 = R.at("P0");
+    double T0 = R.at("T0");
+    double V0 = R.at("V0");
+
+
+
+    /// Compute the geodesic derivative
+    std::vector<double> Geodesic;
+    for(int i = 0; i < m_Dimension ; ++i)
+    {
+        double Coordinate = ComputeOneDimensionalGeodesic(P0, T0, V0, TimePoint);
+        Geodesic.push_back(Coordinate);
+    }
+
+    return Geodesic;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Other method(s) :
@@ -28,7 +73,7 @@ PropagationManifold
     m_ManifoldRandomVariables.clear();
 
     // Initial Propagation coefficient
-    /// TO DO : Les mettre dans le bon ordre
+    /// TODO : Les mettre dans le bon ordre
     double DeltaVariance = 0.1;
     for(int i = 0; i < m_Dimension ; ++i)
     {
@@ -78,6 +123,25 @@ PropagationManifold
 
 }
 
+
+std::vector<double>
+PropagationManifold
+::ComputeMetricTransformation(std::vector<double> VectorToTransform, std::vector<double> ApplicationPoint)
+{
+    typedef std::vector< double >::iterator DoubleIter;
+
+    std::vector< double > TransformedVector;
+
+    for(std::pair<DoubleIter, DoubleIter> i(ApplicationPoint.begin(), VectorToTransform.begin()) ;
+            i.first != ApplicationPoint.end() && i.second != VectorToTransform.end() ;
+            ++i.first, ++i.second)
+    {
+        double Coordinate = *i.second / ( *i.first * *i.first * ( 1.0 - *i.first) * (1.0 - *i.first));
+        TransformedVector.push_back(Coordinate);
+    }
+
+    return TransformedVector;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :

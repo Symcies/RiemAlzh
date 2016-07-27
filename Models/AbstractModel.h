@@ -19,6 +19,8 @@ public:
     typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     typedef std::map<std::string, double> Realizations;
+    typedef std::vector< std::vector< double >> SufficientStatisticsVector;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
@@ -31,13 +33,9 @@ public:
 
     inline void SetManifold(std::shared_ptr< AbstractManifold> M) { m_Manifold = M; }
 
-    inline RandomVariableMap GetPopulationrandomVariables() { return m_PopulationRandomVariables; }
+    inline RandomVariableMap GetPopulationRandomVariables() { return m_PopulationRandomVariables; }
 
     inline RandomVariableMap GetIndividualRandomVariables() { return m_IndividualRandomVariables; }
-
-    inline std::vector< std::vector< double >> GetSufficientStatistics() { return m_SufficientStatistics; }
-
-    inline void SetSufficientStatistics(std::vector< std::vector< double >> NewStatistics) { m_SufficientStatistics = NewStatistics; }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,11 +46,13 @@ public:
     virtual void InitializeRandomVariables() = 0;
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatistics GetSufficientStatistics(const Realizations& R, const Data& D) = 0;
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Data& D) = 0;
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& SufficientStatistics, const Data& D) = 0;
-   
+
+
+
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :

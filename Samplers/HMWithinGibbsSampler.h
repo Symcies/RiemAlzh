@@ -1,21 +1,21 @@
-#ifndef _AbstractManifold_h
-#define _AbstractManifold_h
+#ifndef _HMWithinGibbsSampler_h
+#define _HMWithinGibbsSampler_h
 
 
 #include <memory>
 #include <string>
 #include "../RandomVariables/GaussianRandomVariable.h"
 #include "../RandomVariables/AbstractRandomVariable.h"
+#include "AbstractSampler.h"
 #include <map>
 
-class HMWithinGibbsSampler {
+class HMWithinGibbsSampler : public AbstractSampler{
 public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
 
 
@@ -36,7 +36,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Sample a new variable thanks to the sampler
-    virtual void Sample(RandomVariable CurrentRV, double& CurrentRealization, RandomVariable CandidateRV, double& CandidateRealization); 
+    virtual void Sample(RandomVariable CurrentRV, double& CurrentRealization, RandomVariable CandidateRV, double& CandidateRealization);
    
    
 protected:
@@ -54,4 +54,4 @@ protected:
 };
 
 
-#endif //_AbstractManifold_h
+#endif //_HMWithinGibbsSampler_h

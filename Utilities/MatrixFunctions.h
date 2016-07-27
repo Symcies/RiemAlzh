@@ -2,8 +2,9 @@
 #ifndef _MatrixFunctions_h
 #define _MatrixFunctions_h
 
+#include <vector>
 #include <iostream>
 
-double ComputeEuclidianScalarProduct(std::vector<double>, std::vector<double>);
+double ComputeEuclideanScalarProduct(std::vector<double>, std::vector<double>);
 
 #endif //_MatrixFunctions_h

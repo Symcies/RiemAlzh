@@ -3,7 +3,7 @@
 
 
 #include "../Models/AbstractModel.h"
-#include "../Samplers"
+#include "../Samplers/AbstractSampler.h"
 
 class Algorithm {
 public:
@@ -22,6 +22,7 @@ public:
 
     Algorithm();
     ~Algorithm();
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +56,7 @@ protected:
     // Compute the stochastic coefficient 
     void ComputeStochasticApproximation(double iteration, std::vector< std::vector< double >> SufficientStatistics);
 
-    // Compute the decresing step size of the approximation step
+    // Compute the decreasing step size of the approximation step
     double DecreasingStepSize(double Iteration, double NoMemoryTime);
 
 

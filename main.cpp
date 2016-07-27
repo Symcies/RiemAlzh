@@ -3,6 +3,8 @@
 #include "Manifolds/PropagationManifold.h"
 #include "Models/LongitudinalModel.h"
 #include "Algorithm/Algorithm.h"
+#include "Samplers/HMWithinGibbsSampler.h"
+#include "itkXMLFile.h"
 
 using namespace std;
 
@@ -25,13 +27,13 @@ int main() {
     shared_ptr<Data> D = make_shared<Data>();
 
     /// Sampler
-    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbs>();
+    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
 
     /// Algo
     auto Algo = make_shared<Algorithm>();
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
-    Algo->ComputeMCMCSAEM(D);
+    //Algo->ComputeMCMCSAEM(D);
 
 
     cout << "Hello, World!" << endl;

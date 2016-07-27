@@ -1,4 +1,4 @@
-#include "AbstractManifold.h"
+#include "HMWithinGibbsSampler.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor(s) / Destructor :
@@ -12,7 +12,7 @@ HMWithinGibbsSampler
 
 
 HMWithinGibbsSampler
-::~HMWithinGibbsSampler();
+::~HMWithinGibbsSampler()
 {
 
 }
@@ -25,8 +25,8 @@ HMWithinGibbsSampler
 
 
 void
-AbstractSampler
-::Sample(RandomVariable CurrentRV, double& CurrentRealization, RandomVariable CandidateRV, double& CandidateRealization); 
+HMWithinGibbsSampler
+::Sample(RandomVariable CurrentRV, double& CurrentRealization, RandomVariable CandidateRV, double& CandidateRealization)
 {
 	
 }
