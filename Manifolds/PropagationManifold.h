@@ -40,7 +40,7 @@ public:
     virtual void InitializeRandomVariables();
 
     /// Compute the parallel transport
-    virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, Realizations);
+    virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, const Realizations& R);
 
     /// Get any vector transformation  wrt the metric (used in the householder method)
     virtual std::vector<double> ComputeMetricTransformation(std::vector<double> VectorToTransform, std::vector<double> ApplicationPoint);

@@ -89,17 +89,17 @@ PropagationManifold
 
 std::vector<double>
 PropagationManifold
-::ComputeParallelCurve(double TimePoint, std::vector<double> W0, std::map<std::string, double> Realization)
+::ComputeParallelCurve(double TimePoint, std::vector<double> W0, const Realizations& R)
 {
     /// Get the data from the realisation
-    double P0 = Realization.at("P0");
-    double T0 = Realization.at("T0");
-    double V0 = Realization.at("V0");
+    double P0 = R.at("P0");
+    double T0 = R.at("T0");
+    double V0 = R.at("V0");
     std::vector<double> PropagationRealization;
     for(int i =0; i<m_Dimension ; ++i)
     {
         std::string name = "Delta" + i;
-        PropagationRealization.push_back( Realization.at(name));
+        PropagationRealization.push_back( R.at(name));
     }
 
 

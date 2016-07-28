@@ -79,22 +79,10 @@ Algorithm
         std::string key = it->first;
         double value = it->second;
 
-        //m_Sampler->
+        //m_Sampler->Sample(CurrentRandomVariable, CurrentRealization, CandidateRandomVariable, m_Model);
 
     }
-
-    // For each random variables, get the corresponding realization (double)
-    // To each random variables, associate a proposition random variables (Maybe in the model?)
-    // Get a realization according to the proposition variable
-
-    // Loop over all the variables to sample
-    // Get their realization
-    // Get the associated proposition random variables
-    // Get their realization as well
-        // m_Sampler->Sampler(CurrentRandomVar, CurrentRealization, CandidateRandomVar, CandidateRealization);
-
 }
-
 
 
 void 

@@ -234,6 +234,42 @@ LongitudinalModel
 }
 
 
+double
+LongitudinalModel
+::ComputeLikelihood(const Realizations& R, const Data& D)
+{
+    double Likelihood = 0;
+
+    double T0 = R.at("T0");
+
+    for(std::pair<Data::const_iterator, int> i(D.begin(), 0);
+        i.first < D.end() && i.second < D.size();
+        ++i.first, ++i.second)
+    {
+        double AccFactor = exp( R.at("Ksi" + std::to_string(i.second)) );
+        double TimeShift = R.at("Tau" + std::to_string(i.second));
+        std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(i.second));
+        for(IndividualData::const_iterator it2 = i.first->begin(); it2 != i.first->end(); ++it2)
+        {
+            std::vector<double> Observation = it2->first;
+
+            double Tij = it2->second;
+            double TimePoint = AccFactor * (Tij - T0 - TimeShift) + T0;
+
+            std::vector<double> ParallelCurve = m_Manifold->ComputeParallelCurve(TimePoint, SpaceShift, R);
+
+            Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
+        }
+    }
+
+
+    Likelihood /= -2*m_Noise->GetVariance();
+    Likelihood = exp(Likelihood);
+
+    return Likelihood;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,9 +348,9 @@ LongitudinalModel
     double SLocation = 0.0;
     double SScale = 1/2;
     auto S = std::make_shared< LaplaceRandomVariable >(SLocation, SScale);
-    RandomVariable S_("S", S);
     for(int i = 0; i<m_NbIndependentComponents ; ++i)
     {
+        RandomVariable S_("S" + std::to_string(i), S);
         m_PopulationRandomVariables.insert(S_);
     }
 
@@ -373,7 +409,43 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeAMatrix(const Realizations &R)
+::ComputeAMatrix(const Realizations& R)
 {
+    std::vector<std::vector<double>> AMatrix;
+    for(int i = 0; i < m_Manifold->GetDimension() ; ++i)
+    {
+        std::vector<double> Beta;
+        for(int j = 0; j < m_Manifold->GetDimension() - 1 ; ++j)
+        {
+            Beta.push_back( R.at("Beta" + std::to_string( j + i*(m_Manifold->GetDimension() - 1) )));
+
+        }
+        AMatrix.push_back( LinearCombination(Beta, m_OrthogonalBasis));
+
+    }
+
+    m_AMatrix = AMatrix;
+}
+
+void
+LongitudinalModel
+::ComputeSpaceShifts(const Realizations& R, const Data& D)
+{
+    std::map< std::string, std::vector<double>> SpaceShifts;
+
+    for(int i = 0; i < D.size(); ++i)
+    {
+        std::vector<double> Si;
+        for(int j = 0; j < m_Manifold->GetDimension(); ++j)
+        {
+            double Realization = R.at("S" + std::to_string(j) + std::to_string(i));
+            Si.push_back(Realization);
+        }
+
+        std::pair< std::string, std::vector<double> > SpaceShift("W"+std::to_string(i), LinearCombination(Si, m_AMatrix) );
+        SpaceShifts.insert( SpaceShift);
+    }
+
+    m_SpaceShifts = SpaceShifts;
 
 }

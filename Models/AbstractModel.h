@@ -51,6 +51,8 @@ public:
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& SufficientStatistics, const Data& D) = 0;
 
+    /// Compute the likelihood of the model
+    virtual double ComputeLikelihood(const Realizations& R, const Data& D) = 0;
 
 
 protected:

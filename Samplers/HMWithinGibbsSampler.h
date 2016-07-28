@@ -7,6 +7,7 @@
 #include "../RandomVariables/GaussianRandomVariable.h"
 #include "../RandomVariables/AbstractRandomVariable.h"
 #include "AbstractSampler.h"
+#include "../Models/AbstractModel.h"
 #include <map>
 
 class HMWithinGibbsSampler : public AbstractSampler{
@@ -17,14 +18,13 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-
+    typedef std::map<std::string, double> Realizations;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     HMWithinGibbsSampler();
-    ~HMWithinGibbsSampler();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Encapsulation method(s) :
@@ -36,7 +36,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Sample a new variable thanks to the sampler
-    virtual void Sample(RandomVariable CurrentRV, double& CurrentRealization, RandomVariable CandidateRV, double& CandidateRealization);
+    virtual void Sample(RandomVariable& CurrentRV, double& CurrentRealization, RandomVariable& CandidateRV, AbstractModel& M, Realizations& R, Data& D);
    
    
 protected:

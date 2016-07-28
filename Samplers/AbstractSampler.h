@@ -7,6 +7,7 @@
 #include "../RandomVariables/GaussianRandomVariable.h"
 #include "../RandomVariables/AbstractRandomVariable.h"
 #include <map>
+#include "../Models/AbstractModel.h"
 
 class AbstractSampler {
 public:
@@ -14,10 +15,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    typedef std::vector< std::vector< std::pair< std::vector<double>, unsigned int> > > Data;
     typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-
+    typedef std::map<std::string, double> Realizations;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
@@ -37,8 +38,9 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Sample a new variable thanks to the sampler
-    virtual void Sample(RandomVariable CurrentRV, double& CurrentRealization, RandomVariable CandidateRV, double& CandidateRealization) = 0; 
-   
+    virtual void Sample(RandomVariable& CurrentRV, double& CurrentRealization, RandomVariable& CandidateRV, AbstractModel& M, Realizations& R, Data& D) = 0;
+
+
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :

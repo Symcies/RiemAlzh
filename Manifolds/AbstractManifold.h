@@ -52,7 +52,7 @@ public:
     virtual void InitializeRandomVariables() = 0;
 
     /// Compute the parallel curve
-    virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, Realizations R) = 0;
+    virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, const Realizations& R) = 0;
 
     /// Get any vector transformation  wrt the metric (used in the householder method)
     virtual std::vector<double> ComputeMetricTransformation(std::vector<double> VectorToTransform, std::vector<double> ApplicationPoint) = 0;

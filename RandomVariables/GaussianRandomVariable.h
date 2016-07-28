@@ -18,6 +18,8 @@ public:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    inline double GetVariance() { return m_Variance; }
+
     inline void SetMean(double Mean) { m_Mean = Mean; };
 
     inline void SetVariance(double Variance) {m_Variance = Variance; };
