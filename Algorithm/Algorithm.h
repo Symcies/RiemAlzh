@@ -15,6 +15,7 @@ public:
     typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     typedef std::map<std::string, double> Realizations;
+    typedef std::vector< std::vector< double >> SufficientStatisticsVector;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
@@ -47,11 +48,14 @@ protected:
     // Method(s) of the MCMC SAEM:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // Initialize the stochastic approximation
+    void InitializeStochasticSufficientStatistics(const SufficientStatisticsVector& S);
+
     // Initialize the realization of the model (and related manifold) random variables
     void InitializeRealization(unsigned int NbIndividuals);
 
     // Compute the simulation step : Gibbs Sampling
-    void ComputeSimulationStep();
+    void ComputeSimulationStep(const Data& D);
 
     // Compute the stochastic coefficient 
     void ComputeStochasticApproximation(double iteration, std::vector< std::vector< double >> SufficientStatistics);

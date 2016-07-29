@@ -106,7 +106,7 @@ LongitudinalModel
     std::vector< double > S8;
     for(int i = 0; i<m_Manifold->GetDimension() ; ++i)
     {
-        std::string DeltaI = "Delta" + i;
+        std::string DeltaI = "Delta" + std::to_string(i);
         double Delta = R.at(DeltaI); // TODO : try at(Delta + (string)i)
         S8.push_back(Delta);
     }
@@ -118,9 +118,9 @@ LongitudinalModel
     /// Compute S9
     /////////////////////////
     std::vector< double > S9;
-    for(int i = 0; i < (m_Manifold->GetDimension()) * m_NbIndependentComponents; ++i)
+    for(int i = 0; i < (m_Manifold->GetDimension() - 1) * m_NbIndependentComponents; ++i)
     {
-        std::string BetaI = "Beta" + i;
+        std::string BetaI = "Beta" + std::to_string(i);
         double Beta = R.at(BetaI); // TODO : try strings
         S9.push_back(Beta);
     }
@@ -305,7 +305,7 @@ LongitudinalModel
     {
         double BetaMean = (double)i;
         auto Beta = std::make_shared< GaussianRandomVariable> (BetaMean, BetaVariance);
-        std::string name = "Beta" + i;
+        std::string name = "Beta" + std::to_string(i);
         RandomVariable Beta_(name, Beta);
         m_PopulationRandomVariables.insert(Beta_);
     }
@@ -335,14 +335,14 @@ LongitudinalModel
     double KsiVariance = 0.1;
     auto Ksi = std::make_shared< GaussianRandomVariable >(KsiMean, KsiVariance);
     RandomVariable Ksi_("Ksi", Ksi);
-    m_PopulationRandomVariables.insert(Ksi_);
+    m_IndividualRandomVariables.insert(Ksi_);
 
     // Initial Time Shift
     double TauMean = 0.0;
     double TauVariance = 0.1;
     auto Tau = std::make_shared< GaussianRandomVariable >(TauMean, TauVariance);
     RandomVariable Tau_("Tau", Tau);
-    m_PopulationRandomVariables.insert(Tau_);
+    m_IndividualRandomVariables.insert(Tau_);
 
     // Initial Space shift coefficient
     double SLocation = 0.0;
@@ -351,7 +351,7 @@ LongitudinalModel
     for(int i = 0; i<m_NbIndependentComponents ; ++i)
     {
         RandomVariable S_("S" + std::to_string(i), S);
-        m_PopulationRandomVariables.insert(S_);
+        m_IndividualRandomVariables.insert(S_);
     }
 
 }

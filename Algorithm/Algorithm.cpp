@@ -22,12 +22,14 @@ void
 Algorithm
 ::ComputeMCMCSAEM(std::shared_ptr<Data> D)
 {
-    int NbMaxIterations = 100;
+    int NbMaxIterations = 200;
     InitializeRealization(D->size());
+    InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realization, *D));
 
     for(int k = 0; k<NbMaxIterations; ++k)
     {
-        ComputeSimulationStep();
+        std::cout << k << std::endl;
+        ComputeSimulationStep(*D);
         std::vector< std::vector< double >> SufficientStatistics = m_Model->GetSufficientStatistics(m_Realization, *D);
         ComputeStochasticApproximation(k, SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, *D);
@@ -38,6 +40,19 @@ Algorithm
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
+Algorithm
+::InitializeStochasticSufficientStatistics(const SufficientStatisticsVector& S)
+{
+    m_StochasticSufficientStatistics = S;
+    for(SufficientStatisticsVector::iterator it = m_StochasticSufficientStatistics.begin(); it != m_StochasticSufficientStatistics.end(); ++it)
+    {
+        std::fill(it->begin(), it->end(), 0);
+    }
+}
+
+
 
 void
 Algorithm
@@ -69,18 +84,19 @@ Algorithm
 
 void
 Algorithm
-::ComputeSimulationStep()
+::ComputeSimulationStep(const Data& D)
 {
     typedef Realizations::iterator ReaIter;
     typedef RandomVariableMap::iterator RandVarIter;
 
     for(Realizations::iterator it = m_Realization.begin(); it != m_Realization.end() ; ++it)
     {
-        std::string key = it->first;
-        double value = it->second;
+        std::string NameRV = it->first;
+        double CurrentRealization = it->second;
+        RandomVariable CurrentRV = m_Model->GetRandomVariable(NameRV);
+        std::shared_ptr<AbstractRandomVariable> CandidateRV = std::make_shared<GaussianRandomVariable>(CurrentRealization, 0.01);
 
-        //m_Sampler->Sample(CurrentRandomVariable, CurrentRealization, CandidateRandomVariable, m_Model);
-
+        m_Sampler->Sample(CurrentRV, CandidateRV, m_Model, m_Realization, D);
     }
 }
 

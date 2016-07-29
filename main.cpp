@@ -4,7 +4,7 @@
 #include "Models/LongitudinalModel.h"
 #include "Algorithm/Algorithm.h"
 #include "Samplers/HMWithinGibbsSampler.h"
-#include "itkXMLFile.h"
+//#include "itkXMLFile.h"
 
 using namespace std;
 
@@ -33,7 +33,7 @@ int main() {
     auto Algo = make_shared<Algorithm>();
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
-    //Algo->ComputeMCMCSAEM(D);
+    Algo->ComputeMCMCSAEM(D);
 
 
     cout << "Hello, World!" << endl;

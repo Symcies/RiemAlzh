@@ -19,20 +19,21 @@ HMWithinGibbsSampler
 
 void
 HMWithinGibbsSampler
-::Sample(RandomVariable& CurrentRV, double &CurrentRealization, RandomVariable& CandidateRV, AbstractModel &M, Realizations& R, Data& D)
+::Sample(RandomVariable& CurrentRV, std::shared_ptr< AbstractRandomVariable >& CandidateRV, std::shared_ptr<AbstractModel>& M, Realizations& R, const Data& D)
 {
     //// Compute the current part
+    double CurrentRealization = R.at(CurrentRV.first);
     double CurrentPrior = CurrentRV.second->Likelihood(CurrentRealization);
-    double CurrentLikelihood = M.ComputeLikelihood(R, D);
+    double CurrentLikelihood = M->ComputeLikelihood(R, D);
     double Denominator = CurrentPrior * CurrentLikelihood;
 
 
     /// Compute the candidate part
-    double CandidateRealization = CandidateRV.second->Sample();
+    double CandidateRealization = CandidateRV->Sample();
     R.at(CurrentRV.first) = CandidateRealization;
 
-    double CandidatePrior = CandidateRV.second->Likelihood(CandidateRealization);
-    double CandidateLikelihood = M.ComputeLikelihood(R, D);
+    double CandidatePrior = CandidateRV->Likelihood(CandidateRealization);
+    double CandidateLikelihood = M->ComputeLikelihood(R, D);
     double Numerator = CandidatePrior * CandidateLikelihood;
 
 
@@ -43,9 +44,9 @@ HMWithinGibbsSampler
     std::random_device RD;
     std::default_random_engine Generator(RD());
     std::uniform_real_distribution<double> Distribution(0,1);
-    double unif = Distribution(Generator);
+    double Unif = Distribution(Generator);
 
-    if(unif > Tau) //The new state is the previous one, no change
+    if(Unif > Tau) //The new state is the previous one, no change
     {
         R.at(CurrentRV.first) = CandidateRealization;
     }

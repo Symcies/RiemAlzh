@@ -79,7 +79,7 @@ PropagationManifold
     {
         double DeltaMean = (double)i;
         auto Delta = std::make_shared< GaussianRandomVariable >(DeltaMean, DeltaVariance);
-        std::string name = "Delta" + i;
+        std::string name = "Delta" + std::to_string(i);
         RandomVariable Delta_(name, Delta);
         m_ManifoldRandomVariables.insert(Delta_);
     }

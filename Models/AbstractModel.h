@@ -37,6 +37,7 @@ public:
 
     inline RandomVariableMap GetIndividualRandomVariables() { return m_IndividualRandomVariables; }
 
+    RandomVariable GetRandomVariable(std::string name);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
