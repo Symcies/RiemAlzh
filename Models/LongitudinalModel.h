@@ -34,13 +34,25 @@ public:
     virtual void InitializeRandomVariables();
 
      /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Data& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const std::shared_ptr<Data>& D);
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SufficientStatistics, const Data& D);
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SufficientStatistics, const std::shared_ptr<Data>& D);
 
     /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const Realizations& R, const Data& D);
+    virtual double ComputeLikelihood(const Realizations& R, const std::shared_ptr<Data>& D);
+
+    /// Simulate data according to the model
+    virtual Data* SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
+    virtual void InitializeFakeRandomVariables();
+
 
 
 protected:
@@ -61,7 +73,7 @@ protected:
     void ComputeAMatrix( const Realizations& R); // TODO : Use a library to do it faster
 
     // Compute the space shifts
-    void ComputeSpaceShifts(const Realizations& R, const Data& D); // TODO : Use a library to do it faster
+    void ComputeSpaceShifts(const Realizations& R, const int NumberOfSubjects); // TODO : Use a library to do it faster
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

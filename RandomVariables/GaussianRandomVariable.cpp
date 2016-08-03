@@ -28,6 +28,7 @@ GaussianRandomVariable
     std::mt19937_64 Generator(RD());
     std::normal_distribution<double> Distribution(m_Mean, m_Variance);
 
+    return Distribution(Generator);
 
 }
 

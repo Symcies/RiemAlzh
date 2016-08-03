@@ -11,10 +11,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::vector< std::vector< std::pair< std::vector<double>, unsigned int> > > Data;
+    typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
     typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-    typedef std::map<std::string, double> Realizations;
+    typedef std::map<std::string, std::vector<double>> Realizations;
     typedef std::vector< std::vector< double >> SufficientStatisticsVector;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,9 +30,9 @@ public:
     // Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    inline void SetModel(std::shared_ptr<AbstractModel> M ) { m_Model = M; }
+    inline void SetModel(const std::shared_ptr<AbstractModel>& M ) { m_Model = M; }
 
-    inline void SetSampler(std::shared_ptr<AbstractSampler> S) { m_Sampler = S; }
+    inline void SetSampler(const std::shared_ptr<AbstractSampler>& S) { m_Sampler = S; }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the MCMC SAEM algorithm
-    void ComputeMCMCSAEM(std::shared_ptr<Data> D);
+    void ComputeMCMCSAEM(const std::shared_ptr<Data>& D);
 
 
 protected:
@@ -55,7 +55,7 @@ protected:
     void InitializeRealization(unsigned int NbIndividuals);
 
     // Compute the simulation step : Gibbs Sampling
-    void ComputeSimulationStep(const Data& D);
+    void ComputeSimulationStep(const std::shared_ptr<Data>& D);
 
     // Compute the stochastic coefficient 
     void ComputeStochasticApproximation(double iteration, std::vector< std::vector< double >> SufficientStatistics);

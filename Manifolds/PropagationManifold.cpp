@@ -22,9 +22,9 @@ PropagationManifold
 ::GetGeodesicDerivative(double TimePoint, const Realizations& R)
 {
     /// Get the data from the realisation
-    double P0 = R.at("P0");
-    double T0 = R.at("T0");
-    double V0 = R.at("V0");
+    double P0 = R.at("P0")[0];
+    double T0 = R.at("T0")[0];
+    double V0 = R.at("V0")[0];
 
 
 
@@ -44,9 +44,9 @@ PropagationManifold
 ::GetGeodesic(double TimePoint, const Realizations& R)
 {
     /// Get the data from the realisation
-    double P0 = R.at("P0");
-    double T0 = R.at("T0");
-    double V0 = R.at("V0");
+    double P0 = R.at("P0")[0];
+    double T0 = R.at("T0")[0];
+    double V0 = R.at("V0")[0];
 
 
 
@@ -92,14 +92,13 @@ PropagationManifold
 ::ComputeParallelCurve(double TimePoint, std::vector<double> W0, const Realizations& R)
 {
     /// Get the data from the realisation
-    double P0 = R.at("P0");
-    double T0 = R.at("T0");
-    double V0 = R.at("V0");
+    double P0 = R.at("P0")[0];
+    double T0 = R.at("T0")[0];
+    double V0 = R.at("V0")[0];
     std::vector<double> PropagationRealization;
     for(int i =0; i<m_Dimension ; ++i)
     {
-        std::string name = "Delta" + i;
-        PropagationRealization.push_back( R.at(name));
+        PropagationRealization.push_back( R.at("Delta")[i]);
     }
 
 

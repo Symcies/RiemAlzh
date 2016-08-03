@@ -25,13 +25,15 @@ void
 LongitudinalModel
 ::InitializeRandomVariables()
 {
+    m_PopulationRandomVariables.clear();
+    m_IndividualRandomVariables.clear();
     InitializePopulationRandomVariables();
     InitializeIndividualRandomVariables();
 }
 
 std::vector< std::vector< double >>
 LongitudinalModel
-::GetSufficientStatistics(const Realizations& R, const Data& D)
+::GetSufficientStatistics(const Realizations& R, const std::shared_ptr<Data>& D)
 {
     SufficientStatisticsVector SufficientStatistics;
 
@@ -41,16 +43,16 @@ LongitudinalModel
     std::vector< double > S1, S2;
 
     /// Get population wide attribute , then, Loop over all the subjects
-    double T0 = R.at("T0");
+    double T0 = R.at("T0")[0];
 
-    for(std::pair<Data::const_iterator, int> i(D.begin(), 0) ;
-        i.first != D.end() && i.second < D.size() ;
+    for(std::pair<Data::const_iterator, int> i(D->begin(), 0) ;
+        i.first != D->end() && i.second < D->size() ;
         ++i.first, ++i.second)
     {
         /// Given a particular subject, get its attributes, then, loop over its observation
-        double Ksi = R.at("Ksi" + std::to_string(i.second));    // TODO : Check if cannot be "Ksi" + (string)i.second;
-        double Tau = R.at("Tau" + std::to_string(i.second));
-        std::vector< double > SpaceShift = m_SpaceShifts.at(std::to_string(i.second));
+        double Ksi = R.at("Ksi")[i.second];
+        double Tau = R.at("Tau")[i.second];
+        std::vector< double > SpaceShift = m_SpaceShifts.at("W" + std::to_string(i.second));
 
         for(IndividualData::const_iterator it = i.first->begin() ; it != i.first->end() ; ++it)
         {
@@ -73,12 +75,10 @@ LongitudinalModel
     /////////////////////////
     std::vector< double > S3, S4;
 
-    for(int i = 0; i < D.size() ; ++i )
+    for(int i = 0; i < D->size() ; ++i )
     {
-        std::string KsiI = "Ksi" + i;
-        double Ksi = R.at(KsiI);   // TODO : Check if cannot be "Ksi" + (string)i.second;
-        std::string TauI = "Tau" + i;
-        double Tau = R.at(TauI);
+        double Ksi = R.at("Ksi")[i];
+        double Tau = R.at("Tau")[i];
 
         S3.push_back(Ksi * Ksi);
         S4.push_back(Tau * Tau); 
@@ -91,9 +91,9 @@ LongitudinalModel
     /// Compute S5, S6 and S7
     /////////////////////////
     std::vector< double > S5, S6, S7;
-    S5.push_back( R.at("P0") );
-    S6.push_back( R.at("T0") );
-    S7.push_back( R.at("V0") );
+    S5.push_back( R.at("P0")[0] );
+    S6.push_back( R.at("T0")[0] );
+    S7.push_back( R.at("V0")[0] );
 
     SufficientStatistics.push_back(S5);
     SufficientStatistics.push_back(S6);
@@ -106,8 +106,7 @@ LongitudinalModel
     std::vector< double > S8;
     for(int i = 0; i<m_Manifold->GetDimension() ; ++i)
     {
-        std::string DeltaI = "Delta" + std::to_string(i);
-        double Delta = R.at(DeltaI); // TODO : try at(Delta + (string)i)
+        double Delta = R.at("Delta")[i];
         S8.push_back(Delta);
     }
     
@@ -120,8 +119,7 @@ LongitudinalModel
     std::vector< double > S9;
     for(int i = 0; i < (m_Manifold->GetDimension() - 1) * m_NbIndependentComponents; ++i)
     {
-        std::string BetaI = "Beta" + std::to_string(i);
-        double Beta = R.at(BetaI); // TODO : try strings
+        double Beta = R.at("Beta")[i];
         S9.push_back(Beta);
     }
 
@@ -135,7 +133,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::UpdateRandomVariables(const SufficientStatisticsVector& SufficientStatistics, const Data& D)
+::UpdateRandomVariables(const SufficientStatisticsVector& SufficientStatistics, const std::shared_ptr<Data>& D)
 {
 
     /// Update P0(mean)
@@ -204,7 +202,7 @@ LongitudinalModel
 
     /// Sum Yijk²
     double NoiseVariance;
-    for(Data::const_iterator it = D.begin() ; it != D.end() ; ++it)
+    for(Data::const_iterator it = D->begin() ; it != D->end() ; ++it)
     {
         for(IndividualData::const_iterator it2 = it->begin() ; it2 != it->end() ; ++it2)
         {
@@ -236,18 +234,24 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLikelihood(const Realizations& R, const Data& D)
+::ComputeLikelihood(const Realizations& R, const std::shared_ptr<Data>& D)
 {
+    // TODO : Choose where the following function should be used
+    ComputeOrthonormalBasis(R);
+    ComputeAMatrix(R);
+    ComputeSpaceShifts(R, D->size());
+
+
     double Likelihood = 0;
 
-    double T0 = R.at("T0");
+    double T0 = R.at("T0")[0];
 
-    for(std::pair<Data::const_iterator, int> i(D.begin(), 0);
-        i.first < D.end() && i.second < D.size();
+    for(std::pair<Data::const_iterator, int> i(D->begin(), 0);
+        i.first < D->end() && i.second < D->size();
         ++i.first, ++i.second)
     {
-        double AccFactor = exp( R.at("Ksi" + std::to_string(i.second)) );
-        double TimeShift = R.at("Tau" + std::to_string(i.second));
+        double AccFactor = exp( R.at("Ksi")[i.second]);
+        double TimeShift = R.at("Tau")[i.second];
         std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(i.second));
         for(IndividualData::const_iterator it2 = i.first->begin(); it2 != i.first->end(); ++it2)
         {
@@ -267,6 +271,190 @@ LongitudinalModel
     Likelihood = exp(Likelihood);
 
     return Likelihood;
+}
+
+
+std::vector< std::vector< std::pair< std::vector<double>, double> > >*
+LongitudinalModel
+::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs)
+{
+
+    //////////////////////////
+    // Simulate Time Point ///
+    //////////////////////////
+    std::random_device RD;
+    std::mt19937 RNG(RD());
+    std::uniform_int_distribution<int> Uni(MinObs, MaxObs);
+    std::normal_distribution<double> Normal(70.0, 3.0);
+
+    std::vector< std::vector< double >> TimePoint;
+    for(int i = 0; i<NumberOfSubjects; ++i)
+    {
+        std::vector<double> SubjectTimePoint;
+        for(int j = 0; j < Uni(RNG) ; ++j)
+        {
+            SubjectTimePoint.push_back( Normal(RNG));
+        }
+        std::sort(SubjectTimePoint.begin(), SubjectTimePoint.end());
+        TimePoint.push_back(SubjectTimePoint);
+    }
+
+    ///////////////////
+    // Realizations ///
+    ///////////////////
+    Realizations R;
+
+    // Initialize the realization of the population-wide random variables.
+    // They are shared among the individual thus sampled only once
+    for(RandomVariableMap::iterator it = m_PopulationRandomVariables.begin() ; it != m_PopulationRandomVariables.end(); ++it)
+    {
+        R.insert( std::pair<std::string, double> (it->first, it->second->Sample()));
+    }
+
+    // Initialize the realization of the individual random variables.
+    // One realization is sampled for each individual, tagged with the i coefficient
+    for(RandomVariableMap::iterator it = m_IndividualRandomVariables.begin() ; it != m_IndividualRandomVariables.end() ; ++it)
+    {
+        for(int i = 0; i < NumberOfSubjects ; ++i)
+        {
+            R.insert( std::pair<std::string, double> (it->first + std::to_string(i), it->second->Sample()));
+        }
+    }
+
+
+    /////////////////////////////
+    // Compute some functions ///
+    /////////////////////////////
+    // TODO : Choose where the following function should be used
+    ComputeOrthonormalBasis(R);
+    ComputeAMatrix(R);
+    ComputeSpaceShifts(R, NumberOfSubjects);
+
+
+
+    //////////////////////////////////////////////////////////////////////////
+    // Simulate Data
+    //////////////////////////////////////////////////////////////////////////
+    Data *D = new Data;
+
+    double T0 = R.at("T0")[0];
+    std::normal_distribution<double> Normal2(0.0, m_Noise->Sample());
+    int i = 0;
+
+    for(std::vector<std::vector<double>>::iterator it = TimePoint.begin() ; it != TimePoint.end() ; ++it)
+    {
+        double Tau = R.at("Tau")[i];
+        IndividualData ID;
+        for(std::vector<double>::iterator it2 = it->begin() ; it2 != it->end(); ++it2)
+        {
+            std::vector<double> Observation;
+
+            double Time = exp(R.at("Ksi")[i]) * (*it2 - T0 - Tau) + T0;
+            std::vector<double> W = m_SpaceShifts.at("W" + std::to_string(i));
+            std::vector<double> Eta = m_Manifold->ComputeParallelCurve(Time, W, R);
+            for(std::vector<double>::iterator it3 = Eta.begin() ; it3 != Eta.end(); ++it3)
+            {
+                double Gen = Normal2(RNG);
+                Observation.push_back(*it3 + Gen);
+            }
+            ID.push_back(std::pair<std::vector<double>, double> (Observation, *it2));
+
+        }
+        D->push_back(ID);
+        i+= 1;
+    }
+
+
+    return D;
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
+LongitudinalModel
+::InitializeFakeRandomVariables()
+{
+    /////////////////////////////
+    /// Population Parameters ///
+    /////////////////////////////
+
+    // Initial Position
+    double P0Mean = 0.5;
+    double P0Variance = 0.01;
+    auto P0 = std::make_shared<GaussianRandomVariable>(P0Mean, P0Variance);
+    RandomVariable P0_("P0", P0);
+    m_PopulationRandomVariables.insert(P0_);
+
+    // Initial Time
+    double T0Mean = 70;
+    double T0variance = 0.1;
+    auto T0 = std::make_shared<GaussianRandomVariable>(T0Mean, T0variance);
+    RandomVariable T0_("T0", T0);
+    m_PopulationRandomVariables.insert(T0_);
+
+    // Initial Velocity
+    double V0Mean = 2.0;
+    double V0Variance = 0.1;
+    auto V0 = std::make_shared<GaussianRandomVariable>(V0Mean, V0Variance);
+    RandomVariable V0_("V0", V0);
+    m_PopulationRandomVariables.insert(V0_);
+
+    // Initial Beta coefficient
+    double BetaVariance = 0.1;
+    for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension()-1) ; ++i)
+    {
+        double BetaMean = (double)i;
+        auto Beta = std::make_shared< GaussianRandomVariable> (BetaMean, BetaVariance);
+        std::string name = "Beta" + std::to_string(i);
+        RandomVariable Beta_(name, Beta);
+        m_PopulationRandomVariables.insert(Beta_);
+    }
+
+
+    // Initialize Random variables related to the manifold
+    RandomVariableMap ManifoldRandomVariables = m_Manifold->GetManifoldRandomVariables();
+    for(RandomVariableMap::iterator it = ManifoldRandomVariables.begin() ; it != ManifoldRandomVariables.end(); ++it)
+    {
+        m_PopulationRandomVariables.insert(*it);
+    }
+
+    // Noise
+    double NoiseMean = 0.0;
+    double NoiseVariance = 0.01;
+    m_Noise = std::make_shared< GaussianRandomVariable >(NoiseMean, NoiseVariance);
+
+    /////////////////////////////
+    /// Individual Parameters ///
+    /////////////////////////////
+
+    // Initial pre acceleration factor
+    double KsiMean = 0.0;
+    double KsiVariance = 0.1;
+    auto Ksi = std::make_shared< GaussianRandomVariable >(KsiMean, KsiVariance);
+    RandomVariable Ksi_("Ksi", Ksi);
+    m_IndividualRandomVariables.insert(Ksi_);
+
+    // Initial Time Shift
+    double TauMean = 0.0;
+    double TauVariance = 0.1;
+    auto Tau = std::make_shared< GaussianRandomVariable >(TauMean, TauVariance);
+    RandomVariable Tau_("Tau", Tau);
+    m_IndividualRandomVariables.insert(Tau_);
+
+    // Initial Space shift coefficient
+    double SLocation = 0.0;
+    double SScale = 1/2;
+    auto S = std::make_shared< LaplaceRandomVariable >(SLocation, SScale);
+    for(int i = 0; i<m_NbIndependentComponents ; ++i)
+    {
+        RandomVariable S_("S" + std::to_string(i), S);
+        m_IndividualRandomVariables.insert(S_);
+    }
+
 }
 
 
@@ -360,7 +548,7 @@ void
 LongitudinalModel
 ::ComputeOrthonormalBasis( const Realizations& R)
 {
-    double T0 = R.at("T0");
+    double T0 = R.at("T0")[0];
 
     /// Compute the trasformation to do the Householder reflection in a euclidian space
     std::vector<double> Geodesic = m_Manifold->GetGeodesic(T0, R);
@@ -412,12 +600,12 @@ LongitudinalModel
 ::ComputeAMatrix(const Realizations& R)
 {
     std::vector<std::vector<double>> AMatrix;
-    for(int i = 0; i < m_Manifold->GetDimension() ; ++i)
+    for(int i = 0; i < m_NbIndependentComponents ; ++i)
     {
         std::vector<double> Beta;
         for(int j = 0; j < m_Manifold->GetDimension() - 1 ; ++j)
         {
-            Beta.push_back( R.at("Beta" + std::to_string( j + i*(m_Manifold->GetDimension() - 1) )));
+            Beta.push_back( R.at( "Beta" )[j + i*(m_Manifold->GetDimension() - 1)]);
 
         }
         AMatrix.push_back( LinearCombination(Beta, m_OrthogonalBasis));
@@ -429,16 +617,16 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeSpaceShifts(const Realizations& R, const Data& D)
+::ComputeSpaceShifts(const Realizations& R, const int NumberOfSubjects)
 {
     std::map< std::string, std::vector<double>> SpaceShifts;
 
-    for(int i = 0; i < D.size(); ++i)
+    for(int i = 0; i < NumberOfSubjects; ++i)
     {
         std::vector<double> Si;
-        for(int j = 0; j < m_Manifold->GetDimension(); ++j)
+        for(int j = 0; j < m_NbIndependentComponents; ++j)
         {
-            double Realization = R.at("S" + std::to_string(j) + std::to_string(i));
+            double Realization = R.at("S" + std::to_string(j))[i];
             Si.push_back(Realization);
         }
 

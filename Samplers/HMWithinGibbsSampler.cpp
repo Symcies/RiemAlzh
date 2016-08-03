@@ -19,7 +19,7 @@ HMWithinGibbsSampler
 
 void
 HMWithinGibbsSampler
-::Sample(RandomVariable& CurrentRV, std::shared_ptr< AbstractRandomVariable >& CandidateRV, std::shared_ptr<AbstractModel>& M, Realizations& R, const Data& D)
+::Sample(RandomVariable& CurrentRV, std::shared_ptr< AbstractRandomVariable >& CandidateRV, std::shared_ptr<AbstractModel>& M, Realizations& R, const std::shared_ptr<Data>& D)
 {
     //// Compute the current part
     double CurrentRealization = R.at(CurrentRV.first);
@@ -40,6 +40,7 @@ HMWithinGibbsSampler
     // Calculate the hasting metropolis ratio
     double Tau = Numerator/Denominator;
 
+
     /// Hasting Metropolis Ratio
     std::random_device RD;
     std::default_random_engine Generator(RD());
@@ -50,4 +51,8 @@ HMWithinGibbsSampler
     {
         R.at(CurrentRV.first) = CandidateRealization;
     }
+
+    //std::cout << "Name : " << CurrentRV.first << std::endl;
+    //std::cout << "Candidate Prior/Likelihood : "<< CandidatePrior << "/" << CandidateLikelihood << std::endl;
+    //std::cout << "Current Prior/Likelihood : "<< CurrentPrior << "/" << CurrentLikelihood << std::endl;
 }

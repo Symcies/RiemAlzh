@@ -34,6 +34,6 @@ AbstractModel
     }
     else
     {
-        std::cout << "The key does not exist in the map" << std::endl;
+        std::cout << "OWN WARNING : The key does not exist in the map" << std::endl;
     }
 }
