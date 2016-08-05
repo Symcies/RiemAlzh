@@ -38,7 +38,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Sample a new variable thanks to the sampler
-    virtual void Sample(RandomVariable& CurrentRV, std::shared_ptr< AbstractRandomVariable >& CandidateRV, std::shared_ptr<AbstractModel>& M, Realizations& R, const std::shared_ptr<Data>& D) = 0;
+    virtual void Sample(std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M, const std::shared_ptr<Data>& D) = 0;
 
 
 protected:

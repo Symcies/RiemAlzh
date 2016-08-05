@@ -34,30 +34,29 @@ public:
 
     inline void SetManifold(std::shared_ptr< AbstractManifold>& M) { m_Manifold = M; }
 
-    inline RandomVariableMap GetPopulationRandomVariables() { return m_PopulationRandomVariables; }
-
-    inline RandomVariableMap GetIndividualRandomVariables() { return m_IndividualRandomVariables; }
-
     RandomVariable GetRandomVariable(std::string name);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Initialize the random variables : Population-wide and subject-specifid
+    /// Initialize the random variables : Population-wide and subject-specific
     virtual void InitializeRandomVariables() = 0;
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const std::shared_ptr<Data>& D) = 0;
+    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D) = 0;
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& SufficientStatistics, const std::shared_ptr<Data>& D) = 0;
 
     /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const Realizations& R, const std::shared_ptr<Data>& D) = 0;
+    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D) = 0;
 
     /// Simulate data according to the model
     virtual Data* SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) = 0;
+
+    /// Simulate some random variable realizations
+    Realizations* SimulateRealizations(int NumberOfSubjects);
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

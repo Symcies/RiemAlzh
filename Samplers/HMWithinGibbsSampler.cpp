@@ -19,40 +19,42 @@ HMWithinGibbsSampler
 
 void
 HMWithinGibbsSampler
-::Sample(RandomVariable& CurrentRV, std::shared_ptr< AbstractRandomVariable >& CandidateRV, std::shared_ptr<AbstractModel>& M, Realizations& R, const std::shared_ptr<Data>& D)
+::Sample(std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M, const std::shared_ptr<Data>& D)
 {
-    //// Compute the current part
-    double CurrentRealization = R.at(CurrentRV.first);
-    double CurrentPrior = CurrentRV.second->Likelihood(CurrentRealization);
-    double CurrentLikelihood = M->ComputeLikelihood(R, D);
-    double Denominator = CurrentPrior * CurrentLikelihood;
-
-
-    /// Compute the candidate part
-    double CandidateRealization = CandidateRV->Sample();
-    R.at(CurrentRV.first) = CandidateRealization;
-
-    double CandidatePrior = CandidateRV->Likelihood(CandidateRealization);
-    double CandidateLikelihood = M->ComputeLikelihood(R, D);
-    double Numerator = CandidatePrior * CandidateLikelihood;
-
-
-    // Calculate the hasting metropolis ratio
-    double Tau = Numerator/Denominator;
-
-
-    /// Hasting Metropolis Ratio
     std::random_device RD;
     std::default_random_engine Generator(RD());
     std::uniform_real_distribution<double> Distribution(0,1);
-    double Unif = Distribution(Generator);
 
-    if(Unif > Tau) //The new state is the previous one, no change
+    for(Realizations::iterator  it = R->begin(); it != R->end(); ++it)
     {
-        R.at(CurrentRV.first) = CandidateRealization;
-    }
+        std::string NameCurrentRV = it->first;
+        RandomVariable CurrentRV = M->GetRandomVariable(NameCurrentRV);
 
-    //std::cout << "Name : " << CurrentRV.first << std::endl;
-    //std::cout << "Candidate Prior/Likelihood : "<< CandidatePrior << "/" << CandidateLikelihood << std::endl;
-    //std::cout << "Current Prior/Likelihood : "<< CurrentPrior << "/" << CurrentLikelihood << std::endl;
+        for(std::vector<double>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+        {
+            /// Compute the current part
+            double CurrentRealization = *it2;
+            double CurrentPrior = CurrentRV.second->Likelihood(CurrentRealization);
+            double CurrentLikelihood = M->ComputeLikelihood(R, D);
+
+            /// Compute the candidate part
+            ////// TODO : GET THE CANDIDATE PART AND CHANGE THE FOLLOWING LINES
+            GaussianRandomVariable CandidateRV = GaussianRandomVariable(CurrentRealization, 0.01);
+            double CandidateRealization = CandidateRV.Sample();
+            //////////////////////////////
+            double CandidatePrior = CandidateRV.Likelihood(CandidateRealization);
+            *it2 = CandidateRealization;
+            double CandidateLikelihood = M->ComputeLikelihood(R, D);
+
+            /// Sampling
+            double Tau = CandidatePrior * CandidateLikelihood / (CurrentPrior * CurrentLikelihood);
+            double UnifSample = Distribution(Generator);
+            if(UnifSample > Tau) /// It means that the new state is the previous one : no change
+            {
+                *it2 = CurrentRealization;
+            }
+
+
+        }
+    }
 }

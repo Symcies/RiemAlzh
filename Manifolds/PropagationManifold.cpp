@@ -19,12 +19,12 @@ PropagationManifold
 
 const std::vector<double>
 PropagationManifold
-::GetGeodesicDerivative(double TimePoint, const Realizations& R)
+::GetGeodesicDerivative(double TimePoint, const std::shared_ptr<Realizations>& R)
 {
     /// Get the data from the realisation
-    double P0 = R.at("P0")[0];
-    double T0 = R.at("T0")[0];
-    double V0 = R.at("V0")[0];
+    double P0 = R->at("P0")[0];
+    double T0 = R->at("T0")[0];
+    double V0 = R->at("V0")[0];
 
 
 
@@ -41,12 +41,12 @@ PropagationManifold
 
 const std::vector<double>
 PropagationManifold
-::GetGeodesic(double TimePoint, const Realizations& R)
+::GetGeodesic(double TimePoint, const std::shared_ptr<Realizations>& R)
 {
     /// Get the data from the realisation
-    double P0 = R.at("P0")[0];
-    double T0 = R.at("T0")[0];
-    double V0 = R.at("V0")[0];
+    double P0 = R->at("P0")[0];
+    double T0 = R->at("T0")[0];
+    double V0 = R->at("V0")[0];
 
 
 
@@ -89,16 +89,16 @@ PropagationManifold
 
 std::vector<double>
 PropagationManifold
-::ComputeParallelCurve(double TimePoint, std::vector<double> W0, const Realizations& R)
+::ComputeParallelCurve(double TimePoint, std::vector<double> W0, const std::shared_ptr<Realizations>& R)
 {
     /// Get the data from the realisation
-    double P0 = R.at("P0")[0];
-    double T0 = R.at("T0")[0];
-    double V0 = R.at("V0")[0];
+    double P0 = R->at("P0")[0];
+    double T0 = R->at("T0")[0];
+    double V0 = R->at("V0")[0];
     std::vector<double> PropagationRealization;
     for(int i =0; i<m_Dimension ; ++i)
     {
-        PropagationRealization.push_back( R.at("Delta")[i]);
+        PropagationRealization.push_back( R->at("Delta" + std::to_string(i))[0]);
     }
 
 
@@ -113,6 +113,7 @@ PropagationManifold
     {
         double GeodesicDerivative = ComputeOneDimensionalGeodesicDerivative(P0, T0, V0, T0 + *i.second);
         double NewTimePoint = *i.first/GeodesicDerivative + TimePoint + *i.second;
+        std::cout << "w / gammaderiv : " << *i.first << "/" << GeodesicDerivative << "/" << *i.first/GeodesicDerivative << std::endl;
         double Coordinate = ComputeOneDimensionalGeodesic(P0, T0, V0, NewTimePoint);
 
         ParallelCurve.push_back(Coordinate);
@@ -142,6 +143,28 @@ PropagationManifold
     return TransformedVector;
 }
 
+
+double
+PropagationManifold
+::ComputeScalarProduct(std::vector<double> U, std::vector<double> V, std::vector<double> ApplicationPoint)
+{
+    if(U.size() != V.size() or U.size() != ApplicationPoint.size())
+    {
+        std::cout << " The vectors do not have the same size. How to do a scalar product?";
+    }
+
+    double ScalarProduct = 0;
+
+    for(int i = 0; i < U.size(); ++i)
+    {
+        double P = ApplicationPoint[i];
+        P = 1.0 / ( P * P * (1-P) * (1-P) );
+        ScalarProduct += U[i] * P * V[i];
+    }
+
+    return ScalarProduct;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +175,7 @@ PropagationManifold
 ::ComputeOneDimensionalGeodesic(double P0, double T0, double V0, double T)
 {
     double Value = - V0 * (T-T0) / (P0 * (1.-P0));
-    Value = 1. + (1./P0 - 1 )*exp(Value) ;
+    Value = 1. + (1./P0 - 1. )*exp(Value) ;
     return 1./Value;
 }
 

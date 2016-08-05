@@ -40,9 +40,9 @@ public:
 
     inline RandomVariableMap GetManifoldRandomVariables() { return m_ManifoldRandomVariables; }
 
-    virtual inline const std::vector<double> GetGeodesicDerivative(double TimePoint, const Realizations& R) = 0;
+    virtual inline const std::vector<double> GetGeodesicDerivative(double TimePoint, const std::shared_ptr<Realizations>& R) = 0;
 
-    virtual inline const std::vector<double> GetGeodesic(double TimePoint, const Realizations& R) = 0;
+    virtual inline const std::vector<double> GetGeodesic(double TimePoint, const std::shared_ptr<Realizations>& R) = 0;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
@@ -52,10 +52,13 @@ public:
     virtual void InitializeRandomVariables() = 0;
 
     /// Compute the parallel curve
-    virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, const Realizations& R) = 0;
+    virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, const std::shared_ptr<Realizations>& R) = 0;
 
     /// Get any vector transformation  wrt the metric (used in the householder method)
     virtual std::vector<double> ComputeMetricTransformation(std::vector<double> VectorToTransform, std::vector<double> ApplicationPoint) = 0;
+
+    /// Compute the scalar product corresponding to the manifold metric
+    virtual double ComputeScalarProduct(std::vector<double> U, std::vector<double> V, std::vector<double> ApplicationPoint) = 0;
 
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -23,7 +23,7 @@ Algorithm
 ::ComputeMCMCSAEM(const std::shared_ptr<Data>& D)
 {
 
-    int NbMaxIterations = 5;
+    int NbMaxIterations = 1;
     InitializeRealization((int)D->size());
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realization, D));
 
@@ -59,33 +59,8 @@ void
 Algorithm
 ::InitializeRealization(unsigned int NbIndividuals)
 {
-    m_Realization.clear();
-
-    RandomVariableMap PopulationRandomVariable = m_Model->GetPopulationRandomVariables();
-    RandomVariableMap IndividualRandomVariable = m_Model->GetIndividualRandomVariables();
-
-    // Initialize the realization of the population-wide random variables.
-    // They are shared among the individual thus sampled only once
-    for(RandomVariableMap::iterator it = PopulationRandomVariable.begin() ; it != PopulationRandomVariable.end(); ++it)
-    {
-        std::vector<double> Real;
-        Real.push_back(it->second->Sample());
-        m_Realization.insert( std::pair<std::string, std::vector<double>> (it->first, Real));
-    }
-
-    // Initialize the realization of the individual random variables.
-    // One realization is sampled for each individual, tagged with the i coefficient
-    for(RandomVariableMap::iterator it = IndividualRandomVariable.begin() ; it != IndividualRandomVariable.end() ; ++it)
-    {
-        std::vector<double> Real;
-        for(int i = 0; i < NbIndividuals ; ++i)
-        {
-            Real.push_back(it->second->Sample());
-        }
-        m_Realization.insert(std::pair<std::string, std::vector<double>> (it->first, Real));
-    }
-
-
+    std::shared_ptr<Realizations> R(m_Model->SimulateRealizations(NbIndividuals));
+    m_Realization = R;
 }
 
 void
@@ -95,18 +70,8 @@ Algorithm
     typedef Realizations::iterator ReaIter;
     typedef RandomVariableMap::iterator RandVarIter;
 
-    for(Realizations::iterator it = m_Realization.begin(); it != m_Realization.end() ; ++it)
-    {
-        std::string NameRV = it->first;
-        for(std::vector<double>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-        {
-            double CurrentRealization = *it2;
-            RandomVariable CurrentRV = m_Model->GetRandomVariable(NameRV);
-            std::shared_ptr<AbstractRandomVariable> CandidateRV = std::make_shared<GaussianRandomVariable>(CurrentRealization, 0.1);
+    m_Sampler->Sample( m_Realization, m_Model, D);
 
-            m_Sampler->Sample(CurrentRV, CandidateRV, m_Model, m_Realization, D);
-        }
-    }
 }
 
 

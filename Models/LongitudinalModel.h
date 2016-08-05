@@ -34,13 +34,13 @@ public:
     virtual void InitializeRandomVariables();
 
      /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const std::shared_ptr<Data>& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& SufficientStatistics, const std::shared_ptr<Data>& D);
 
     /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const Realizations& R, const std::shared_ptr<Data>& D);
+    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
 
     /// Simulate data according to the model
     virtual Data* SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
@@ -67,13 +67,13 @@ protected:
     void InitializeIndividualRandomVariables();
 
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
-    void ComputeOrthonormalBasis( const Realizations& R); // TODO : Use a library to do it faster
+    void ComputeOrthonormalBasis( const std::shared_ptr<Realizations>& R); // TODO : Use a library to do it faster
 
     /// Compute the A Matrix used to get the space shifts
-    void ComputeAMatrix( const Realizations& R); // TODO : Use a library to do it faster
+    void ComputeAMatrix( const std::shared_ptr<Realizations>& R); // TODO : Use a library to do it faster
 
     // Compute the space shifts
-    void ComputeSpaceShifts(const Realizations& R, const int NumberOfSubjects); // TODO : Use a library to do it faster
+    void ComputeSpaceShifts(const std::shared_ptr<Realizations>& R, const int NumberOfSubjects); // TODO : Use a library to do it faster
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -72,7 +72,7 @@ protected:
     std::shared_ptr<AbstractModel> m_Model;
 
     /// Realisation of the random variables of the model
-    Realizations m_Realization;
+    std::shared_ptr<Realizations> m_Realization;
 
     /// Abstract Sampler - for the MCMC SAEM 
     std::shared_ptr<AbstractSampler> m_Sampler;

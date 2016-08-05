@@ -33,7 +33,7 @@ LongitudinalModel
 
 std::vector< std::vector< double >>
 LongitudinalModel
-::GetSufficientStatistics(const Realizations& R, const std::shared_ptr<Data>& D)
+::GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D)
 {
     SufficientStatisticsVector SufficientStatistics;
 
@@ -43,15 +43,15 @@ LongitudinalModel
     std::vector< double > S1, S2;
 
     /// Get population wide attribute , then, Loop over all the subjects
-    double T0 = R.at("T0")[0];
+    double T0 = R->at("T0")[0];
 
     for(std::pair<Data::const_iterator, int> i(D->begin(), 0) ;
         i.first != D->end() && i.second < D->size() ;
         ++i.first, ++i.second)
     {
         /// Given a particular subject, get its attributes, then, loop over its observation
-        double Ksi = R.at("Ksi")[i.second];
-        double Tau = R.at("Tau")[i.second];
+        double Ksi = R->at("Ksi")[i.second];
+        double Tau = R->at("Tau")[i.second];
         std::vector< double > SpaceShift = m_SpaceShifts.at("W" + std::to_string(i.second));
 
         for(IndividualData::const_iterator it = i.first->begin() ; it != i.first->end() ; ++it)
@@ -77,8 +77,8 @@ LongitudinalModel
 
     for(int i = 0; i < D->size() ; ++i )
     {
-        double Ksi = R.at("Ksi")[i];
-        double Tau = R.at("Tau")[i];
+        double Ksi = R->at("Ksi")[i];
+        double Tau = R->at("Tau")[i];
 
         S3.push_back(Ksi * Ksi);
         S4.push_back(Tau * Tau); 
@@ -91,9 +91,9 @@ LongitudinalModel
     /// Compute S5, S6 and S7
     /////////////////////////
     std::vector< double > S5, S6, S7;
-    S5.push_back( R.at("P0")[0] );
-    S6.push_back( R.at("T0")[0] );
-    S7.push_back( R.at("V0")[0] );
+    S5.push_back( R->at("P0")[0] );
+    S6.push_back( R->at("T0")[0] );
+    S7.push_back( R->at("V0")[0] );
 
     SufficientStatistics.push_back(S5);
     SufficientStatistics.push_back(S6);
@@ -106,7 +106,7 @@ LongitudinalModel
     std::vector< double > S8;
     for(int i = 0; i<m_Manifold->GetDimension() ; ++i)
     {
-        double Delta = R.at("Delta")[i];
+        double Delta = R->at("Delta" + std::to_string(i))[0];
         S8.push_back(Delta);
     }
     
@@ -119,7 +119,7 @@ LongitudinalModel
     std::vector< double > S9;
     for(int i = 0; i < (m_Manifold->GetDimension() - 1) * m_NbIndependentComponents; ++i)
     {
-        double Beta = R.at("Beta")[i];
+        double Beta = R->at("Beta" + std::to_string(i))[0];
         S9.push_back(Beta);
     }
 
@@ -234,7 +234,7 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLikelihood(const Realizations& R, const std::shared_ptr<Data>& D)
+::ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D)
 {
     // TODO : Choose where the following function should be used
     ComputeOrthonormalBasis(R);
@@ -244,14 +244,14 @@ LongitudinalModel
 
     double Likelihood = 0;
 
-    double T0 = R.at("T0")[0];
+    double T0 = R->at("T0")[0];
 
     for(std::pair<Data::const_iterator, int> i(D->begin(), 0);
         i.first < D->end() && i.second < D->size();
         ++i.first, ++i.second)
     {
-        double AccFactor = exp( R.at("Ksi")[i.second]);
-        double TimeShift = R.at("Tau")[i.second];
+        double AccFactor = exp( R->at("Ksi")[i.second]);
+        double TimeShift = R->at("Tau")[i.second];
         std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(i.second));
         for(IndividualData::const_iterator it2 = i.first->begin(); it2 != i.first->end(); ++it2)
         {
@@ -262,7 +262,22 @@ LongitudinalModel
 
             std::vector<double> ParallelCurve = m_Manifold->ComputeParallelCurve(TimePoint, SpaceShift, R);
 
-            Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
+             Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
+
+            /*
+            ///// DEBUGGING - Parallel transport quite constant per individual
+            std::vector<double> Geo = m_Manifold->GetGeodesic(T0, R);
+            for(double t = 0.0; t < 10.0; t += 0.5)
+            {
+                std::vector<double> ParallelCurve = m_Manifold->ComputeParallelCurve(TimePoint + t, SpaceShift, R);
+                double ParallelTransport = m_Manifold->ComputeScalarProduct(ParallelCurve, ParallelCurve, Geo);
+                std::cout << "Indiv#" << i.second << " - Parallel Transport : " << ParallelTransport << std::endl;
+
+            }
+            std::cout << "--------------------"<< std::endl;
+            ///// END DEBUGGIN
+             */
+
         }
     }
 
@@ -302,24 +317,7 @@ LongitudinalModel
     ///////////////////
     // Realizations ///
     ///////////////////
-    Realizations R;
-
-    // Initialize the realization of the population-wide random variables.
-    // They are shared among the individual thus sampled only once
-    for(RandomVariableMap::iterator it = m_PopulationRandomVariables.begin() ; it != m_PopulationRandomVariables.end(); ++it)
-    {
-        R.insert( std::pair<std::string, double> (it->first, it->second->Sample()));
-    }
-
-    // Initialize the realization of the individual random variables.
-    // One realization is sampled for each individual, tagged with the i coefficient
-    for(RandomVariableMap::iterator it = m_IndividualRandomVariables.begin() ; it != m_IndividualRandomVariables.end() ; ++it)
-    {
-        for(int i = 0; i < NumberOfSubjects ; ++i)
-        {
-            R.insert( std::pair<std::string, double> (it->first + std::to_string(i), it->second->Sample()));
-        }
-    }
+    std::shared_ptr<Realizations> R(SimulateRealizations(NumberOfSubjects));
 
 
     /////////////////////////////
@@ -337,19 +335,19 @@ LongitudinalModel
     //////////////////////////////////////////////////////////////////////////
     Data *D = new Data;
 
-    double T0 = R.at("T0")[0];
+    double T0 = R->at("T0")[0];
     std::normal_distribution<double> Normal2(0.0, m_Noise->Sample());
     int i = 0;
 
     for(std::vector<std::vector<double>>::iterator it = TimePoint.begin() ; it != TimePoint.end() ; ++it)
     {
-        double Tau = R.at("Tau")[i];
+        double Tau = R->at("Tau")[i];
         IndividualData ID;
         for(std::vector<double>::iterator it2 = it->begin() ; it2 != it->end(); ++it2)
         {
             std::vector<double> Observation;
 
-            double Time = exp(R.at("Ksi")[i]) * (*it2 - T0 - Tau) + T0;
+            double Time = exp(R->at("Ksi")[i]) * (*it2 - T0 - Tau) + T0;
             std::vector<double> W = m_SpaceShifts.at("W" + std::to_string(i));
             std::vector<double> Eta = m_Manifold->ComputeParallelCurve(Time, W, R);
             for(std::vector<double>::iterator it3 = Eta.begin() ; it3 != Eta.end(); ++it3)
@@ -546,13 +544,13 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeOrthonormalBasis( const Realizations& R)
+::ComputeOrthonormalBasis(const std::shared_ptr<Realizations>& R)
 {
-    double T0 = R.at("T0")[0];
+    double T0 = R->at("T0")[0];
 
-    /// Compute the trasformation to do the Householder reflection in a euclidian space
+    /// Compute the transformation to do the Householder reflection in a Euclidean space
     std::vector<double> Geodesic = m_Manifold->GetGeodesic(T0, R);
-    std::vector< double > GeoDerivative = m_Manifold->GetGeodesicDerivative(T0, R);
+    std::vector<double> GeoDerivative = m_Manifold->GetGeodesicDerivative(T0, R);
     std::vector<double> U = m_Manifold->ComputeMetricTransformation(GeoDerivative, Geodesic);
 
     /// Compute the initial pivot vector U
@@ -563,8 +561,7 @@ LongitudinalModel
     }
     Norm = sqrt(Norm);
 
-    /// TODO : check if the following is ok
-    U[0] += copysign(U[0], -1)*Norm;
+    U[0] += copysign(1, -U[0])*Norm;
 
     double NormU = 0;
     for(std::vector<double>::iterator it = U.begin(); it != U.end(); ++it)
@@ -579,7 +576,7 @@ LongitudinalModel
         std::vector<double> Coordinate;
         for(std::vector<double>::iterator it2 = U.begin(); it2 != U.end(); ++it2)
         {
-            Coordinate.push_back( - *it * *it / NormU);
+            Coordinate.push_back( - 2 * *it * *it2 / NormU);
         }
         Q.push_back( Coordinate );
     }
@@ -589,15 +586,21 @@ LongitudinalModel
         Q[i][i] += 1;
     }
 
+    /// COLINEARITY BETWEEN THE FIRST VECTOR AND Q[0] HAS BEEN CHECKED
+
+    /// ORTHOGONALITY BETWEEN BASIS VECTORS HAS BEEN CHECKED
+
+
     /// Drop the first vector which is colinear to gamma_derivative(t0)
     Q.erase(Q.begin());
 
     m_OrthogonalBasis = Q;
+
 }
 
 void
 LongitudinalModel
-::ComputeAMatrix(const Realizations& R)
+::ComputeAMatrix(const std::shared_ptr<Realizations>& R)
 {
     std::vector<std::vector<double>> AMatrix;
     for(int i = 0; i < m_NbIndependentComponents ; ++i)
@@ -605,10 +608,21 @@ LongitudinalModel
         std::vector<double> Beta;
         for(int j = 0; j < m_Manifold->GetDimension() - 1 ; ++j)
         {
-            Beta.push_back( R.at( "Beta" )[j + i*(m_Manifold->GetDimension() - 1)]);
+            std::string Number = std::to_string(int(j + i*(m_Manifold->GetDimension() - 1)));
+            Beta.push_back( R->at( "Beta" + Number)[0]);
 
         }
-        AMatrix.push_back( LinearCombination(Beta, m_OrthogonalBasis));
+        std::vector<double> AColumn = LinearCombination(Beta, m_OrthogonalBasis);
+        AMatrix.push_back( AColumn );
+
+        /*
+        /// DEBUGGING METHOD : CHECK IF A COLUMN ORTHOGONAL TO THE GEO DERIVATIVE AT gamma(T0)
+        double T0 = R->at("T0")[0];
+        std::vector<double> Geo = m_Manifold->GetGeodesic(T0, R);
+        std::vector<double> GeoDeriv = m_Manifold->GetGeodesicDerivative(T0, R);
+        std::cout << "Should be 0 (Ortho to B0) : " << m_Manifold->ComputeScalarProduct(m_OrthogonalBasis[0], GeoDeriv, Geo) << std::endl;
+        std::cout << "Should be 0 (Ortho to A ) : " << m_Manifold->ComputeScalarProduct(AColumn, GeoDeriv, Geo) << std::endl;
+        */
 
     }
 
@@ -617,7 +631,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeSpaceShifts(const Realizations& R, const int NumberOfSubjects)
+::ComputeSpaceShifts(const std::shared_ptr<Realizations>& R, const int NumberOfSubjects)
 {
     std::map< std::string, std::vector<double>> SpaceShifts;
 
@@ -626,7 +640,7 @@ LongitudinalModel
         std::vector<double> Si;
         for(int j = 0; j < m_NbIndependentComponents; ++j)
         {
-            double Realization = R.at("S" + std::to_string(j))[i];
+            double Realization = R->at("S" + std::to_string(j))[i];
             Si.push_back(Realization);
         }
 
