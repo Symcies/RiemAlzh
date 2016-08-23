@@ -43,6 +43,9 @@ public:
     /// Initialize the random variables : Population-wide and subject-specific
     virtual void InitializeRandomVariables() = 0;
 
+    /// Initialize the model parameters, if any, and the manifold parameters, if any
+    virtual void InitializeModelParameters(const std::shared_ptr< Realizations >& R) = 0;
+
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D) = 0;
 
@@ -86,6 +89,9 @@ protected:
 
     /// Random variables that are subject-specific
     RandomVariableMap m_IndividualRandomVariables;
+
+    /// Random variables that are related to the manifold
+    RandomVariableMap m_ManifoldRandomVariables;
 
 
 };

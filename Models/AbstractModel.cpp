@@ -32,6 +32,11 @@ AbstractModel
         RandomVariable R(name, m_PopulationRandomVariables.at(name) );
         return R;
     }
+    else if(m_ManifoldRandomVariables.count(name))
+    {
+        RandomVariable R(name, m_ManifoldRandomVariables.at(name) );
+        return R;
+    }
     else
     {
         std::cout << "OWN WARNING : The key does not exist in the map" << std::endl;
@@ -71,5 +76,13 @@ AbstractModel
         R->insert(std::pair< std::string, std::vector<double>> (it->first, Realization));
     }
 
+    // Initialize the realization of the manifold random variables/
+    // They are shared among the individual thus sampled only once
+    for(RandomVariableMap::iterator it = m_ManifoldRandomVariables.begin(); it != m_ManifoldRandomVariables.end(); ++it)
+    {
+        std::vector<double> Realization;
+        Realization.push_back(it->second->Sample());
+        R->insert(std::pair< std::string, std::vector<double>> (it->first, Realization));
+    }
     return R;
 }

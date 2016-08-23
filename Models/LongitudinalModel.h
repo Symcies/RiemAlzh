@@ -33,6 +33,10 @@ public:
     /// Initialize the random variables : Population-wide and subject-specific
     virtual void InitializeRandomVariables();
 
+    /// Initialize the model parameters, if any, and the manifold parameters, if any
+    /// In the propagation case, only the Delta(k) (Manifold param) are initialized
+    virtual void InitializeModelParameters(const std::shared_ptr< Realizations >& R);
+
      /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
 
@@ -65,6 +69,9 @@ protected:
 
     /// Initialize Individual random variables
     void InitializeIndividualRandomVariables();
+
+    /// Initialize Manifold random variables
+    void InitializeManifoldRandomVariables();
 
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
     void ComputeOrthonormalBasis( const std::shared_ptr<Realizations>& R); // TODO : Use a library to do it faster

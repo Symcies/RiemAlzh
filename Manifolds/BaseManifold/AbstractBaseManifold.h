@@ -1,12 +1,8 @@
-
-#ifndef _PropagationManifold_h
-#define _PropagationManifold_h
-
-
-#include "AbstractManifold.h"
+#ifndef _AbstractBaseManifold_h
+#define _AbstractBaseManifold_h
 
 
-class PropagationManifold : public AbstractManifold {
+class AbstractBaseManifold {
 public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
@@ -17,8 +13,8 @@ public:
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    PropagationManifold(unsigned int NumberDimension, std::shared_ptr<AbstractBaseManifold>& BM);
-
+    AbstractBaseManifold();
+    ~AbstractBaseManifold();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Encapsulation method(s) :
@@ -29,17 +25,11 @@ public:
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Compute the parallel transport
-    virtual std::vector<double> ComputeParallelCurve(std::vector<double> P0, double T0, std::vector<double> V0,
-                                                     std::vector<double> SpaceShift, double TimePoint );
+    /// Compute the geodesic
+    virtual double ComputeGeodesic(double P0, double T0, double V0, double TimePoint) = 0;
 
-
-    /// Get V0 transformation  wrt the metric at the application point P0 (used in the householder method)
-    virtual std::vector<double> GetVelocityTransformToEuclideanSpace(std::vector<double> P0, double T0, std::vector<double> V0);
-
-    ////////// TODO : CHECK WHERE TO PUT THE FOLLOWING FUNCTIONS
-    /// Compute the scalar product corresponding to the manifold metric
-    virtual double ComputeScalarProduct(std::vector<double> U, std::vector<double> V, std::vector<double> ApplicationPoint);
+    /// Compute the geodesic derivative
+    virtual double ComputeGeodesicDerivative(double P0, double T0, double V0, double TimePoint) = 0;
 
 
 protected:
@@ -47,7 +37,7 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::vector<double> GetPropagationParameters();
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
@@ -56,4 +46,4 @@ protected:
 };
 
 
-#endif //_PropagationManifold_h
+#endif //_AbstractBaseManifold_h

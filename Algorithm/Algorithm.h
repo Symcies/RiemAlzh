@@ -54,6 +54,9 @@ protected:
     // Initialize the realization of the model (and related manifold) random variables
     void InitializeRealization(unsigned int NbIndividuals);
 
+    // Initialize the manifold parameters
+    void InitializeModelParameters(std::shared_ptr<Realizations>& R);
+
     // Compute the simulation step : Gibbs Sampling
     void ComputeSimulationStep(const std::shared_ptr<Data>& D);
 

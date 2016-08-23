@@ -4,6 +4,7 @@
 #include "Models/LongitudinalModel.h"
 #include "Algorithm/Algorithm.h"
 #include "Samplers/HMWithinGibbsSampler.h"
+#include "Manifolds/BaseManifold/LogisticBaseManifold.h"
 //#include "itkXMLFile.h"
 
 using namespace std;
@@ -13,9 +14,13 @@ typedef std::map<std::string, std::vector<double>> Realizations;
 
 
 int main() {
+    /// Base Manifold
+    shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
+
+
     /// Manifold
     unsigned int NumberDimension = 4;
-    shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension);
+    shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
 
     /// Model
     unsigned int NumberIndependentComponents = 2;
@@ -35,13 +40,13 @@ int main() {
     /// Realizations
     shared_ptr<Realizations> R(Model->SimulateRealizations(15));
 
-    /*
+
     /// Algo
     auto Algo = make_shared<Algorithm>();
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
     Algo->ComputeMCMCSAEM(D);
-    */
+
 
     cout << "Hello, World!" << endl;
     return 0;

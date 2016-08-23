@@ -5,9 +5,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 PropagationManifold
-::PropagationManifold(unsigned int NumberDimension)
+::PropagationManifold(unsigned int NumberDimension, std::shared_ptr<AbstractBaseManifold>& BM)
 {
     m_Dimension = NumberDimension;
+    m_BaseManifold = BM;
 }
 
 
@@ -17,47 +18,6 @@ PropagationManifold
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-const std::vector<double>
-PropagationManifold
-::GetGeodesicDerivative(double TimePoint, const std::shared_ptr<Realizations>& R)
-{
-    /// Get the data from the realisation
-    double P0 = R->at("P0")[0];
-    double T0 = R->at("T0")[0];
-    double V0 = R->at("V0")[0];
-
-
-    /// Compute the geodesic derivative
-    std::vector<double> GeodesicDerivative;
-    for(int i = 0; i < m_Dimension ; ++i)
-    {
-        double Coordinate = ComputeOneDimensionalGeodesicDerivative(P0, T0, V0, TimePoint);
-        GeodesicDerivative.push_back( Coordinate );
-    }
-
-    return GeodesicDerivative;
-}
-
-const std::vector<double>
-PropagationManifold
-::GetGeodesic(double TimePoint, const std::shared_ptr<Realizations>& R)
-{
-    /// Get the data from the realisation
-    double P0 = R->at("P0")[0];
-    double T0 = R->at("T0")[0];
-    double V0 = R->at("V0")[0];
-
-
-    /// Compute the geodesic derivative
-    std::vector<double> Geodesic;
-    for(int i = 0; i < m_Dimension ; ++i)
-    {
-        double Coordinate = ComputeOneDimensionalGeodesic(P0, T0, V0, TimePoint);
-        Geodesic.push_back( Coordinate );
-    }
-    //std::cout << Geodesic[0] << std::endl;
-    return Geodesic;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Other method(s) :
@@ -65,80 +25,49 @@ PropagationManifold
 
 std::vector<double>
 PropagationManifold
-::ComputeParallelTransport(double T, std::vector<double> W0, const std::shared_ptr<Realizations> &R)
+::ComputeParallelCurve(std::vector<double> P0, double T0, std::vector<double> V0, std::vector<double> SpaceShift,
+                           double TimePoint)
 {
-    /// Get the data from the realisation
-    double P0 = R->at("P0")[0];
-    double T0 = R->at("T0")[0];
-    double V0 = R->at("V0")[0];
+    // TODO **UNIT TEST** : Check if P0, V0, PropagCoeff and SpaceShift of the same size
 
-    /// Compute the parallel transport
     std::vector<double> ParallelTransport;
 
-    for(int i =0; i<m_Dimension ; ++i)
-    {
-        double PropagationRealization = R->at("Delta" + std::to_string(i))[0];
+    std::vector<double> PropParameters = GetPropagationParameters();
+    auto IterProp = PropParameters.begin();
+    auto IterPos = P0.begin();
+    auto IterVel = V0.begin();
+    auto IterSpa = SpaceShift.begin();
 
-        double Num = W0[i] * ComputeOneDimensionalGeodesicDerivative(P0, T0, V0, T + PropagationRealization);
-        double Denom = ComputeOneDimensionalGeodesicDerivative(P0, T0, V0, T0 + PropagationRealization);
-        ParallelTransport.push_back(Num / Denom);
+
+    for(    ; IterProp != PropParameters.end() && IterPos != P0.end() && IterVel != V0.end() && IterSpa != SpaceShift.end()
+            ; ++IterProp, ++IterPos, ++IterVel, ++IterSpa)
+    {
+        double T = *IterSpa / m_BaseManifold->ComputeGeodesicDerivative(*IterPos, T0, *IterVel, T0 + *IterProp );
+        T += TimePoint + *IterProp;
+        double Coordinate = m_BaseManifold->ComputeGeodesic(*IterPos, T0, *IterVel, T);
+
+        ParallelTransport.push_back(Coordinate);
     }
 
     return ParallelTransport;
 }
 
-std::vector<double>
-PropagationManifold
-::ComputeParallelCurve(double TimePoint, std::vector<double> W0, const std::shared_ptr<Realizations>& R)
-{
-    /// Get the data from the realisation
-    double P0 = R->at("P0")[0];
-    double T0 = R->at("T0")[0];
-    double V0 = R->at("V0")[0];
-    std::vector<double> PropagationRealization;
-    for(int i =0; i<m_Dimension ; ++i)
-    {
-        PropagationRealization.push_back( R->at("Delta" + std::to_string(i))[0]);
-    }
-
-
-    /// Compute the parallel transport
-    std::vector<double> ParallelCurve;
-
-    typedef std::vector<double>::iterator DoubleIter;
-
-    for(std::pair<DoubleIter, DoubleIter> i(W0.begin(), PropagationRealization.begin());
-            i.first != W0.end() && i.second != PropagationRealization.end();
-            ++i.first, ++i.second)
-    {
-        double GeodesicDerivative = ComputeOneDimensionalGeodesicDerivative(P0, T0, V0, T0 + *i.second);
-        double NewTimePoint = *i.first/GeodesicDerivative + TimePoint + *i.second;
-        double Coordinate = ComputeOneDimensionalGeodesic(P0, T0, V0, NewTimePoint);
-        ParallelCurve.push_back(Coordinate);
-    }
-
-    return ParallelCurve;
-
-}
-
 
 std::vector<double>
 PropagationManifold
-::ComputeMetricTransformation(std::vector<double> VectorToTransform, std::vector<double> ApplicationPoint)
+::GetVelocityTransformToEuclideanSpace(std::vector<double> P0, double T0, std::vector<double> V0)
 {
-    typedef std::vector< double >::iterator DoubleIter;
+    double Geo = m_BaseManifold->ComputeGeodesic(P0[0], T0, V0[0], T0);
+    double GeoDer= m_BaseManifold->ComputeGeodesicDerivative(P0[0], T0, V0[0], T0);
+    double Coordinate = GeoDer / ( Geo * Geo * (1.0-Geo) * (1.0-Geo) );
 
-    std::vector< double > TransformedVector;
-
-    for(std::pair<DoubleIter, DoubleIter> i(ApplicationPoint.begin(), VectorToTransform.begin()) ;
-            i.first != ApplicationPoint.end() && i.second != VectorToTransform.end() ;
-            ++i.first, ++i.second)
+    std::vector<double> TransformedVelocity;
+    for(int i = 0; i < m_Dimension; ++i)
     {
-        double Coordinate = *i.second / ( *i.first * *i.first * ( 1.0 - *i.first) * (1.0 - *i.first));
-        TransformedVector.push_back(Coordinate);
+        TransformedVelocity.push_back(Coordinate);
     }
 
-    return TransformedVector;
+    return TransformedVelocity;
 }
 
 
@@ -168,23 +97,15 @@ PropagationManifold
 // Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-double
+std::vector<double>
 PropagationManifold
-::ComputeOneDimensionalGeodesic(double P0, double T0, double V0, double T)
+::GetPropagationParameters()
 {
+    std::vector<double> PropagationParameters;
+    for(int i = 0; i < m_Dimension; ++i)
+    {
+        PropagationParameters.push_back( m_Parameters.at("Delta" + std::to_string(i)) );
+    }
 
-    double Value = - V0 * (T-T0) / (P0 * (1.-P0));
-    Value = 1. + (1./P0 - 1. )*exp(Value) ;
-    return 1./Value;
-}
-
-double
-PropagationManifold
-::ComputeOneDimensionalGeodesicDerivative(double P0, double T0, double V0, double T)
-{
-    double Value = exp(- V0 * (T-T0) / (P0 * (1.-P0)));
-    double Num = V0 * Value;
-    double Denom = (P0 + (1-P0)*Value) * (P0 + (1-P0)*Value);
-    return Num/Denom;
+    return PropagationParameters;
 }

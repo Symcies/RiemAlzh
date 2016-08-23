@@ -25,6 +25,7 @@ Algorithm
 
     int NbMaxIterations = 2;
     InitializeRealization((int)D->size());
+    InitializeModelParameters(m_Realization);
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realization, D));
 
     for(int k = 0; k<NbMaxIterations; ++k)
@@ -61,6 +62,13 @@ Algorithm
 {
     std::shared_ptr<Realizations> R(m_Model->SimulateRealizations(NbIndividuals));
     m_Realization = R;
+}
+
+void
+Algorithm
+::InitializeModelParameters(std::shared_ptr<Realizations>& R)
+{
+    m_Model->InitializeModelParameters(R);
 }
 
 void

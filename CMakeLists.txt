@@ -23,6 +23,9 @@ set(RANDOMVARIABLES
 
 set(MANIFOLDS
         Manifolds
+        Manifolds/BaseManifold
+        Manifolds/BaseManifold/AbstractBaseManifold
+        Manifolds/BaseManifold/LogisticBaseManifold
         Manifolds/AbstractManifold
         Manifolds/PropagationManifold)
 

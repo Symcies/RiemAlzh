@@ -6,12 +6,11 @@
 #include <string>
 #include "../RandomVariables/GaussianRandomVariable.h"
 #include "../RandomVariables/AbstractRandomVariable.h"
+#include "BaseManifold/AbstractBaseManifold.h"
 #include <map>
 
 
-/// TODO : GetGeodesicDerivative, GetGeodesic and ComputeParallelTransport
-/// ... shouldn't have std::vector<double> W0 as argument
-/// ... W0 should be a realization !
+
 
 class AbstractManifold {
 public:
@@ -20,9 +19,7 @@ public:
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
-    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-    typedef std::map<std::string, std::vector<double>> Realizations;
+    typedef std::map<std::string, double> Parameters;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
@@ -38,39 +35,27 @@ public:
 
     inline const double GetDimension() { return m_Dimension; }
 
-    /*
-    virtual inline const std::vector<double> GetGeodesicDerivative(double TimePoint, const std::shared_ptr<Realizations>& R) = 0;
+    inline const double GetParameter(std::string P) { return m_Parameters.at(P); }
 
-    virtual inline const std::vector<double> GetGeodesic(double TimePoint, const std::shared_ptr<Realizations>& R) = 0;
-    */
+    inline double SetParameter(std::string P, double Value) { m_Parameters.at(P) = Value; }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Compute the geodesic
-    template <typename TimePoint>
-    virtual const std::vector<double> ComputeGeodesic(std::vector<double> P0, double T0, std::vector<double> V0, TimePoint T) = 0;
-
-    /// Compute the geodesic derivative
-    template <typename TimePoint>
-    virtual const std::vector<double> ComputeGeodesicDerivative(std::vector<double> P0, double T0, std::vector<double> V0, TimePoint T) = 0;
-
-    /// Compute the parallel curve
-    template <typename TimePoint>
-    virtual const std::vector<double> ComputeParallelCurveBIS(std::vector<double> P0, double T0, std::vector<double> V0, std::vector<double> W, TimePoint T) = 0;
-
+    /// Initialize the parameters
+    void InitializeParameters(Parameters P);
 
     /// Compute the parallel transport
-    virtual std::vector<double> ComputeParallelTransport(double T, std::vector<double> W0, const std::shared_ptr<Realizations>& R ) = 0;
+    virtual std::vector<double> ComputeParallelCurve(std::vector<double> P0, double T0, std::vector<double> V0,
+                                                     std::vector<double> SpaceShift, double TimePoint ) = 0;
 
-    /// Compute the parallel curve ;which is the Riemannian Exponential of the parallel Transport
-    /// TO DO : To be removed
-    virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, const std::shared_ptr<Realizations>& R) = 0;
+    /// Get V0 transformation  wrt the metric at the application point P0 (used in the householder method)
+    virtual std::vector<double> GetVelocityTransformToEuclideanSpace(std::vector<double> P0, double T0, std::vector<double> V0) = 0;
 
-    /// Get any vector transformation  wrt the metric (used in the householder method)
-    virtual std::vector<double> ComputeMetricTransformation(std::vector<double> VectorToTransform, std::vector<double> ApplicationPoint) = 0;
 
+    ////////// TODO : CHECK WHERE TO PUT THE FOLLOWING FUNCTIONS
     /// Compute the scalar product corresponding to the manifold metric
     virtual double ComputeScalarProduct(std::vector<double> U, std::vector<double> V, std::vector<double> ApplicationPoint) = 0;
 
@@ -87,6 +72,13 @@ protected:
 
     /// Dimension of the Riemanian Manifold
     unsigned int m_Dimension;
+
+    /// Base Manifold
+    std::shared_ptr<AbstractBaseManifold> m_BaseManifold;
+
+    /// Parameters of the Manifold
+    Parameters m_Parameters;
+
 
 };
 
