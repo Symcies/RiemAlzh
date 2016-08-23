@@ -47,7 +47,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
 set(ITK_DIR /aramis/dartagnan2/Software/ITK/ITKb-4.5.1)
 
-find_Package(ITK REQUIRED)
+#find_Package(ITK REQUIRED)
 
 if(ITK_FOUND)
     INCLUDE(${ITK_USE_FILE})

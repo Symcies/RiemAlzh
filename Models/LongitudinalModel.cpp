@@ -264,20 +264,6 @@ LongitudinalModel
 
              Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
 
-            /*
-            ///// DEBUGGING - Parallel transport quite constant per individual
-            std::vector<double> Geo = m_Manifold->GetGeodesic(T0, R);
-            for(double t = 0.0; t < 10.0; t += 0.5)
-            {
-                std::vector<double> ParallelCurve = m_Manifold->ComputeParallelCurve(TimePoint + t, SpaceShift, R);
-                double ParallelTransport = m_Manifold->ComputeScalarProduct(ParallelCurve, ParallelCurve, Geo);
-                std::cout << "Indiv#" << i.second << " - Parallel Transport : " << ParallelTransport << std::endl;
-
-            }
-            std::cout << "--------------------"<< std::endl;
-            ///// END DEBUGGIN
-             */
-
         }
     }
 
@@ -412,12 +398,16 @@ LongitudinalModel
         m_PopulationRandomVariables.insert(Beta_);
     }
 
-
-    // Initialize Random variables related to the manifold
-    RandomVariableMap ManifoldRandomVariables = m_Manifold->GetManifoldRandomVariables();
-    for(RandomVariableMap::iterator it = ManifoldRandomVariables.begin() ; it != ManifoldRandomVariables.end(); ++it)
+    // Initial Propagation coefficient
+    /// TODO : Les mettre dans le bon ordre
+    double DeltaVariance = 0.1;
+    for(int i = 0; i < m_Manifold->GetDimension() ; ++i)
     {
-        m_PopulationRandomVariables.insert(*it);
+        double DeltaMean = 0.5*(double)i;
+        auto Delta = std::make_shared< GaussianRandomVariable >(DeltaMean, DeltaVariance);
+        std::string name = "Delta" + std::to_string(i);
+        RandomVariable Delta_(name, Delta);
+        m_PopulationRandomVariables.insert(Delta_);
     }
 
     // Noise
@@ -497,11 +487,16 @@ LongitudinalModel
     }
 
 
-    // Initialize Random variables related to the manifold
-    RandomVariableMap ManifoldRandomVariables = m_Manifold->GetManifoldRandomVariables();
-    for(RandomVariableMap::iterator it = ManifoldRandomVariables.begin() ; it != ManifoldRandomVariables.end(); ++it)
+    // Initial Propagation coefficient
+    /// TODO : Les mettre dans le bon ordre
+    double DeltaVariance = 0.1;
+    for(int i = 0; i < m_Manifold->GetDimension() ; ++i)
     {
-        m_PopulationRandomVariables.insert(*it);
+        double DeltaMean = 0.5*(double)i;
+        auto Delta = std::make_shared< GaussianRandomVariable >(DeltaMean, DeltaVariance);
+        std::string name = "Delta" + std::to_string(i);
+        RandomVariable Delta_(name, Delta);
+        m_PopulationRandomVariables.insert(Delta_);
     }
 
     // Noise
@@ -649,5 +644,24 @@ LongitudinalModel
     }
 
     m_SpaceShifts = SpaceShifts;
+
+    ///////////////////////////////
+    //// Debugging : Unit tests ///
+    ///////////////////////////////
+    double P0 = R->at("P0")[0];
+    double V0 = R->at("V0")[0];
+    double T0 = R->at("T0")[0];
+
+    for(double t = 68.0; t < 74; t += 0.5)
+    {
+        std::vector<double> Geodesic = m_Manifold->GetGeodesic(t, R);
+        std::vector<double> ParallelTransport = m_Manifold->ComputeParallelTransport(t, m_SpaceShifts["W0"], R);
+        double Norm = m_Manifold->ComputeScalarProduct(ParallelTransport, ParallelTransport, Geodesic);
+        std::cout << "Norm at " << t << " : " << Norm << std::endl;
+    }
+
+    ///////////////////////////////
+    ////End Unit tests ///
+    ///////////////////////////////
 
 }

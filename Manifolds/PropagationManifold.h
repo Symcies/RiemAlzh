@@ -36,8 +36,8 @@ public:
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Initialize the random variables related to the manifold
-    virtual void InitializeRandomVariables();
+    /// Compute the parallel transport
+    virtual std::vector<double> ComputeParallelTransport(double T, std::vector<double> W0, const std::shared_ptr<Realizations>& R );
 
     /// Compute the parallel transport
     virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, const std::shared_ptr<Realizations>& R);

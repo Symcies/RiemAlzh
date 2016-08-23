@@ -23,7 +23,7 @@ Algorithm
 ::ComputeMCMCSAEM(const std::shared_ptr<Data>& D)
 {
 
-    int NbMaxIterations = 1;
+    int NbMaxIterations = 2;
     InitializeRealization((int)D->size());
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realization, D));
 

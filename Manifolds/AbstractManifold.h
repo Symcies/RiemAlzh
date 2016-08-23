@@ -38,20 +38,34 @@ public:
 
     inline const double GetDimension() { return m_Dimension; }
 
-    inline RandomVariableMap GetManifoldRandomVariables() { return m_ManifoldRandomVariables; }
-
+    /*
     virtual inline const std::vector<double> GetGeodesicDerivative(double TimePoint, const std::shared_ptr<Realizations>& R) = 0;
 
     virtual inline const std::vector<double> GetGeodesic(double TimePoint, const std::shared_ptr<Realizations>& R) = 0;
+    */
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Initialize the random variables related to the manifold
-    virtual void InitializeRandomVariables() = 0;
+    /// Compute the geodesic
+    template <typename TimePoint>
+    virtual const std::vector<double> ComputeGeodesic(std::vector<double> P0, double T0, std::vector<double> V0, TimePoint T) = 0;
+
+    /// Compute the geodesic derivative
+    template <typename TimePoint>
+    virtual const std::vector<double> ComputeGeodesicDerivative(std::vector<double> P0, double T0, std::vector<double> V0, TimePoint T) = 0;
 
     /// Compute the parallel curve
+    template <typename TimePoint>
+    virtual const std::vector<double> ComputeParallelCurveBIS(std::vector<double> P0, double T0, std::vector<double> V0, std::vector<double> W, TimePoint T) = 0;
+
+
+    /// Compute the parallel transport
+    virtual std::vector<double> ComputeParallelTransport(double T, std::vector<double> W0, const std::shared_ptr<Realizations>& R ) = 0;
+
+    /// Compute the parallel curve ;which is the Riemannian Exponential of the parallel Transport
+    /// TO DO : To be removed
     virtual std::vector<double> ComputeParallelCurve(double TimePoint, std::vector<double> W0, const std::shared_ptr<Realizations>& R) = 0;
 
     /// Get any vector transformation  wrt the metric (used in the householder method)
@@ -74,8 +88,6 @@ protected:
     /// Dimension of the Riemanian Manifold
     unsigned int m_Dimension;
 
-    /// Random variables related to the manifold to be sent to the model
-    RandomVariableMap m_ManifoldRandomVariables;
 };
 
 
