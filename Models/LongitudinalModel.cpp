@@ -18,6 +18,33 @@ LongitudinalModel
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// Encapsulation method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
+LongitudinalModel
+::SetRealization(std::string Name, double Realization)
+{
+    if(m_IndividualRandomVariables.count(Name))
+    {
+
+    }
+    else if(m_PopulationRandomVariables.count(Name))
+    {
+
+    }
+    else if(m_ManifoldRandomVariables.count(Name))
+    {
+        m_Manifold->SetParameter(Name, Realization);
+    }
+    else
+    {
+        std::cout << "OWN WARNING : The key does not exist in the map" << std::endl;
+    }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -543,7 +570,6 @@ LongitudinalModel
     
 }
 
-
 void
 LongitudinalModel
 ::InitializeIndividualRandomVariables()
@@ -573,7 +599,6 @@ LongitudinalModel
     }
 
 }
-
 
 void
 LongitudinalModel
@@ -675,6 +700,7 @@ LongitudinalModel
 
         /*
         /// DEBUGGING METHOD : CHECK IF A COLUMN ORTHOGONAL TO THE GEO DERIVATIVE AT gamma(T0)
+        // TODO : the manifold does not return the geodesic or the geodesic derivative!
         double T0 = R->at("T0")[0];
         std::vector<double> Geo = m_Manifold->GetGeodesic(T0, R);
         std::vector<double> GeoDeriv = m_Manifold->GetGeodesicDerivative(T0, R);
@@ -708,25 +734,41 @@ LongitudinalModel
 
     m_SpaceShifts = SpaceShifts;
 
-    /*
+
     ///////////////////////////////
     //// Debugging : Unit tests ///
     ///////////////////////////////
-    double P0 = R->at("P0")[0];
-    double V0 = R->at("V0")[0];
-    double T0 = R->at("T0")[0];
 
-    for(double t = 68.0; t < 74; t += 0.5)
+    /// Get Data
+    double T0 = R->at("T0")[0];
+    std::vector<double> P0, V0;
+    for(int i = 0; i < m_Manifold->GetDimension(); ++i)
     {
-        std::vector<double> Geodesic = m_Manifold->GetGeodesic(t, R);
-        std::vector<double> ParallelTransport = m_Manifold->ComputeParallelTransport(t, m_SpaceShifts["W0"], R);
-        double Norm = m_Manifold->ComputeScalarProduct(ParallelTransport, ParallelTransport, Geodesic);
-        std::cout << "Norm at " << t << " : " << Norm << std::endl;
+        P0.push_back(R->at("P0")[0]);
+        V0.push_back(R->at("V0")[0]);
+    }
+
+    /// Compute Norm of the parallel transport
+    std::vector<double> Geodesic0 = m_Manifold->ComputeGeodesic(P0, T0, V0, T0);
+    std::vector<double> GeodesicDerivative0 = m_Manifold->ComputeGeodesicDerivative(P0, T0, V0, T0);
+    std::vector<double> OK = m_Manifold->ComputeParallelTransport(P0, T0, V0, m_SpaceShifts["W0"], T0);
+    double ScalarProduct = m_Manifold->ComputeScalarProduct(OK, GeodesicDerivative0, Geodesic0);
+    std::cout << "<diff(g(0)) , W0>|g(0) : " << ScalarProduct << std::endl;
+
+    for(double t = 67; t < 73; t += 1.0)
+    {
+        std::vector<double> Geodesic = m_Manifold->ComputeGeodesic(P0, T0, V0, t);
+        std::vector<double> GeodesicDerivative = m_Manifold->ComputeGeodesicDerivative(P0, T0, V0, t);
+        std::vector<double> ParallelTransport = m_Manifold->ComputeParallelTransport(P0, T0, V0, m_SpaceShifts["W0"], t);
+        double ScalarProd = m_Manifold->ComputeScalarProduct(ParallelTransport, GeodesicDerivative, Geodesic);
+        std::cout << "<diff(g(t)), ParallelTransport(W0)>|g(t)> at " << t << " : " << ScalarProd << std::endl;
+        //double Norm = m_Manifold->ComputeScalarProduct(ParallelTransport, ParallelTransport, Geodesic);
+        //std::cout << "Norm at " << t << " : " << Norm << std::endl;
     }
 
     ///////////////////////////////
     ////End Unit tests ///
     ///////////////////////////////
-     */
+
 
 }

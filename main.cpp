@@ -19,7 +19,7 @@ int main() {
 
 
     /// Manifold
-    unsigned int NumberDimension = 4;
+    unsigned int NumberDimension = 2;
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
 
     /// Model
@@ -29,7 +29,7 @@ int main() {
 
     /// Data
     Model->InitializeFakeRandomVariables();
-    shared_ptr<Data> D(Model->SimulateData(1, 2, 3));
+    shared_ptr<Data> D(Model->SimulateData(1, 2, 2));
 
     // Model
     Model->InitializeRandomVariables();

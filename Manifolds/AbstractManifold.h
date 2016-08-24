@@ -47,7 +47,18 @@ public:
     /// Initialize the parameters
     void InitializeParameters(Parameters P);
 
+    /// Compute the geodesic
+    virtual std::vector<double> ComputeGeodesic(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint) = 0;
+
+    // TODO : CHECK IF THE DERIVATIVE IS ALWAYS NEEDED OR IF IT IS JUST IN THE PROPAGATION MANIFOLD
+    /// Compute the geodesic derivative
+    virtual std::vector<double> ComputeGeodesicDerivative(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint) = 0;
+
     /// Compute the parallel transport
+    virtual std::vector<double> ComputeParallelTransport(std::vector<double> P0, double T0, std::vector<double> V0,
+                                                         std::vector<double> SpaceShift, double TimePoint) = 0;
+
+    /// Compute the parallel curve
     virtual std::vector<double> ComputeParallelCurve(std::vector<double> P0, double T0, std::vector<double> V0,
                                                      std::vector<double> SpaceShift, double TimePoint ) = 0;
 

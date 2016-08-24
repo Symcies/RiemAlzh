@@ -28,6 +28,7 @@ HMWithinGibbsSampler
     for(Realizations::iterator  it = R->begin(); it != R->end(); ++it)
     {
         std::string NameCurrentRV = it->first;
+        std::cout << std::endl << NameCurrentRV << std::endl;
         RandomVariable CurrentRV = M->GetRandomVariable(NameCurrentRV);
 
         for(std::vector<double>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -49,9 +50,14 @@ HMWithinGibbsSampler
             /// Sampling
             double Tau = CandidatePrior * CandidateLikelihood / (CurrentPrior * CurrentLikelihood);
             double UnifSample = Distribution(Generator);
+
             if(UnifSample > Tau) /// It means that the new state is the previous one : no change
             {
                 *it2 = CurrentRealization;
+            }
+            else
+            {
+                M->SetRealization(NameCurrentRV, CandidateRealization);
             }
 
 

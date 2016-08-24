@@ -36,6 +36,9 @@ public:
 
     RandomVariable GetRandomVariable(std::string name);
 
+    /// Change a realization in the model or manifold when it is not a pointer to the realization in the algorithm
+    virtual void SetRealization(std::string Name, double Realization) = 0;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////

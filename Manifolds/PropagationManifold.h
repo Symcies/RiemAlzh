@@ -29,10 +29,19 @@ public:
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Compute the parallel transport
+    /// Compute the geodesic
+    virtual std::vector<double> ComputeGeodesic(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint);
+
+    /// Compute the geodesic derivative
+    virtual std::vector<double> ComputeGeodesicDerivative(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint);
+
+    /// Compute the parallel curve
     virtual std::vector<double> ComputeParallelCurve(std::vector<double> P0, double T0, std::vector<double> V0,
                                                      std::vector<double> SpaceShift, double TimePoint );
 
+    /// Compute the parallel transport
+    virtual std::vector<double> ComputeParallelTransport(std::vector<double> P0, double T0, std::vector<double> V0,
+                                                         std::vector<double> SpaceShift, double TimePoint);
 
     /// Get V0 transformation  wrt the metric at the application point P0 (used in the householder method)
     virtual std::vector<double> GetVelocityTransformToEuclideanSpace(std::vector<double> P0, double T0, std::vector<double> V0);
