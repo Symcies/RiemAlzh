@@ -32,6 +32,9 @@ public:
     /// Compute the geodesic
     virtual std::vector<double> ComputeGeodesic(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint);
 
+    // Compute the geodesic
+    //virtual std::vector<double> ComputeGeodesic(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint, std::vector<double> Delta);
+
     /// Compute the geodesic derivative
     virtual std::vector<double> ComputeGeodesicDerivative(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint);
 

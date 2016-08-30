@@ -10,11 +10,11 @@ ComputeEuclideanScalarProduct(std::vector<double> A, std::vector<double> B)
 	}
 
 	double ScalarProduct = 0;
-	for(std::pair<std::vector<double>::iterator, std::vector<double>::iterator> i(A.begin(), B.begin()) ;
-		i.first != A.end() && i.second != B.end() ;
-		++i.first, ++ i.second)
+    auto u = A.begin();
+    auto v = B.begin();
+	for( ; u != A.end() && v != B.end() ; ++u, ++v)
 	{
-		ScalarProduct += *i.first * *i.second;
+		ScalarProduct += *u * *v;
 	}
 
 	return ScalarProduct;
@@ -29,6 +29,7 @@ LinearCombination(std::vector<double> Coefficients, std::vector<std::vector<doub
     {
         std::cout << " The coefficients and vectors do not have the same size. How to do a linear combination?";
     }
+    //std::cout << Vectors.size() << std::endl;
     std::vector<double> ReturnVector(Vectors[0].size(), 0.0);
 
     typedef std::vector<double>::iterator DoubleIter;
@@ -64,7 +65,7 @@ NormOfVectorDifference(std::vector<double> U, std::vector<double> V)
         i.first != U.end() && i.second != V.end();
         ++i.first, ++i.second)
     {
-        Diff += (i.first-i.second) * (i.first-i.second);
+        Diff += (*i.first-*i.second) * (*i.first-*i.second);
     }
 
     return Diff;

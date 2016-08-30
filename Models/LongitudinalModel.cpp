@@ -25,6 +25,8 @@ void
 LongitudinalModel
 ::SetRealization(std::string Name, double Realization)
 {
+    // TODO : CHECK IF THIS FUNCTION IS NEEDED AND HOW IT INTERACTS WITH INITIALITE_MODEL_PARAMETERS!
+    // TODO : Especially when one knows if the realizations are / aren't in the model
     if(m_IndividualRandomVariables.count(Name))
     {
 
@@ -43,6 +45,39 @@ LongitudinalModel
     }
 }
 
+std::shared_ptr< AbstractRandomVariable >
+LongitudinalModel
+::GetCandidateRandomVariable(const std::string Name, const double Realization)
+{
+    /// Initialization
+    std::map<std::string, double> CandidateVariance;
+    CandidateVariance.insert(std::pair<std::string, double> ("P0", 0.3));
+    CandidateVariance.insert(std::pair<std::string, double> ("V0", 0.01));
+    CandidateVariance.insert(std::pair<std::string, double> ("T0", 0.01));
+
+    for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
+    {
+        CandidateVariance.insert(std::pair<std::string, double> ("Delta" + std::to_string(i), 0.01));
+    }
+
+    for(int i = 0; i < (m_Manifold->GetDimension() - 1) * m_NbIndependentComponents; ++i)
+    {
+        CandidateVariance.insert(std::pair<std::string, double> ("Beta" + std::to_string(i), 0.01));
+    }
+
+    for(int i = 0; i < m_NbIndependentComponents; ++i)
+    {
+        CandidateVariance.insert(std::pair<std::string, double> ("S" + std::to_string(i), 0.01));
+    }
+
+    CandidateVariance.insert(std::pair<std::string, double> ("Ksi", 0.01));
+    CandidateVariance.insert(std::pair<std::string, double> ("Tau", 0.01));
+
+    /// Return part
+    std::shared_ptr<AbstractRandomVariable> CandidateRandomVariable = std::make_shared<GaussianRandomVariable>( Realization, CandidateVariance.at(Name));
+
+    return CandidateRandomVariable;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Other method(s) :
@@ -58,13 +93,14 @@ LongitudinalModel
     InitializePopulationRandomVariables();
     InitializeIndividualRandomVariables();
     InitializeManifoldRandomVariables();
+
+
 }
 
 void
 LongitudinalModel
 ::InitializeModelParameters(const std::shared_ptr<Realizations> &R)
 {
-
 
     // Initialize the manifold parameters, if any
     std::map<std::string, double> Parameters;
@@ -73,6 +109,11 @@ LongitudinalModel
         Parameters.insert(std::pair<std::string, double> (it->first, R->at(it->first)[0]));
     }
     m_Manifold->InitializeParameters(Parameters);
+
+    // TODO : Here is the first place in the model where we have access to the realizations
+    // TODO : Thus, if the candidate random variables depends on the realization, then it might be the right place
+    // TODO : CHECK IF THIS IS THE RIGHT PLACE TO INITIALIZE THE PROPOSITION LAW
+    //InitializeCandidateRandomVariables(R);
 }
 
 std::vector< std::vector< double >>
@@ -118,11 +159,13 @@ LongitudinalModel
             S1.push_back( ComputeEuclideanScalarProduct(ParallelCurve, Observation ) );
             S2.push_back( ComputeEuclideanScalarProduct(ParallelCurve, ParallelCurve) );
         }
+
     }
 
     SufficientStatistics.push_back(S1);
     SufficientStatistics.push_back(S2);
 
+    //std::cout << "1. Calculation : " << SufficientStatistics[0][0] << " & " << SufficientStatistics[0][1] << std::endl;
 
     /////////////////////////
     /// Compute S3 and S4
@@ -158,7 +201,7 @@ LongitudinalModel
     /// Compute S8
     /////////////////////////
     std::vector< double > S8;
-    for(int i = 0; i<m_Manifold->GetDimension() ; ++i)
+    for(int i = 0; i<m_Manifold->GetDimension() - 1; ++i)
     {
         double Delta = R->at("Delta" + std::to_string(i))[0];
         S8.push_back(Delta);
@@ -254,24 +297,35 @@ LongitudinalModel
 
     /// Update Uncertainty variance
 
+    /// Initialization
+    double N = m_Manifold->GetDimension();
+    double K = 0;
+
     /// Sum Yijk²
     double NoiseVariance;
     for(Data::const_iterator it = D->begin() ; it != D->end() ; ++it)
     {
+        K += it->size();
         for(IndividualData::const_iterator it2 = it->begin() ; it2 != it->end() ; ++it2)
         {
-            for(std::vector<double>::const_iterator it3 = it2->first.begin() ; it3 != it2->first.begin() ; ++it3)
+            for(std::vector<double>::const_iterator it3 = it2->first.begin() ; it3 != it2->first.end() ; ++it3)
             {
                 NoiseVariance += *it3 * *it3;
             }
         }
     }
 
+    //std::cout << "1. Noise Var : " << NoiseVariance << std::endl;
+
     /// Sum -2 S1
     for(std::vector< double >::const_iterator it = SufficientStatistics[0].begin() ; it != SufficientStatistics[0].end() ; ++it)
     {
         NoiseVariance -= 2* *it;
+        //std::cout << *it << ". ";
     }
+    //std::cout << std::endl;
+
+    //std::cout << "2. Noise Var : " << NoiseVariance << std::endl;
 
     /// Sum S2
     for(std::vector< double >::const_iterator it = SufficientStatistics[1].begin() ; it != SufficientStatistics[1].end(); ++it)
@@ -279,6 +333,10 @@ LongitudinalModel
         NoiseVariance += *it;
     }
 
+
+    // Divide by N*K, then take the square root
+    NoiseVariance /= N*K;
+    NoiseVariance = sqrt(NoiseVariance);
 
     m_Noise->SetVariance(NoiseVariance);
 
@@ -310,12 +368,14 @@ LongitudinalModel
     double T0 = R->at("T0")[0];
 
     for(std::pair<Data::const_iterator, int> i(D->begin(), 0);
-        i.first < D->end() && i.second < D->size();
+        i.first != D->end() && i.second < D->size();
         ++i.first, ++i.second)
     {
         double AccFactor = exp( R->at("Ksi")[i.second]);
         double TimeShift = R->at("Tau")[i.second];
         std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(i.second));
+
+        //std::cout << "1. Likelihood -> ParallelCurve : " << std::endl;
         for(IndividualData::const_iterator it2 = i.first->begin(); it2 != i.first->end(); ++it2)
         {
             std::vector<double> Observation = it2->first;
@@ -324,21 +384,32 @@ LongitudinalModel
             double TimePoint = AccFactor * (Tij - T0 - TimeShift) + T0;
 
             std::vector<double> ParallelCurve = m_Manifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint);
+            /*
+            if(isnan(ParallelCurve[0]))
+            {
+                std::cout << "Parallel Curve 0 : " << ParallelCurve[0] << std::endl;
+                std::cout << "Args : " << P0[0] << " & " << V0[0] << " & " << SpaceShift[0] << std::endl;
+            }
+            */
+
 
             Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
-
         }
     }
+    //std::cout << "2. Likelihood : " << Likelihood << std::endl;
 
 
+    //std::cout << "1. Likelihood & Variance : " << Likelihood << " & " << m_Noise->GetVariance() << std::endl;
     Likelihood /= -2*m_Noise->GetVariance();
+    //std::cout << "2. Likelihood : " << Likelihood << std::endl;
     Likelihood = exp(Likelihood);
+    //std::cout << "3. Likelihood : " << Likelihood << std::endl;
 
     return Likelihood;
 }
 
 
-std::vector< std::vector< std::pair< std::vector<double>, double> > >*
+std::vector< std::vector< std::pair< std::vector<double>, double> > >
 LongitudinalModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs)
 {
@@ -366,7 +437,8 @@ LongitudinalModel
     ///////////////////
     // Realizations ///
     ///////////////////
-    std::shared_ptr<Realizations> R(SimulateRealizations(NumberOfSubjects));
+    Realizations Real = SimulateRealizations(NumberOfSubjects);
+    std::shared_ptr<Realizations> R = std::make_shared<Realizations>(Real);
 
 
     /////////////////////////////
@@ -391,7 +463,7 @@ LongitudinalModel
     //////////////////////////////////////////////////////////////////////////
     // Simulate Data
     //////////////////////////////////////////////////////////////////////////
-    Data *D = new Data;
+    Data D;
 
     double T0 = R->at("T0")[0];
     std::normal_distribution<double> Normal2(0.0, m_Noise->Sample());
@@ -416,10 +488,9 @@ LongitudinalModel
             ID.push_back(std::pair<std::vector<double>, double> (Observation, *it2));
 
         }
-        D->push_back(ID);
+        D.push_back(ID);
         i+= 1;
     }
-
 
     return D;
 
@@ -453,8 +524,8 @@ LongitudinalModel
     m_PopulationRandomVariables.insert(T0_);
 
     // Initial Velocity
-    double V0Mean = 2.0;
-    double V0Variance = 0.1;
+    double V0Mean = 0.01;
+    double V0Variance = 0.01;
     auto V0 = std::make_shared<GaussianRandomVariable>(V0Mean, V0Variance);
     RandomVariable V0_("V0", V0);
     m_PopulationRandomVariables.insert(V0_);
@@ -470,12 +541,19 @@ LongitudinalModel
         m_PopulationRandomVariables.insert(Beta_);
     }
 
-    // Initial Propagation coefficient
-    /// TODO : Les mettre dans le bon ordre
+    // Noise
+    double NoiseMean = 0.0;
+    double NoiseVariance = 0.01;
+    m_Noise = std::make_shared< GaussianRandomVariable >(NoiseMean, NoiseVariance);
+
+    /////////////////////////////
+    ///  Manifold Parameters  ///
+    /////////////////////////////
+
     std::map<std::string, double> ManifoldParameters;
 
     double DeltaVariance = 0.1;
-    for(int i = 0; i < m_Manifold->GetDimension() ; ++i)
+    for(int i = 0; i < m_Manifold->GetDimension() - 1 ; ++i)
     {
         double DeltaMean = 0.5*(double)i;
         auto Delta = std::make_shared< GaussianRandomVariable >(DeltaMean, DeltaVariance);
@@ -486,10 +564,6 @@ LongitudinalModel
     }
     m_Manifold->InitializeParameters(ManifoldParameters);
 
-    // Noise
-    double NoiseMean = 0.0;
-    double NoiseVariance = 0.01;
-    m_Noise = std::make_shared< GaussianRandomVariable >(NoiseMean, NoiseVariance);
 
     /////////////////////////////
     /// Individual Parameters ///
@@ -511,7 +585,7 @@ LongitudinalModel
 
     // Initial Space shift coefficient
     double SLocation = 0.0;
-    double SScale = 1/2;
+    double SScale = 1.0/2.0;
     auto S = std::make_shared< LaplaceRandomVariable >(SLocation, SScale);
     for(int i = 0; i<m_NbIndependentComponents ; ++i)
     {
@@ -545,8 +619,8 @@ LongitudinalModel
     m_PopulationRandomVariables.insert(T0_);
 
     // Initial Velocity
-    double V0Mean = 2.0;
-    double V0Variance = 0.1;
+    double V0Mean = 0.01;
+    double V0Variance = 0.01;
     auto V0 = std::make_shared<GaussianRandomVariable>(V0Mean, V0Variance);
     RandomVariable V0_("V0", V0);
     m_PopulationRandomVariables.insert(V0_);
@@ -590,7 +664,7 @@ LongitudinalModel
 
     // Initial Space shift coefficient
     double SLocation = 0.0;
-    double SScale = 1/2;
+    double SScale = 1.0/2.0;
     auto S = std::make_shared< LaplaceRandomVariable >(SLocation, SScale);
     for(int i = 0; i<m_NbIndependentComponents ; ++i)
     {
@@ -606,9 +680,8 @@ LongitudinalModel
 {
 
     // Initial Propagation coefficient
-    /// TODO : Les mettre dans le bon ordre
     double DeltaVariance = 0.1;
-    for(int i = 0; i < m_Manifold->GetDimension() ; ++i)
+    for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
     {
         double DeltaMean = 0.5*(double)i;
         auto Delta = std::make_shared< GaussianRandomVariable >(DeltaMean, DeltaVariance);
@@ -617,6 +690,7 @@ LongitudinalModel
         m_ManifoldRandomVariables.insert(Delta_);
     }
 }
+
 
 void
 LongitudinalModel
@@ -676,7 +750,6 @@ LongitudinalModel
 
     /// Drop the first vector which is colinear to gamma_derivative(t0)
     Q.erase(Q.begin());
-
     m_OrthogonalBasis = Q;
 
 }
@@ -697,6 +770,24 @@ LongitudinalModel
         }
         std::vector<double> AColumn = LinearCombination(Beta, m_OrthogonalBasis);
         AMatrix.push_back( AColumn );
+
+        /*
+        if(isnan(LinearCombination(Beta, m_OrthogonalBasis)[0]))
+        {
+            std::cout << "Compute A Matrix : ";
+            for(int i = 0; i < m_OrthogonalBasis.size(); ++i)
+            {
+                for (int j = 0; j < m_OrthogonalBasis[0].size(); ++j)
+                {
+                    std::cout << m_OrthogonalBasis[i][j] << ". ";
+
+                }
+                std::cout << std::endl;
+            }
+            std::cout << std::endl;
+        }
+         */
+
 
         /*
         /// DEBUGGING METHOD : CHECK IF A COLUMN ORTHOGONAL TO THE GEO DERIVATIVE AT gamma(T0)
@@ -728,6 +819,21 @@ LongitudinalModel
             Si.push_back(Realization);
         }
 
+        /*
+        if(isnan(LinearCombination(Si, m_AMatrix)[0]))
+        {
+            std::cout << "Linear combin : ";
+            for(int i = 0; i < m_AMatrix.size(); ++i)
+            {
+                for(int j = 0; j < m_AMatrix[0].size(); ++j)
+                {
+                    std::cout << m_AMatrix[i][j] << ". ";
+                }
+            }
+            std::cout << std::endl;
+        }
+         */
+
         std::pair< std::string, std::vector<double> > SpaceShift("W"+std::to_string(i), LinearCombination(Si, m_AMatrix) );
         SpaceShifts.insert( SpaceShift);
     }
@@ -738,7 +844,7 @@ LongitudinalModel
     ///////////////////////////////
     //// Debugging : Unit tests ///
     ///////////////////////////////
-
+    /*
     /// Get Data
     double T0 = R->at("T0")[0];
     std::vector<double> P0, V0;
@@ -749,9 +855,11 @@ LongitudinalModel
     }
 
     /// Compute Norm of the parallel transport
+    //std::cout << "Args : " << P0[0] << ". " << T0 << ". " << V0[0] << std::endl;
     std::vector<double> Geodesic0 = m_Manifold->ComputeGeodesic(P0, T0, V0, T0);
     std::vector<double> GeodesicDerivative0 = m_Manifold->ComputeGeodesicDerivative(P0, T0, V0, T0);
     std::vector<double> OK = m_Manifold->ComputeParallelTransport(P0, T0, V0, m_SpaceShifts["W0"], T0);
+
     double ScalarProduct = m_Manifold->ComputeScalarProduct(OK, GeodesicDerivative0, Geodesic0);
     std::cout << "<diff(g(0)) , W0>|g(0) : " << ScalarProduct << std::endl;
 
@@ -762,9 +870,10 @@ LongitudinalModel
         std::vector<double> ParallelTransport = m_Manifold->ComputeParallelTransport(P0, T0, V0, m_SpaceShifts["W0"], t);
         double ScalarProd = m_Manifold->ComputeScalarProduct(ParallelTransport, GeodesicDerivative, Geodesic);
         std::cout << "<diff(g(t)), ParallelTransport(W0)>|g(t)> at " << t << " : " << ScalarProd << std::endl;
-        //double Norm = m_Manifold->ComputeScalarProduct(ParallelTransport, ParallelTransport, Geodesic);
-        //std::cout << "Norm at " << t << " : " << Norm << std::endl;
+        double Norm = m_Manifold->ComputeScalarProduct(ParallelTransport, ParallelTransport, Geodesic);
+        std::cout << "Norm at " << t << " : " << Norm << std::endl;
     }
+    */
 
     ///////////////////////////////
     ////End Unit tests ///

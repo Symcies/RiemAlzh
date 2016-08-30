@@ -1,6 +1,7 @@
 #ifndef _AbstractBaseManifold_h
 #define _AbstractBaseManifold_h
 
+#include <iostream>
 
 class AbstractBaseManifold {
 public:
@@ -30,6 +31,9 @@ public:
 
     /// Compute the geodesic derivative
     virtual double ComputeGeodesicDerivative(double P0, double T0, double V0, double TimePoint) = 0;
+
+    /// Compute the scalar product
+    virtual double ComputeScalarProduct(double U, double V, double ApplicationPoint) = 0;
 
 
 protected:

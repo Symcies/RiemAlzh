@@ -40,6 +40,8 @@ GaussianRandomVariable
     double num = exp( - (X - m_Mean)*(X - m_Mean) / (2*m_Variance));
     double result = num/denom;
 
+    //std::cout << "Mean/Variance : " << m_Mean << "/" << m_Variance << std::endl;
+
     if(isnan(result)) std::cout << "Mean/Variance : " << m_Mean << "/" << m_Variance << "  -  Num/Denom : "<<  num << "/" << denom << std::endl;
     return result;
 }

@@ -49,11 +49,11 @@ AbstractModel
 // Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::map<std::string, std::vector<double>>*
+std::map<std::string, std::vector<double>>
 AbstractModel
 ::SimulateRealizations(int NumberOfSubjects)
 {
-    Realizations* R = new Realizations;
+    Realizations R;
 
     // Initialize the realization of the population-wide random variables.
     // They are shared among the individual thus sampled only once
@@ -61,7 +61,7 @@ AbstractModel
     {
         std::vector<double> Realization;
         Realization.push_back(it->second->Sample());
-        R->insert(std::pair< std::string, std::vector<double>> (it->first, Realization));
+        R.insert(std::pair< std::string, std::vector<double>> (it->first, Realization));
     }
 
     // Initialize the realization of the individual random variables.
@@ -73,7 +73,7 @@ AbstractModel
         {
             Realization.push_back(it->second->Sample());
         }
-        R->insert(std::pair< std::string, std::vector<double>> (it->first, Realization));
+        R.insert(std::pair< std::string, std::vector<double>> (it->first, Realization));
     }
 
     // Initialize the realization of the manifold random variables/
@@ -82,7 +82,7 @@ AbstractModel
     {
         std::vector<double> Realization;
         Realization.push_back(it->second->Sample());
-        R->insert(std::pair< std::string, std::vector<double>> (it->first, Realization));
+        R.insert(std::pair< std::string, std::vector<double>> (it->first, Realization));
     }
     return R;
 }

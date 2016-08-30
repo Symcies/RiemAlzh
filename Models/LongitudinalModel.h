@@ -29,6 +29,9 @@ public:
     /// Change a realization in the model or manifold when it is not a pointer to the realization in the algorithm
     virtual void SetRealization(std::string Name, double Realization);
 
+    /// Get the candidate random variable corresponding to a realization
+    virtual std::shared_ptr< AbstractRandomVariable > GetCandidateRandomVariable(const std::string Name, const double Realization);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +53,7 @@ public:
     virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
 
     /// Simulate data according to the model
-    virtual Data* SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
+    virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

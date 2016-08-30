@@ -36,7 +36,10 @@ public:
 
     RandomVariable GetRandomVariable(std::string name);
 
-    /// Change a realization in the model or manifold when it is not a pointer to the realization in the algorithm
+    /// Get the candidate random variable corresponding to a realization
+    virtual std::shared_ptr< AbstractRandomVariable > GetCandidateRandomVariable(const std::string Name, const double Realization) = 0;
+
+    /// Change a realization/parameter in the model or manifold when it is not a pointer to the realization in the algorithm
     virtual void SetRealization(std::string Name, double Realization) = 0;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,6 +55,8 @@ public:
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D) = 0;
 
+    // TODO : TO BE CHANGED ABSOLUTELLY : this is not how the random variables are updated GENERALLY
+    // TODO : In fact, this was made because it is not generic by now as for the algorithm maximization step
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& SufficientStatistics, const std::shared_ptr<Data>& D) = 0;
 
@@ -59,10 +64,10 @@ public:
     virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D) = 0;
 
     /// Simulate data according to the model
-    virtual Data* SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) = 0;
+    virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) = 0;
 
     /// Simulate some random variable realizations
-    Realizations* SimulateRealizations(int NumberOfSubjects);
+    Realizations SimulateRealizations(int NumberOfSubjects);
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

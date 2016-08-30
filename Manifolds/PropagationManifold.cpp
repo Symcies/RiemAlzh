@@ -29,12 +29,19 @@ PropagationManifold
 {
     std::vector<double> Geodesic;
 
-
+    /// Initialization
     std::vector<double> PropParameters = GetPropagationParameters();
     auto IterPos = P0.begin();
-    auto IterVel = V0.begin();
+    auto IterVel = V0.begin() ;
     auto IterProp = PropParameters.begin();
 
+    /// First component
+    double FirstComponent = m_BaseManifold->ComputeGeodesic(*IterPos, T0, *IterVel, TimePoint);
+    Geodesic.push_back( FirstComponent );
+    ++IterPos;
+    ++IterVel;
+
+    /// Next components
     for(    ; IterPos != P0.end() && IterVel != V0.end() && IterProp != PropParameters.end()
             ; ++IterPos, ++IterVel, ++IterProp)
     {
@@ -51,12 +58,19 @@ PropagationManifold
 {
     std::vector<double> GeodesicDerivative;
 
-
+    // Initialization
     std::vector<double> PropParameters = GetPropagationParameters();
     auto IterPos = P0.begin();
     auto IterVel = V0.begin();
     auto IterProp = PropParameters.begin();
 
+    // First component
+    double FirstComponent = m_BaseManifold->ComputeGeodesicDerivative(*IterPos, T0, *IterVel, TimePoint);
+    GeodesicDerivative.push_back( FirstComponent );
+    ++IterPos;
+    ++IterVel;
+
+    // Next components
     for(    ; IterPos != P0.end() && IterVel != V0.end() && IterProp != PropParameters.end()
             ; ++IterPos, ++IterVel, ++IterProp)
     {
@@ -75,19 +89,26 @@ PropagationManifold
 {
     std::vector<double> ParallelTransport;
 
-    std::vector<double> PropParameters = GetPropagationParameters();
-    auto IterProp = PropParameters.begin();
-    auto IterPos = P0.begin();
-    auto IterVel = V0.begin();
-    auto IterSpa = SpaceShift.begin();
-    for(    ; IterPos != P0.end() && IterVel != V0.end() && IterSpa != SpaceShift.end() && IterProp != PropParameters.end()
-            ; ++IterPos, ++IterVel, ++IterSpa, ++IterProp)
-    {
-        double Num = *IterSpa * m_BaseManifold->ComputeGeodesicDerivative(*IterPos, T0, *IterVel, TimePoint + *IterProp);
-        double Denom = m_BaseManifold->ComputeGeodesicDerivative(*IterPos, T0, *IterVel, TimePoint + *IterProp);
-        ParallelTransport.push_back( Num / Denom );
-    }
+    // Initialization
+    std::vector<double> GeodesicDerivative0 = ComputeGeodesicDerivative(P0, T0, V0, T0);
+    std::vector<double> GeodesicDerivative = ComputeGeodesicDerivative(P0, T0, V0, TimePoint);
 
+    auto IterSpace  = SpaceShift.begin();
+    auto IterDeriv0 = GeodesicDerivative0.begin();
+    auto IterDeriv  = GeodesicDerivative.begin();
+
+    // Compute parallel transport
+    for(    ; IterSpace != SpaceShift.end() && IterDeriv0 != GeodesicDerivative0.end() && IterDeriv != GeodesicDerivative.end()
+            ; ++IterSpace, ++IterDeriv0, ++IterDeriv)
+    {
+        double Coordinate = *IterSpace * *IterDeriv / *IterDeriv0;
+        if(isnan(Coordinate))
+        {
+            std::cout << "here : " << Coordinate << std::endl;
+        }
+        ParallelTransport.push_back( Coordinate );
+    }
+    std::cout << "here : " << ParallelTransport[0] << std::endl;
     return ParallelTransport;
 
 }
@@ -103,21 +124,22 @@ PropagationManifold
 
     std::vector<double> ParallelTransport;
 
+    // Initialization
+    std::vector<double> GeodesicDerivative0 = ComputeGeodesicDerivative(P0, T0, V0, T0);
     std::vector<double> PropParameters = GetPropagationParameters();
-    auto IterProp = PropParameters.begin();
-    auto IterPos = P0.begin();
-    auto IterVel = V0.begin();
-    auto IterSpa = SpaceShift.begin();
 
+    auto IterDeriv0 = GeodesicDerivative0.begin();
+    auto IterSpace  = SpaceShift.begin();
+    auto IterProp   = PropParameters.begin();
+    auto IterPos    = P0.begin();
+    auto IterVel    = V0.begin();
 
-    for(    ; IterProp != PropParameters.end() && IterPos != P0.end() && IterVel != V0.end() && IterSpa != SpaceShift.end()
-            ; ++IterProp, ++IterPos, ++IterVel, ++IterSpa)
+    //Compute parallel curve
+    for(    ; IterDeriv0 != GeodesicDerivative0.end() && IterSpace != SpaceShift.end() && IterProp != PropParameters.end() && IterPos != P0.end() && IterVel != V0.end()
+            ; ++IterDeriv0, ++IterSpace, ++IterProp, ++IterPos, ++IterVel)
     {
-        double T = *IterSpa / m_BaseManifold->ComputeGeodesicDerivative(*IterPos, T0, *IterVel, T0 + *IterProp );
-        T += TimePoint + *IterProp;
-        double Coordinate = m_BaseManifold->ComputeGeodesic(*IterPos, T0, *IterVel, T + *IterProp );
-
-        ParallelTransport.push_back(Coordinate);
+        double Coordinate = m_BaseManifold->ComputeGeodesic(*IterPos, T0, *IterVel, *IterSpace / *IterDeriv0 + TimePoint + *IterProp);
+        ParallelTransport.push_back( Coordinate );
     }
 
     return ParallelTransport;
@@ -130,18 +152,33 @@ PropagationManifold
 
     std::vector<double> TransformedVelocity;
 
+    // Initialization
+    std::vector<double> Geodesic0 = ComputeGeodesic(P0, T0, V0, T0);
+    std::vector<double> GeodesicDerivative0 = ComputeGeodesicDerivative(P0, T0, V0, T0);
 
-    std::vector<double> PropParameters = GetPropagationParameters();
-    auto IterPos = P0.begin();
-    auto IterVel = V0.begin();
-    auto IterPro = PropParameters.begin();
-    for(    ; IterPos != P0.end() && IterVel != V0.end() && IterPro != PropParameters.end()
-            ; ++IterPos, ++IterVel, ++IterPro)
+    auto IterGeo = Geodesic0.begin();
+    auto IterGeoDer = GeodesicDerivative0.begin();
+
+    // Compute velocity transformation
+    for(    ; IterGeo != Geodesic0.end() && IterGeoDer != GeodesicDerivative0.end()
+            ; ++IterGeo, ++IterGeoDer)
     {
-        double Geo = m_BaseManifold->ComputeGeodesic(*IterPos, T0, *IterVel, T0 + *IterPro);
-        double GeoDer = m_BaseManifold->ComputeGeodesicDerivative(*IterPos, T0, *IterVel, T0 + *IterPro);
-        double Coordinate = GeoDer / ( Geo * Geo * (1.0-Geo) * (1.0-Geo) );
-        TransformedVelocity.push_back(Coordinate);
+        double Denom = *IterGeo * *IterGeo * (1.0 - *IterGeo) * (1.0 - *IterGeo);
+        if(Denom == 0)
+        {
+            std::cout << "ici P0 & V0 : ";
+            for(int i = 0; i < P0.size(); ++i)
+            {
+                std::cout << P0[i] << " & " << V0[i] << " - ";
+            }
+            std::cout << std::endl;
+        }
+        else
+        {
+
+        }
+        double Coordinate = *IterGeoDer / Denom;
+        TransformedVelocity.push_back( Coordinate );
     }
 
     return TransformedVelocity;
@@ -158,15 +195,15 @@ PropagationManifold
     }
 
     double ScalarProduct = 0;
-
-    std::cout << "Coord by coord : ";
-    for(int i = 0; i < U.size(); ++i)
+    auto u = U.begin();
+    auto v = V.begin();
+    auto p = ApplicationPoint.begin();
+    for(    ; u != U.end() && v != V.end() && p != ApplicationPoint.end()
+            ; ++u, ++v, ++p)
     {
-        double P = ApplicationPoint[i];
-        P = 1.0 / ( P * P * (1-P) * (1-P) );
-        
-        ScalarProduct += U[i] * P * V[i];
+        ScalarProduct += m_BaseManifold->ComputeScalarProduct(*u, *v, *p);
     }
+
 
     return ScalarProduct;
 }
@@ -180,7 +217,7 @@ PropagationManifold
 ::GetPropagationParameters()
 {
     std::vector<double> PropagationParameters;
-    for(int i = 0; i < m_Dimension; ++i)
+    for(int i = 0; i < m_Dimension - 1; ++i)
     {
         PropagationParameters.push_back( m_Parameters.at("Delta" + std::to_string(i)) );
     }

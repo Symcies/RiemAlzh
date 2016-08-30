@@ -14,12 +14,12 @@ typedef std::map<std::string, std::vector<double>> Realizations;
 
 
 int main() {
+
     /// Base Manifold
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
 
-
     /// Manifold
-    unsigned int NumberDimension = 2;
+    unsigned int NumberDimension = 3;
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
 
     /// Model
@@ -29,7 +29,7 @@ int main() {
 
     /// Data
     Model->InitializeFakeRandomVariables();
-    shared_ptr<Data> D(Model->SimulateData(1, 2, 2));
+    std::shared_ptr<Data> D = std::make_shared<Data>( Model->SimulateData(5, 4, 7) );
 
     // Model
     Model->InitializeRandomVariables();
@@ -37,15 +37,15 @@ int main() {
     /// Sampler
     shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
 
-    /// Realizations
-    shared_ptr<Realizations> R(Model->SimulateRealizations(15));
-
 
     /// Algo
     auto Algo = make_shared<Algorithm>();
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
     Algo->ComputeMCMCSAEM(D);
+
+    /// Realizations
+    auto R = std::make_shared<Realizations>( Model->SimulateRealizations(5) );
 
 
     cout << "Hello, World!" << endl;

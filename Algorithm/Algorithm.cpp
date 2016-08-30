@@ -23,16 +23,15 @@ Algorithm
 ::ComputeMCMCSAEM(const std::shared_ptr<Data>& D)
 {
 
-    int NbMaxIterations = 1;
+    int NbMaxIterations = 50;
     InitializeRealization((int)D->size());
-    InitializeModelParameters(m_Realization);
-    InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realization, D));
+    InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
 
     for(int k = 0; k<NbMaxIterations; ++k)
     {
         std::cout << "--------------------- Iteration " << k << " -------------------------------" << std::endl;
         ComputeSimulationStep(D);
-        std::vector< std::vector< double >> SufficientStatistics = m_Model->GetSufficientStatistics(m_Realization, D);
+        std::vector< std::vector< double >> SufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
         ComputeStochasticApproximation(k, SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
     }
@@ -48,9 +47,9 @@ Algorithm
 ::InitializeStochasticSufficientStatistics(const SufficientStatisticsVector& S)
 {
     m_StochasticSufficientStatistics = S;
-    for(SufficientStatisticsVector::iterator it = m_StochasticSufficientStatistics.begin(); it != m_StochasticSufficientStatistics.end(); ++it)
+    for(auto it = m_StochasticSufficientStatistics.begin(); it != m_StochasticSufficientStatistics.end(); ++it)
     {
-        std::fill(it->begin(), it->end(), 0);
+        std::fill(it->begin(), it->end(), 0.0);
     }
 }
 
@@ -60,8 +59,9 @@ void
 Algorithm
 ::InitializeRealization(unsigned int NbIndividuals)
 {
-    std::shared_ptr<Realizations> R(m_Model->SimulateRealizations(NbIndividuals));
-    m_Realization = R;
+    Realizations R = m_Model->SimulateRealizations(NbIndividuals);
+    m_Realizations = std::make_shared<Realizations>(R);
+    InitializeModelParameters(m_Realizations);
 }
 
 void
@@ -78,7 +78,7 @@ Algorithm
     typedef Realizations::iterator ReaIter;
     typedef RandomVariableMap::iterator RandVarIter;
 
-    m_Sampler->Sample(m_Realization, m_Model, D);
+    m_Sampler->Sample(m_Realizations, m_Model, D);
 }
 
 
@@ -90,25 +90,37 @@ Algorithm
     SufficientStatisticsVector NewStochasticSufficientStatistics;
 
     double NoMemoryTime = 100;  // TODO : Initialize, maybe out of the Compute function? Maybe in the decreasing step size function 
-    double StepSize = DecreasingStepSize(iteration, 100);
+    double StepSize = DecreasingStepSize(iteration, NoMemoryTime);
 
-    for(std::pair<SufficientStatisticsVector::iterator, SufficientStatisticsVector::iterator> i(SufficientStatistics.begin(), m_StochasticSufficientStatistics.begin()) ;
-        i.first != SufficientStatistics.end() && i.second != m_StochasticSufficientStatistics.end() ;
-        ++i.first, ++i.second)
+    auto IterStat = SufficientStatistics.begin();
+    auto IterStochStat = m_StochasticSufficientStatistics.begin();
+
+    for(    ; IterStat != SufficientStatistics.end() && IterStochStat != m_StochasticSufficientStatistics.end()
+            ; ++IterStat, ++IterStochStat)
     {
         std::vector<double> S;
 
-        for(std::pair<std::vector<double>::iterator, std::vector<double>::iterator> j(i.first->begin(), i.second->begin()) ;
-            j.first != i.first->end() && j.second != i.second->end() ;
-            ++j.first, ++j.second)
+        auto IterCoordStat = IterStat->begin();
+        auto IterCoordStochStat = IterStochStat->begin();
+        for(    ; IterCoordStat != IterStat->end() && IterCoordStochStat != IterStochStat->end()
+                ; ++IterCoordStat, ++IterCoordStochStat)
         {
-            S.push_back(*j.second + StepSize * (*j.first - *j.second)); // TODO : CHECK WHAT i AND j are
+            if(isnan(*IterCoordStochStat + StepSize * (*IterCoordStat - *IterCoordStochStat)))
+            {
+                //std::cout << "Comput : " << *IterCoordStochStat << " & " << StepSize << " & " << *IterCoordStat << std::endl;
+            }
+            S.push_back( *IterCoordStochStat + StepSize * (*IterCoordStat - *IterCoordStochStat) );
         }
 
         NewStochasticSufficientStatistics.push_back(S);
+
     }
 
+    //std::cout << "2. Stoch approx : " << NewStochasticSufficientStatistics[0][0] << " & " << NewStochasticSufficientStatistics[0][1] << std::endl;
+
+
     m_StochasticSufficientStatistics = NewStochasticSufficientStatistics;
+
 }
 
 
