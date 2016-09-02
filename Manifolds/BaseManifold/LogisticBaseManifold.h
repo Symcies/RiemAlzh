@@ -34,8 +34,15 @@ public:
     /// Compute the geodesic derivative
     virtual double ComputeGeodesicDerivative(double P0, double T0, double V0, double TimePoint);
 
+    /// Compute the parallel transport
+    virtual double ComputeParallelTransport(double P0, double T0, double V0, double SpaceShift, double TimePoint);
+
+    /// Compute the parallel curve
+    virtual double ComputeParallelCurve(double P0, double T0, double V0, double SpaceShift, double TimePoint);
+
     /// Compute the scalar product
     virtual double ComputeScalarProduct(double U, double V, double ApplicationPoint);
+
 
 
 protected:

@@ -19,7 +19,8 @@ HMWithinGibbsSampler
 
 void
 HMWithinGibbsSampler
-::Sample(std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M, const std::shared_ptr<Data>& D)
+::Sample(std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
+         std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D)
 {
     std::random_device RD;
     std::default_random_engine Generator(RD());
@@ -29,6 +30,7 @@ HMWithinGibbsSampler
     for(Realizations::iterator  it = R->begin(); it != R->end(); ++it)
     {
         std::string NameCurrentRV = it->first;
+        //std::cout << NameCurrentRV << " : ";
         RandomVariable CurrentRV = M->GetRandomVariable(NameCurrentRV);
 
         for(std::vector<double>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -40,10 +42,9 @@ HMWithinGibbsSampler
             double CurrentLikelihood = M->ComputeLikelihood(R, D);
 
             /// Compute the candidate part
-            std::shared_ptr<AbstractRandomVariable> CandidateRV = M->GetCandidateRandomVariable(NameCurrentRV, CurrentRealization);
+            auto CandidateRV = Candidates->GetRandomVariable(NameCurrentRV, CurrentRealization);
             double CandidateRealization = CandidateRV->Sample();
             double CandidatePrior = CandidateRV->Likelihood(CandidateRealization);
-            // TODO : gros problème car ça omet les realizations deltak qui ne sont updatées qu'avec setrealization
             *it2 = CandidateRealization;
             double CandidateLikelihood = M->ComputeLikelihood(R, D);
 
@@ -59,15 +60,19 @@ HMWithinGibbsSampler
             if(std::isnan(Tau))
             {
                 std::cout << NameCurrentRV << " isNaN" << std::endl;
-                std::cout << "Likelihood : " << CandidateLikelihood << std::endl;
-                //std::cout << "Likelihood : " << CurrentLikelihood << std::endl;
             }
+            /*
+            std::cout << NameCurrentRV << " : " << std::endl;
+            std::cout << "Candidate Likelihood/Prior : " << CandidateLikelihood << "/" << CandidatePrior << std::endl;
+            std::cout << "Current   Likelihood/Prior : " << CurrentLikelihood << "/" << CurrentPrior << std::endl;
+            */
 
             //////////////////////////
             ///   END DEBUGGING   ////
             //////////////////////////
 
-            std::cout << Tau << ". ";
+
+            //std::cout << Tau << "#  ";
             if(UnifSample > Tau) /// It means that the new state is the previous one : no change
             {
                 *it2 = CurrentRealization;
@@ -77,7 +82,6 @@ HMWithinGibbsSampler
             {
                 // TO DO : Should be in the compute likelihood part ?
                 // Useless if there are only pointers to the realizations
-                M->SetRealization(NameCurrentRV, CandidateRealization);
                 //std::cout << "1. ";
             }
 

@@ -44,8 +44,24 @@ LogisticBaseManifold
 
 double
 LogisticBaseManifold
+::ComputeParallelTransport(double P0, double T0, double V0, double SpaceShift, double TimePoint)
+{
+    return SpaceShift * ComputeGeodesicDerivative(P0, T0, V0, TimePoint) / ComputeGeodesicDerivative(P0, T0, V0, T0);
+}
+
+double
+LogisticBaseManifold
+::ComputeParallelCurve(double P0, double T0, double V0, double SpaceShift, double TimePoint)
+{
+    double Time = SpaceShift / ComputeGeodesicDerivative(P0, T0, V0, T0) + TimePoint;
+    return ComputeGeodesicDerivative(P0, T0, V0, Time);
+}
+
+double
+LogisticBaseManifold
 ::ComputeScalarProduct(double U, double V, double ApplicationPoint)
 {
     double G = ApplicationPoint * ApplicationPoint * (1 - ApplicationPoint) * (1 - ApplicationPoint);
     return U * V / G;
 }
+

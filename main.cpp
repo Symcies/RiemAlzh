@@ -15,21 +15,23 @@ typedef std::map<std::string, std::vector<double>> Realizations;
 
 int main() {
 
+    //// INITIALIZATION ///
+    unsigned int NumberDimension = 3;
+    unsigned int NumberIndependentComponents = 2;
+
+
     /// Base Manifold
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
 
     /// Manifold
-    unsigned int NumberDimension = 3;
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
 
     /// Model
-    unsigned int NumberIndependentComponents = 2;
-    shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents);
-    Model->SetManifold(Manifold);
+    shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
 
     /// Data
     Model->InitializeFakeRandomVariables();
-    std::shared_ptr<Data> D = std::make_shared<Data>( Model->SimulateData(5, 4, 7) );
+    std::shared_ptr<Data> D = std::make_shared<Data>( Model->SimulateData(10, 3, 3) );
 
     // Model
     Model->InitializeRandomVariables();

@@ -7,7 +7,9 @@
 
 AbstractBaseManifold
 ::AbstractBaseManifold()
-{ }
+{
+
+}
 
 AbstractBaseManifold
 ::~AbstractBaseManifold()

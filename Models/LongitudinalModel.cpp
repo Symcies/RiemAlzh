@@ -1,4 +1,5 @@
 #include "LongitudinalModel.h"
+#include "../Manifolds/PropagationManifold.h"
 
 
 
@@ -7,9 +8,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 LongitudinalModel
-::LongitudinalModel(unsigned int NbIndependentComponents)
+::LongitudinalModel(const unsigned int NbIndependentComponents, std::shared_ptr<AbstractManifold>& M)
 {
     m_NbIndependentComponents = NbIndependentComponents;
+    std::shared_ptr<PropagationManifold> Manifold = std::dynamic_pointer_cast<PropagationManifold>(M);
+    m_Manifold = Manifold;
 }
 
 LongitudinalModel
@@ -21,63 +24,7 @@ LongitudinalModel
 // Encapsulation method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
-LongitudinalModel
-::SetRealization(std::string Name, double Realization)
-{
-    // TODO : CHECK IF THIS FUNCTION IS NEEDED AND HOW IT INTERACTS WITH INITIALITE_MODEL_PARAMETERS!
-    // TODO : Especially when one knows if the realizations are / aren't in the model
-    if(m_IndividualRandomVariables.count(Name))
-    {
 
-    }
-    else if(m_PopulationRandomVariables.count(Name))
-    {
-
-    }
-    else if(m_ManifoldRandomVariables.count(Name))
-    {
-        m_Manifold->SetParameter(Name, Realization);
-    }
-    else
-    {
-        std::cout << "OWN WARNING : The key does not exist in the map" << std::endl;
-    }
-}
-
-std::shared_ptr< AbstractRandomVariable >
-LongitudinalModel
-::GetCandidateRandomVariable(const std::string Name, const double Realization)
-{
-    /// Initialization
-    std::map<std::string, double> CandidateVariance;
-    CandidateVariance.insert(std::pair<std::string, double> ("P0", 0.3));
-    CandidateVariance.insert(std::pair<std::string, double> ("V0", 0.01));
-    CandidateVariance.insert(std::pair<std::string, double> ("T0", 0.01));
-
-    for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
-    {
-        CandidateVariance.insert(std::pair<std::string, double> ("Delta" + std::to_string(i), 0.01));
-    }
-
-    for(int i = 0; i < (m_Manifold->GetDimension() - 1) * m_NbIndependentComponents; ++i)
-    {
-        CandidateVariance.insert(std::pair<std::string, double> ("Beta" + std::to_string(i), 0.01));
-    }
-
-    for(int i = 0; i < m_NbIndependentComponents; ++i)
-    {
-        CandidateVariance.insert(std::pair<std::string, double> ("S" + std::to_string(i), 0.01));
-    }
-
-    CandidateVariance.insert(std::pair<std::string, double> ("Ksi", 0.01));
-    CandidateVariance.insert(std::pair<std::string, double> ("Tau", 0.01));
-
-    /// Return part
-    std::shared_ptr<AbstractRandomVariable> CandidateRandomVariable = std::make_shared<GaussianRandomVariable>( Realization, CandidateVariance.at(Name));
-
-    return CandidateRandomVariable;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Other method(s) :
@@ -97,25 +44,6 @@ LongitudinalModel
 
 }
 
-void
-LongitudinalModel
-::InitializeModelParameters(const std::shared_ptr<Realizations> &R)
-{
-
-    // Initialize the manifold parameters, if any
-    std::map<std::string, double> Parameters;
-    for(RandomVariableMap::iterator it = m_ManifoldRandomVariables.begin(); it != m_ManifoldRandomVariables.end(); ++it)
-    {
-        Parameters.insert(std::pair<std::string, double> (it->first, R->at(it->first)[0]));
-    }
-    m_Manifold->InitializeParameters(Parameters);
-
-    // TODO : Here is the first place in the model where we have access to the realizations
-    // TODO : Thus, if the candidate random variables depends on the realization, then it might be the right place
-    // TODO : CHECK IF THIS IS THE RIGHT PLACE TO INITIALIZE THE PROPOSITION LAW
-    //InitializeCandidateRandomVariables(R);
-}
-
 std::vector< std::vector< double >>
 LongitudinalModel
 ::GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D)
@@ -125,20 +53,18 @@ LongitudinalModel
     /////////////////////////
     /// Get the vectors P0 and V0
     /////////////////////////
-    std::vector<double> P0, V0;
-    for(int i = 0; i < m_Manifold->GetDimension(); ++i)
-    {
-        P0.push_back(R->at("P0")[0]);
-        V0.push_back(R->at("V0")[0]);
-    }
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+    double T0 = R->at("T0")[0];
+    std::vector<double> InitialPosition = GetInitialPosition(R);
+    std::vector<double> InitialVelocity = GetInitialVelocity(R);
+    std::vector<double> Delta = GetPropagationCoefficients(R);
+
 
     /////////////////////////
     /// Compute S1 and S2
     /////////////////////////
     std::vector< double > S1, S2;
 
-    /// Get population wide attribute , then, Loop over all the subjects
-    double T0 = R->at("T0")[0];
 
     for(std::pair<Data::const_iterator, int> i(D->begin(), 0) ;
         i.first != D->end() && i.second < D->size() ;
@@ -153,7 +79,7 @@ LongitudinalModel
         {
             double TimePoint = exp(Ksi) * ( it->second - T0 - Tau) + T0;
 
-            std::vector<double> ParallelCurve = m_Manifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint);
+            std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(InitialPosition, T0, InitialVelocity, SpaceShift, TimePoint, Delta);
             std::vector<double> Observation = it->first;
 
             S1.push_back( ComputeEuclideanScalarProduct(ParallelCurve, Observation ) );
@@ -200,14 +126,7 @@ LongitudinalModel
     /////////////////////////
     /// Compute S8
     /////////////////////////
-    std::vector< double > S8;
-    for(int i = 0; i<m_Manifold->GetDimension() - 1; ++i)
-    {
-        double Delta = R->at("Delta" + std::to_string(i))[0];
-        S8.push_back(Delta);
-    }
-    
-    SufficientStatistics.push_back(S8);
+    SufficientStatistics.push_back(Delta);
 
 
     /////////////////////////
@@ -216,7 +135,7 @@ LongitudinalModel
     std::vector< double > S9;
     for(int i = 0; i < (m_Manifold->GetDimension() - 1) * m_NbIndependentComponents; ++i)
     {
-        double Beta = R->at("Beta" + std::to_string(i))[0];
+        double Beta = R->at("Beta#" + std::to_string(i))[0];
         S9.push_back(Beta);
     }
 
@@ -253,7 +172,7 @@ LongitudinalModel
         i.first != SufficientStatistics[7].end() && i.second < SufficientStatistics[7].size() ;
         ++i.first, ++i.second)
     {
-        std::string Name = "Delta" + std::to_string(i.second);
+        std::string Name = "Delta#" + std::to_string(i.second);
         auto AbstractDelta = m_ManifoldRandomVariables.at(Name);
         auto Delta = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractDelta ) ;
         Delta->SetMean(*i.first) ;              //TODO : Maybe store P0...
@@ -264,7 +183,7 @@ LongitudinalModel
         i.first != SufficientStatistics[8].end() && i.second < SufficientStatistics[8].size() ;
         ++i.first, ++i.second )
     {
-        std::string Name = "Beta" + std::to_string(i.second);
+        std::string Name = "Beta#" + std::to_string(i.second);
         auto AbstractBeta = m_PopulationRandomVariables.at(Name);
         auto Beta = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractBeta );
         Beta->SetMean(*i.first);                //TODO : Maybe store P0...
@@ -353,19 +272,18 @@ LongitudinalModel
     ComputeAMatrix(R);
     ComputeSpaceShifts(R, D->size());
 
-    /////////////////////////
-    /// Get the vectors P0 and V0
-    /////////////////////////
-    std::vector<double> P0, V0;
-    for(int i = 0; i < m_Manifold->GetDimension(); ++i)
-    {
-        P0.push_back(R->at("P0")[0]);
-        V0.push_back(R->at("V0")[0]);
-    }
 
-    double Likelihood = 0;
-
+    /// Get the data
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
     double T0 = R->at("T0")[0];
+    std::vector<double> InitialPosition = GetInitialPosition(R);
+    std::vector<double> InitialVelocity = GetInitialVelocity(R);
+    std::vector<double> Delta = GetPropagationCoefficients(R);
+
+
+
+    /// Compute the likelihood
+    double Likelihood = 0;
 
     for(std::pair<Data::const_iterator, int> i(D->begin(), 0);
         i.first != D->end() && i.second < D->size();
@@ -375,7 +293,6 @@ LongitudinalModel
         double TimeShift = R->at("Tau")[i.second];
         std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(i.second));
 
-        //std::cout << "1. Likelihood -> ParallelCurve : " << std::endl;
         for(IndividualData::const_iterator it2 = i.first->begin(); it2 != i.first->end(); ++it2)
         {
             std::vector<double> Observation = it2->first;
@@ -383,27 +300,16 @@ LongitudinalModel
             double Tij = it2->second;
             double TimePoint = AccFactor * (Tij - T0 - TimeShift) + T0;
 
-            std::vector<double> ParallelCurve = m_Manifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint);
-            /*
-            if(isnan(ParallelCurve[0]))
-            {
-                std::cout << "Parallel Curve 0 : " << ParallelCurve[0] << std::endl;
-                std::cout << "Args : " << P0[0] << " & " << V0[0] << " & " << SpaceShift[0] << std::endl;
-            }
-            */
+            std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(InitialPosition, T0, InitialVelocity, SpaceShift, TimePoint, Delta);
+
 
 
             Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
         }
     }
-    //std::cout << "2. Likelihood : " << Likelihood << std::endl;
 
-
-    //std::cout << "1. Likelihood & Variance : " << Likelihood << " & " << m_Noise->GetVariance() << std::endl;
     Likelihood /= -2*m_Noise->GetVariance();
-    //std::cout << "2. Likelihood : " << Likelihood << std::endl;
     Likelihood = exp(Likelihood);
-    //std::cout << "3. Likelihood : " << Likelihood << std::endl;
 
     return Likelihood;
 }
@@ -413,6 +319,8 @@ std::vector< std::vector< std::pair< std::vector<double>, double> > >
 LongitudinalModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs)
 {
+
+
 
     //////////////////////////
     // Simulate Time Point ///
@@ -451,21 +359,22 @@ LongitudinalModel
 
 
     /////////////////////////
-    /// Get the vectors P0 and V0
+    /// Get the data
     /////////////////////////
-    std::vector<double> P0, V0;
-    for(int i = 0; i < m_Manifold->GetDimension(); ++i)
-    {
-        P0.push_back(R->at("P0")[0]);
-        V0.push_back(R->at("V0")[0]);
-    }
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+    double T0 = R->at("T0")[0];
+    std::vector<double> InitialPosition = GetInitialPosition(R);
+    std::vector<double> InitialVelocity = GetInitialVelocity(R);
+    std::vector<double> Delta = GetPropagationCoefficients(R);
+
 
     //////////////////////////////////////////////////////////////////////////
     // Simulate Data
     //////////////////////////////////////////////////////////////////////////
     Data D;
 
-    double T0 = R->at("T0")[0];
+
+
     std::normal_distribution<double> Normal2(0.0, m_Noise->Sample());
     int i = 0;
 
@@ -479,7 +388,7 @@ LongitudinalModel
 
             double Time = exp(R->at("Ksi")[i]) * (*it2 - T0 - Tau) + T0;
             std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
-            std::vector<double> ParallelCurve = m_Manifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, Time);
+            std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(InitialPosition, T0, InitialVelocity, SpaceShift, Time, Delta);
             for(std::vector<double>::iterator it3 = ParallelCurve.begin() ; it3 != ParallelCurve.end(); ++it3)
             {
                 double Gen = Normal2(RNG);
@@ -536,7 +445,7 @@ LongitudinalModel
     {
         double BetaMean = (double)i;
         auto Beta = std::make_shared< GaussianRandomVariable> (BetaMean, BetaVariance);
-        std::string name = "Beta" + std::to_string(i);
+        std::string name = "Beta#" + std::to_string(i);
         RandomVariable Beta_(name, Beta);
         m_PopulationRandomVariables.insert(Beta_);
     }
@@ -557,12 +466,11 @@ LongitudinalModel
     {
         double DeltaMean = 0.5*(double)i;
         auto Delta = std::make_shared< GaussianRandomVariable >(DeltaMean, DeltaVariance);
-        std::string name = "Delta" + std::to_string(i);
+        std::string name = "Delta#" + std::to_string(i);
         RandomVariable Delta_(name, Delta);
         ManifoldParameters.insert(std::pair<std::string, double> (name, Delta->Sample()));
         m_ManifoldRandomVariables.insert(Delta_);
     }
-    m_Manifold->InitializeParameters(ManifoldParameters);
 
 
     /////////////////////////////
@@ -589,7 +497,7 @@ LongitudinalModel
     auto S = std::make_shared< LaplaceRandomVariable >(SLocation, SScale);
     for(int i = 0; i<m_NbIndependentComponents ; ++i)
     {
-        RandomVariable S_("S" + std::to_string(i), S);
+        RandomVariable S_("S#" + std::to_string(i), S);
         m_IndividualRandomVariables.insert(S_);
     }
 
@@ -631,7 +539,7 @@ LongitudinalModel
     {
         double BetaMean = (double)i;
         auto Beta = std::make_shared< GaussianRandomVariable> (BetaMean, BetaVariance);
-        std::string name = "Beta" + std::to_string(i);
+        std::string name = "Beta#" + std::to_string(i);
         RandomVariable Beta_(name, Beta);
         m_PopulationRandomVariables.insert(Beta_);
     }
@@ -668,7 +576,7 @@ LongitudinalModel
     auto S = std::make_shared< LaplaceRandomVariable >(SLocation, SScale);
     for(int i = 0; i<m_NbIndependentComponents ; ++i)
     {
-        RandomVariable S_("S" + std::to_string(i), S);
+        RandomVariable S_("S#" + std::to_string(i), S);
         m_IndividualRandomVariables.insert(S_);
     }
 
@@ -685,12 +593,61 @@ LongitudinalModel
     {
         double DeltaMean = 0.5*(double)i;
         auto Delta = std::make_shared< GaussianRandomVariable >(DeltaMean, DeltaVariance);
-        std::string name = "Delta" + std::to_string(i);
+        std::string name = "Delta#" + std::to_string(i);
         RandomVariable Delta_(name, Delta);
         m_ManifoldRandomVariables.insert(Delta_);
     }
 }
 
+std::vector<double>
+LongitudinalModel
+::GetInitialPosition(const std::shared_ptr<Realizations> &R)
+{
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+
+    double T0 = R->at("T0")[0];
+    std::vector<double> P0, V0, Delta;
+    P0.push_back( R->at("P0")[0] );
+    V0.push_back( R->at("P0")[0] );
+    for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
+    {
+        Delta.push_back( R->at("Delta#" + std::to_string(i))[0]);
+    }
+
+    return CastedManifold->ComputeGeodesic(P0, T0, V0, T0, Delta);
+}
+
+std::vector<double>
+LongitudinalModel
+::GetInitialVelocity(const std::shared_ptr<Realizations> &R)
+{
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+
+    double T0 = R->at("T0")[0];
+    std::vector<double> P0, V0, Delta;
+    P0.push_back( R->at("P0")[0] );
+    V0.push_back( R->at("P0")[0] );
+    for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
+    {
+        Delta.push_back( R->at("Delta#" + std::to_string(i))[0]);
+    }
+
+    return CastedManifold->ComputeGeodesicDerivative(P0, T0, V0, T0, Delta);
+}
+
+std::vector<double>
+LongitudinalModel
+::GetPropagationCoefficients(const std::shared_ptr<Realizations> &R)
+{
+    std::vector<double> Delta;
+
+    for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
+    {
+        Delta.push_back( R->at("Delta#" + std::to_string(i))[0]);
+    }
+
+    return Delta;
+}
 
 void
 LongitudinalModel
@@ -699,16 +656,14 @@ LongitudinalModel
     /////////////////////////
     /// Get the vectors P0 and V0
     /////////////////////////
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
     double T0 = R->at("T0")[0];
-    std::vector<double> P0, V0;
-    for(int i = 0; i < m_Manifold->GetDimension(); ++i)
-    {
-        P0.push_back(R->at("P0")[0]);
-        V0.push_back(R->at("V0")[0]);
-    }
+    std::vector<double> InitialPosition = GetInitialPosition(R);
+    std::vector<double> InitialVelocity = GetInitialVelocity(R);
+    std::vector<double> Delta = GetPropagationCoefficients(R);
 
     /// Compute the transformation to do the Householder reflection in a Euclidean space
-    std::vector<double> U = m_Manifold->GetVelocityTransformToEuclideanSpace(P0, T0, V0);
+    std::vector<double> U = CastedManifold->GetVelocityTransformToEuclideanSpace(InitialPosition, T0, InitialVelocity, Delta);
 
     /// Compute the initial pivot vector U
     double Norm = 0;
@@ -751,7 +706,6 @@ LongitudinalModel
     /// Drop the first vector which is colinear to gamma_derivative(t0)
     Q.erase(Q.begin());
     m_OrthogonalBasis = Q;
-
 }
 
 void
@@ -765,7 +719,7 @@ LongitudinalModel
         for(int j = 0; j < m_Manifold->GetDimension() - 1 ; ++j)
         {
             std::string Number = std::to_string(int(j + i*(m_Manifold->GetDimension() - 1)));
-            Beta.push_back( R->at( "Beta" + Number)[0]);
+            Beta.push_back( R->at( "Beta#" + Number)[0]);
 
         }
         std::vector<double> AColumn = LinearCombination(Beta, m_OrthogonalBasis);
@@ -815,24 +769,10 @@ LongitudinalModel
         std::vector<double> Si;
         for(int j = 0; j < m_NbIndependentComponents; ++j)
         {
-            double Realization = R->at("S" + std::to_string(j))[i];
+            double Realization = R->at("S#" + std::to_string(j))[i];
             Si.push_back(Realization);
         }
 
-        /*
-        if(isnan(LinearCombination(Si, m_AMatrix)[0]))
-        {
-            std::cout << "Linear combin : ";
-            for(int i = 0; i < m_AMatrix.size(); ++i)
-            {
-                for(int j = 0; j < m_AMatrix[0].size(); ++j)
-                {
-                    std::cout << m_AMatrix[i][j] << ". ";
-                }
-            }
-            std::cout << std::endl;
-        }
-         */
 
         std::pair< std::string, std::vector<double> > SpaceShift("W"+std::to_string(i), LinearCombination(Si, m_AMatrix) );
         SpaceShifts.insert( SpaceShift);
@@ -846,34 +786,63 @@ LongitudinalModel
     ///////////////////////////////
     /*
     /// Get Data
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
     double T0 = R->at("T0")[0];
-    std::vector<double> P0, V0;
-    for(int i = 0; i < m_Manifold->GetDimension(); ++i)
+    std::vector<double> InitialPosition = GetInitialPosition(R);
+    std::vector<double> InitialVelocity = GetInitialVelocity(R);
+    std::vector<double> Delta = GetPropagationCoefficients(R);
+
+
+
+    std::vector<double> Geodesic0 = CastedManifold->ComputeGeodesic(InitialPosition, T0, InitialVelocity, T0, Delta);
+    std::vector<double> GeodesicDerivative0 = CastedManifold->ComputeGeodesicDerivative(InitialPosition, T0, InitialVelocity, T0, Delta);
+    std::vector<double> ParallelTransport = CastedManifold->ComputeParallelTransport(InitialPosition, T0, InitialVelocity, m_SpaceShifts["W0"], T0, Delta);
+    */
+
+    /// DEBUG 1 : Forall(k) <diff(g(0)) , OrthonormalBase(k)>|g(0) = 0
+    /*for(auto it = m_OrthogonalBasis.begin(); it != m_OrthogonalBasis.end(); ++it)
     {
-        P0.push_back(R->at("P0")[0]);
-        V0.push_back(R->at("V0")[0]);
-    }
+        double ScalarProduct = CastedManifold->ComputeScalarProduct(*it, GeodesicDerivative0, Geodesic0);
+        std::cout << "<diff(g(0)) , OrthonormalBase(k)>|g(0) = " << ScalarProduct << " (Should be 0)" << std::endl;
+    }*
 
-    /// Compute Norm of the parallel transport
-    //std::cout << "Args : " << P0[0] << ". " << T0 << ". " << V0[0] << std::endl;
-    std::vector<double> Geodesic0 = m_Manifold->ComputeGeodesic(P0, T0, V0, T0);
-    std::vector<double> GeodesicDerivative0 = m_Manifold->ComputeGeodesicDerivative(P0, T0, V0, T0);
-    std::vector<double> OK = m_Manifold->ComputeParallelTransport(P0, T0, V0, m_SpaceShifts["W0"], T0);
 
-    double ScalarProduct = m_Manifold->ComputeScalarProduct(OK, GeodesicDerivative0, Geodesic0);
-    std::cout << "<diff(g(0)) , W0>|g(0) : " << ScalarProduct << std::endl;
-
-    for(double t = 67; t < 73; t += 1.0)
+    /// DEBUG 2 : Forall(k) <diff(g(0)) , A(k)>|g(0) = 0
+    /*for(auto it = m_AMatrix.begin(); it != m_AMatrix.end(); ++it)
     {
-        std::vector<double> Geodesic = m_Manifold->ComputeGeodesic(P0, T0, V0, t);
-        std::vector<double> GeodesicDerivative = m_Manifold->ComputeGeodesicDerivative(P0, T0, V0, t);
-        std::vector<double> ParallelTransport = m_Manifold->ComputeParallelTransport(P0, T0, V0, m_SpaceShifts["W0"], t);
+        double ScalarProduct = CastedManifold->ComputeScalarProduct(*it, GeodesicDerivative0, Geodesic0);
+        std::cout << "<diff(g(0)) , A(k)>|g(0) = " << ScalarProduct << " (Should be 0)" << std::endl;
+    }*/
+
+
+    /// DEBUG 3 : <diff(g(0)) , ParallelTransport>|g(0) = 0
+    /*double ScalarProduct3 = CastedManifold->ComputeScalarProduct(ParallelTransport, GeodesicDerivative0, Geodesic0);
+    std::cout << "<diff(g(0)) , ParallelTransport>|g(0) = " << ScalarProduct3 << " (Should be 0)" << std::endl;
+    */
+
+
+    /// DEBUG 4 : <diff(g(t)) , ParallelTransport>|g(t) = 0
+
+
+    /// DEBUG 5 : ParallelTransport(0) = W(0)
+
+
+    /// DEBUG 6 : <ParallelTransport, ParallelTransport>g(t) = Constant
+    /*
+    for(double t = 62; t < 75; t += 0.5)
+    {
+        std::vector<double> Geodesic = CastedManifold->ComputeGeodesic(InitialPosition, T0, InitialVelocity, t, Delta);
+        std::vector<double> GeodesicDerivative = CastedManifold->ComputeGeodesicDerivative(InitialPosition, T0, InitialVelocity, t, Delta);
+        std::vector<double> ParallelTransport = CastedManifold->ComputeParallelTransport(InitialPosition, T0, InitialVelocity, m_SpaceShifts["W0"], t, Delta);
         double ScalarProd = m_Manifold->ComputeScalarProduct(ParallelTransport, GeodesicDerivative, Geodesic);
         std::cout << "<diff(g(t)), ParallelTransport(W0)>|g(t)> at " << t << " : " << ScalarProd << std::endl;
         double Norm = m_Manifold->ComputeScalarProduct(ParallelTransport, ParallelTransport, Geodesic);
         std::cout << "Norm at " << t << " : " << Norm << std::endl;
     }
-    */
+     */
+
+
+
 
     ///////////////////////////////
     ////End Unit tests ///

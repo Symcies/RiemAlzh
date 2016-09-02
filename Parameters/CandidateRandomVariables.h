@@ -1,42 +1,49 @@
-#ifndef _HMWithinGibbsSampler_h
-#define _HMWithinGibbsSampler_h
+#ifndef _CandidateRandomVariables_h
+#define _CandidateRandomVariables_h
 
-
-#include <memory>
-#include <string>
-#include "../RandomVariables/GaussianRandomVariable.h"
-#include "../RandomVariables/AbstractRandomVariable.h"
-#include "AbstractSampler.h"
-#include "../Models/AbstractModel.h"
 #include <map>
 
-class HMWithinGibbsSampler : public AbstractSampler{
-public:
+#include "../RandomVariables/GaussianRandomVariable.h"
+#include "../RandomVariables/AbstractRandomVariable.h"
+#include "../Models/AbstractModel.h"
 
+class CandidateRandomVariables {
+
+public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+    /// Key : Name of the parameter. Value : Value of the parameter
+    typedef std::map<std::string, double > RandomVariableParameters;              // TODO : Maybe changed?
+
+    /// Key : Name of the random variable. Value : <Type of the candidate random variable, list of parameters>
+    typedef std::map<std::string, RandomVariableParameters > RandomVariableParametersMap;
+
+    typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    HMWithinGibbsSampler();
+    CandidateRandomVariables(); // TODO : Add one argument : the XML file
+    ~CandidateRandomVariables();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    
+    /// Get a candidate random variable
+    std::shared_ptr<AbstractRandomVariable> GetRandomVariable(std::string NameRandomVariable, double Realization);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Sample a new variable thanks to the sampler
-    virtual void Sample(std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
-                        std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D);
+    /// Initialize the candidate random variables
+    void InitializeCandidateRandomVariables(std::shared_ptr<AbstractModel>& M);
+
 
 
 protected:
@@ -44,14 +51,21 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /// Gaussian random variable with determined mean
+    std::shared_ptr<AbstractRandomVariable> GetGaussianRandomVariable(double Mean, RandomVariableParameters Parameters);
+
+
+    /// Read the parameters of a given random variable within a certain file
+    RandomVariableParameters ReadParameters(std::string NameRandomVariable);
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    RandomVariableParametersMap m_RandomVariableParameters;
 
 };
 
 
-#endif //_HMWithinGibbsSampler_h
+#endif //_CandidateRandomVariables_h

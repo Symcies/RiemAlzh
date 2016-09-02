@@ -4,6 +4,7 @@
 
 #include "../Models/AbstractModel.h"
 #include "../Samplers/AbstractSampler.h"
+#include "../Parameters/CandidateRandomVariables.h"
 
 class Algorithm {
 public:
@@ -13,7 +14,6 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
     typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
-    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     typedef std::map<std::string, std::vector<double>> Realizations;
     typedef std::vector< std::vector< double >> SufficientStatisticsVector;
 
@@ -54,8 +54,8 @@ protected:
     // Initialize the realization of the model (and related manifold) random variables
     void InitializeRealization(unsigned int NbIndividuals);
 
-    // Initialize the manifold parameters
-    void InitializeModelParameters(std::shared_ptr<Realizations>& R);
+    /// Initialize the candidate random variables
+    void InitializeCandidateRandomVariables(std::shared_ptr<AbstractModel>& Model);
 
     // Compute the simulation step : Gibbs Sampling
     void ComputeSimulationStep(const std::shared_ptr<Data>& D);
@@ -82,6 +82,9 @@ protected:
 
     /// Stochastic Sufficient Statistics used in the stochastic approximation step
     std::vector< std::vector< double >> m_StochasticSufficientStatistics;
+
+    /// Candidates random variables, corresponding to those in the Model
+    std::shared_ptr<CandidateRandomVariables> m_CandidateRandomVariables;
 
 
 protected:

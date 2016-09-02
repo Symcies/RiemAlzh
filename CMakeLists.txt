@@ -6,6 +6,10 @@ project(Longitudina2)
 ####################################
 ### Set new project folders / files
 ####################################
+set(PARAMETERS
+        Parameters
+        Parameters/CandidateRandomVariables)
+
 set(UTILITIES
         Utilities
         Utilities/MatrixFunctions)
@@ -75,4 +79,5 @@ add_executable(Longitudina2
         ${RANDOMVARIABLES}
         ${MODELS}
         ${ALGORITHM}
-        ${MANIFOLDS})
+        ${MANIFOLDS}
+        ${PARAMETERS})

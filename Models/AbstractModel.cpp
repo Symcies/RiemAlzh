@@ -44,6 +44,18 @@ AbstractModel
 }
 
 
+std::map< std::string, std::shared_ptr< AbstractRandomVariable >>
+AbstractModel
+::GetRandomVariables()
+{
+    RandomVariableMap RandomVariables;
+
+    RandomVariables.insert(m_ManifoldRandomVariables.begin(), m_ManifoldRandomVariables.end());
+    RandomVariables.insert(m_PopulationRandomVariables.begin(), m_PopulationRandomVariables.end());
+    RandomVariables.insert(m_IndividualRandomVariables.begin(), m_IndividualRandomVariables.end());
+
+    return RandomVariables;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Other method(s) :

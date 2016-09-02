@@ -8,6 +8,7 @@
 #include "../RandomVariables/AbstractRandomVariable.h"
 #include <map>
 #include "../Models/AbstractModel.h"
+#include "../Parameters/CandidateRandomVariables.h"
 
 class AbstractSampler {
 public:
@@ -38,7 +39,8 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Sample a new variable thanks to the sampler
-    virtual void Sample(std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M, const std::shared_ptr<Data>& D) = 0;
+    virtual void Sample(std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
+                        std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D) = 0;
 
 
 protected:

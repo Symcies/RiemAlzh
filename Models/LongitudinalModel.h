@@ -18,7 +18,7 @@ public:
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    LongitudinalModel(unsigned int NbIndependentComponents);
+    LongitudinalModel(const unsigned int NbIndependentComponents, std::shared_ptr<AbstractManifold>& M);
     ~LongitudinalModel();
 
 
@@ -26,11 +26,7 @@ public:
     // Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Change a realization in the model or manifold when it is not a pointer to the realization in the algorithm
-    virtual void SetRealization(std::string Name, double Realization);
 
-    /// Get the candidate random variable corresponding to a realization
-    virtual std::shared_ptr< AbstractRandomVariable > GetCandidateRandomVariable(const std::string Name, const double Realization);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
@@ -38,10 +34,6 @@ public:
 
     /// Initialize the random variables : Population-wide and subject-specific
     virtual void InitializeRandomVariables();
-
-    /// Initialize the model parameters, if any, and the manifold parameters, if any
-    /// In the propagation case, only the Delta(k) (Manifold param) are initialized
-    virtual void InitializeModelParameters(const std::shared_ptr< Realizations >& R);
 
      /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
@@ -78,6 +70,16 @@ protected:
 
     /// Initialize Manifold random variables
     void InitializeManifoldRandomVariables();
+
+    // TODO : Peut -être faire des get pour toutes les différentes réalisations?
+    /// Get the initial position = gamma(t0)
+    std::vector<double> GetInitialPosition(const std::shared_ptr<Realizations>& R);
+
+    /// Get the initial velocity = diff(gamma(t0))
+    std::vector<double> GetInitialVelocity(const std::shared_ptr<Realizations>& R);
+
+    /// Get the propagation = (delta(k))
+    std::vector<double> GetPropagationCoefficients(const std::shared_ptr<Realizations>& R);
 
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
     void ComputeOrthonormalBasis( const std::shared_ptr<Realizations>& R); // TODO : Use a library to do it faster

@@ -32,15 +32,10 @@ public:
     // Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    inline void SetManifold(std::shared_ptr< AbstractManifold>& M) { m_Manifold = M; }
-
     RandomVariable GetRandomVariable(std::string name);
 
-    /// Get the candidate random variable corresponding to a realization
-    virtual std::shared_ptr< AbstractRandomVariable > GetCandidateRandomVariable(const std::string Name, const double Realization) = 0;
+    RandomVariableMap GetRandomVariables();
 
-    /// Change a realization/parameter in the model or manifold when it is not a pointer to the realization in the algorithm
-    virtual void SetRealization(std::string Name, double Realization) = 0;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
@@ -49,8 +44,6 @@ public:
     /// Initialize the random variables : Population-wide and subject-specific
     virtual void InitializeRandomVariables() = 0;
 
-    /// Initialize the model parameters, if any, and the manifold parameters, if any
-    virtual void InitializeModelParameters(const std::shared_ptr< Realizations >& R) = 0;
 
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D) = 0;
