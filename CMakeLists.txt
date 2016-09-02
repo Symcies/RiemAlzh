@@ -10,6 +10,10 @@ set(PARAMETERS
         Parameters
         Parameters/CandidateRandomVariables)
 
+set(OUTPUTS
+        Outputs
+        Outputs/RandomVariableRealizations)
+
 set(UTILITIES
         Utilities
         Utilities/MatrixFunctions)
@@ -80,4 +84,5 @@ add_executable(Longitudina2
         ${MODELS}
         ${ALGORITHM}
         ${MANIFOLDS}
-        ${PARAMETERS})
+        ${PARAMETERS}
+        ${OUTPUTS})

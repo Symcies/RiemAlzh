@@ -1,16 +1,20 @@
 #include <iostream>
+#include <fstream>
 #include <memory>
+
+
 #include "Manifolds/PropagationManifold.h"
 #include "Models/LongitudinalModel.h"
 #include "Algorithm/Algorithm.h"
 #include "Samplers/HMWithinGibbsSampler.h"
 #include "Manifolds/BaseManifold/LogisticBaseManifold.h"
+#include "Outputs/RandomVariableRealizations.h"
 //#include "itkXMLFile.h"
 
 using namespace std;
 
-typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
-typedef std::map<std::string, std::vector<double>> Realizations;
+typedef vector< vector< pair< vector<double>, double> > > Data;
+typedef map<std::string, vector<double>> Realizations;
 
 
 int main() {
@@ -20,25 +24,18 @@ int main() {
     unsigned int NumberIndependentComponents = 2;
 
 
-    /// Base Manifold
+    /// Base Manifold, Manifold, Model & Sampler ///
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
-
-    /// Manifold
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
-
-    /// Model
     shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
+    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
 
-    /// Data
+    /// DATA GENERATION ///
     Model->InitializeFakeRandomVariables();
-    std::shared_ptr<Data> D = std::make_shared<Data>( Model->SimulateData(10, 3, 3) );
+    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(100, 3, 4) );
 
     // Model
     Model->InitializeRandomVariables();
-
-    /// Sampler
-    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
-
 
     /// Algo
     auto Algo = make_shared<Algorithm>();
@@ -47,10 +44,16 @@ int main() {
     Algo->ComputeMCMCSAEM(D);
 
     /// Realizations
-    auto R = std::make_shared<Realizations>( Model->SimulateRealizations(5) );
+    //auto R = std::make_shared<Realizations>( Model->SimulateRealizations(5) );
+
+    /// Realizations evolution
+    map< string, vector<vector<double>> > Real = Algo->GetRealizationEvolution();
+    ofstream File;
+    File.open("Realizations.txt");
+    RealizationsEvolution(Real, File);
 
 
-    cout << "Hello, World!" << endl;
+    cout <<  endl << "Hello, World!" << endl;
     return 0;
 
     //

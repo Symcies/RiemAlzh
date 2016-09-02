@@ -169,7 +169,7 @@ PropagationManifold
     /// Next coordinates
     for(    ; IterShift != SpaceShift.end() && IterProp != Delta.end(); ++IterShift, ++IterProp)
     {
-        double Time = *IterShift / m_BaseManifold->ComputeGeodesic(InitialPosition, T0, InitialVelocity, T0 + *IterShift);
+        double Time = *IterShift / m_BaseManifold->ComputeGeodesic(InitialPosition, T0, InitialVelocity, T0 + *IterProp);
         Time += TimePoint + *IterShift;
         double Coordinate = m_BaseManifold->ComputeGeodesic(InitialPosition, T0, InitialVelocity, Time);
         ParallelCurve.push_back(Coordinate);

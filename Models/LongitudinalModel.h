@@ -42,7 +42,7 @@ public:
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& SufficientStatistics, const std::shared_ptr<Data>& D);
 
     /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
+    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, std::pair<std::string, int> Realization);
 
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
@@ -88,12 +88,20 @@ protected:
     void ComputeAMatrix( const std::shared_ptr<Realizations>& R); // TODO : Use a library to do it faster
 
     // Compute the space shifts
-    void ComputeSpaceShifts(const std::shared_ptr<Realizations>& R, const int NumberOfSubjects); // TODO : Use a library to do it faster
+    void ComputeSpaceShifts(const std::shared_ptr<Realizations>& R); // TODO : Use a library to do it faster
 
+    /// Compute the Likelihood the most generic way, without simplification
+    double ComputeLikelihoodGeneric(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
+
+    /// Compute the likelihood keeping the term of the specific individual
+    double ComputeLikelihoodIndividual(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const int SubjectNumber);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Last calculated Likelihood - and the corresponding realizations
+    std::pair<double, Realizations> m_LastLikelihood;
 
     /// Number of independent components
     unsigned int m_NbIndependentComponents;

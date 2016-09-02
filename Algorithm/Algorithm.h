@@ -34,6 +34,7 @@ public:
 
     inline void SetSampler(const std::shared_ptr<AbstractSampler>& S) { m_Sampler = S; }
 
+    inline std::map< std::string, std::vector<std::vector<double>> > GetRealizationEvolution() { return m_RealizationsEvolution; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
@@ -55,7 +56,7 @@ protected:
     void InitializeRealization(unsigned int NbIndividuals);
 
     /// Initialize the candidate random variables
-    void InitializeCandidateRandomVariables(std::shared_ptr<AbstractModel>& Model);
+    void InitializeCandidateRandomVariables();
 
     // Compute the simulation step : Gibbs Sampling
     void ComputeSimulationStep(const std::shared_ptr<Data>& D);
@@ -85,6 +86,17 @@ protected:
 
     /// Candidates random variables, corresponding to those in the Model
     std::shared_ptr<CandidateRandomVariables> m_CandidateRandomVariables;
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Output(s)
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Evolution of each random variable
+    std::map< std::string, std::vector<std::vector<double>> > m_RealizationsEvolution;
+
+    /// Compute the evolution of each random variable
+    void ComputeRealizationsEvolution();
 
 
 protected:

@@ -23,9 +23,9 @@ Algorithm
 ::ComputeMCMCSAEM(const std::shared_ptr<Data>& D)
 {
 
-    int NbMaxIterations = 10;
+    int NbMaxIterations = 100;
     InitializeRealization((int)D->size());
-    InitializeCandidateRandomVariables(m_Model);
+    InitializeCandidateRandomVariables();
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
 
     for(int k = 0; k<NbMaxIterations; ++k)
@@ -35,6 +35,7 @@ Algorithm
         std::vector< std::vector< double >> SufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
         ComputeStochasticApproximation(k, SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
+        ComputeRealizationsEvolution();
     }
 }
 
@@ -62,14 +63,19 @@ Algorithm
 {
     Realizations R = m_Model->SimulateRealizations(NbIndividuals);
     m_Realizations = std::make_shared<Realizations>(R);
+
+    for(auto it = m_Realizations->begin(); it != m_Realizations->end(); ++it)
+    {
+        m_RealizationsEvolution[it->first] = std::vector<std::vector<double>>(1, it->second);
+    }
 }
 
 void
 Algorithm
-::InitializeCandidateRandomVariables(std::shared_ptr<AbstractModel>& Model)
+::InitializeCandidateRandomVariables()
 {
     m_CandidateRandomVariables = std::make_shared<CandidateRandomVariables>();
-    m_CandidateRandomVariables->InitializeCandidateRandomVariables(Model);
+    m_CandidateRandomVariables->InitializeCandidateRandomVariables(m_Model);
 }
 
 void
@@ -125,7 +131,6 @@ Algorithm
 }
 
 
-
 double
 Algorithm
 ::DecreasingStepSize(double Iteration, double NoMemoryTime)
@@ -133,4 +138,22 @@ Algorithm
     double Epsilon = std::max(1.0, Iteration - NoMemoryTime);
 
     return 1.0 / pow(Epsilon, 0.6); // TODO : TO CHECK
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Output(s)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
+Algorithm
+::ComputeRealizationsEvolution()
+{
+    for(auto it = m_Realizations->begin(); it != m_Realizations->end(); ++it)
+    {
+        std::string Name = it->first;
+        std::vector<double> Realization = it->second;
+        m_RealizationsEvolution[Name].push_back(Realization);
+    }
 }

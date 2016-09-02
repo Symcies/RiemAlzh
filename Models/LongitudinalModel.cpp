@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "LongitudinalModel.h"
 #include "../Manifolds/PropagationManifold.h"
 
@@ -265,51 +266,68 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D)
+::ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, std::pair<std::string, int> Realization)
 {
-    // TODO : Choose where the following function should be used
-    ComputeOrthonormalBasis(R);
-    ComputeAMatrix(R);
-    ComputeSpaceShifts(R, D->size());
+    std::string NameRandomVariable = Realization.first;
 
-
-    /// Get the data
-    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")[0];
-    std::vector<double> InitialPosition = GetInitialPosition(R);
-    std::vector<double> InitialVelocity = GetInitialVelocity(R);
-    std::vector<double> Delta = GetPropagationCoefficients(R);
-
-
-
-    /// Compute the likelihood
-    double Likelihood = 0;
-
-    for(std::pair<Data::const_iterator, int> i(D->begin(), 0);
-        i.first != D->end() && i.second < D->size();
-        ++i.first, ++i.second)
+    // TODO : Checking the name should be done here?
+    if(NameRandomVariable.size() != 1 and NameRandomVariable.find_first_of("#") != std::string::npos)
     {
-        double AccFactor = exp( R->at("Ksi")[i.second]);
-        double TimeShift = R->at("Tau")[i.second];
-        std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(i.second));
-
-        for(IndividualData::const_iterator it2 = i.first->begin(); it2 != i.first->end(); ++it2)
-        {
-            std::vector<double> Observation = it2->first;
-
-            double Tij = it2->second;
-            double TimePoint = AccFactor * (Tij - T0 - TimeShift) + T0;
-
-            std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(InitialPosition, T0, InitialVelocity, SpaceShift, TimePoint, Delta);
-
-
-
-            Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
-        }
+        NameRandomVariable = NameRandomVariable.substr(0, NameRandomVariable.find_first_of("#"));
     }
 
-    Likelihood /= -2*m_Noise->GetVariance();
-    Likelihood = exp(Likelihood);
+
+    /*
+    /// CHECK IF THE REALIZATIONS HAVEN'T CHANGED and IF WE CHANGED A GLOBALVARIABLE
+    // Because individual variable does not return the real likelihood but a part of it
+    bool GlobalVariable = (NameRandomVariable == "P0" || NameRandomVariable == "V0" || NameRandomVariable == "T0"
+                                                                                       || NameRandomVariable == "Beta" || NameRandomVariable == "Delta");
+    if(m_LastLikelihood.second == *R && GlobalVariable)
+    {
+        std::cout << "&";
+        return m_LastLikelihood.first;
+    }
+    else if(GlobalVariable)
+    {
+
+        m_LastLikelihood.second = *R;
+    }
+    */
+
+    /// COMPUTE LIKELIHOOD
+    double Likelihood;
+    if(NameRandomVariable == "P0" or NameRandomVariable == "V0" or NameRandomVariable == "T0" or NameRandomVariable == "Delta")
+    {
+        ComputeOrthonormalBasis(R);
+        ComputeAMatrix(R);
+        ComputeSpaceShifts(R);
+        Likelihood = ComputeLikelihoodGeneric(R, D);
+        m_LastLikelihood.first = Likelihood;
+    }
+    else if(NameRandomVariable == "Beta")
+    {
+        ComputeAMatrix(R);
+        ComputeSpaceShifts(R);
+        Likelihood = ComputeLikelihoodGeneric(R, D);
+        m_LastLikelihood.first = Likelihood;
+    }
+    else if(NameRandomVariable == "S")
+    {
+        ComputeSpaceShifts(R);
+        Likelihood = ComputeLikelihoodGeneric(R, D);
+        m_LastLikelihood.first = Likelihood;
+    }
+    else if(NameRandomVariable == "Tau" or NameRandomVariable == "Ksi")
+    {
+        Likelihood = ComputeLikelihoodIndividual(R, D, Realization.second);
+    }
+    else
+    {
+        std::cout << "Problem with " << NameRandomVariable << std::endl;
+        Likelihood = ComputeLikelihoodGeneric(R, D);
+        m_LastLikelihood.first = Likelihood;
+    }
+
 
     return Likelihood;
 }
@@ -355,7 +373,7 @@ LongitudinalModel
     // TODO : Choose where the following function should be used
     ComputeOrthonormalBasis(R);
     ComputeAMatrix(R);
-    ComputeSpaceShifts(R, NumberOfSubjects);
+    ComputeSpaceShifts(R);
 
 
     /////////////////////////
@@ -427,20 +445,20 @@ LongitudinalModel
 
     // Initial Time
     double T0Mean = 70;
-    double T0variance = 0.1;
+    double T0variance = 0.05;
     auto T0 = std::make_shared<GaussianRandomVariable>(T0Mean, T0variance);
     RandomVariable T0_("T0", T0);
     m_PopulationRandomVariables.insert(T0_);
 
     // Initial Velocity
     double V0Mean = 0.01;
-    double V0Variance = 0.01;
+    double V0Variance = 0.05;
     auto V0 = std::make_shared<GaussianRandomVariable>(V0Mean, V0Variance);
     RandomVariable V0_("V0", V0);
     m_PopulationRandomVariables.insert(V0_);
 
     // Initial Beta coefficient
-    double BetaVariance = 0.1;
+    double BetaVariance = 0.05;
     for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension()-1) ; ++i)
     {
         double BetaMean = (double)i;
@@ -461,7 +479,7 @@ LongitudinalModel
 
     std::map<std::string, double> ManifoldParameters;
 
-    double DeltaVariance = 0.1;
+    double DeltaVariance = 0.05;
     for(int i = 0; i < m_Manifold->GetDimension() - 1 ; ++i)
     {
         double DeltaMean = 0.5*(double)i;
@@ -479,14 +497,14 @@ LongitudinalModel
 
     // Initial pre acceleration factor
     double KsiMean = 0.0;
-    double KsiVariance = 0.1;
+    double KsiVariance = 0.05;
     auto Ksi = std::make_shared< GaussianRandomVariable >(KsiMean, KsiVariance);
     RandomVariable Ksi_("Ksi", Ksi);
     m_IndividualRandomVariables.insert(Ksi_);
 
     // Initial Time Shift
     double TauMean = 0.0;
-    double TauVariance = 0.1;
+    double TauVariance = 0.05;
     auto Tau = std::make_shared< GaussianRandomVariable >(TauMean, TauVariance);
     RandomVariable Tau_("Tau", Tau);
     m_IndividualRandomVariables.insert(Tau_);
@@ -521,20 +539,20 @@ LongitudinalModel
 
     // Initial Time
     double T0Mean = 70;
-    double T0variance = 0.1;
+    double T0variance = 0.05;
     auto T0 = std::make_shared<GaussianRandomVariable>(T0Mean, T0variance);
     RandomVariable T0_("T0", T0);
     m_PopulationRandomVariables.insert(T0_);
 
     // Initial Velocity
     double V0Mean = 0.01;
-    double V0Variance = 0.01;
+    double V0Variance = 0.05;
     auto V0 = std::make_shared<GaussianRandomVariable>(V0Mean, V0Variance);
     RandomVariable V0_("V0", V0);
     m_PopulationRandomVariables.insert(V0_);
 
     // Initial Beta coefficient
-    double BetaVariance = 0.1;
+    double BetaVariance = 0.05;
     for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension()-1) ; ++i)
     {
         double BetaMean = (double)i;
@@ -558,14 +576,14 @@ LongitudinalModel
 {
     // Initial pre acceleration factor
     double KsiMean = 0.0;
-    double KsiVariance = 0.1;
+    double KsiVariance = 0.05;
     auto Ksi = std::make_shared< GaussianRandomVariable >(KsiMean, KsiVariance);
     RandomVariable Ksi_("Ksi", Ksi);
     m_IndividualRandomVariables.insert(Ksi_);
 
     // Initial Time Shift
     double TauMean = 0.0;
-    double TauVariance = 0.1;
+    double TauVariance = 0.05;
     auto Tau = std::make_shared< GaussianRandomVariable >(TauMean, TauVariance);
     RandomVariable Tau_("Tau", Tau);
     m_IndividualRandomVariables.insert(Tau_);
@@ -588,7 +606,7 @@ LongitudinalModel
 {
 
     // Initial Propagation coefficient
-    double DeltaVariance = 0.1;
+    double DeltaVariance = 0.05;
     for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
     {
         double DeltaMean = 0.5*(double)i;
@@ -760,9 +778,14 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeSpaceShifts(const std::shared_ptr<Realizations>& R, const int NumberOfSubjects)
+::ComputeSpaceShifts(const std::shared_ptr<Realizations>& R)
 {
     std::map< std::string, std::vector<double>> SpaceShifts;
+    int NumberOfSubjects = (int)R->at("Tau").size();
+    if(NumberOfSubjects != R->at("Ksi").size())
+    {
+        throw std::invalid_argument("Not the same number of realization in Tau and in Ksi. Whereas its equal to the number of subjects");
+    }
 
     for(int i = 0; i < NumberOfSubjects; ++i)
     {
@@ -849,4 +872,89 @@ LongitudinalModel
     ///////////////////////////////
 
 
+}
+
+double
+LongitudinalModel
+::ComputeLikelihoodGeneric(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D)
+{
+    // TODO : Choose where the following function should be used
+    ComputeOrthonormalBasis(R);
+    ComputeAMatrix(R);
+    ComputeSpaceShifts(R);
+
+
+    /// Get the data
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+    double T0 = R->at("T0")[0];
+    std::vector<double> InitialPosition = GetInitialPosition(R);
+    std::vector<double> InitialVelocity = GetInitialVelocity(R);
+    std::vector<double> Delta = GetPropagationCoefficients(R);
+
+
+
+    /// Compute the likelihood
+    double Likelihood = 0;
+
+    for(std::pair<Data::const_iterator, int> i(D->begin(), 0);
+        i.first != D->end() && i.second < D->size();
+        ++i.first, ++i.second)
+    {
+        double AccFactor = exp( R->at("Ksi")[i.second]);
+        double TimeShift = R->at("Tau")[i.second];
+        std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(i.second));
+
+        for(IndividualData::const_iterator it2 = i.first->begin(); it2 != i.first->end(); ++it2)
+        {
+            std::vector<double> Observation = it2->first;
+
+            double Tij = it2->second;
+            double TimePoint = AccFactor * (Tij - T0 - TimeShift) + T0;
+
+            std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(InitialPosition, T0, InitialVelocity, SpaceShift, TimePoint, Delta);
+
+
+
+            Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
+        }
+    }
+
+    Likelihood /= -2*m_Noise->GetVariance();
+    Likelihood = exp(Likelihood);
+
+    return Likelihood;
+}
+
+
+double
+LongitudinalModel
+::ComputeLikelihoodIndividual(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data>& D,
+                              const int SubjectNumber)
+{
+    /// Initialize the individual parameters
+    double AccFactor = exp(R->at("Tau")[SubjectNumber]);
+    double TimeShift = R->at("Ksi")[SubjectNumber];
+    std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
+
+    /// Get the global parameters
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+    double T0 = R->at("T0")[0];
+    std::vector<double> InitialPosition = GetInitialPosition(R);
+    std::vector<double> InitialVelocity = GetInitialVelocity(R);
+    std::vector<double> Delta = GetPropagationCoefficients(R);
+
+    /// Compute the likelihood
+    double Likelihood = 0;
+    for(auto it = D->at(SubjectNumber).begin(); it != D->at(SubjectNumber).end(); ++it)
+    {
+        std::vector<double> Observation = it->first;
+        double Tij = it->second;
+        double TimePoint = AccFactor * (Tij - T0 - TimeShift) + T0;
+
+        std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(InitialPosition, T0, InitialVelocity, SpaceShift, TimePoint, Delta);
+
+        Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
+    }
+
+    return Likelihood;
 }
