@@ -33,10 +33,8 @@ HMWithinGibbsSampler
         RandomVariable CurrentRV = M->GetRandomVariable(NameCurrentRV);
 
         int i = 0;
-        Realizations R1, R2;
         for(std::vector<double>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2, ++i)
         {
-            R1 = *R;
 
             /// Compute the current part
             std::pair<std::string, double> Realization(NameCurrentRV, i);
@@ -47,7 +45,7 @@ HMWithinGibbsSampler
             /// Compute the candidate part
             auto CandidateRV = Candidates->GetRandomVariable(NameCurrentRV, CurrentRealization);
             double CandidateRealization = CandidateRV->Sample();
-            double CandidatePrior = CandidateRV->Likelihood(CandidateRealization);
+            double CandidatePrior = CurrentRV.second->Likelihood(CandidateRealization);
             *it2 = CandidateRealization;
             double CandidateLikelihood = M->ComputeLikelihood(R, D, Realization);
 
@@ -67,7 +65,7 @@ HMWithinGibbsSampler
                 std::cout << "Current   Likelihood/Prior : " << CurrentLikelihood << "/" << CurrentPrior << std::endl;
             }
 
-            if(Tau <10e-4 or Tau > 100)
+            if(Tau <10e-4 or Tau > 20)
             {
                 std::cout << std::endl << "Ratio of " << NameCurrentRV << " is too small or too large : " << Tau <<  std::endl;
                 std::cout << "Candidate Likelihood/Prior : " << CandidateLikelihood << "/" << CandidatePrior << std::endl;
@@ -91,11 +89,6 @@ HMWithinGibbsSampler
                 std::cout << "1. ";
             }
 
-            R2 = *R;
-            if(R1 == R2)
-            {
-                //std::cout << "Donc ca marche? => " << UnifSample <<  ">" <<  Tau << std::endl;
-            }
         }
     }
     std::cout << std::endl;

@@ -23,20 +23,39 @@ Algorithm
 ::ComputeMCMCSAEM(const std::shared_ptr<Data>& D)
 {
 
-    int NbMaxIterations = 100;
+    int NbMaxIterations = 10;
     InitializeRealization((int)D->size());
     InitializeCandidateRandomVariables();
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
 
+    double a1 = 0;
+    double a2 = 0;
+    double a3 = 0;
+    double a4 = 0;
+
     for(int k = 0; k<NbMaxIterations; ++k)
     {
-        std::cout << "--------------------- Iteration " << k << " -------------------------------" << std::endl;
+        std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl;
+        //clock_t a = clock();
         ComputeSimulationStep(D);
+        //clock_t b = clock();
         std::vector< std::vector< double >> SufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
+        //clock_t c = clock();
         ComputeStochasticApproximation(k, SufficientStatistics);
+        //clock_t d = clock();
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
+        //clock_t e = clock();
         ComputeRealizationsEvolution();
+        //a1 += b - a;
+        //a2 += c - b;
+        //a3 += d - c;
+        //a4 += e - d;
     }
+
+    //std::cout << "Simulate : " << double(a1) << std::endl;
+    //std::cout << "SuffStat : " << double(a2) << std::endl;
+    //std::cout << "Stochast : " << double(a3) << std::endl;
+    //std::cout << "Maximize : " << double(a4) << std::endl;
 }
 
 

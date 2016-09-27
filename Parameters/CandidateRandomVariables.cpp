@@ -115,7 +115,7 @@ CandidateRandomVariables
     double DeltaVariance = 0.01;
     double BetaVariance = 0.1;
     double TauVariance = 0.1;
-    double KsiVariance = 0.05;
+    double KsiVariance = 0.01;
     double SVariance = 0.01;
 
 
