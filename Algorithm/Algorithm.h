@@ -5,6 +5,8 @@
 #include "../Models/AbstractModel.h"
 #include "../Samplers/AbstractSampler.h"
 #include "../Parameters/CandidateRandomVariables.h"
+#include <iostream>
+#include <fstream>
 
 class Algorithm {
 public:
@@ -33,8 +35,6 @@ public:
     inline void SetModel(const std::shared_ptr<AbstractModel>& M ) { m_Model = M; }
 
     inline void SetSampler(const std::shared_ptr<AbstractSampler>& S) { m_Sampler = S; }
-
-    inline std::map< std::string, std::vector<std::vector<double>> > GetRealizationEvolution() { return m_RealizationsEvolution; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
@@ -92,11 +92,11 @@ protected:
     // Output(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Evolution of each random variable
-    std::map< std::string, std::vector<std::vector<double>> > m_RealizationsEvolution;
+    /// Compute Outputs
+    void ComputeOutputs();
 
-    /// Compute the evolution of each random variable
-    void ComputeRealizationsEvolution();
+    /// Output file
+    std::ofstream m_OutputRealizations;
 
 
 protected:

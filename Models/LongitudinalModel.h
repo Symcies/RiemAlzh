@@ -42,7 +42,7 @@ public:
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& SufficientStatistics, const std::shared_ptr<Data>& D);
 
     /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, std::pair<std::string, int> Realization);
+    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const std::pair<std::string, int> NameRandomVariable);
 
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
@@ -101,7 +101,8 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Last calculated Likelihood - and the corresponding realizations
-    std::pair<double, Realizations> m_LastLikelihood;
+    /// Bool : if last calculation was generic. Double : last likelihood value. Realizations : last realizations
+    std::tuple<bool, double, Realizations> m_LastLikelihood;
 
     /// Number of independent components
     unsigned int m_NbIndependentComponents;
@@ -118,6 +119,12 @@ protected:
     /// Space shifts w(i) of the model
     std::map< std::string, std::vector< double >> m_SpaceShifts; // TODO : Initialize somewhere
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Output(s) :
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Compute outputs
+    virtual void ComputeOutputs();
 
 };
 

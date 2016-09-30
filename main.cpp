@@ -11,6 +11,7 @@
 #include "Outputs/RandomVariableRealizations.h"
 //#include "itkXMLFile.h"
 
+
 using namespace std;
 
 typedef vector< vector< pair< vector<double>, double> > > Data;
@@ -32,10 +33,17 @@ int main() {
 
     /// DATA GENERATION ///
     Model->InitializeFakeRandomVariables();
-    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(100, 3, 4) );
+    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(50, 3, 4) );
 
-    // Model
+    /// Model
     Model->InitializeRandomVariables();
+
+
+    /// Python call
+    std::string filename = "/Users/igor.koval/PycharmProjects/RiemAlzh/plotGraph.py";
+    std::string command = "python ";
+    command += filename;
+    //system(command.c_str());
 
     /// Algo
     auto Algo = make_shared<Algorithm>();
@@ -43,14 +51,6 @@ int main() {
     Algo->SetSampler(Sampler);
     Algo->ComputeMCMCSAEM(D);
 
-    /// Realizations
-    //auto R = std::make_shared<Realizations>( Model->SimulateRealizations(5) );
-
-    /// Realizations evolution
-    map< string, vector<vector<double>> > Real = Algo->GetRealizationEvolution();
-    ofstream File;
-    File.open("Realizations.txt");
-    RealizationsEvolution(Real, File);
 
 
     cout <<  endl << "Hello, World!" << endl;

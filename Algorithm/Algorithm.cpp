@@ -7,7 +7,9 @@
 
 Algorithm
 ::Algorithm()
-{ }
+{
+    m_OutputRealizations.open("Realizations.txt");
+}
 
 Algorithm
 ::~Algorithm()
@@ -23,7 +25,7 @@ Algorithm
 ::ComputeMCMCSAEM(const std::shared_ptr<Data>& D)
 {
 
-    int NbMaxIterations = 10;
+    int NbMaxIterations = 1000;
     InitializeRealization((int)D->size());
     InitializeCandidateRandomVariables();
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
@@ -45,7 +47,7 @@ Algorithm
         //clock_t d = clock();
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
         //clock_t e = clock();
-        ComputeRealizationsEvolution();
+        ComputeOutputs();
         //a1 += b - a;
         //a2 += c - b;
         //a3 += d - c;
@@ -74,8 +76,6 @@ Algorithm
     }
 }
 
-
-
 void
 Algorithm
 ::InitializeRealization(unsigned int NbIndividuals)
@@ -83,10 +83,11 @@ Algorithm
     Realizations R = m_Model->SimulateRealizations(NbIndividuals);
     m_Realizations = std::make_shared<Realizations>(R);
 
-    for(auto it = m_Realizations->begin(); it != m_Realizations->end(); ++it)
+    for(auto it : *m_Realizations)
     {
-        m_RealizationsEvolution[it->first] = std::vector<std::vector<double>>(1, it->second);
+        m_OutputRealizations << it.first << ", ";
     }
+    m_OutputRealizations << std::endl;
 }
 
 void
@@ -159,20 +160,24 @@ Algorithm
     return 1.0 / pow(Epsilon, 0.6); // TODO : TO CHECK
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Output(s)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 void
 Algorithm
-::ComputeRealizationsEvolution()
+::ComputeOutputs()
 {
-    for(auto it = m_Realizations->begin(); it != m_Realizations->end(); ++it)
+    for(auto it : *m_Realizations)
     {
-        std::string Name = it->first;
-        std::vector<double> Realization = it->second;
-        m_RealizationsEvolution[Name].push_back(Realization);
+        for(auto it2 : it.second)
+        {
+            m_OutputRealizations << it2 << ",";
+        }
     }
+    m_OutputRealizations << std::endl;
+
 }
+
+

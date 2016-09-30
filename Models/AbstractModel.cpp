@@ -18,27 +18,25 @@ AbstractManifold
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> // RandomVariable
+std::shared_ptr< AbstractRandomVariable > // RandomVariable
 AbstractModel
 ::GetRandomVariable(std::string name)
 {
     if(m_IndividualRandomVariables.count(name))
     {
-        RandomVariable R(name, m_IndividualRandomVariables.at(name));
-        return R;
+        return m_IndividualRandomVariables.at(name);
     }
     else if(m_PopulationRandomVariables.count(name))
     {
-        RandomVariable R(name, m_PopulationRandomVariables.at(name) );
-        return R;
+        return m_PopulationRandomVariables.at(name);
     }
     else if(m_ManifoldRandomVariables.count(name))
     {
-        RandomVariable R(name, m_ManifoldRandomVariables.at(name) );
-        return R;
+        return  m_ManifoldRandomVariables.at(name);
     }
     else
     {
+        // TODO : change to a real warning
         std::cout << "OWN WARNING : The key does not exist in the map" << std::endl;
     }
 }

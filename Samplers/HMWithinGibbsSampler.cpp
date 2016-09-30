@@ -30,29 +30,41 @@ HMWithinGibbsSampler
     {
         std::string NameCurrentRV = it->first;
         std::cout << NameCurrentRV << ": ";
-        RandomVariable CurrentRV = M->GetRandomVariable(NameCurrentRV);
+        auto CurrentRV = M->GetRandomVariable(NameCurrentRV);
 
         int i = 0;
         for(std::vector<double>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2, ++i)
         {
 
             /// Compute the current part
-            std::pair<std::string, double> Realization(NameCurrentRV, i);
             double CurrentRealization = *it2;
-            double CurrentPrior = CurrentRV.second->Likelihood(CurrentRealization);
-            double CurrentLikelihood = M->ComputeLikelihood(R, D, Realization);
+            double CurrentPrior = CurrentRV->Likelihood(CurrentRealization);
+            double CurrentLikelihood = M->ComputeLikelihood(R, D, std::pair<std::string, int> (NameCurrentRV, i));
 
             /// Compute the candidate part
             auto CandidateRV = Candidates->GetRandomVariable(NameCurrentRV, CurrentRealization);
             double CandidateRealization = CandidateRV->Sample();
-            double CandidatePrior = CurrentRV.second->Likelihood(CandidateRealization);
+            double CandidatePrior = CurrentRV->Likelihood(CandidateRealization);
             *it2 = CandidateRealization;
-            double CandidateLikelihood = M->ComputeLikelihood(R, D, Realization);
+            double CandidateLikelihood = M->ComputeLikelihood(R, D, std::pair<std::string, int> (NameCurrentRV, i));
 
             /// Sampling
             double Tau = CandidatePrior * CandidateLikelihood / (CurrentPrior * CurrentLikelihood);
-            // Tau = min(1.0, Tau)
             double UnifSample = Distribution(Generator);
+
+
+            if(UnifSample > Tau) /// It means that the new state is the previous one : no change
+            {
+                *it2 = CurrentRealization;
+                std::cout << "0. " ;
+            }
+            else
+            {
+                // TO DO : Should be in the compute likelihood part ?
+                // Useless if there are only pointers to the realizations
+                std::cout << "1. ";
+            }
+
 
             //////////////////////////
             /// DEBUGGING METHODS ////
@@ -76,18 +88,6 @@ HMWithinGibbsSampler
             //////////////////////////
             ///   END DEBUGGING   ////
             //////////////////////////
-
-            if(UnifSample > Tau) /// It means that the new state is the previous one : no change
-            {
-                *it2 = CurrentRealization;
-                std::cout << "0. " ;
-            }
-            else
-            {
-                // TO DO : Should be in the compute likelihood part ?
-                // Useless if there are only pointers to the realizations
-                std::cout << "1. ";
-            }
 
         }
     }

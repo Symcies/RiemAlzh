@@ -7,6 +7,10 @@
 #include "../RandomVariables/LaplaceRandomVariable.h"
 #include "../Manifolds/AbstractManifold.h"
 #include <algorithm>
+#include <iostream>
+#include <fstream>
+
+
 
 class AbstractModel {
 public:
@@ -32,7 +36,7 @@ public:
     // Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    RandomVariable GetRandomVariable(std::string name);
+    std::shared_ptr< AbstractRandomVariable > GetRandomVariable(std::string name);
 
     RandomVariableMap GetRandomVariables();
 
@@ -54,7 +58,7 @@ public:
     virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& SufficientStatistics, const std::shared_ptr<Data>& D) = 0;
 
     /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, std::pair<std::string, int> Realization) = 0;
+    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const std::pair<std::string, int> NameRandomVariable) = 0;
 
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) = 0;
@@ -76,7 +80,8 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+    /// Compute the outputs
+    virtual void ComputeOutputs() = 0;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
@@ -93,6 +98,9 @@ protected:
 
     /// Random variables that are related to the manifold
     RandomVariableMap m_ManifoldRandomVariables;
+
+    /// Output file
+    std::ofstream m_OutputParameters;
 
 
 };
