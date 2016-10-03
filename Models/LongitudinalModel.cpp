@@ -272,97 +272,62 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const std::pair<std::string, int> NameRandomVariable)
+::ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D,
+                    const std::pair<std::string, int> NameRandomVariable)
 {
+    double LogLikelihood = ComputeLikelihood(R, D, NameRandomVariable);
+    return exp(LogLikelihood);
+}
+
+
+double
+LongitudinalModel
+::ComputeLogLikelihood(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D,
+                       const std::pair<std::string, int> NameRandomVariable) {
     /// Get the name of the realization, and its number (in case it is subject specific)
     std::string Name = NameRandomVariable.first.substr(0, NameRandomVariable.first.find_first_of("#"));
     int SubjectNumber = NameRandomVariable.second;
 
-    bool Generic = !(Name == "Tau" or Name == "Ksi");
+
+    bool PreviousEqualCurrentRealizations = (*R == std::get<2>(m_LastLogLikelihood));
+    bool CurrentIsGeneric = !(Name == "Tau" or Name == "Ksi");
+    bool PreviousIsGeneric = std::get<0>(m_LastLogLikelihood);
 
     /// COMPUTE LIKELIHOOD
-    double Likelihood;
-
-    /// Means the previous realization was the same
-    /// It is possible, under certain condition, to return the last likelihood calculated
-    Realizations LastReal = std::get<2>(m_LastLikelihood);
-    if(*R == std::get<2>(m_LastLikelihood))
+    double LogLikelihood;
+    if (PreviousEqualCurrentRealizations && CurrentIsGeneric && PreviousIsGeneric)
     {
-        if(Generic)
-        {
-            if(std::get<0>(m_LastLikelihood))
-            {
-                Likelihood = std::get<1>(m_LastLikelihood);
-                m_LastLikelihood = std::tuple<bool, double, Realizations> (true, Likelihood, *R);
-                return Likelihood;
-            }
-            else
-            {
-                Likelihood = ComputeLikelihoodGeneric(R, D);
-                m_LastLikelihood = std::tuple<bool, double, Realizations> (true, Likelihood, *R);
-                return Likelihood;
-            }
-        }
-        else
-        {
-            Likelihood = ComputeLikelihoodIndividual(R, D, SubjectNumber);
-            m_LastLikelihood = std::tuple<bool, double, Realizations> (false, Likelihood, *R);
-            return Likelihood;
-        }
+        LogLikelihood = std::get<1>(m_LastLogLikelihood);
+    }
+    else if (!CurrentIsGeneric)
+    {
+        LogLikelihood = ComputeLogLikelihoodIndividual(R, D, SubjectNumber);
     }
     else
     {
-        ComputeOrthonormalBasis(R);
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
-        if(Generic)
+        /// Here it can be assumed that CurrentIsGeneric / (CurrentIs Generic && PreviousIsGeneric && PreviousEqualCurrentRealizations)
+        if(Name == "S")
         {
-
-            Likelihood = ComputeLikelihoodGeneric(R, D);
-            m_LastLikelihood = std::tuple<bool, double, Realizations> (true, Likelihood, *R);
-            return Likelihood;
+            ComputeSpaceShifts(R);
+        }
+        else if(Name == "Beta")
+        {
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
         }
         else
         {
-            Likelihood = ComputeLikelihoodIndividual(R, D, SubjectNumber);
-            m_LastLikelihood = std::tuple<bool, double, Realizations> (false, Likelihood, *R);
-            return Likelihood;
+            // The else condition contains the P0, T0, V0 and Delta random variables
+            ComputeOrthonormalBasis(R);
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
         }
+        LogLikelihood = ComputeLogLikelihoodGeneric(R, D);
     }
 
-    if(Name == "P0" or Name == "V0" or Name == "T0" or Name == "Delta")
-    {
-        ComputeOrthonormalBasis(R);
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
-        Likelihood = ComputeLikelihoodGeneric(R, D);
-    }
-    else if(Name == "Beta")
-    {
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
-        Likelihood = ComputeLikelihoodGeneric(R, D);
-    }
-    else if(Name == "S")
-    {
-        ComputeSpaceShifts(R);
-        Likelihood = ComputeLikelihoodGeneric(R, D);
-
-    }
-    else if(Name == "Tau" or Name == "Ksi")
-    {
-        Likelihood = ComputeLikelihoodGeneric(R, D);
-    }
-    else
-    {
-        std::cout << "Problem with " << Name << std::endl;
-        Likelihood = ComputeLikelihoodGeneric(R, D);
-    }
-
-
-    return Likelihood;
+    m_LastLogLikelihood = std::tuple<bool, double, Realizations>(CurrentIsGeneric, LogLikelihood, *R);
+    return LogLikelihood;
 }
-
 
 std::vector< std::vector< std::pair< std::vector<double>, double> > >
 LongitudinalModel
@@ -907,13 +872,8 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLikelihoodGeneric(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D)
+::ComputeLogLikelihoodGeneric(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D)
 {
-    // TODO : Choose where the following function should be used
-    ComputeOrthonormalBasis(R);
-    ComputeAMatrix(R);
-    ComputeSpaceShifts(R);
-
 
     /// Get the data
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
@@ -925,7 +885,7 @@ LongitudinalModel
 
 
     /// Compute the likelihood
-    double Likelihood = 0;
+    double LogLikelihood = 0;
 
     for(std::pair<Data::const_iterator, int> i(D->begin(), 0);
         i.first != D->end() && i.second < D->size();
@@ -946,20 +906,19 @@ LongitudinalModel
 
 
 
-            Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
+            LogLikelihood  += NormOfVectorDifference(Observation, ParallelCurve);
         }
     }
 
-    Likelihood /= -2*m_Noise->GetVariance();
-    Likelihood = exp(Likelihood);
+    LogLikelihood  /= -2*m_Noise->GetVariance();
 
-    return Likelihood;
+    return LogLikelihood ;
 }
 
 
 double
 LongitudinalModel
-::ComputeLikelihoodIndividual(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data>& D,
+::ComputeLogLikelihoodIndividual(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data>& D,
                               const int SubjectNumber)
 {
     /// Initialize the individual parameters
@@ -975,7 +934,7 @@ LongitudinalModel
     std::vector<double> Delta = GetPropagationCoefficients(R);
 
     /// Compute the likelihood
-    double Likelihood = 0;
+    double LogLikelihood = 0;
     for(auto it = D->at(SubjectNumber).begin(); it != D->at(SubjectNumber).end(); ++it)
     {
         std::vector<double> Observation = it->first;
@@ -984,10 +943,10 @@ LongitudinalModel
 
         std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(InitialPosition, T0, InitialVelocity, SpaceShift, TimePoint, Delta);
 
-        Likelihood += NormOfVectorDifference(Observation, ParallelCurve);
+        LogLikelihood += NormOfVectorDifference(Observation, ParallelCurve);
     }
 
-    return Likelihood;
+    return LogLikelihood;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

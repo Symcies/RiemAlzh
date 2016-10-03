@@ -39,17 +39,17 @@ HMWithinGibbsSampler
             /// Compute the current part
             double CurrentRealization = *it2;
             double CurrentPrior = CurrentRV->Likelihood(CurrentRealization);
-            double CurrentLikelihood = M->ComputeLikelihood(R, D, std::pair<std::string, int> (NameCurrentRV, i));
+            double CurrentLogLikelihood = M->ComputeLogLikelihood(R, D, std::pair<std::string, int> (NameCurrentRV, i));
 
             /// Compute the candidate part
             auto CandidateRV = Candidates->GetRandomVariable(NameCurrentRV, CurrentRealization);
             double CandidateRealization = CandidateRV->Sample();
             double CandidatePrior = CurrentRV->Likelihood(CandidateRealization);
             *it2 = CandidateRealization;
-            double CandidateLikelihood = M->ComputeLikelihood(R, D, std::pair<std::string, int> (NameCurrentRV, i));
+            double CandidateLogLikelihood = M->ComputeLogLikelihood(R, D, std::pair<std::string, int> (NameCurrentRV, i));
 
             /// Sampling
-            double Tau = CandidatePrior * CandidateLikelihood / (CurrentPrior * CurrentLikelihood);
+            double Tau = CandidatePrior * CandidateLogLikelihood / (CurrentPrior * CurrentLogLikelihood);
             double UnifSample = Distribution(Generator);
 
 
@@ -73,15 +73,15 @@ HMWithinGibbsSampler
             if(std::isnan(Tau))
             {
                 std::cout << NameCurrentRV << " isNaN" << std::endl;
-                std::cout << "Candidate Likelihood/Prior : " << CandidateLikelihood << "/" << CandidatePrior << std::endl;
-                std::cout << "Current   Likelihood/Prior : " << CurrentLikelihood << "/" << CurrentPrior << std::endl;
+                std::cout << "Candidate Likelihood/Prior : " << CandidateLogLikelihood << "/" << CandidatePrior << std::endl;
+                std::cout << "Current   Likelihood/Prior : " << CurrentLogLikelihood << "/" << CurrentPrior << std::endl;
             }
 
             if(Tau <10e-4 or Tau > 20)
             {
                 std::cout << std::endl << "Ratio of " << NameCurrentRV << " is too small or too large : " << Tau <<  std::endl;
-                std::cout << "Candidate Likelihood/Prior : " << CandidateLikelihood << "/" << CandidatePrior << std::endl;
-                std::cout << "Current   Likelihood/Prior : " << CurrentLikelihood << "/" << CurrentPrior << std::endl;
+                std::cout << "Candidate Likelihood/Prior : " << CandidateLogLikelihood << "/" << CandidatePrior << std::endl;
+                std::cout << "Current   Likelihood/Prior : " << CurrentLogLikelihood << "/" << CurrentPrior << std::endl;
 
             }
 

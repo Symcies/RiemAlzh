@@ -41,8 +41,13 @@ public:
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& SufficientStatistics, const std::shared_ptr<Data>& D);
 
+
     /// Compute the likelihood of the model
     virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const std::pair<std::string, int> NameRandomVariable);
+
+    /// Compute the log likelihood of the model
+    /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
+    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const std::pair<std::string, int> NameRandomVariable);
 
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
@@ -91,10 +96,10 @@ protected:
     void ComputeSpaceShifts(const std::shared_ptr<Realizations>& R); // TODO : Use a library to do it faster
 
     /// Compute the Likelihood the most generic way, without simplification
-    double ComputeLikelihoodGeneric(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
+    double ComputeLogLikelihoodGeneric(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
 
     /// Compute the likelihood keeping the term of the specific individual
-    double ComputeLikelihoodIndividual(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const int SubjectNumber);
+    double ComputeLogLikelihoodIndividual(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const int SubjectNumber);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
@@ -102,7 +107,7 @@ protected:
 
     /// Last calculated Likelihood - and the corresponding realizations
     /// Bool : if last calculation was generic. Double : last likelihood value. Realizations : last realizations
-    std::tuple<bool, double, Realizations> m_LastLikelihood;
+    std::tuple<bool, double, Realizations> m_LastLogLikelihood;
 
     /// Number of independent components
     unsigned int m_NbIndependentComponents;
