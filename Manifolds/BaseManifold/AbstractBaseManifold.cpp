@@ -13,4 +13,6 @@ AbstractBaseManifold
 
 AbstractBaseManifold
 ::~AbstractBaseManifold()
-{ }
+{ 
+    
+}

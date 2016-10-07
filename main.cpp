@@ -8,6 +8,7 @@
 #include "Algorithm/Algorithm.h"
 #include "Samplers/HMWithinGibbsSampler.h"
 #include "Manifolds/BaseManifold/LogisticBaseManifold.h"
+#include "Tests/TestAssert.h"
 #include "Outputs/RandomVariableRealizations.h"
 //#include "itkXMLFile.h"
 
@@ -23,6 +24,10 @@ int main() {
     //// INITIALIZATION ///
     unsigned int NumberDimension = 3;
     unsigned int NumberIndependentComponents = 2;
+    
+    /// TESTS ///
+    bool Active = true;
+    TestAssert::Init(Active);
 
 
     /// Base Manifold, Manifold, Model & Sampler ///
@@ -33,7 +38,7 @@ int main() {
 
     /// DATA GENERATION ///
     Model->InitializeFakeRandomVariables();
-    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(50, 3, 4) );
+    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(100, 4, 5) );
 
     /// Model
     Model->InitializeRandomVariables();

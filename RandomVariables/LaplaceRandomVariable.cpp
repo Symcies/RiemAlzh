@@ -38,10 +38,10 @@ LaplaceRandomVariable
 {
     std::random_device RD;
     std::mt19937_64 Generator(RD());
-    std::uniform_real_distribution<double> Distribution(1/2, 1/2);
+    std::uniform_real_distribution<double> Distribution(-1.0/2.0, 1.0/2.0);
 
     double UniDraw = Distribution(Generator);
-    return m_Location - m_Scale*copysign( 1.0, UniDraw) * log( 1 - 2*fabs(UniDraw) );
+    return  m_Location - m_Scale*copysign( 1.0, UniDraw) * log( 1 - 2*fabs(UniDraw) );
 
 }
 
@@ -51,4 +51,14 @@ LaplaceRandomVariable
 ::Likelihood(double X)
 {
     return exp( - fabs(X - m_Location) / m_Scale) / (2*m_Scale) ;
+}
+
+
+double 
+LaplaceRandomVariable
+::LogLikelihood(double X) 
+{
+    double LogLikelihood = -log(2*m_Scale);
+    LogLikelihood += -fabs(X - m_Location) / m_Scale;
+    return LogLikelihood;
 }

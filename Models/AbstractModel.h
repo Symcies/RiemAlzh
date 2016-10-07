@@ -3,12 +3,14 @@
 
 #include <memory>
 
+#include "../Tests/TestAssert.h"
 #include "../RandomVariables/AbstractRandomVariable.h"
 #include "../RandomVariables/LaplaceRandomVariable.h"
 #include "../Manifolds/AbstractManifold.h"
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <functional>
 
 
 
@@ -47,6 +49,10 @@ public:
 
     /// Initialize the random variables : Population-wide and subject-specific
     virtual void InitializeRandomVariables() = 0;
+    
+    /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
+    /// This update can depend on the parameter that has changed, provided by the Name argument
+    virtual void UpdateParameters(std::shared_ptr<Realizations>& R, std::string Name = "All") = 0;
 
 
     /// Update the sufficient statistics according to the model variables / parameters 

@@ -32,6 +32,9 @@ public:
 
     /// Compute the likelihood given a current state
     virtual double Likelihood(double X);
+    
+    /// Compute the loglikelihood given a current state
+    virtual double LogLikelihood(double X);
 
     // TODO : Check if needed
     ////////////////////////////////////////////////////////////////////////////////////////////////////

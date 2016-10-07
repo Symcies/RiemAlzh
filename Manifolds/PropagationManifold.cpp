@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include "PropagationManifold.h"
 #include "BaseManifold/LogisticBaseManifold.h"
+#include "../Tests/TestAssert.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor(s) / Destructor :
@@ -30,8 +31,6 @@ PropagationManifold
 ::ComputeGeodesic(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint,
                   std::vector<double> Delta)
 {
-    // TODO : SHOULD P0 be of size N or of size 1?
-
     /// Initialization
     std::vector<double> Geodesic;
     double InitialPoint = P0[0];
@@ -41,9 +40,9 @@ PropagationManifold
     Geodesic.push_back( m_BaseManifold->ComputeGeodesic(InitialPoint, T0, InitialVelocity, TimePoint) );
 
     /// Next coordinates
-    for( auto it = Delta.begin(); it != Delta.end(); ++it)
+    for( auto it : Delta)
     {
-        double Coordinate = m_BaseManifold->ComputeGeodesic(InitialPoint, T0, InitialVelocity, TimePoint + *it);
+        double Coordinate = m_BaseManifold->ComputeGeodesic(InitialPoint, T0, InitialVelocity, TimePoint + it);
         Geodesic.push_back( Coordinate );
     }
 
@@ -67,8 +66,6 @@ PropagationManifold
 ::ComputeGeodesicDerivative(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint,
                             std::vector<double> Delta)
 {
-    // TODO : SHOULD P0 be of size N or of size 1?
-
     /// Initialize
     std::vector<double> GeodesicDerivative;
     double InitialPosition = P0[0];
@@ -79,9 +76,9 @@ PropagationManifold
     GeodesicDerivative.push_back( Coordinate );
 
     /// Next coordinate
-    for( auto it = Delta.begin(); it != Delta.end(); ++it)
+    for( auto it : Delta)
     {
-        double Coordinate = m_BaseManifold->ComputeGeodesicDerivative(InitialPosition, T0, InitialVelocity, TimePoint + *it);
+        Coordinate = m_BaseManifold->ComputeGeodesicDerivative(InitialPosition, T0, InitialVelocity, TimePoint + it);
         GeodesicDerivative.push_back( Coordinate );
     }
 
@@ -106,9 +103,7 @@ PropagationManifold
 ::ComputeParallelTransport(std::vector<double> P0, double T0, std::vector<double> V0, std::vector<double> SpaceShift,
                        double TimePoint, std::vector<double> Delta)
 {
-    // TODO : SHOULD P0 be of size N or of size 1?
-
-    /// Initialization
+        /// Initialization
     std::vector<double> ParallelTransport;
     double InitialPosition = P0[0];
     double InitialVelocity = V0[0];
@@ -150,9 +145,6 @@ PropagationManifold
 ::ComputeParallelCurve(std::vector<double> P0, double T0, std::vector<double> V0, std::vector<double> SpaceShift,
                        double TimePoint, std::vector<double> Delta)
 {
-    // TODO : SHOULD P0 be of size N or of size 1?
-    //std::cout << "Here it is super!" << std::endl;
-
     /// Initialization
     std::vector<double> ParallelCurve;
     double InitialPosition = P0[0];
@@ -195,14 +187,11 @@ PropagationManifold
 ::GetVelocityTransformToEuclideanSpace(std::vector<double> P0, double T0, std::vector<double> V0,
                                        std::vector<double> Delta)
 {
-    // TODO : SHOULD P0 be of size N or of size 1?
-
     /// Initialization
     std::vector<double> TransformedVelocity;
     double InitialPosition = P0[0];
     double InitialVelocity = V0[0];
-
-
+    
     /// First coordinate
     double FirstGeoDeriv = m_BaseManifold->ComputeGeodesicDerivative(InitialPosition, T0, InitialVelocity, T0);
     double FirstGeo =  m_BaseManifold->ComputeGeodesic(InitialPosition, T0, InitialVelocity, T0);

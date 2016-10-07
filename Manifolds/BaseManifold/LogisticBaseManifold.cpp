@@ -26,9 +26,7 @@ LogisticBaseManifold
 ::ComputeGeodesic(double P0, double T0, double V0, double TimePoint)
 {
     double Value = - V0 * (TimePoint - T0) / (P0 * (1.-P0));
-    //std::cout << "TimePoint & Value : " << TimePoint << " & " << Value << " & ";
     Value = 1. + (1./P0 - 1. )*exp(Value) ;
-    //std::cout << Value << " & " << 1.0/Value << std::endl;
     return 1./Value;
 }
 

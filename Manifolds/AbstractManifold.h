@@ -75,11 +75,7 @@ protected:
 
     /// Base Manifold
     std::shared_ptr<AbstractBaseManifold> m_BaseManifold;
-
-    /// Parameters of the Manifold
-    Parameters m_Parameters;
-
-
+    
 };
 
 

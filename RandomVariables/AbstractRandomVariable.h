@@ -27,6 +27,10 @@ public:
 
     /// Compute the likelihood
     virtual double Likelihood(double X) = 0;
+    
+    // TODO : Implement it in the general case as log of likelihood
+    // Compute the log likelihood
+    virtual double LogLikelihood(double X) = 0;
 
 
     // TODO : Check if needed

@@ -35,7 +35,8 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Sample a new variable thanks to the sampler
-    virtual void Sample(std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
+    // The model cannot be constant because we modify some of its parameters (m_Orthonormal Basis for instance)
+    virtual Realizations Sample(const std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
                         std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D);
 
 

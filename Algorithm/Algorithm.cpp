@@ -8,7 +8,7 @@
 Algorithm
 ::Algorithm()
 {
-    m_OutputRealizations.open("Realizations.txt");
+    m_OutputRealizations.open("Realizations.txt",  std::ofstream::out | std::ofstream::trunc );
 }
 
 Algorithm
@@ -27,6 +27,7 @@ Algorithm
 
     int NbMaxIterations = 1000;
     InitializeRealization((int)D->size());
+    InitializeModel(m_Realizations);
     InitializeCandidateRandomVariables();
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
 
@@ -39,7 +40,7 @@ Algorithm
     {
         std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl;
         //clock_t a = clock();
-        ComputeSimulationStep(D);
+        ComputeSimulationStep(D, k);
         //clock_t b = clock();
         std::vector< std::vector< double >> SufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
         //clock_t c = clock();
@@ -83,9 +84,12 @@ Algorithm
     Realizations R = m_Model->SimulateRealizations(NbIndividuals);
     m_Realizations = std::make_shared<Realizations>(R);
 
-    for(auto it : *m_Realizations)
+    for(auto it = m_Realizations->begin(); it != m_Realizations->end(); ++it)
     {
-        m_OutputRealizations << it.first << ", ";
+        m_OutputRealizations << it->first << ", ";
+
+        std::vector<double> v(it->second.size(), 0);
+        m_AcceptanceRatios[it->first] = v;
     }
     m_OutputRealizations << std::endl;
 }
@@ -100,12 +104,22 @@ Algorithm
 
 void
 Algorithm
-::ComputeSimulationStep(const std::shared_ptr<Data>& D)
+::InitializeModel(std::shared_ptr<Realizations> &R) 
+{
+    m_Model->UpdateParameters(R);
+}
+
+void
+Algorithm
+::ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration)
 {
     typedef Realizations::iterator ReaIter;
     typedef RandomVariableMap::iterator RandVarIter;
 
-    m_Sampler->Sample(m_Realizations, m_Model, m_CandidateRandomVariables, D);
+    Realizations R = m_Sampler->Sample(m_Realizations, m_Model, m_CandidateRandomVariables, D);
+    ComputeAcceptanceRatio(R, Iteration);
+    m_Realizations = std::make_shared<Realizations>(R);
+    
 }
 
 
@@ -116,7 +130,7 @@ Algorithm
     typedef std::vector< std::vector< double >> SufficientStatisticsVector;
     SufficientStatisticsVector NewStochasticSufficientStatistics;
 
-    double NoMemoryTime = 100;  // TODO : Initialize, maybe out of the Compute function? Maybe in the decreasing step size function 
+    double NoMemoryTime = 600;  // TODO : Initialize, maybe out of the Compute function? Maybe in the decreasing step size function 
     double StepSize = DecreasingStepSize(iteration, NoMemoryTime);
 
     auto IterStat = SufficientStatistics.begin();
@@ -132,20 +146,13 @@ Algorithm
         for(    ; IterCoordStat != IterStat->end() && IterCoordStochStat != IterStochStat->end()
                 ; ++IterCoordStat, ++IterCoordStochStat)
         {
-            if(isnan(*IterCoordStochStat + StepSize * (*IterCoordStat - *IterCoordStochStat)))
-            {
-                //std::cout << "Comput : " << *IterCoordStochStat << " & " << StepSize << " & " << *IterCoordStat << std::endl;
-            }
             S.push_back( *IterCoordStochStat + StepSize * (*IterCoordStat - *IterCoordStochStat) );
         }
 
         NewStochasticSufficientStatistics.push_back(S);
 
     }
-
-    //std::cout << "2. Stoch approx : " << NewStochasticSufficientStatistics[0][0] << " & " << NewStochasticSufficientStatistics[0][1] << std::endl;
-
-
+    
     m_StochasticSufficientStatistics = NewStochasticSufficientStatistics;
 
 }
@@ -178,6 +185,42 @@ Algorithm
     }
     m_OutputRealizations << std::endl;
 
+    
 }
+
+
+void
+Algorithm
+::ComputeAcceptanceRatio(Realizations& R, int Iteration)
+{
+    std::cout << "AcceptRatio: ";
+  for(auto it : *m_Realizations)
+  {
+      std::string NameVariable = it.first;
+      std::cout << it.first << ": ";
+      double AverageAcceptanceRatioToPrint = 0;
+      
+      std::vector<double> PrevReal = it.second;
+      std::vector<double> NewReal = R.at(NameVariable);
+      
+      auto IterPrevReal = PrevReal.begin();
+      auto IterNewReal = NewReal.begin();
+      auto IterAcceptRatio = m_AcceptanceRatios.at(NameVariable).begin();
+      
+      for(    ; IterPrevReal != PrevReal.end() && IterNewReal != NewReal.end() && IterAcceptRatio != m_AcceptanceRatios.at(NameVariable).end()
+              ; ++IterPrevReal, ++IterNewReal, ++IterAcceptRatio)
+      {
+          //std::cout << "b/a : " << *IterPrevReal << "/" << *IterNewReal << "->";
+          bool Change = (*IterNewReal != *IterPrevReal);
+          *IterAcceptRatio = (*IterAcceptRatio * Iteration + Change ) / (Iteration + 1);
+          AverageAcceptanceRatioToPrint += *IterAcceptRatio;
+      }
+      
+      std::cout << AverageAcceptanceRatioToPrint / PrevReal.size() << ". ";
+  }
+    std::cout << std::endl;
+    
+}
+
 
 

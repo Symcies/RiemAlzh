@@ -1,4 +1,5 @@
 #include "AbstractManifold.h"
+#include "../Tests/TestAssert.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -11,7 +12,8 @@ std::vector<double>
 AbstractManifold
 ::ComputeGeodesic(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint)
 {
-    // TODO : check if P0 and V0 of the same size
+    /// Tests
+    TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeGeodesic");
 
     /// Initialization
     std::vector<double> Geodesic;
@@ -32,7 +34,8 @@ std::vector<double>
 AbstractManifold
 ::ComputeGeodesicDerivative(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint)
 {
-    // TODO : check if P0 and V0 of the same size
+    /// Tests
+    TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeGeodesicDerivative");
 
     /// Initialization
     std::vector<double> GeodesicDerivative;
@@ -54,7 +57,11 @@ AbstractManifold
 ::ComputeParallelTransport(std::vector<double> P0, double T0, std::vector<double> V0, std::vector<double> SpaceShift,
                            double TimePoint)
 {
-    // TODO : check if P0, V0  and Space Shift of the same size
+    /// Tests
+    TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeParallelTransport");
+    TestAssert::WarningEquality_Object(V0.size(), SpaceShift.size(), "V0 and SpaceShift does not have the same size in AbstractManifold > ComputeParallelTransport");
+    TestAssert::WarningEquality_Object(P0.size(), SpaceShift.size(), "P0 and SpaceShift does not have the same size in AbstractManifold > ComputeParallelTransport");
+    
 
     /// Initialization
     std::vector<double> ParallelTransport;
@@ -78,7 +85,10 @@ AbstractManifold
 ::ComputeParallelCurve(std::vector<double> P0, double T0, std::vector<double> V0, std::vector<double> SpaceShift,
                        double TimePoint)
 {
-    // TODO : check if P0, V0  and Space Shift of the same size
+    /// Tests
+    TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeParallelCurve");
+    TestAssert::WarningEquality_Object(V0.size(), SpaceShift.size(), "V0 and SpaceShift does not have the same size in AbstractManifold > ComputeParallelCurve");
+    TestAssert::WarningEquality_Object(P0.size(), SpaceShift.size(), "P0 and SpaceShift does not have the same size in AbstractManifold > ComputeParallelCurve");
 
     /// Initialization
     std::vector<double> ParallelCurve;

@@ -1,4 +1,5 @@
 #include "HMWithinGibbsSampler.h"
+#include "../Tests/TestAssert.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor(s) / Destructor :
@@ -17,16 +18,18 @@ HMWithinGibbsSampler
 // Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
+std::map<std::string, std::vector<double>>
 HMWithinGibbsSampler
-::Sample(std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
+::Sample(const std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
          std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D)
 {
     std::random_device RD;
     std::default_random_engine Generator(RD());
     std::uniform_real_distribution<double> Distribution(0,1);
 
-    for(Realizations::iterator  it = R->begin(); it != R->end(); ++it)
+    std::shared_ptr<Realizations> GibbsRealizations = std::make_shared<Realizations>(*R);
+    std::cout << "Realization: ";
+    for(Realizations::iterator  it = GibbsRealizations->begin(); it != GibbsRealizations->end(); ++it)
     {
         std::string NameCurrentRV = it->first;
         std::cout << NameCurrentRV << ": ";
@@ -38,52 +41,73 @@ HMWithinGibbsSampler
 
             /// Compute the current part
             double CurrentRealization = *it2;
-            double CurrentPrior = CurrentRV->Likelihood(CurrentRealization);
-            double CurrentLogLikelihood = M->ComputeLogLikelihood(R, D, std::pair<std::string, int> (NameCurrentRV, i));
+
+            double CurrentLogPrior = CurrentRV->LogLikelihood(CurrentRealization);
+            double CurrentLogLikelihood = M->ComputeLogLikelihood(GibbsRealizations, D, std::pair<std::string, int> (NameCurrentRV, i));
 
             /// Compute the candidate part
             auto CandidateRV = Candidates->GetRandomVariable(NameCurrentRV, CurrentRealization);
             double CandidateRealization = CandidateRV->Sample();
-            double CandidatePrior = CurrentRV->Likelihood(CandidateRealization);
+            double CandidateLogPrior = CurrentRV->LogLikelihood(CandidateRealization);
             *it2 = CandidateRealization;
-            double CandidateLogLikelihood = M->ComputeLogLikelihood(R, D, std::pair<std::string, int> (NameCurrentRV, i));
-
+            double CandidateLogLikelihood = M->ComputeLogLikelihood(GibbsRealizations, D, std::pair<std::string, int> (NameCurrentRV, i));
+            
             /// Sampling
-            double Tau = CandidatePrior * CandidateLogLikelihood / (CurrentPrior * CurrentLogLikelihood);
+            double Tau = CandidateLogPrior + CandidateLogLikelihood - (CurrentLogPrior + CurrentLogLikelihood);
+            Tau = std::min(0.0, Tau);
             double UnifSample = Distribution(Generator);
+            
+            TestAssert::WarningEquality_Object(0.0, 0.0, "Tau wrong");
 
-
-            if(UnifSample > Tau) /// It means that the new state is the previous one : no change
+            if(log(UnifSample) > Tau) /// It means that the new state is the previous one : no change
             {
                 *it2 = CurrentRealization;
-                std::cout << "0. " ;
+                M->UpdateParameters(GibbsRealizations, NameCurrentRV);
+                std::cout << CurrentRealization << ". " ;
             }
             else
             {
-                // TO DO : Should be in the compute likelihood part ?
-                // Useless if there are only pointers to the realizations
-                std::cout << "1. ";
+                //No need to rewrite *it2 as it is already the Candidate Realization
+                // *it2 = CandidateRealization;
+                std::cout << CandidateRealization << ". ";
             }
 
 
             //////////////////////////
             /// DEBUGGING METHODS ////
             //////////////////////////
-
-            if(std::isnan(Tau))
+            /*
+            if( NameCurrentRV == "Ksi" or NameCurrentRV == "Tau")
+            {
+                std::cout << std::endl;
+                std::cout << NameCurrentRV << " : " << CurrentRealization << " -> " << CandidateRealization << std::endl;
+                std::cout << "Ratio : " << Tau << std::endl;
+                std::cout << "Candidate Likelihood/Prior : " << CandidateLogLikelihood << "/" << CandidateLogPrior << std::endl;
+                std::cout << "Current   Likelihood/Prior : " << CurrentLogLikelihood << "/" << CurrentLogPrior << std::endl;  
+            }
+             */
+             
+            
+            /*
+            if(true)
             {
                 std::cout << NameCurrentRV << " isNaN" << std::endl;
-                std::cout << "Candidate Likelihood/Prior : " << CandidateLogLikelihood << "/" << CandidatePrior << std::endl;
-                std::cout << "Current   Likelihood/Prior : " << CurrentLogLikelihood << "/" << CurrentPrior << std::endl;
+                std::cout << "Candidate Likelihood/Prior : " << CandidateLogLikelihood << "/" << CandidateLogPrior << std::endl;
+                std::cout << "Current   Likelihood/Prior : " << CurrentLogLikelihood << "/" << CurrentLogPrior << std::endl;
             }
-
+             */
+             
+            /*
             if(Tau <10e-4 or Tau > 20)
             {
                 std::cout << std::endl << "Ratio of " << NameCurrentRV << " is too small or too large : " << Tau <<  std::endl;
-                std::cout << "Candidate Likelihood/Prior : " << CandidateLogLikelihood << "/" << CandidatePrior << std::endl;
-                std::cout << "Current   Likelihood/Prior : " << CurrentLogLikelihood << "/" << CurrentPrior << std::endl;
+                std::cout << "Candidate Likelihood/Prior : " << CandidateLogLikelihood << "/" << CandidateLogPrior << std::endl;
+                std::cout << "Current   Likelihood/Prior : " << CurrentLogLikelihood << "/" << CurrentLogPrior << std::endl;
 
             }
+             */
+             
+            
 
             //////////////////////////
             ///   END DEBUGGING   ////
@@ -92,4 +116,6 @@ HMWithinGibbsSampler
         }
     }
     std::cout << std::endl;
+
+    return *GibbsRealizations;
 }

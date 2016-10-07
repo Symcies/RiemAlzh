@@ -57,9 +57,12 @@ protected:
 
     /// Initialize the candidate random variables
     void InitializeCandidateRandomVariables();
+    
+    /// Initialize Manifold
+    void InitializeModel(std::shared_ptr<Realizations>& R);
 
     // Compute the simulation step : Gibbs Sampling
-    void ComputeSimulationStep(const std::shared_ptr<Data>& D);
+    void ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration);
 
     // Compute the stochastic coefficient 
     void ComputeStochasticApproximation(double iteration, std::vector< std::vector< double >> SufficientStatistics);
@@ -92,8 +95,14 @@ protected:
     // Output(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /// Compute the acceptance ratio for each random variable
+    void ComputeAcceptanceRatio(Realizations& R, int Iteration);
+    
     /// Compute Outputs
     void ComputeOutputs();
+    
+    /// Acceptance Ratios
+    std::map<std::string, std::vector<double>> m_AcceptanceRatios;
 
     /// Output file
     std::ofstream m_OutputRealizations;

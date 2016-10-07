@@ -4,6 +4,7 @@
 
 #include "AbstractModel.h"
 #include "../Utilities/MatrixFunctions.h"
+#include <functional>
 
 class LongitudinalModel : public AbstractModel {
 public:
@@ -34,12 +35,15 @@ public:
 
     /// Initialize the random variables : Population-wide and subject-specific
     virtual void InitializeRandomVariables();
+    
+    /// Initialize parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
+    virtual void UpdateParameters(std::shared_ptr<Realizations>& R, std::string Name = "All");
 
      /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SufficientStatistics, const std::shared_ptr<Data>& D);
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const std::shared_ptr<Data>& D);
 
 
     /// Compute the likelihood of the model
@@ -85,6 +89,9 @@ protected:
 
     /// Get the propagation = (delta(k))
     std::vector<double> GetPropagationCoefficients(const std::shared_ptr<Realizations>& R);
+    
+    /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
+    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations>& R);
 
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
     void ComputeOrthonormalBasis( const std::shared_ptr<Realizations>& R); // TODO : Use a library to do it faster
