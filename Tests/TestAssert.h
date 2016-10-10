@@ -97,7 +97,7 @@ TestAssert
     if(!Instance()->GetActive()) return;
     
     double Val = fabs(a() - b());
-    if(fabs(Val) > 10e-13)
+    if(fabs(Val) > 10e-10)
     {
         std::cout << msg << " #### Value : " << Val << std::endl;
     }

@@ -56,8 +56,6 @@ HMWithinGibbsSampler
             double Tau = CandidateLogPrior + CandidateLogLikelihood - (CurrentLogPrior + CurrentLogLikelihood);
             Tau = std::min(0.0, Tau);
             double UnifSample = Distribution(Generator);
-            
-            TestAssert::WarningEquality_Object(0.0, 0.0, "Tau wrong");
 
             if(log(UnifSample) > Tau) /// It means that the new state is the previous one : no change
             {

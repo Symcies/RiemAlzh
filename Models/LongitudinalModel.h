@@ -47,11 +47,13 @@ public:
 
 
     /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const std::pair<std::string, int> NameRandomVariable);
+    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, 
+                                     const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0));
 
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const std::pair<std::string, int> NameRandomVariable);
+    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, 
+                                        const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0));
 
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
@@ -123,13 +125,13 @@ protected:
     std::shared_ptr< GaussianRandomVariable > m_Noise;
 
     /// Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns> (Basis orthogonal to gamma0_deriv(T0)
-    std::vector< std::vector< double >> m_OrthogonalBasis; // TODO : Initialize somewhere
+    std::vector< std::vector< double >> m_OrthogonalBasis;
 
     /// A Matrix vec<A1, ..., A(N)> where Ai is vec<Ns> (Ai is a column)
-    std::vector< std::vector< double >> m_AMatrix; // TODO : Initialize somewhere
+    std::vector< std::vector< double >> m_AMatrix;
 
     /// Space shifts w(i) of the model
-    std::map< std::string, std::vector< double >> m_SpaceShifts; // TODO : Initialize somewhere
+    std::map< std::string, std::vector< double >> m_SpaceShifts;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Output(s) :

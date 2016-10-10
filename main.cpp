@@ -7,6 +7,7 @@
 #include "Models/LongitudinalModel.h"
 #include "Algorithm/Algorithm.h"
 #include "Samplers/HMWithinGibbsSampler.h"
+#include "Samplers/BlockedGibbsSampler.h"
 #include "Manifolds/BaseManifold/LogisticBaseManifold.h"
 #include "Tests/TestAssert.h"
 #include "Outputs/RandomVariableRealizations.h"
@@ -34,7 +35,8 @@ int main() {
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
     shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
-    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
+    // shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
+    shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
 
     /// DATA GENERATION ///
     Model->InitializeFakeRandomVariables();

@@ -64,12 +64,14 @@ public:
     virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& SufficientStatistics, const std::shared_ptr<Data>& D) = 0;
 
     /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const std::pair<std::string, int> NameRandomVariable) = 0;
+    virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, 
+                                     const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0)) = 0;
 
 
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, const std::pair<std::string, int> NameRandomVariable) = 0;
+    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, 
+                                        const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0)) = 0;
 
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) = 0;

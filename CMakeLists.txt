@@ -21,7 +21,9 @@ set(UTILITIES
 set(SAMPLERS
         Samplers
         Samplers/AbstractSampler
-        Samplers/HMWithinGibbsSampler)
+        Samplers/BlockedGibbsSampler
+        Samplers/HMWithinGibbsSampler
+        )
 
 set(RANDOMVARIABLES
         RandomVariables

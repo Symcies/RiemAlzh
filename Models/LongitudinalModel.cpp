@@ -352,7 +352,8 @@ LongitudinalModel
 double
 LongitudinalModel
 ::ComputeLogLikelihood(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D,
-                       const std::pair<std::string, int> NameRandomVariable) {
+                       const std::pair<std::string, int> NameRandomVariable) 
+{
     /// Get the name of the realization, and its number (in case it is subject specific)
     std::string Name = NameRandomVariable.first.substr(0, NameRandomVariable.first.find_first_of("#"));
     int SubjectNumber = NameRandomVariable.second;
@@ -370,7 +371,6 @@ LongitudinalModel
     }
     else if (!CurrentIsGeneric)
     {
-        //LogLikelihood = ComputeLogLikelihoodGeneric(R, D);
         LogLikelihood = ComputeLogLikelihoodIndividual(R, D, SubjectNumber);
     }
     else
@@ -919,7 +919,7 @@ LongitudinalModel
     std::vector<double> InitialPosition = GetInitialPosition(R);
     std::vector<double> InitialVelocity = GetInitialVelocity(R);
     std::vector<double> Delta = GetPropagationCoefficients(R);
-    
+    std::function<double()> NullFunction = []() { return 0;};
     
     /// DEBUG 1 : The orthonormal basis is orthogonal to the velocity
     for(auto it : m_AMatrix)
@@ -928,8 +928,8 @@ LongitudinalModel
         {
             return this->m_Manifold->ComputeScalarProduct(it, InitialVelocity, InitialPosition);
         };
-        std::function<double()> f2 = []() { return 0;};
-        TestAssert::WarningEquality_Function(f1, f2, "Basis vector B not orthogonal to the velocity. LongitudinalModel > ComputeAMatrix");
+        
+        TestAssert::WarningEquality_Function(f1, NullFunction, "Basis vector B not orthogonal to the velocity. LongitudinalModel > ComputeSpaceShifts");
     }
     
     /// DEBUG 2 : Check if the matrix column is orthogonal to the velocity
@@ -939,21 +939,65 @@ LongitudinalModel
         {
             return this->m_Manifold->ComputeScalarProduct(it, InitialVelocity, InitialPosition);
         };
-        std::function<double()> f2 = []() { return 0;};
-        TestAssert::WarningEquality_Function(f1, f2, "A column not orthogonal to the velocity. LongitudinalModel > ComputeAMatrix");
+        TestAssert::WarningEquality_Function(f1, NullFunction, "A column not orthogonal to the velocity. LongitudinalModel > ComputeSpaceShifts");
+    }
+    
+    /// DEBUG 3 : Check if the space shifts are orthogonal to the velocity
+    for(auto it : m_SpaceShifts)
+    {
+        std::function<double()> f1 = [=, &InitialPosition, &InitialVelocity, &it] ()
+        {
+            return this->m_Manifold->ComputeScalarProduct(it.second, InitialVelocity, InitialPosition);
+        };
+        TestAssert::WarningEquality_Function(f1, NullFunction, "Space Shifts not orthogonal to the velocity. Longitudinal Model > ComputeSpaceShifts");
     }
 
 
-    /// DEBUG 3 : <diff(g(0)) , ParallelTransport>|g(0) = 0
-    /*double ScalarProduct3 = CastedManifold->ComputeScalarProduct(ParallelTransport, GeodesicDerivative0, Geodesic0);
-    std::cout << "<diff(g(0)) , ParallelTransport>|g(0) = " << ScalarProduct3 << " (Should be 0)" << std::endl;
-    */
+    /// DEBUG 4 : ParallelTransport(0) = W(0). Is it true?
+    /*
+    for(auto it : m_SpaceShifts)
+    {
+        auto ParallelTransport = CastedManifold->ComputeParallelTransport(InitialPosition, T0, InitialVelocity, it.second, T0, Delta);
+        TestAssert::WarningEquality_Object(it.second, ParallelTransport, "Parallel Transport(T0) != SpaceShift. Longitudinal Model > ComputeSpaceShift");
+    }
+     */
 
 
-    /// DEBUG 4 : <diff(g(t)) , ParallelTransport>|g(t) = 0
+    /// DEBUG 5 : <diff(g(t)) , ParallelTransport>|g(t) = 0
+    /// DEBUG 6 : <ParallelTransport, ParallelTransport>g(t) = Constant
+    auto ParallelTransport = CastedManifold->ComputeParallelTransport(InitialPosition, T0, InitialVelocity, m_SpaceShifts["W0"], 55, Delta);
+    auto position = CastedManifold->ComputeGeodesic(InitialPosition, T0, InitialVelocity, 55, Delta);
+    double Constant = m_Manifold->ComputeScalarProduct(ParallelTransport, ParallelTransport, position);
+    std::function<double()> ConstantFunction = [Constant] () { return Constant; };
+    
+    
+    for(double t = 61; t < 80; t += 0.5)
+    {
+        
+        std::function<double()> f1 = [&CastedManifold, &InitialPosition, &InitialVelocity, &T0, &Delta, &SpaceShifts, t] () 
+        {
+            auto a = CastedManifold->ComputeGeodesicDerivative(InitialPosition, T0, InitialVelocity, t, Delta);
+            auto b = CastedManifold->ComputeParallelTransport(InitialPosition, T0, InitialVelocity, SpaceShifts["W0"], t, Delta);
+            auto velocity = CastedManifold->ComputeGeodesic(InitialPosition, T0, InitialVelocity, t, Delta);
+            return CastedManifold->ComputeScalarProduct(a, b, velocity);
+        };
+    
+        std::function<double()> f2= [&SpaceShifts, &CastedManifold, &InitialPosition, &InitialVelocity, &T0, &Delta, t] () 
+        {
+            auto a = CastedManifold->ComputeParallelTransport(InitialPosition, T0, InitialVelocity, SpaceShifts["W0"], t, Delta);
+            auto position = CastedManifold->ComputeGeodesic(InitialPosition, T0, InitialVelocity, t, Delta);
+            return CastedManifold->ComputeScalarProduct(a, a, position);
+        };
+    
+        
+        
+        
+        TestAssert::WarningEquality_Function(f1, NullFunction, "Parallel transport not orthogonal to velocity at any t. LongitudinalModel > ComputeSpaceShifts");
+        TestAssert::WarningEquality_Function(f2, ConstantFunction, "Norm of parallel transport not constant over time. LongiudinalModel > ComputeSpaceShifts");
+    }
+    
 
 
-    /// DEBUG 5 : ParallelTransport(0) = W(0)
 
 
     /// DEBUG 6 : <ParallelTransport, ParallelTransport>g(t) = Constant
