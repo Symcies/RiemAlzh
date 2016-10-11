@@ -32,8 +32,7 @@ CandidateRandomVariables
     {
         NameRandomVariable = NameRandomVariable.substr(0, NameRandomVariable.find_first_of("#"));
     }
-    //std::cout << NameRandomVariable << std::endl;
-
+    
 
     RandomVariableParameters Parameters = m_RandomVariableParameters.at(NameRandomVariable);
 
@@ -45,7 +44,7 @@ CandidateRandomVariables
     }
     else if(RVType == 2)
     {
-        // TODO : Maybe other typers
+        return GetConstantRandomVariable(Realization, Parameters);
     }
 }
 
@@ -95,6 +94,15 @@ CandidateRandomVariables
 }
 
 
+std::shared_ptr<AbstractRandomVariable>
+CandidateRandomVariables
+::GetConstantRandomVariable(double Mean, RandomVariableParameters Parameters) 
+{
+    std::shared_ptr<AbstractRandomVariable> RandomVariable = std::make_shared<ConstantRandomVariable>(Mean);
+    return RandomVariable;
+}
+
+
 
 std::map<std::string, double >
 CandidateRandomVariables
@@ -109,13 +117,13 @@ CandidateRandomVariables
     /////////////////////////////////////////////////////
 
     /// QUICK CHANGES IN THE INITIALIZATION
-    double P0Variance = 0.001;
+    double P0Variance = 0.04;
     double T0Variance = 0.5;
-    double V0Variance = 0.0005;
+    double V0Variance = 0.001;
     double DeltaVariance = 0.05;
     double BetaVariance = 0.1;
-    double TauVariance = 0.7;
-    double KsiVariance = 0.05;
+    double TauVariance = 0.8;
+    double KsiVariance = 0.6;
     double SVariance = 0.5;
 
 
@@ -129,7 +137,7 @@ CandidateRandomVariables
     }
     else if(NameRandomVariable == "T0")
     {
-        Parameters["Type"] = 1;
+        Parameters["Type"] = 2;
         Parameters["Variance"] = T0Variance;
     }
     else if(NameRandomVariable == "V0")

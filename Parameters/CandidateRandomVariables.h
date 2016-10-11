@@ -3,6 +3,7 @@
 
 #include <map>
 
+#include "../RandomVariables/ConstantRandomVariable.h"
 #include "../RandomVariables/GaussianRandomVariable.h"
 #include "../RandomVariables/AbstractRandomVariable.h"
 #include "../Models/AbstractModel.h"
@@ -54,6 +55,8 @@ protected:
     /// Gaussian random variable with determined mean
     std::shared_ptr<AbstractRandomVariable> GetGaussianRandomVariable(double Mean, RandomVariableParameters Parameters);
 
+    /// Constant random variable with determined mean
+    std::shared_ptr<AbstractRandomVariable> GetConstantRandomVariable(double Mean, RandomVariableParameters Parameters);
 
     /// Read the parameters of a given random variable within a certain file
     RandomVariableParameters ReadParameters(std::string NameRandomVariable);

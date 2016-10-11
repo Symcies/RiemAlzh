@@ -1,36 +1,40 @@
+#ifndef Longitudinal_ConstantRandomVariable_h
+#define Longitudinal_ConstantRandomVariable_h
 
-#ifndef _AbstractRandomVariable_h
-#define _AbstractRandomVariable_h
+#include <iostream>
+#include <cmath>
+#include "AbstractRandomVariable.h"
 
-#include <random>
-#include <iostream>     // For cout : only for debugging part
-
-class AbstractRandomVariable {
+class ConstantRandomVariable : public AbstractRandomVariable {
 public:
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+    ConstantRandomVariable(double Mean);
+    ~ConstantRandomVariable();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Getter(s) and Setter(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+    inline double GetMean() { return m_Mean; }
+    
+    inline void SetMean(double Mean) { m_Mean = Mean; }
+    
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
+    
     /// Draw a new sample
-    virtual double Sample() = 0;
+    virtual double Sample();
 
     /// Compute the likelihood
-    virtual double Likelihood(double X) = 0;
-    
-    // TODO : Implement it in the general case as log of likelihood
-    // Compute the log likelihood
-    virtual double LogLikelihood(double X) = 0;
+    virtual double Likelihood(double X);
+
+    /// Compute the log likelihood
+    virtual double LogLikelihood(double X);
 
 
     // TODO : Check if needed
@@ -39,7 +43,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Print the parameters
-    virtual void PrintParameters() = 0;
+    virtual void PrintParameters();
 
 
 
@@ -53,13 +57,10 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
+    
+    /// Constant value of the random variable
+    double m_Mean;
 };
 
 
-#endif //_AbstractRandomVariable_h
+#endif //Longitudinal_ConstantRandomVariable_h

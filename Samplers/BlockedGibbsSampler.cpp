@@ -27,21 +27,23 @@ BlockedGibbsSampler
     std::uniform_real_distribution<double> Distribution(0, 1);
     
     /// Initialize the realization to return and the corresponding likelihood
-    auto GibbsRealizations = std::make_shared<Realizations>(*R);
+    
+    auto OutputRealizations = std::make_shared<Realizations>(*R);
+    auto WorkingRealizations = std::make_shared<Realizations>(*R);
     double CurrentLogLikelihood = M->ComputeLogLikelihood(R, D);
     
     /// Loop over each realization
-    for(auto it : *R)
+    for(auto it = WorkingRealizations->begin(); it != WorkingRealizations->end(); ++it)
     {
         /// Get the random variable associated to the realizations
-        std::string NameCurrentVariable = it.first;
+        std::string NameCurrentVariable = it->first;
         auto CurrentRandomVariable = M->GetRandomVariable( NameCurrentVariable );
         
         std::cout << NameCurrentVariable << " : ";
         /// Initialize loop
-        auto IterReal = it.second.begin();
+        
         int i = 0;
-        for( ; IterReal != it.second.end(); ++IterReal, ++i)
+        for(auto IterReal = it->second.begin() ; IterReal != it->second.end(); ++IterReal, ++i)
         {
             
             /// Current random vabiable 
@@ -49,11 +51,11 @@ BlockedGibbsSampler
             double CurrentLogPrior = CurrentRandomVariable->LogLikelihood(*IterReal);
             
             /// Candidate random variable
-            auto CandidateRandomVariable = Candidates->GetRandomVariable(NameCurrentVariable, *IterReal);
+            auto CandidateRandomVariable = Candidates->GetRandomVariable(NameCurrentVariable, CurrentRealization );
             double CandidateRealization = CandidateRandomVariable->Sample();
             double CandidateLogPrior = CurrentRandomVariable->LogLikelihood( CandidateRealization );
             *IterReal = CandidateRealization;
-            double CandidateLogLikelihood = M->ComputeLogLikelihood(R, D);
+            double CandidateLogLikelihood = M->ComputeLogLikelihood(WorkingRealizations, D);
             
             /// Sampling
             double Tau = CandidateLogPrior + CandidateLogLikelihood - (CurrentLogPrior + CurrentLogLikelihood);
@@ -63,18 +65,21 @@ BlockedGibbsSampler
             /// Acceptation / Reject
             if(log(UniformSampler) > Tau)   /// Reject : no changes
             {
+                OutputRealizations->at(NameCurrentVariable)[i] = CurrentRealization;
                 std::cout << CurrentRealization << ". " ;
             }
             else                            /// Acceptation
             {
-                GibbsRealizations->at(NameCurrentVariable)[i] = *IterReal;
+                OutputRealizations->at(NameCurrentVariable)[i] = CandidateRealization;
                 std::cout << CandidateRealization << ". ";
             }
             
             *IterReal = CurrentRealization;
+            M->UpdateParameters(R, NameCurrentVariable);
+            
         }
     }
     std::cout << std::endl;
     
-    return *GibbsRealizations;
+    return *OutputRealizations;
 }

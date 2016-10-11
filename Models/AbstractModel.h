@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "../Utilities/MatrixFunctions.h"
 #include "../Tests/TestAssert.h"
 #include "../RandomVariables/AbstractRandomVariable.h"
 #include "../RandomVariables/LaplaceRandomVariable.h"
@@ -18,7 +19,7 @@ class AbstractModel {
 public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // typedef :
+    /// typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
@@ -30,12 +31,12 @@ public:
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Constructor(s) / Destructor :
+    /// Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Encapsulation method(s) :
+    /// Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     std::shared_ptr< AbstractRandomVariable > GetRandomVariable(std::string name);
@@ -44,7 +45,7 @@ public:
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Other method(s) :
+    /// Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the random variables : Population-wide and subject-specific
@@ -52,7 +53,7 @@ public:
     
     /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
     /// This update can depend on the parameter that has changed, provided by the Name argument
-    virtual void UpdateParameters(std::shared_ptr<Realizations>& R, std::string Name = "All") = 0;
+    virtual void UpdateParameters(const std::shared_ptr<Realizations>& R, std::string Name = "All") = 0;
 
 
     /// Update the sufficient statistics according to the model variables / parameters 
@@ -61,7 +62,7 @@ public:
     // TODO : TO BE CHANGED ABSOLUTELLY : this is not how the random variables are updated GENERALLY
     // TODO : In fact, this was made because it is not generic by now as for the algorithm maximization step
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& SufficientStatistics, const std::shared_ptr<Data>& D) = 0;
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const std::shared_ptr<Data>& D) = 0;
 
     /// Compute the likelihood of the model
     virtual double ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D, 

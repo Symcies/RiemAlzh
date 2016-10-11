@@ -24,8 +24,8 @@ HMWithinGibbsSampler
          std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D)
 {
     std::random_device RD;
-    std::default_random_engine Generator(RD());
-    std::uniform_real_distribution<double> Distribution(0,1);
+    std::mt19937 Generator(RD());
+    std::uniform_real_distribution<double> Distribution(0.0, 1.0);
 
     std::shared_ptr<Realizations> GibbsRealizations = std::make_shared<Realizations>(*R);
     std::cout << "Realization: ";

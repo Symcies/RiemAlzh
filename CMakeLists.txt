@@ -29,7 +29,9 @@ set(RANDOMVARIABLES
         RandomVariables
         RandomVariables/AbstractRandomVariable
         RandomVariables/GaussianRandomVariable
-        RandomVariables/LaplaceRandomVariable)
+        RandomVariables/LaplaceRandomVariable
+        RandomVariables/ConstantRandomVariable
+        )
 
 set(MANIFOLDS
         Manifolds
@@ -42,6 +44,7 @@ set(MANIFOLDS
 set(MODELS
         Models
         Models/AbstractModel
+        Models/UnivariateModel
         Models/LongitudinalModel)
 
 set(ALGORITHM

@@ -52,7 +52,7 @@ LogisticBaseManifold
 ::ComputeParallelCurve(double P0, double T0, double V0, double SpaceShift, double TimePoint)
 {
     double Time = SpaceShift / ComputeGeodesicDerivative(P0, T0, V0, T0) + TimePoint;
-    return ComputeGeodesicDerivative(P0, T0, V0, Time);
+    return ComputeGeodesic(P0, T0, V0, Time);
 }
 
 double

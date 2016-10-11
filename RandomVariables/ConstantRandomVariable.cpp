@@ -1,0 +1,51 @@
+#include "ConstantRandomVariable.h"
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// typedef :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ConstantRandomVariable
+::ConstantRandomVariable(double Mean) 
+{
+    m_Mean = Mean;
+}
+
+ConstantRandomVariable
+::~ConstantRandomVariable() 
+{
+    
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Other method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+double 
+ConstantRandomVariable
+::Sample() 
+{
+    return m_Mean;
+}
+
+double 
+ConstantRandomVariable
+::Likelihood(double X) 
+{
+    return exp(1);
+}
+
+double 
+ConstantRandomVariable
+::LogLikelihood(double X) 
+{
+    return 1;
+}
+
+void
+ConstantRandomVariable
+::PrintParameters() 
+{
+    std::cout << "Mean : " << m_Mean << std::endl;
+}
