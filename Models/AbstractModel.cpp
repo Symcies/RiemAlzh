@@ -63,7 +63,7 @@ std::map<std::string, std::vector<double>>
 AbstractModel
 ::SimulateRealizations(int NumberOfSubjects)
 {
-    Realizations R;
+    MultiRealizations R;
 
     // Initialize the realization of the population-wide random variables.
     // They are shared among the individual thus sampled only once

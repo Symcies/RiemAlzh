@@ -16,7 +16,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
     typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
-    typedef std::map<std::string, std::vector<double>> Realizations;
+    typedef std::map<std::string, std::vector<double>> MultiRealizations;
     typedef std::vector< std::vector< double >> SufficientStatisticsVector;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,8 +58,11 @@ protected:
     /// Initialize the candidate random variables
     void InitializeCandidateRandomVariables();
     
+    /// Initialize sampler
+    void InitializeSampler(std::shared_ptr<MultiRealizations>& R);
+    
     /// Initialize Manifold
-    void InitializeModel(std::shared_ptr<Realizations>& R);
+    void InitializeModel(std::shared_ptr<MultiRealizations>& R);
 
     // Compute the simulation step : Gibbs Sampling
     void ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration);
@@ -79,7 +82,7 @@ protected:
     std::shared_ptr<AbstractModel> m_Model;
 
     /// Realisation of the random variables of the model
-    std::shared_ptr<Realizations> m_Realizations;
+    std::shared_ptr<MultiRealizations> m_Realizations;
 
     /// Abstract Sampler - for the MCMC SAEM 
     std::shared_ptr<AbstractSampler> m_Sampler;
@@ -96,7 +99,7 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the acceptance ratio for each random variable
-    void ComputeAcceptanceRatio(Realizations& R, int Iteration);
+    void ComputeAcceptanceRatio(MultiRealizations& R, int Iteration);
     
     /// Compute Outputs
     void ComputeOutputs();

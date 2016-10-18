@@ -1,35 +1,21 @@
-#ifndef _AbstractModel_h
-#define _AbstractModel_h
-
-#include <memory>
-
-#include "../Utilities/MatrixFunctions.h"
-#include "../Tests/TestAssert.h"
-#include "../RandomVariables/AbstractRandomVariable.h"
-#include "../RandomVariables/LaplaceRandomVariable.h"
-#include "../Manifolds/AbstractManifold.h"
-#include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <functional>
+#ifndef _NetworkPropagationModel_h
+#define _NetworkPropagationModel_h
 
 
+#include "AbstractModel.h"
 
-class AbstractModel {
-public:
-
+class NetworkPropagationModel : public AbstractModel {
+public: 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
-    typedef std::vector< std::pair< std::vector<double>, double> > IndividualData;
-    typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
-    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-    typedef std::map<std::string, std::vector<double>> MultiRealizations;
-    typedef std::vector< std::vector< double >> SufficientStatisticsVector;
-
-
+    
+    typedef std::vector< std::vector<double>> ControlPoints;
+    
+    // TODO : TO BE CHANGED ABSOLUTELY
+    typedef std::vector<std::vector< double >> Matrix;
+    typedef double Data;
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,26 +25,17 @@ public:
     /// Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::shared_ptr< AbstractRandomVariable > GetRandomVariable(std::string name);
-
-    RandomVariableMap GetRandomVariables();
-
-
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Initialize the model
-    virtual void Initialize() = 0;
-        
-    /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
-    /// This update can depend on the parameter that has changed, provided by the Name argument
-    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, std::string Name = "All") = 0;
-
-
-    /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D) = 0;
-
+    /// Initialize the model : The random variables, the Kernel matrix and the interpolation matrix
+    virtual void Initialize(const std::shared_ptr<ControlPoints>& P, const std::shared_ptr<Data>& D);
+    
+    /// Update parameters of the model, if any has to be updated
+    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, std::string Name = "All");
+    
     // TODO : TO BE CHANGED ABSOLUTELLY : this is not how the random variables are updated GENERALLY
     // TODO : In fact, this was made because it is not generic by now as for the algorithm maximization step
     /// Update the fixed effects thanks to the approximation step of the algorithm
@@ -81,23 +58,13 @@ public:
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) = 0;
 
-    /// Simulate some random variable realizations
-    MultiRealizations SimulateRealizations(int NumberOfSubjects);
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
-    virtual void InitializeFakeRandomVariables() = 0;
-
-
+    
+    
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    
     /// Compute the outputs
     virtual void ComputeOutputs() = 0;
 
@@ -105,23 +72,18 @@ protected:
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Riemanian manifold
-    std::shared_ptr< AbstractManifold > m_Manifold;
-
-    /// Random variables shared among the population
-    RandomVariableMap m_PopulationRandomVariables;
-
-    /// Random variables that are subject-specific
-    RandomVariableMap m_IndividualRandomVariables;
-
-    /// Random variables that are related to the manifold
-    RandomVariableMap m_ManifoldRandomVariables;
-
-    /// Output file
-    std::ofstream m_OutputParameters;
-
-
+    /// Interpolation Matrix to calculate any point translation
+    Matrix m_InterpolationMatrix;
+    
+    /// Kernel Matrix K 
+    Matrix m_KernelMatrix;
+    
+    /// Noise associated to the model
+    std::shared_ptr<GaussianRandomVariable> m_Noise;
+    
+    
+    
 };
 
 
-#endif //_AbstractModel_h
+#endif //_NetworkPropagationModel_h

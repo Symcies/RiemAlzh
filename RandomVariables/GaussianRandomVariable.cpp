@@ -47,8 +47,8 @@ double
 GaussianRandomVariable
 ::Likelihood(double X)
 {
-    double denom =   sqrt(2*m_Variance*M_PI);
-    double num = exp( - (X - m_Mean)*(X - m_Mean) / (2*m_Variance));
+    double denom =   sqrt(2.0*m_Variance*M_PI);
+    double num = exp( - (X - m_Mean)*(X - m_Mean) / (2.0*m_Variance));
     double result = num/denom;
 
 
@@ -61,8 +61,8 @@ double
 GaussianRandomVariable
 ::LogLikelihood(double X) 
 {
-    double LogLikelihood = - 1.0/2.0 * log(2*m_Variance*M_PI);
-    LogLikelihood +=  - (X - m_Mean)*(X - m_Mean) / (2*m_Variance);
+    double LogLikelihood = - 1.0/2.0 * log(2.0*m_Variance*M_PI);
+    LogLikelihood +=  - (X - m_Mean)*(X - m_Mean) / (2.0 * m_Variance);
     return LogLikelihood;
     
 }

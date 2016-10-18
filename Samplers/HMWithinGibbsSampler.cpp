@@ -18,30 +18,37 @@ HMWithinGibbsSampler
 // Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void
+HMWithinGibbsSampler
+::InitializeSampler(const std::shared_ptr<MultiRealizations> &R) 
+{
+    
+}
+
+
 std::map<std::string, std::vector<double>>
 HMWithinGibbsSampler
-::Sample(const std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
+::Sample(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
          std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D)
 {
     std::random_device RD;
     std::mt19937 Generator(RD());
     std::uniform_real_distribution<double> Distribution(0.0, 1.0);
 
-    std::shared_ptr<Realizations> GibbsRealizations = std::make_shared<Realizations>(*R);
+    std::shared_ptr<MultiRealizations> GibbsRealizations = std::make_shared<MultiRealizations>(*R);
     std::cout << "Realization: ";
-    for(Realizations::iterator  it = GibbsRealizations->begin(); it != GibbsRealizations->end(); ++it)
+    for(auto&& it : *GibbsRealizations)
     {
-        std::string NameCurrentRV = it->first;
+        std::string NameCurrentRV = it.first;
         std::cout << NameCurrentRV << ": ";
         auto CurrentRV = M->GetRandomVariable(NameCurrentRV);
 
         int i = 0;
-        for(std::vector<double>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2, ++i)
+        for(auto it2 = it.second.begin(); it2 != it.second.end(); ++it2, ++i)
         {
 
             /// Compute the current part
             double CurrentRealization = *it2;
-
             double CurrentLogPrior = CurrentRV->LogLikelihood(CurrentRealization);
             double CurrentLogLikelihood = M->ComputeLogLikelihood(GibbsRealizations, D, std::pair<std::string, int> (NameCurrentRV, i));
 
@@ -66,51 +73,8 @@ HMWithinGibbsSampler
             else
             {
                 //No need to rewrite *it2 as it is already the Candidate Realization
-                // *it2 = CandidateRealization;
                 std::cout << CandidateRealization << ". ";
             }
-
-
-            //////////////////////////
-            /// DEBUGGING METHODS ////
-            //////////////////////////
-            /*
-            if( NameCurrentRV == "Ksi" or NameCurrentRV == "Tau")
-            {
-                std::cout << std::endl;
-                std::cout << NameCurrentRV << " : " << CurrentRealization << " -> " << CandidateRealization << std::endl;
-                std::cout << "Ratio : " << Tau << std::endl;
-                std::cout << "Candidate Likelihood/Prior : " << CandidateLogLikelihood << "/" << CandidateLogPrior << std::endl;
-                std::cout << "Current   Likelihood/Prior : " << CurrentLogLikelihood << "/" << CurrentLogPrior << std::endl;  
-            }
-             */
-             
-            
-            /*
-            if(true)
-            {
-                std::cout << NameCurrentRV << " isNaN" << std::endl;
-                std::cout << "Candidate Likelihood/Prior : " << CandidateLogLikelihood << "/" << CandidateLogPrior << std::endl;
-                std::cout << "Current   Likelihood/Prior : " << CurrentLogLikelihood << "/" << CurrentLogPrior << std::endl;
-            }
-             */
-             
-            /*
-            if(Tau <10e-4 or Tau > 20)
-            {
-                std::cout << std::endl << "Ratio of " << NameCurrentRV << " is too small or too large : " << Tau <<  std::endl;
-                std::cout << "Candidate Likelihood/Prior : " << CandidateLogLikelihood << "/" << CandidateLogPrior << std::endl;
-                std::cout << "Current   Likelihood/Prior : " << CurrentLogLikelihood << "/" << CurrentLogPrior << std::endl;
-
-            }
-             */
-             
-            
-
-            //////////////////////////
-            ///   END DEBUGGING   ////
-            //////////////////////////
-
         }
     }
     std::cout << std::endl;

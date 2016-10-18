@@ -1,5 +1,4 @@
 #include "UnivariateModel.h"
-#include "../RandomVariables/ConstantRandomVariable.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +26,7 @@ UnivariateModel
 
 void
 UnivariateModel
-::InitializeRandomVariables() 
+::Initialize()
 {
     /// Initialization
     m_PopulationRandomVariables.clear();
@@ -35,33 +34,33 @@ UnivariateModel
     m_ManifoldRandomVariables.clear();
     
     /// Initial Position
-    auto P0 = std::make_shared<GaussianRandomVariable>( 0.35, 0.01 );
+    auto P0 = std::make_shared<GaussianRandomVariable>( 0.35, 0.000001 );
     m_PopulationRandomVariables.insert( RandomVariable("P0", P0));
     
     /// Initial Time
-    auto T0 = std::make_shared<ConstantRandomVariable>( 70.0);
+    auto T0 = std::make_shared<GaussianRandomVariable>( 72.0, 0.0001);
     m_PopulationRandomVariables.insert( RandomVariable("T0", T0));
     
     /// Initial Velocity
-    auto V0 = std::make_shared<GaussianRandomVariable>( 0.06, 0.001 );
+    auto V0 = std::make_shared<GaussianRandomVariable>( 0.03, 0.000001 );
     m_PopulationRandomVariables.insert( RandomVariable("V0", V0) );
     
     /// Noise
-    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.05);
+    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.005);
     
     /// Individual Time Shift
-    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 3.0);
+    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 3*3);
     m_IndividualRandomVariables.insert( RandomVariable("Tau", Tau));
     
     /// Individual pace / Preaceleration factor
-    auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 1.5); 
+    auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.5); 
     m_IndividualRandomVariables.insert( RandomVariable("Ksi", Ksi));
 }
 
 
 void 
 UnivariateModel
-::UpdateParameters(const std::shared_ptr<Realizations> &R, std::string Name) 
+::UpdateParameters(const std::shared_ptr<MultiRealizations> &R, std::string Name) 
 {
     // TODO : Check if something has to be added
 }
@@ -69,7 +68,7 @@ UnivariateModel
 
 std::vector< std::vector< double >> 
 UnivariateModel
-::GetSufficientStatistics(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D) 
+::GetSufficientStatistics(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D) 
 {
    
     /// Get the data to compute the geometric operation on the manifold
@@ -80,21 +79,19 @@ UnivariateModel
     /// Compute S1 <- [Data_ij * ParallelCurve_ij]  and  S2 <- [ParrallelCurve_ij ^2]
     std::vector<double> S1, S2;
     
-    int i =0;
-    for(auto IterData : *D)
+    int i = 0;
+    for(auto IterData = D->begin(); IterData != D->end(); ++i, ++IterData)
     {
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
-        for(auto IterIndivData : IterData)
+        for(auto IterIndivData = IterData->begin(); IterIndivData != IterData->end(); ++IterIndivData)
         {
-            double TimePoint = SubjectTimePoint(IterIndivData.second);
-            double SpaceShift = 0;
+            double TimePoint = SubjectTimePoint(IterIndivData->second);
             
-            auto ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint);
-            auto Observation = IterIndivData.first;
+            auto ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
+            auto Observation = IterIndivData->first[0];
             
-            S1.push_back( ParallelCurve * Observation[0] );
+            S1.push_back( ParallelCurve * Observation );
             S2.push_back( ParallelCurve * ParallelCurve );
-            
         }
     }
     
@@ -116,6 +113,37 @@ UnivariateModel
     
     SufficientStatisticsVector SufficientStatistics = {S1, S2, S3, S4, S5, S6, S7};
     
+    /// Tests
+    /// There are two way to compute the logLikelihood. Check if they are equal
+    std::function<double()> f1 = [=, &D, &R] () { return this->ComputeLogLikelihoodGeneric(R, D); };
+    std::function<double()> f2 = [=, &D, &SufficientStatistics] ()
+    {
+        double Calculation = 0;
+        int K = 0;
+        for(auto it = D->begin(); it != D->end(); ++it)
+        {
+            K += it->size();
+            for(auto it2 = it->begin(); it2 != it->end(); ++it2)
+            {
+                Calculation += it2->first[0] * it2->first[0];
+            }
+        }
+        for(auto it : SufficientStatistics[0])
+        {
+            Calculation += -2 * it;
+        }
+        for(auto it : SufficientStatistics[1])
+        {
+            Calculation += it;
+        }
+        Calculation /= -2*this->m_Noise->GetVariance();
+        Calculation -= K * log(sqrt( 2 * M_PI * m_Noise->GetVariance() ));        
+        return Calculation;
+    };
+    
+    TestAssert::WarningEquality_Function(f1, f2, "Likelihood not correct. UnivariateModel > GetSufficientStatistics");
+
+    
     return SufficientStatistics;
 }
 
@@ -132,7 +160,7 @@ UnivariateModel
     P0->SetMean( StochSufficientStatistics[4][0]);
     
     auto AbstractT0 = m_PopulationRandomVariables.at("T0");
-    auto T0 = std::dynamic_pointer_cast< ConstantRandomVariable >( AbstractT0 );
+    auto T0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractT0 );
     T0->SetMean(StochSufficientStatistics[5][0]); 
     
     auto AbstractV0 = m_PopulationRandomVariables.at("V0");
@@ -152,14 +180,11 @@ UnivariateModel
 
     /// Update Tau
     double VarianceTau = 0;
-    //std::cout << "Tau & Tau^2 : "; 
     for(auto it : StochSufficientStatistics[3])
     {
         VarianceTau += it;
-        //std::cout << sqrt(it) << "/" << it << " ## ";
     }
     VarianceTau /= NumberOfSubject;
-    //std::cout << std::endl;
     auto AbstractTau = m_IndividualRandomVariables.at("Tau");
     auto Tau = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractTau );
     Tau->SetVariance(VarianceTau);  
@@ -168,11 +193,11 @@ UnivariateModel
     /// Update Uncertainty variance
 
     /// Initialization
-    double K = 0;
+    double K = 0.0;
 
     /// Sum Yijk²
-    double NoiseVariance = 0;
-    for(auto it : *D)
+    double NoiseVariance = 0.0;
+    for(const auto& it : *D)
     {
         K += it.size();
         for(auto it2 : it)
@@ -190,29 +215,24 @@ UnivariateModel
         NoiseVariance -= 2* it;
     }
 
-
     /// Sum S2
     for(auto it : StochSufficientStatistics[1])
     {
         NoiseVariance += it;
     }
 
-
-    // Divide by N*K, then take the square root
+    // Divide by K
     NoiseVariance /= K;
-
     m_Noise->SetVariance(NoiseVariance);
-    
     
 
     ComputeOutputs();
-
 }
 
 
 double 
 UnivariateModel
-::ComputeLikelihood(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D,
+::ComputeLikelihood(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D,
                     const std::pair<std::string, int> NameRandomVariable) 
 {
     double LogLikelihood = ComputeLogLikelihood(R, D, NameRandomVariable);
@@ -221,7 +241,7 @@ UnivariateModel
 
 double 
 UnivariateModel
-::ComputeLogLikelihood(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D,
+::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D,
                        const std::pair<std::string, int> NameRandomVariable) 
 {
     /// Get the name of the realization, and its number (in case it is subject specific)
@@ -240,14 +260,42 @@ UnivariateModel
     }
     else if(!CurrentIsGeneric)
     {
-        LogLikelihood = ComputeLogLikelihoodIndividual(R, D, SubjectNumber);
+        LogLikelihood = ComputeIndividualLogLikelihood(R, D, SubjectNumber);
     }
     else
     {
         LogLikelihood = ComputeLogLikelihoodGeneric(R, D);
     }
     
-    m_LastLogLikelihood = std::tuple<bool, double, Realizations>(CurrentIsGeneric, LogLikelihood, *R);
+    m_LastLogLikelihood = std::tuple<bool, double, MultiRealizations>(CurrentIsGeneric, LogLikelihood, *R);
+    return LogLikelihood;
+}
+
+double 
+UnivariateModel
+::ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> &R,
+                                 const std::shared_ptr<Data> &D, const int SubjectNumber) 
+{
+    /// Initialize the individual parameters
+    double T0 = R->at("T0")[0];
+    double P0 = R->at("P0")[0];
+    double V0 = R->at("V0")[0];
+    std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
+    
+    /// Compute the loglikelihood
+    double LogLikelihood = 0;
+    double k = D->at(SubjectNumber).size();
+    int i = 0;
+    for(auto IterData = D->at(SubjectNumber).begin(); IterData != D->at(SubjectNumber).end(); ++IterData, ++i)
+    {
+        double TimePoint = SubjectTimePoint(IterData->second);
+        auto ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
+        double Norm = (IterData->first[0] - ParallelCurve);
+        LogLikelihood += Norm*Norm;
+    }
+
+    LogLikelihood /= -2*m_Noise->GetVariance();
+    LogLikelihood -= k * log(sqrt( 2 * m_Noise->GetVariance() * M_PI));
     return LogLikelihood;
 }
 
@@ -256,7 +304,7 @@ UnivariateModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
     /// Simulate Realizations
-    auto R = std::make_shared<Realizations>( SimulateRealizations(NumberOfSubjects) );
+    auto R = std::make_shared<MultiRealizations>( SimulateRealizations(NumberOfSubjects) );
     
     /// Initialize
     std::random_device RD;
@@ -290,7 +338,7 @@ UnivariateModel
             double TimePoint = SubjectTimePoint(it);
             double Noise = NoiseDistrib(RNG);
             double ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
-            auto Scores = { ParallelCurve + Noise};
+            auto Scores = { ParallelCurve + Noise };
             
             InDa.push_back(std::pair<std::vector<double>, double> (Scores, it));
         }
@@ -311,26 +359,26 @@ UnivariateModel
 {
  
     /// Initial Position
-    auto P0 = std::make_shared<GaussianRandomVariable>( 0.3, 0.01 );
+    auto P0 = std::make_shared<GaussianRandomVariable>( 0.24, 0.000001 );
     m_PopulationRandomVariables.insert( RandomVariable("P0", P0));
     
     /// Initial Time
-    auto T0 = std::make_shared<ConstantRandomVariable>( 70.0 );
+    auto T0 = std::make_shared<GaussianRandomVariable>( 70.0, 0.0001 );
     m_PopulationRandomVariables.insert( RandomVariable("T0", T0));
     
     /// Initial Velocity
-    auto V0 = std::make_shared<GaussianRandomVariable>( 0.06, 0.001 );
+    auto V0 = std::make_shared<GaussianRandomVariable>( 0.06, 0.000001 );
     m_PopulationRandomVariables.insert( RandomVariable("V0", V0) );
     
     /// Noise
-    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.05);
+    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.0001);
     
     /// Individual Time Shift
-    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 3.0);
+    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 5.0*5.0);
     m_IndividualRandomVariables.insert( RandomVariable("Tau", Tau));
     
     /// Individual pace / Preaceleration factor
-    auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 1.5); 
+    auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.5*0.5); 
     m_IndividualRandomVariables.insert( RandomVariable("Ksi", Ksi));
     
     
@@ -344,7 +392,7 @@ UnivariateModel
 
 std::function<double(double)>  
 UnivariateModel
-::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations>& R)
+::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R)
 {
     double AccFactor = exp(R->at("Ksi")[SubjectNumber]);
     double TimeShift = R->at("Tau")[SubjectNumber];
@@ -356,7 +404,7 @@ UnivariateModel
 
 double 
 UnivariateModel
-::ComputeLogLikelihoodGeneric(const std::shared_ptr<Realizations> &R,
+::ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations> &R,
                               const std::shared_ptr<Data> &D) 
 {
     /// Get the data
@@ -371,12 +419,11 @@ UnivariateModel
     {
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
         K += IterData->size();
-        
-        for(auto it : *IterData)
+        for(const auto& IterIndivData : *IterData)
         {
-            double TimePoint = SubjectTimePoint(it.second);
+            double TimePoint = SubjectTimePoint(IterIndivData.second);
             auto ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
-            double Norm = (it.first[0] - ParallelCurve);
+            double Norm = (IterIndivData.first[0] - ParallelCurve);
             LogLikelihood += Norm * Norm ;
         }
     }
@@ -389,42 +436,12 @@ UnivariateModel
 }
 
 
-double
-UnivariateModel
-::ComputeLogLikelihoodIndividual(const std::shared_ptr<Realizations> &R,
-                                 const std::shared_ptr<Data> &D, const int SubjectNumber) 
-{
-    /// Initialize the individual parameters
-    double T0 = R->at("T0")[0];
-    double P0 = R->at("P0")[0];
-    double V0 = R->at("V0")[0];
-    std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
-    
-    /// Compute the loglikelihood
-    double LogLikelihood = 0;
-    double k = D->at(SubjectNumber).size();
-    int i = 0;
-    for(auto IterData = D->at(SubjectNumber).begin(); IterData != D->at(SubjectNumber).end(); ++IterData, ++i)
-    {
-        double TimePoint = SubjectTimePoint(IterData->second);
-        auto ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
-        double Norm = (IterData->first[0] - ParallelCurve) * (IterData->first[0] - ParallelCurve);
-        LogLikelihood += Norm*Norm;
-    }
-
-    LogLikelihood /= -2*m_Noise->GetVariance();
-    LogLikelihood -= k * log(sqrt( 2 * m_Noise->GetVariance() * M_PI));
-    return LogLikelihood;
-    
-}
-
-
 void
 UnivariateModel
 ::ComputeOutputs() 
 {
     double MeanP0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"))->GetMean();
-    double MeanT0 = std::dynamic_pointer_cast<ConstantRandomVariable>(m_PopulationRandomVariables.at("T0"))->GetMean();
+    double MeanT0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("T0"))->GetMean();
     double MeanV0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"))->GetMean();
     double SigmaKsi = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetVariance();
     double SigmaTau = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetVariance();

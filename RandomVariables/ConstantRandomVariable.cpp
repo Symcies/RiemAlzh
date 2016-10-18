@@ -33,14 +33,14 @@ double
 ConstantRandomVariable
 ::Likelihood(double X) 
 {
-    return exp(1);
+    return exp(1.0);
 }
 
 double 
 ConstantRandomVariable
 ::LogLikelihood(double X) 
 {
-    return 1;
+    return 1.0;
 }
 
 void

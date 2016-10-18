@@ -36,7 +36,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::InitializeRandomVariables()
+::Initialize()
 {
     m_PopulationRandomVariables.clear();
     m_IndividualRandomVariables.clear();
@@ -45,14 +45,14 @@ LongitudinalModel
     InitializeIndividualRandomVariables();
     InitializeManifoldRandomVariables();
     
-    m_OutputParameters << "P0, T0, V0, sigmaKsi, sigmaTau, sigma, " << std::endl;
+    m_OutputParameters << "P0, T0, V0, sigmaKsi, sigmaTau, sigma, Beta, Delta" << std::endl;
     ComputeOutputs();
 
 }
 
 void 
 LongitudinalModel
-::UpdateParameters(const std::shared_ptr<Realizations> &R, std::string Name) 
+::UpdateParameters(const std::shared_ptr<MultiRealizations> &R, std::string Name) 
 {
     /// Preprocess the name to delete the # if any
     Name = Name.substr(0, Name.find_first_of("#"));
@@ -95,7 +95,7 @@ LongitudinalModel
 
 std::vector< std::vector< double >>
 LongitudinalModel
-::GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D)
+::GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D)
 {
     SufficientStatisticsVector SufficientStatistics;
 
@@ -186,36 +186,43 @@ LongitudinalModel
         S9.push_back(Beta);
     }
 
-    SufficientStatistics.push_back(S9);
+    SufficientStatistics.push_back(S9); /// TODO : push back only once by creating the vector
     
-    /*
+    
     /// Tests
     /// There are two way to compute the logLikelihood. Check if they are equal
-    double LogLikelihood = ComputeLogLikelihoodGeneric(R, D);
-    double Calculation = 0;
-    for(auto it : *D)
+    std::function<double()> f1 = [=, &D, &R] () { return this->ComputeLogLikelihoodGeneric(R, D); };
+    std::function<double()> f2 = [=, &D, &SufficientStatistics] ()
     {
-        for(auto it2 : it)
+        double Calculation = 0;
+        int K = 0;
+        for(const auto& it : *D)
         {
-            for(auto it3 : it2.first)
+            K += it.size();
+            for(auto it2 : it)
             {
-                Calculation += it3*it3;
+                for(auto it3 : it2.first)
+                {
+                    Calculation += it3*it3;
+                }
             }
         }
-    }
-    for(auto it : SufficientStatistics[0])
-    {
-        Calculation += -2 * it;
-    }
-    for(auto it : SufficientStatistics[1])
-    {
-        Calculation += it;
-    }
-    Calculation /= -2*m_Noise->GetVariance();
-    std::cout << "Likelihood difference  " << LogLikelihood - Calculation << std::endl;
-    /// End tests
-     */
-        
+        for(auto it : SufficientStatistics[0])
+        {
+            Calculation += -2 * it;
+        }
+        for(auto it : SufficientStatistics[1])
+        {
+            Calculation += it;
+        }
+        Calculation /= -2*this->m_Noise->GetVariance();
+        Calculation -= K * log(sqrt( 2 * M_PI * m_Noise->GetVariance() ));  
+            
+        return Calculation;
+    };
+    
+    TestAssert::WarningEquality_Function(f1, f2, "Likelihood not correct. LongitudinalModel > GetSufficientStatistics");
+    
     return SufficientStatistics;
     
 }
@@ -284,7 +291,7 @@ LongitudinalModel
     {
         VarianceTau += it;
     }
-    VarianceTau /= NumberOfSubjects; 
+    VarianceTau /= NumberOfSubjects; // TODO : CHECK IF SIZE EQUAL TO NUMBER OF PEOPLE
 
     
     auto AbstractTau = m_IndividualRandomVariables.at("Tau");
@@ -341,7 +348,7 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D,
+::ComputeLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D,
                     const std::pair<std::string, int> NameRandomVariable)
 {
     double LogLikelihood = ComputeLogLikelihood(R, D, NameRandomVariable);
@@ -351,7 +358,7 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLogLikelihood(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D,
+::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D,
                        const std::pair<std::string, int> NameRandomVariable) 
 {
     /// Get the name of the realization, and its number (in case it is subject specific)
@@ -372,6 +379,7 @@ LongitudinalModel
     else if (!CurrentIsGeneric)
     {
         LogLikelihood = ComputeLogLikelihoodIndividual(R, D, SubjectNumber);
+        //LogLikelihood = ComputeIndividualLogLikelihood(R, D, SubjectNumber);
     }
     else
     {
@@ -395,16 +403,49 @@ LongitudinalModel
         LogLikelihood = ComputeLogLikelihoodGeneric(R, D);
     }
 
-    m_LastLogLikelihood = std::tuple<bool, double, Realizations>(CurrentIsGeneric, LogLikelihood, *R);
+    m_LastLogLikelihood = std::tuple<bool, double, MultiRealizations>(CurrentIsGeneric, LogLikelihood, *R);
     return LogLikelihood;
 }
+
+double
+LongitudinalModel
+::ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> &R,
+                                 const std::shared_ptr<Data> &D, const int SubjectNumber) 
+{
+    /// Initialize the individual parameters
+    std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
+    std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
+
+    /// Get the global parameters
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+    double T0 = R->at("T0")[0];
+    auto InitialPosition = GetInitialPosition(R);
+    auto InitialVelocity = GetInitialVelocity(R);
+    auto Delta = GetPropagationCoefficients(R);
+
+    /// Compute the likelihood
+    double LogLikelihood = 0;
+    double k = D->at(SubjectNumber).size();
+    int i = 0;
+    for(auto IterData = D->at(SubjectNumber).begin(); IterData != D->at(SubjectNumber).end(); ++IterData, ++i)
+    {
+        double TimePoint = SubjectTimePoint(IterData->second);
+        std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(InitialPosition, T0, InitialVelocity, SpaceShift, TimePoint, Delta);
+        LogLikelihood += NormOfVectorDifference(IterData->first, ParallelCurve);
+    }
+
+    LogLikelihood /= -2*m_Noise->GetVariance();
+    LogLikelihood -= k * log(sqrt( 2 * m_Noise->GetVariance() * M_PI));
+    return LogLikelihood;
+}
+
 
 std::vector< std::vector< std::pair< std::vector<double>, double> > >
 LongitudinalModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs)
 {
     /// Simulate realizations
-    auto R = std::make_shared<Realizations>( SimulateRealizations(NumberOfSubjects) );
+    auto R = std::make_shared<MultiRealizations>( SimulateRealizations(NumberOfSubjects) );
     
     /// Initialize model attributes
     ComputeOrthonormalBasis(R);
@@ -456,8 +497,7 @@ LongitudinalModel
         
         D.push_back(InDa);
     }
-
-
+    
     return D;
 
 }
@@ -476,57 +516,40 @@ LongitudinalModel
     /////////////////////////////
 
     // Initial Position
-    double P0Mean = 0.3;
-    double P0Variance = 0.01;
-    auto P0 = std::make_shared<GaussianRandomVariable>(P0Mean, P0Variance);
-    RandomVariable P0_("P0", P0);
-    m_PopulationRandomVariables.insert(P0_);
+    auto P0 = std::make_shared<GaussianRandomVariable>(0.35, 0.000001);
+    m_PopulationRandomVariables.insert( RandomVariable("P0", P0));
 
     // Initial Time
-    double T0Mean = 70;
-    double T0variance = 0.1;
-    auto T0 = std::make_shared<GaussianRandomVariable>(T0Mean, T0variance);
-    RandomVariable T0_("T0", T0);
-    m_PopulationRandomVariables.insert(T0_);
+    auto T0 = std::make_shared<GaussianRandomVariable>(70.0, 0.0001);
+    m_PopulationRandomVariables.insert(RandomVariable("T0", T0));
 
     // Initial Velocity
-    double V0Mean = 0.01;
-    double V0Variance = 0.001;
-    auto V0 = std::make_shared<GaussianRandomVariable>(V0Mean, V0Variance);
-    RandomVariable V0_("V0", V0);
-    m_PopulationRandomVariables.insert(V0_);
+    auto V0 = std::make_shared<GaussianRandomVariable>(0.06, 0.000001);
+    m_PopulationRandomVariables.insert(RandomVariable("V0", V0));
 
     // Initial Beta coefficient
-    double BetaVariance = 0.01;
     for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension()-1) ; ++i)
     {
-        double BetaMean = (double)i;
-        auto Beta = std::make_shared< GaussianRandomVariable> (BetaMean, BetaVariance);
+        auto Beta = std::make_shared< GaussianRandomVariable> ((double)i/5.0, 0.0001);
         std::string name = "Beta#" + std::to_string(i);
-        RandomVariable Beta_(name, Beta);
-        m_PopulationRandomVariables.insert(Beta_);
+        m_PopulationRandomVariables.insert(RandomVariable(name, Beta));
     }
 
     // Noise
-    double NoiseMean = 0.0;
-    double NoiseVariance = 0.05;
-    m_Noise = std::make_shared< GaussianRandomVariable >(NoiseMean, NoiseVariance);
+    m_Noise = std::make_shared< GaussianRandomVariable >(0.0, 0.0001);
 
     /////////////////////////////
     ///  Manifold Parameters  ///
     /////////////////////////////
 
     std::map<std::string, double> ManifoldParameters;
-
-    double DeltaVariance = 0.001;
+    
     for(int i = 0; i < m_Manifold->GetDimension() - 1 ; ++i)
     {
-        double DeltaMean = 0.5 + (double)i;
-        auto Delta = std::make_shared< GaussianRandomVariable >(DeltaMean, DeltaVariance);
+        auto Delta = std::make_shared< GaussianRandomVariable >(0.5 + (double)i, 0.0001);
         std::string name = "Delta#" + std::to_string(i);
-        RandomVariable Delta_(name, Delta);
         ManifoldParameters.insert(std::pair<std::string, double> (name, Delta->Sample()));
-        m_ManifoldRandomVariables.insert(Delta_);
+        m_ManifoldRandomVariables.insert(RandomVariable(name, Delta));
     }
 
 
@@ -535,27 +558,19 @@ LongitudinalModel
     /////////////////////////////
 
     // Initial pre acceleration factor
-    double KsiMean = 0.0;
-    double KsiVariance = 0.5;
-    auto Ksi = std::make_shared< GaussianRandomVariable >(KsiMean, KsiVariance);
-    RandomVariable Ksi_("Ksi", Ksi);
-    m_IndividualRandomVariables.insert(Ksi_);
+    auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.5*0.5);
+    m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
 
     // Initial Time Shift
-    double TauMean = 0.0;
-    double TauVariance = 3.0;
-    auto Tau = std::make_shared< GaussianRandomVariable >(TauMean, TauVariance);
-    RandomVariable Tau_("Tau", Tau);
-    m_IndividualRandomVariables.insert(Tau_);
+    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 5.0*5.0);
+    m_IndividualRandomVariables.insert(RandomVariable("Tau", Tau));
 
     // Initial Space shift coefficient
-    double SLocation = 0.0;
-    double SScale = 1.0/2.0;
-    auto S = std::make_shared< LaplaceRandomVariable >(SLocation, SScale);
+    auto S = std::make_shared< LaplaceRandomVariable >(0.0, 1.0/2.0);
     for(int i = 0; i<m_NbIndependentComponents ; ++i)
     {
-        RandomVariable S_("S#" + std::to_string(i), S);
-        m_IndividualRandomVariables.insert(S_);
+        std::string name = "S#" + std::to_string(i);
+        m_IndividualRandomVariables.insert(RandomVariable(name, S));
     }
 
 }
@@ -570,42 +585,28 @@ LongitudinalModel
 ::InitializePopulationRandomVariables()
 {
     // Initial Position
-    double P0Mean = 0.35;
-    double P0Variance = 0.01;
-    auto P0 = std::make_shared<GaussianRandomVariable>(P0Mean, P0Variance);
-    RandomVariable P0_("P0", P0);
-    m_PopulationRandomVariables.insert(P0_);
+    auto P0 = std::make_shared<GaussianRandomVariable>(0.35, 0.000001);
+    m_PopulationRandomVariables.insert( RandomVariable("P0", P0) );
 
     // Initial Time
-    double T0Mean = 70;
-    double T0variance = 0.1;
-    auto T0 = std::make_shared<GaussianRandomVariable>(T0Mean, T0variance);
-    RandomVariable T0_("T0", T0);
-    m_PopulationRandomVariables.insert(T0_);
+    auto T0 = std::make_shared<GaussianRandomVariable>(70.0, 0.0001);
+    m_PopulationRandomVariables.insert(RandomVariable("T0", T0));
 
     // Initial Velocity
-    double V0Mean = 0.06;
-    double V0Variance = 0.001;
-    auto V0 = std::make_shared<GaussianRandomVariable>(V0Mean, V0Variance);
-    RandomVariable V0_("V0", V0);
-    m_PopulationRandomVariables.insert(V0_);
+    auto V0 = std::make_shared<GaussianRandomVariable>(0.06, 0.000001);
+    m_PopulationRandomVariables.insert(RandomVariable("V0", V0));
 
     // Initial Beta coefficient
-    double BetaVariance = 0.01;
     for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension()-1) ; ++i)
     {
-        double BetaMean = (double)i + 0.2;
-        auto Beta = std::make_shared< GaussianRandomVariable> (BetaMean, BetaVariance);
+        auto Beta = std::make_shared< GaussianRandomVariable> ((double)i/5.0 , 0.0001);
         std::string name = "Beta#" + std::to_string(i);
-        RandomVariable Beta_(name, Beta);
-        m_PopulationRandomVariables.insert(Beta_);
+        m_PopulationRandomVariables.insert(RandomVariable(name, Beta));
     }
 
 
     // Noise
-    double NoiseMean = 0.0;
-    double NoiseVariance = 0.05;
-    m_Noise = std::make_shared< GaussianRandomVariable >(NoiseMean, NoiseVariance);
+    m_Noise = std::make_shared< GaussianRandomVariable >(0.0, 0.0001);
     
 }
 
@@ -614,27 +615,20 @@ LongitudinalModel
 ::InitializeIndividualRandomVariables()
 {
     // Initial pre acceleration factor
-    double KsiMean = 0.0;
-    double KsiVariance = 0.5;
-    auto Ksi = std::make_shared< GaussianRandomVariable >(KsiMean, KsiVariance);
-    RandomVariable Ksi_("Ksi", Ksi);
-    m_IndividualRandomVariables.insert(Ksi_);
+    auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.5*0.5);
+    m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
 
     // Initial Time Shift
-    double TauMean = 0.0;
-    double TauVariance = 3.0;
-    auto Tau = std::make_shared< GaussianRandomVariable >(TauMean, TauVariance);
+    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 5.0*5.0);
     RandomVariable Tau_("Tau", Tau);
     m_IndividualRandomVariables.insert(Tau_);
 
     // Initial Space shift coefficient
-    double SLocation = 0.0;
-    double SScale = 1.0/2.0;
-    auto S = std::make_shared< LaplaceRandomVariable >(SLocation, SScale);
     for(int i = 0; i<m_NbIndependentComponents ; ++i)
-    {
-        RandomVariable S_("S#" + std::to_string(i), S);
-        m_IndividualRandomVariables.insert(S_);
+    { 
+        auto S = std::make_shared< LaplaceRandomVariable >(0.0, 1.0/2.0);
+        std::string name = "S#" + std::to_string(i);
+        m_IndividualRandomVariables.insert(RandomVariable(name, S));
     }
 
 }
@@ -645,20 +639,17 @@ LongitudinalModel
 {
 
     // Initial Propagation coefficient
-    double DeltaVariance = 0.001;
     for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
     {
-        double DeltaMean = 0.5 + (double)i;
-        auto Delta = std::make_shared< GaussianRandomVariable >(DeltaMean, DeltaVariance);
+        auto Delta = std::make_shared< GaussianRandomVariable >(0.5 + (double)i, 0.0001);
         std::string name = "Delta#" + std::to_string(i);
-        RandomVariable Delta_(name, Delta);
-        m_ManifoldRandomVariables.insert(Delta_);
+        m_ManifoldRandomVariables.insert( RandomVariable(name, Delta) );
     }
 }
 
 std::vector<double>
 LongitudinalModel
-::GetInitialPosition(const std::shared_ptr<Realizations> &R)
+::GetInitialPosition(const std::shared_ptr<MultiRealizations> &R)
 {
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
 
@@ -683,7 +674,7 @@ LongitudinalModel
 
 std::vector<double>
 LongitudinalModel
-::GetInitialVelocity(const std::shared_ptr<Realizations> &R)
+::GetInitialVelocity(const std::shared_ptr<MultiRealizations> &R)
 {
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
 
@@ -709,7 +700,7 @@ LongitudinalModel
 
 std::vector<double>
 LongitudinalModel
-::GetPropagationCoefficients(const std::shared_ptr<Realizations> &R)
+::GetPropagationCoefficients(const std::shared_ptr<MultiRealizations> &R)
 {
     std::vector<double> Delta;
 
@@ -723,7 +714,7 @@ LongitudinalModel
 
 std::function<double(double)>  
 LongitudinalModel
-::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations>& R)
+::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R)
 {
     double AccFactor = exp(R->at("Ksi")[SubjectNumber]);
     double TimeShift = R->at("Tau")[SubjectNumber];
@@ -734,7 +725,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeOrthonormalBasis(const std::shared_ptr<Realizations>& R)
+::ComputeOrthonormalBasis(const std::shared_ptr<MultiRealizations>& R)
 {
     /////////////////////////
     /// Get the vectors P0 and V0
@@ -806,7 +797,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeAMatrix(const std::shared_ptr<Realizations>& R)
+::ComputeAMatrix(const std::shared_ptr<MultiRealizations>& R)
 {
     std::vector<std::vector<double>> AMatrix;
     for(int i = 0; i < m_NbIndependentComponents ; ++i)
@@ -855,7 +846,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeSpaceShifts(const std::shared_ptr<Realizations>& R)
+::ComputeSpaceShifts(const std::shared_ptr<MultiRealizations>& R)
 {
     std::map< std::string, std::vector<double>> SpaceShifts;
     int NumberOfSubjects = (int)R->at("Tau").size();
@@ -988,7 +979,7 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLogLikelihoodGeneric(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D)
+::ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D)
 {
 
     /// Get the data
@@ -1025,7 +1016,7 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLogLikelihoodIndividual(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data>& D, 
+::ComputeLogLikelihoodIndividual(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data>& D, 
                                  const int SubjectNumber)
 {
     /// Initialize the individual parameters
@@ -1068,11 +1059,16 @@ LongitudinalModel
     double MeanV0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"))->GetMean();
     double SigmaKsi = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetVariance();
     double SigmaTau = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetVariance();
+    double Beta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#0"))->GetMean();
+    double Delta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_ManifoldRandomVariables.at("Delta#0"))->GetMean();
     double Sigma = m_Noise->GetVariance();
 
     m_OutputParameters << MeanP0 << ", " << MeanT0 << ", " << MeanV0 << ", ";
-    m_OutputParameters << SigmaKsi << ", " << SigmaTau << ", " << Sigma << ", " << std::endl;
+    m_OutputParameters << SigmaKsi << ", " << SigmaTau << ", " << Sigma << ", ";
+    m_OutputParameters << Beta << ", " << Delta << std::endl;
 
     
-    std::cout << "Parameters : P0: " << MeanP0 << ". T0: " << MeanT0 << ". V0: " << MeanV0 << ". Ksi: " << SigmaKsi << ". Tau: " << SigmaTau << ". Sigma: " << Sigma << ". " << std::endl;
+    std::cout << "Parameters : P0: " << MeanP0 << ". T0: " << MeanT0 << ". V0: " << MeanV0;
+    std::cout << ". Ksi: " << SigmaKsi << ". Tau: " << SigmaTau << ". Sigma: " << Sigma;
+    std::cout << ". Beta: " << Beta << ". Delta: " << Delta << std::endl;
 }

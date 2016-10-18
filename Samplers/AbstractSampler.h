@@ -20,7 +20,8 @@ public:
     typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
     typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-    typedef std::map<std::string, std::vector<double>> Realizations;
+    typedef std::map<std::string, std::vector<double>> MultiRealizations;
+    typedef std::map<std::string, double> UniqueRealizations;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
@@ -39,9 +40,12 @@ public:
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /// Initialize the sampler
+    virtual void InitializeSampler(const std::shared_ptr<MultiRealizations>& R) = 0;
+    
     // Sample a new variable thanks to the sampler
     // The model cannot be constant because we modify some of its parameters (m_Orthonormal Basis for instance)
-    virtual Realizations Sample(const std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
+    virtual MultiRealizations Sample(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
                         std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D) = 0;
 
 

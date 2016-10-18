@@ -26,6 +26,7 @@ int main() {
     //// INITIALIZATION ///
     unsigned int NumberDimension = 3;
     unsigned int NumberIndependentComponents = 2;
+    clock_t start = clock();
     
     /// TESTS ///
     bool Active = true;
@@ -37,23 +38,26 @@ int main() {
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
     shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
-    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
-    // shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-     */
+    //shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
+    shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
+    */
+     
     
-    /// 
+    /// Univariate Model
+    
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
     shared_ptr<AbstractModel> Model = make_shared<UnivariateModel>(BaseManifold);
     //shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
     shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
     
+    
 
     /// DATA GENERATION ///
     Model->InitializeFakeRandomVariables();
-    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(100, 4, 5) );
+    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(200, 6, 8) );
 
     /// Model
-    Model->InitializeRandomVariables();
+    Model->Initialize();
 
 
     /// Python call
@@ -70,7 +74,8 @@ int main() {
 
 
 
-    cout <<  endl << "Hello, World!" << endl;
+    clock_t end = clock();
+    cout <<  endl << "Time : " << (end - start) / CLOCKS_PER_SEC << " secondes" << endl;
     return 0;
 
     //
