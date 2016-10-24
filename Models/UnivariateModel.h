@@ -49,11 +49,7 @@ public:
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& StochSufficientStatistics, 
                                        const std::shared_ptr<Data>& D);
-
-    /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D, 
-                                     const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0));
-
+    
     /// Compute the log likelihood of the model for a particular individual
     virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations>& R, 
                                                   const std::shared_ptr<Data>& D, const int SubjectNumber);

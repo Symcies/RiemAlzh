@@ -1,7 +1,7 @@
 #ifndef _Algorithm_h
 #define _Algorithm_h
 
-
+#include "../Models/AbstractModel.h"
 #include "../Models/AbstractModel.h"
 #include "../Samplers/AbstractSampler.h"
 #include "../Parameters/CandidateRandomVariables.h"

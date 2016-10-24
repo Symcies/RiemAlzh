@@ -66,7 +66,7 @@ public:
 
     /// Compute the likelihood of the model
     virtual double ComputeLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D, 
-                                     const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0)) = 0;
+                                     const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0));
 
 
     /// Compute the log likelihood of the model
@@ -113,10 +113,7 @@ protected:
 
     /// Random variables that are subject-specific
     RandomVariableMap m_IndividualRandomVariables;
-
-    /// Random variables that are related to the manifold
-    RandomVariableMap m_ManifoldRandomVariables;
-
+    
     /// Output file
     std::ofstream m_OutputParameters;
 

@@ -1,59 +1,38 @@
 cmake_minimum_required(VERSION 3.5)
-project(Longitudina)
+
+
+####################################
+### Project Declaration 
+####################################
+
+project(Longitudina2)
 
 
 
 ####################################
 ### Set new project folders / files
 ####################################
-set(PARAMETERS
-        Parameters
-        Parameters/CandidateRandomVariables)
 
-set(OUTPUTS
-        Outputs
-        Outputs/RandomVariableRealizations)
+file( GLOB_RECURSE PARAMETERS Parameters/*)
 
-set(UTILITIES
-        Utilities
-        Utilities/MatrixFunctions)
+file( GLOB_RECURSE OUTPUTS Outputs/* )
 
-set(SAMPLERS
-        Samplers
-        Samplers/AbstractSampler
-        Samplers/BlockedGibbsSampler
-        Samplers/HMWithinGibbsSampler
-        )
+file( GLOB_RECURSE UTILITIES Utilities/* )
 
-set(RANDOMVARIABLES
-        RandomVariables
-        RandomVariables/AbstractRandomVariable
-        RandomVariables/GaussianRandomVariable
-        RandomVariables/LaplaceRandomVariable
-        RandomVariables/ConstantRandomVariable
-        )
+file( GLOB_RECURSE LINEARALGEBRA LinearAlgebra/*)
 
-set(MANIFOLDS
-        Manifolds
-        Manifolds/BaseManifold
-        Manifolds/BaseManifold/AbstractBaseManifold
-        Manifolds/BaseManifold/LogisticBaseManifold
-        Manifolds/AbstractManifold
-        Manifolds/PropagationManifold)
+file( GLOB_RECURSE SAMPLERS Samplers/*)
 
-set(MODELS
-        Models
-        Models/AbstractModel
-        Models/UnivariateModel
-        Models/LongitudinalModel)
+file( GLOB_RECURSE RANDOMVARIABLES RandomVariables/*)
 
-set(ALGORITHM
-        Algorithm
-        Algorithm/Algorithm)
+file( GLOB_RECURSE MANIFOLDS Manifolds/*)
 
-set(TESTS 
-        Tests
-        Tests/TestAssert)
+file( GLOB_RECURSE MODELS Models/*)
+
+file( GLOB_RECURSE ALGORITHM Algorithm/*)
+
+file( GLOB_RECURSE TESTS Tests/* )
+
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
@@ -61,46 +40,58 @@ set(SOURCE_FILES main.cpp)
 
 
 ####################################
+### Set Armadillo
+####################################
+
+find_Package(Armadillo 4.32 QUIET)
+
+if (ARMADILLO_FOUND)
+    Include_Directories(${ARMADILLO_INCLUDE_DIRS})
+    Message("Armadillo has been found")
+else()
+    Message(FATAL_ERROR " -- IMPOSSIBLE TO FIND ARMADILLO -- ")
+endif()
+
+
+
+
+####################################
 ### Set ITK
 ####################################
+
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
 set(ITK_DIR /aramis/dartagnan2/Software/ITK/ITKb-4.5.1)
 
 #find_Package(ITK REQUIRED)
 
-if(ITK_FOUND)
-    INCLUDE(${ITK_USE_FILE})
-else(ITK_FOUND)
-    MESSAGE(FATAL ERROR "ITK not found. Please set ITK_DIR.")
-endif(ITK_FOUND)
+#if(ITK_FOUND)
+#    INCLUDE(${ITK_USE_FILE})
+#    MESSAGE("ITK has been found")
+#else()
+#    MESSAGE(FATAL ERROR "ITK not found. Please set ITK_DIR.")
+#endif(ITK_FOUND)
 
 
 
 ####################################
-### Set GNUPLOT
+### Executable Declaration
 ####################################
 
-
-
-
-####################################
-### Libraries
-####################################
-
-
-
-####################################
-### Add Executable
-####################################
 add_executable(Longitudina2
         ${SOURCE_FILES}
+        ${SOURCES}
         ${UTILITIES}
         ${SAMPLERS}
         ${RANDOMVARIABLES}
         ${MODELS}
+        ${LINEARALGEBRA}
         ${ALGORITHM}
         ${MANIFOLDS}
         ${PARAMETERS}
         ${OUTPUTS}
         ${TESTS})
+
+
+Target_Link_Libraries(Longitudina2
+            ${ARMADILLO_LIBRARIES})

@@ -2,22 +2,60 @@
 <module type="CPP_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/Utilities" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Parameters" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Algorithm" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Tests/TestAssert.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Tests/TestAssert.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Samplers/AbstractSampler.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Samplers/HMWithinGibbsSampler.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Samplers/HMWithinGibbsSampler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Samplers/AbstractSampler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/LongitudinalModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/LongitudinalModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/AbstractRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/GaussianRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/ConstantRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LaplaceRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/GaussianRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/AbstractRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LaplaceRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/ConstantRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Algorithm/Algorithm.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Algorithm/Algorithm.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Tests" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Samplers" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Outputs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Manifolds/AbstractManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Manifolds/PropagationManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Manifolds/AbstractManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Manifolds/PropagationManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/LogisticBaseManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/LogisticBaseManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/AbstractBaseManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/AbstractBaseManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Parameters/CandidateRandomVariables.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Parameters/CandidateRandomVariables.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Utilities/MatrixFunctions.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Utilities/MatrixFunctions.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/LinearAlgebra.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloLinearAlgebra.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper_friend.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper_friend.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper.h" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library name="Header Search Paths">
         <CLASSES>
+          <root url="file:///usr/local/include" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AudioToolbox.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Carbon.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/Headers" />
@@ -176,8 +214,8 @@
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/AE.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/FSEvents.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/OSServices.framework/Headers" />
-          <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/Metadata.framework/Headers" />
+          <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/ServiceManagement.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/ICADevices.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/DiskArbitration.framework/Headers" />
@@ -190,6 +228,7 @@
           <root url="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include" />
         </CLASSES>
         <SOURCES>
+          <root url="file:///usr/local/include" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AudioToolbox.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Carbon.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/Headers" />
@@ -348,8 +387,8 @@
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/AE.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/FSEvents.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/OSServices.framework/Headers" />
-          <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/Metadata.framework/Headers" />
+          <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/ServiceManagement.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/ICADevices.framework/Headers" />
           <root url="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/DiskArbitration.framework/Headers" />

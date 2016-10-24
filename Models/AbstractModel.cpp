@@ -30,10 +30,6 @@ AbstractModel
     {
         return m_PopulationRandomVariables.at(name);
     }
-    else if(m_ManifoldRandomVariables.count(name))
-    {
-        return  m_ManifoldRandomVariables.at(name);
-    }
     else
     {
         // TODO : change to a real warning
@@ -47,8 +43,7 @@ AbstractModel
 ::GetRandomVariables()
 {
     RandomVariableMap RandomVariables;
-
-    RandomVariables.insert(m_ManifoldRandomVariables.begin(), m_ManifoldRandomVariables.end());
+    
     RandomVariables.insert(m_PopulationRandomVariables.begin(), m_PopulationRandomVariables.end());
     RandomVariables.insert(m_IndividualRandomVariables.begin(), m_IndividualRandomVariables.end());
 
@@ -58,6 +53,17 @@ AbstractModel
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+double 
+AbstractModel
+::ComputeLikelihood(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D,
+                    const std::pair<std::string, int> NameRandomVariable) 
+{
+    double LogLikelihood = ComputeLogLikelihood(R, D, NameRandomVariable);
+    return exp(LogLikelihood);
+}
+
+
 
 std::map<std::string, std::vector<double>>
 AbstractModel
@@ -86,13 +92,5 @@ AbstractModel
         R.insert(std::pair< std::string, std::vector<double>> (it.first, Realization));
     }
 
-    // Initialize the realization of the manifold random variables/
-    // They are shared among the individual thus sampled only once
-    for(auto it : m_ManifoldRandomVariables)
-    {
-        std::vector<double> Realization;
-        Realization.push_back(it.second->Sample());
-        R.insert(std::pair< std::string, std::vector<double>> (it.first, Realization));
-    }
     return R;
 }

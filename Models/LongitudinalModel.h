@@ -45,12 +45,7 @@ public:
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const std::shared_ptr<Data>& D);
-
-
-    /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D, 
-                                     const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0));
-
+    
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
     virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D, 
@@ -77,15 +72,6 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /// Initialize Population random variables
-    void InitializePopulationRandomVariables();
-
-    /// Initialize Individual random variables
-    void InitializeIndividualRandomVariables();
-
-    /// Initialize Manifold random variables
-    void InitializeManifoldRandomVariables();
     
     /// Get the initial position = gamma(t0)
     std::vector<double> GetInitialPosition(const std::shared_ptr<MultiRealizations>& R);
@@ -93,7 +79,7 @@ protected:
     /// Get the initial velocity = diff(gamma(t0))
     std::vector<double> GetInitialVelocity(const std::shared_ptr<MultiRealizations>& R);
 
-    /// Get the propagation = (delta(k))
+    /// Get the propagation coefficients = (delta(k))
     std::vector<double> GetPropagationCoefficients(const std::shared_ptr<MultiRealizations>& R);
     
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
@@ -111,9 +97,7 @@ protected:
     /// Compute the Likelihood the most generic way, without simplification
     double ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
 
-    /// Compute the likelihood keeping the term of the specific individual
-    double ComputeLogLikelihoodIndividual(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D, const int SubjectNumber);
-
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
