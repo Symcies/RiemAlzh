@@ -26,7 +26,7 @@ HMWithinGibbsSampler
 }
 
 
-std::map<std::string, std::vector<double>>
+HMWithinGibbsSampler::MultiRealizations
 HMWithinGibbsSampler
 ::Sample(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
          std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D)
@@ -36,11 +36,9 @@ HMWithinGibbsSampler
     std::uniform_real_distribution<double> Distribution(0.0, 1.0);
 
     std::shared_ptr<MultiRealizations> GibbsRealizations = std::make_shared<MultiRealizations>(*R);
-    std::cout << "Realization: ";
     for(auto&& it : *GibbsRealizations)
     {
         std::string NameCurrentRV = it.first;
-        std::cout << NameCurrentRV << ": ";
         auto CurrentRV = M->GetRandomVariable(NameCurrentRV);
 
         int i = 0;
@@ -68,16 +66,13 @@ HMWithinGibbsSampler
             {
                 *it2 = CurrentRealization;
                 M->UpdateParameters(GibbsRealizations, NameCurrentRV);
-                std::cout << CurrentRealization << ". " ;
             }
             else
             {
                 //No need to rewrite *it2 as it is already the Candidate Realization
-                std::cout << CandidateRealization << ". ";
             }
         }
     }
-    std::cout << std::endl;
 
     return *GibbsRealizations;
 }

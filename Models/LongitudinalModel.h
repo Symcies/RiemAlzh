@@ -66,6 +66,12 @@ public:
     /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
     virtual void InitializeFakeRandomVariables();
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Outputs
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /// Compute Outputs
+    virtual void ComputeOutputs();
 
 
 protected:
@@ -74,25 +80,25 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Get the initial position = gamma(t0)
-    std::vector<double> GetInitialPosition(const std::shared_ptr<MultiRealizations>& R);
+    VectorType GetInitialPosition(const std::shared_ptr<MultiRealizations>& R);
 
     /// Get the initial velocity = diff(gamma(t0))
-    std::vector<double> GetInitialVelocity(const std::shared_ptr<MultiRealizations>& R);
+    VectorType GetInitialVelocity(const std::shared_ptr<MultiRealizations>& R);
 
     /// Get the propagation coefficients = (delta(k))
-    std::vector<double> GetPropagationCoefficients(const std::shared_ptr<MultiRealizations>& R);
+    VectorType GetPropagationCoefficients(const std::shared_ptr<MultiRealizations>& R);
     
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
     std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R);
 
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
-    void ComputeOrthonormalBasis( const std::shared_ptr<MultiRealizations>& R); // TODO : Use a library to do it faster
+    void ComputeOrthonormalBasis( const std::shared_ptr<MultiRealizations>& R);
 
     /// Compute the A Matrix used to get the space shifts
-    void ComputeAMatrix( const std::shared_ptr<MultiRealizations>& R); // TODO : Use a library to do it faster
+    void ComputeAMatrix( const std::shared_ptr<MultiRealizations>& R);
 
     // Compute the space shifts
-    void ComputeSpaceShifts(const std::shared_ptr<MultiRealizations>& R); // TODO : Use a library to do it faster
+    void ComputeSpaceShifts(const std::shared_ptr<MultiRealizations>& R);
 
     /// Compute the Likelihood the most generic way, without simplification
     double ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
@@ -113,21 +119,14 @@ protected:
     std::shared_ptr< GaussianRandomVariable > m_Noise;
 
     /// Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns> (Basis orthogonal to gamma0_deriv(T0)
-    std::vector< std::vector< double >> m_OrthogonalBasis;
+    std::vector< VectorType > m_OrthogonalBasis;
 
     /// A Matrix vec<A1, ..., A(N)> where Ai is vec<Ns> (Ai is a column)
-    std::vector< std::vector< double >> m_AMatrix;
+    MatrixType m_AMatrix;
 
     /// Space shifts w(i) of the model
-    std::map< std::string, std::vector< double >> m_SpaceShifts;
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Output(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /// Compute outputs
-    virtual void ComputeOutputs();
-
+    std::map< std::string, VectorType> m_SpaceShifts;
+    
 };
 
 

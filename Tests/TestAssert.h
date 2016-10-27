@@ -1,10 +1,13 @@
 #ifndef TestAssert_h
 #define TestAssert_h
 
+typedef double ScalarType;
+
 #include <iostream>
 #include <vector>
 #include <functional>
 #include <cmath>
+#include "../LinearAlgebra/LinearAlgebra.h"
 
 
 class TestAssert {
@@ -104,10 +107,6 @@ TestAssert
         
     }
 }
-
-
-
-
 
 
 

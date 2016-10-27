@@ -22,51 +22,57 @@ ComputeEuclideanScalarProduct(std::vector<double> A, std::vector<double> B)
 
 
 
-std::vector<double>
-LinearCombination(std::vector<double> Coefficients, std::vector<std::vector<double>> Vectors)
+LinearAlgebra<ScalarType>::VectorType
+LinearCombination(LinearAlgebra<ScalarType>::VectorType Coefficients, std::vector<LinearAlgebra<ScalarType>::VectorType> Vectors)
 {
+    typedef LinearAlgebra<ScalarType>::VectorType VectorType;
+    
     if(Coefficients.size() != Vectors.size())
     {
         std::cout << " The coefficients and vectors do not have the same size. How to do a linear combination?";
     }
-    //std::cout << Vectors.size() << std::endl;
-    std::vector<double> ReturnVector(Vectors[0].size(), 0.0);
-
-    typedef std::vector<double>::iterator DoubleIter;
-    for(int i = 0; i < Vectors.size(); ++i)
+    
+    VectorType ReturnVector(Vectors[0].size(), 0.0);
+    
+    auto IterVect = Vectors.begin();
+    auto IterCoef = Coefficients.begin();
+    for(    ; IterCoef != Coefficients.end() && IterVect != Vectors.end(); ++IterCoef, ++IterVect)
     {
-        double Coeff = Coefficients[i];
-        std::vector<double> Vector = Vectors[i];
-
-        for(std::pair<DoubleIter, DoubleIter> i(Vector.begin(), ReturnVector.begin());
-            i.first != Vector.end() && i.second != ReturnVector.end();
-            ++i.first, ++i.second)
-        {
-            *i.second += Coeff* *i.first;
-        }
+        ReturnVector += *IterCoef * *IterVect;
     }
-
+    
     return ReturnVector;
 
 }
 
 double
-NormOfVectorDifference(std::vector<double> U, std::vector<double> V)
+NormOfVectorDifference(LinearAlgebra<ScalarType>::VectorType U, LinearAlgebra<ScalarType>::VectorType V)
 {
 
     if(U.size() != U.size())
     {
         std::cout << " The vectors do not have the same size. How to do a difference?";
     }
+    
+    LinearAlgebra<ScalarType>::VectorType R = U - V;
+    double Result = R.squared_magnitude();
+         
+    return Result;
+}
 
-    typedef std::vector<double>::iterator DoubleIter;
-    double Diff = 0;
-    for(std::pair<DoubleIter, DoubleIter> i(U.begin(), V.begin());
-        i.first != U.end() && i.second != V.end();
-        ++i.first, ++i.second)
+
+// TO BE DELETED ABSOLUTELY !
+LinearAlgebra<ScalarType>::VectorType
+ConvertToVectorType(std::vector<double> VectorSTL)
+{
+    LinearAlgebra<ScalarType>::VectorType V(VectorSTL.size());
+    
+    int i = 0;
+    for(auto it = VectorSTL.begin(); it != VectorSTL.end(); ++it, ++i)
     {
-        Diff += (*i.first-*i.second) * (*i.first-*i.second);
+        V(i) = *it;
     }
-
-    return Diff;
+    
+    return V;
+    
 }

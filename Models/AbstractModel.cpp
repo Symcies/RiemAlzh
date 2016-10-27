@@ -38,7 +38,7 @@ AbstractModel
 }
 
 
-std::map< std::string, std::shared_ptr< AbstractRandomVariable >>
+AbstractModel::RandomVariableMap
 AbstractModel
 ::GetRandomVariables()
 {
@@ -65,7 +65,7 @@ AbstractModel
 
 
 
-std::map<std::string, std::vector<double>>
+AbstractModel::MultiRealizations
 AbstractModel
 ::SimulateRealizations(int NumberOfSubjects)
 {
@@ -75,21 +75,20 @@ AbstractModel
     // They are shared among the individual thus sampled only once
     for(auto it : m_PopulationRandomVariables)
     {
-        std::vector<double> Realization;
-        Realization.push_back(it.second->Sample());
-        R.insert(std::pair< std::string, std::vector<double>> (it.first, Realization));
+        VectorType Realization(1, it.second->Sample());
+        R.insert(std::pair< std::string, VectorType> (it.first, Realization));
     }
 
     // Initialize the realization of the individual random variables.
     // One realization is sampled for each individual, tagged with the i coefficient
     for(auto it : m_IndividualRandomVariables)
     {
-        std::vector<double> Realization;
-        for(int i = 0; i < NumberOfSubjects; ++i)
+        VectorType Realization(NumberOfSubjects);
+        for(auto it2 = Realization.begin(); it2 != Realization.end(); ++it2)
         {
-            Realization.push_back(it.second->Sample());
+            *it2 = it.second->Sample();
         }
-        R.insert(std::pair< std::string, std::vector<double>> (it.first, Realization));
+        R.insert(std::pair< std::string, VectorType> (it.first, Realization));
     }
 
     return R;

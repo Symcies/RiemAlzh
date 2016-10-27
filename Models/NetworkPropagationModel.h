@@ -14,21 +14,17 @@ public:
     /// typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    typedef std::vector< std::vector<double>> ControlPoints;
-    typedef std::vector< std::vector<double>> MeshPoints;
+    typedef std::vector< VectorType > ControlPoints;
+    typedef std::vector< VectorType > MeshPoints;
     typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
-    
-    
-    // TODO : TO BE CHANGED ABSOLUTELY
-    typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
-    
+        
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     NetworkPropagationModel(const unsigned int NbIndependantComponents, std::shared_ptr<AbstractManifold>& M, 
-                            MatrixType InvertKernelMatrix, MatrixType InterpolationMatrix);
+                            MatrixType KernelMatrix, MatrixType InterpolationMatrix);
     ~NetworkPropagationModel();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +37,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the model : The random variables, the Kernel matrix and the interpolation matrix
-    virtual void Initialize(const std::shared_ptr<ControlPoints>& CP, const std::shared_ptr<MeshPoints> &MP);
+    virtual void Initialize();
     
     /// Update parameters of the model, if any has to be updated
     virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, std::string Name = "All");
@@ -73,6 +69,13 @@ public:
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
 
     
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Output(s) :
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Compute outputs
+    virtual void ComputeOutputs();
+    
     
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +102,8 @@ protected:
     
     /// Compute the interpolation coefficients
     void ComputeInterpolationCoefficients(const std::shared_ptr<MultiRealizations>& R);
+    
+ 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
@@ -115,13 +120,13 @@ protected:
     std::shared_ptr< GaussianRandomVariable > m_Noise;
 
     /// Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns> (Basis orthogonal to gamma0_deriv(T0)
-    std::vector< std::vector< double >> m_OrthogonalBasis;
+    std::vector< VectorType > m_OrthogonalBasis;
 
     /// A Matrix vec<A1, ..., A(N)> where Ai is vec<Ns> (Ai is a column)
-    std::vector< std::vector< double >> m_AMatrix;
+    MatrixType m_AMatrix;
 
     /// Space shifts w(i) of the model
-    std::map< std::string, std::vector< double >> m_SpaceShifts;
+    std::map< std::string, VectorType> m_SpaceShifts;
     
     /// Interpolation Matrix to calculate any point translation
     MatrixType m_InterpolationMatrix;
@@ -133,17 +138,12 @@ protected:
     MatrixType m_InvertKernelMatrix;
     
     /// Coordinates of the Control points
-    ControlPoints m_ControlPoints;
+    //ControlPoints m_ControlPoints;
     
     /// Coordinates of the mesh points
-    MeshPoints m_MeshPoints;
+    //MeshPoints m_MeshPoints;
     
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Output(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Compute outputs
-    virtual void ComputeOutputs();
     
     
     

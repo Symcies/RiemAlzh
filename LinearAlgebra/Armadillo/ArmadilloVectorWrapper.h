@@ -45,8 +45,14 @@ ArmadilloVectorWrapper<ScalarType> operator/(const ArmadilloVectorWrapper<Scalar
 template<class ScalarType>
 ArmadilloVectorWrapper<ScalarType> operator*(const ScalarType & leftScalar, const ArmadilloVectorWrapper<ScalarType> & rightVector);
 
+
 template<class ScalarType>
 std::ostream & operator<<(std::ostream& os, ArmadilloVectorWrapper<ScalarType> const& rhs);
+
+
+// ADDED BY IGOR
+template <class ScalarType>    
+bool operator==(const ArmadilloVectorWrapper<ScalarType> & left, const ArmadilloVectorWrapper<ScalarType> & right);
 
 
 /**
@@ -75,6 +81,8 @@ class ArmadilloVectorWrapper {
 	friend ArmadilloVectorWrapper<ScalarType> operator/<>(const ArmadilloVectorWrapper<ScalarType> & leftVector, const ScalarType & rightScalar);
 
 	friend ArmadilloVectorWrapper<ScalarType> operator*<>(const ScalarType & leftScalar, const ArmadilloVectorWrapper<ScalarType> & rightVector);
+    // ADDED BY IGOR
+    friend bool operator==<>(const ArmadilloVectorWrapper<ScalarType> & left, const ArmadilloVectorWrapper<ScalarType> & right);
 
 	/// Overload of the stream operator.
 	friend std::ostream & operator<<<>(std::ostream& os, ArmadilloVectorWrapper<ScalarType> const& rhs);
@@ -246,8 +254,7 @@ public :
 	inline ArmadilloVectorWrapper<ScalarType> operator*(ScalarType scalar) const { return ArmadilloVectorWrapper<ScalarType>(m_Vector*scalar); }
 	/// Scalar division of lhs vector by \e scalar.
 	inline ArmadilloVectorWrapper<ScalarType> operator/(ScalarType scalar) const { return ArmadilloVectorWrapper<ScalarType>(m_Vector/scalar); }
-
-
+    
 
 private :
 

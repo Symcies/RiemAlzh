@@ -42,6 +42,8 @@ ArmadilloMatrixWrapper<TScalar> operator/(TScalar const& leftScalar, const Armad
 template<class TScalar>
 ArmadilloVectorWrapper<TScalar> operator*(ArmadilloMatrixWrapper<TScalar> const &leftMatrix, ArmadilloVectorWrapper<TScalar> const &rightVector);
 
+
+
 template<class TScalar>
 ArmadilloMatrixWrapper<TScalar> diagonal_matrix(unsigned N, TScalar const & value);
 template<class TScalar>
@@ -52,7 +54,6 @@ template<class TScalar>
 ArmadilloMatrixWrapper<TScalar> inverse_sympd(ArmadilloMatrixWrapper<TScalar> const& M);
 template<class TScalar>
 ArmadilloVectorWrapper<TScalar> eigenvalues_sym(ArmadilloMatrixWrapper<TScalar> const& M);
-
 
 template <class TScalar>
 std::ostream & operator<<(std::ostream& os, ArmadilloMatrixWrapper<TScalar> const& rhs);

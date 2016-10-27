@@ -74,7 +74,6 @@ LongitudinalModel
    
     /// Compute the first outputs
     m_OutputParameters << "P0, T0, V0, sigmaKsi, sigmaTau, sigma, Beta, Delta" << std::endl;
-    ComputeOutputs();
 }
 
 void 
@@ -120,7 +119,7 @@ LongitudinalModel
 
 }
 
-std::vector< std::vector< double >>
+LongitudinalModel::SufficientStatisticsVector
 LongitudinalModel
 ::GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D)
 {
@@ -128,32 +127,38 @@ LongitudinalModel
     /// Initialization
     /////////////////////////
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    std::vector<double> S1, S2, S3, S4, S9;
-    double T0 = R->at("T0")[0];
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
-    std::vector<double> Delta = GetPropagationCoefficients(R);
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
+    
     
     /////////////////////////
     /// Compute S1 and S2
     /////////////////////////
+    int K = 0; 
+    for(auto it = D->begin(); it != D->end(); ++it)
+    {
+        K += it->size();
+    }
+    VectorType S1(K), S2(K);
+    
     int i = 0;
-    for(auto Iter = D->begin(); Iter != D->end(); ++Iter, ++i)
+    auto IterS1 = S1.begin();
+    auto IterS2 = S2.begin();
+    for(auto Iter = D->begin(); Iter != D->end() && IterS1 != S1.end() && IterS2 != S2.end(); ++Iter, ++i, ++IterS1, ++IterS2)
     {
         /// Given a particular subject, get its attributes, then, loop over its observation
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
-        auto SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
+        VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
         
         for(auto it : *Iter)
         {
             double TimePoint = SubjectTimePoint(it.second);
+            VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
 
-            std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
-            std::vector<double> Observation = it.first;
-
-            S1.push_back( ComputeEuclideanScalarProduct(ParallelCurve, Observation ) );
-            S2.push_back( ComputeEuclideanScalarProduct(ParallelCurve, ParallelCurve) );
-            
+            *IterS1 = dot_product(ParallelCurve, it.first);
+            *IterS2 = ParallelCurve.squared_magnitude();
         }
 
     }
@@ -161,24 +166,31 @@ LongitudinalModel
     /////////////////////////
     /// Compute S3 and S4
     /////////////////////////
+    VectorType S3(R->at("Ksi").size()), S4(R->at("Tau").size());
     auto IterKsi = R->at("Ksi").begin();
     auto IterTau = R->at("Tau").begin();
-    for( ; IterKsi != R->at("Ksi").end() && IterTau != R->at("Tau").end(); ++IterKsi, ++IterTau )
+    auto IterS3 = S3.begin();
+    auto IterS4 = S4.begin();
+    for( ; IterKsi != R->at("Ksi").end() && IterTau != R->at("Tau").end() && IterS3 != S3.end() && IterS4 != S4.end()
+            ; ++IterKsi, ++IterTau, ++IterS3, ++IterS4 )
     {
-        S3.push_back(*IterKsi * *IterKsi);
-        S4.push_back(*IterTau * *IterTau); 
+        *IterS3 = *IterKsi * *IterKsi;
+        *IterS4 = *IterTau * *IterTau;
     }
     
     /////////////////////////
     /// Compute S9
     /////////////////////////
-    for(int i = 0; i < (m_Manifold->GetDimension() - 1) * m_NbIndependentComponents; ++i)
+    VectorType S9((m_Manifold->GetDimension() - 1) * m_NbIndependentComponents);
+    int k = 0;
+    for(auto it = S9.begin(); it != S9.end(); ++it, ++k)
     {
-        S9.push_back( R->at("Beta#" + std::to_string(i))[0] );
+        *it = R->at("Beta#" + std::to_string(k))[0];
     }
-
-    SufficientStatisticsVector S = {S1, S2, S3, S4, P0, {T0}, V0, Delta, S9};
     
+    SufficientStatisticsVector S = {S1, S2, S3, S4, P0, VectorType(1, T0), V0, Delta, S9};
+    
+    /*
     /////////////////////////
     /// Tests
     /////////////////////////
@@ -214,7 +226,8 @@ LongitudinalModel
     };
     
     TestAssert::WarningEquality_Function(f1, f2, "Likelihood not correct. LongitudinalModel > GetSufficientStatistics");
-    
+    */
+     
     return S;
     
 }
@@ -236,9 +249,9 @@ LongitudinalModel
     auto T0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractT0 );
     auto V0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractV0 );
     
-    P0->SetMean(StochSufficientStatistics[4][0]);
-    T0->SetMean(StochSufficientStatistics[5][0]);
-    V0->SetMean(StochSufficientStatistics[6][0]);
+    P0->SetMean(StochSufficientStatistics[4](0));
+    T0->SetMean(StochSufficientStatistics[5](0));
+    V0->SetMean(StochSufficientStatistics[6](0));
     
     /// Update Delta(k)(mean)
     int i = 0;
@@ -292,10 +305,7 @@ LongitudinalModel
         K += it.size();
         for(auto it2 : it)
         {
-            for(auto it3 : it2.first)
-            {
-                NoiseVariance += it3 * it3;
-            }
+            NoiseVariance += it2.first.squared_magnitude();
         }
     }
 
@@ -309,9 +319,7 @@ LongitudinalModel
 
     /// Divide by N*K, then take the square root
     NoiseVariance /= N*K;
-    m_Noise->SetVariance(NoiseVariance);
-    ComputeOutputs();
-    
+    m_Noise->SetVariance(NoiseVariance);    
 }
 
 
@@ -358,24 +366,25 @@ LongitudinalModel
 {
     /// Initialize the individual parameters
     std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
-    std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
+    VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
 
     /// Get the global parameters
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")[0];
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
-    std::vector<double> Delta = GetPropagationCoefficients(R);
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
     
     /// Compute the likelihood
+    
     double LogLikelihood = 0;
     double k = D->at(SubjectNumber).size();
     int i = 0;
     for(auto IterData = D->at(SubjectNumber).begin(); IterData != D->at(SubjectNumber).end(); ++IterData, ++i)
     {
         double TimePoint = SubjectTimePoint(IterData->second);
-        std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
-        LogLikelihood += NormOfVectorDifference(IterData->first, ParallelCurve);
+        VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
+        LogLikelihood += (IterData->first - ParallelCurve).squared_magnitude();
     }
 
     LogLikelihood /= -2*m_Noise->GetVariance();
@@ -384,7 +393,7 @@ LongitudinalModel
 }
 
 
-std::vector< std::vector< std::pair< std::vector<double>, double> > >
+LongitudinalModel::Data
 LongitudinalModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs)
 {
@@ -404,10 +413,11 @@ LongitudinalModel
     std::normal_distribution<double> NoiseDistrib(0.0, sqrt(m_Noise->GetVariance()));
     
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")[0];
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
-    std::vector<double> Delta = GetPropagationCoefficients(R);
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
+    
     Data D;
     
     /// Simulate the data
@@ -428,15 +438,16 @@ LongitudinalModel
         /// Generate observations corresponding to the time points
         for(auto it : TimePoints)
         {
-            std::vector<double> Scores;
+            VectorType Scores(SpaceShift.size());
             
             double TimePoint = SubjectTimePoint(it);
-            auto ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
-            for(auto it2 : ParallelCurve)
+            VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
+            int i = 0;
+            for(auto it2 = ParallelCurve.begin(); it2 != ParallelCurve.end(); ++it2, ++i)
             {
-                Scores.push_back(it2 + NoiseDistrib(RNG));
+                Scores(i) = *it2 + NoiseDistrib(RNG);
             }
-            InDa.push_back(std::pair<std::vector<double>, double> (Scores, it));
+            InDa.push_back(std::pair<VectorType, double> (Scores, it));
         }
         
         D.push_back(InDa);
@@ -444,6 +455,33 @@ LongitudinalModel
     
     return D;
 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Output(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
+LongitudinalModel
+::ComputeOutputs()
+{
+    double MeanP0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"))->GetMean();
+    double MeanT0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("T0"))->GetMean();
+    double MeanV0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"))->GetMean();
+    double SigmaKsi = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetVariance();
+    double SigmaTau = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetVariance();
+    double Beta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#0"))->GetMean();
+    double Delta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#0"))->GetMean();
+    double Sigma = m_Noise->GetVariance();
+
+    m_OutputParameters << MeanP0 << ", " << MeanT0 << ", " << MeanV0 << ", ";
+    m_OutputParameters << SigmaKsi << ", " << SigmaTau << ", " << Sigma << ", ";
+    m_OutputParameters << Beta << ", " << Delta << std::endl;
+
+    
+    std::cout << "Parameters : P0: " << MeanP0 << ". T0: " << MeanT0 << ". V0: " << MeanV0;
+    std::cout << ". Ksi: " << SigmaKsi << ". Tau: " << SigmaTau << ". Sigma: " << Sigma;
+    std::cout << ". Beta: " << Beta << ". Delta: " << Delta << std::endl;
 }
 
 
@@ -506,42 +544,42 @@ LongitudinalModel
 
 
 
-std::vector<double>
+LongitudinalModel::VectorType
 LongitudinalModel
 ::GetInitialPosition(const std::shared_ptr<MultiRealizations> &R)
 {
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
 
-    double T0 = R->at("T0")[0];
-    std::vector<double> Delta = GetPropagationCoefficients(R);
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
 
     auto InitialPosition = CastedManifold->ComputeGeodesic(P0, T0, V0, T0, Delta);
     
     /// Tests
-    std::function<double()> f1 = [&R]() { return R->at("P0")[0]; };
+    std::function<double()> f1 = [&R]() { return R->at("P0")(0); };
     std::function<double()> f2 = [&InitialPosition]() { return InitialPosition[0]; };
     TestAssert::WarningEquality_Function(f1, f2, "P0 != InitialPosition[0]. LongitudinalModel > GetInitialPosition");
     
     return InitialPosition;
 }
 
-std::vector<double>
+LongitudinalModel::VectorType
 LongitudinalModel
 ::GetInitialVelocity(const std::shared_ptr<MultiRealizations> &R)
 {
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
 
-    double T0 = R->at("T0")[0];
-    std::vector<double> Delta = GetPropagationCoefficients(R);
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
+    double T0 = R->at("T0")(0);
+    VectorType Delta = GetPropagationCoefficients(R);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
 
-    auto InitialVelocity = CastedManifold->ComputeGeodesicDerivative(P0, T0, V0, T0, Delta);
+    VectorType InitialVelocity = CastedManifold->ComputeGeodesicDerivative(P0, T0, V0, T0, Delta);
     
     /// Tests 
-    std::function<double()> f1 = [&R]() { return R->at("V0")[0]; };
+    std::function<double()> f1 = [&R]() { return R->at("V0")(0); };
     std::function<double()> f2 = [&InitialVelocity]() { return InitialVelocity[0]; };
     TestAssert::WarningEquality_Function(f1, f2, "P0 != InitialVelocity[0]. LongitudinalModel > GetInitialVelocity");
     
@@ -549,15 +587,16 @@ LongitudinalModel
     
 }
 
-std::vector<double>
+LongitudinalModel::VectorType
 LongitudinalModel
 ::GetPropagationCoefficients(const std::shared_ptr<MultiRealizations> &R)
 {
-    std::vector<double> Delta;
+    VectorType Delta(m_Manifold->GetDimension() - 1);
 
-    for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
+    int i = 0;
+    for(auto it = Delta.begin(); it != Delta.end(); ++it, ++i)
     {
-        Delta.push_back( R->at("Delta#" + std::to_string(i))[0]);
+        *it = R->at("Delta#" + std::to_string(i))(0);
     }
 
     return Delta;
@@ -567,9 +606,9 @@ std::function<double(double)>
 LongitudinalModel
 ::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R)
 {
-    double AccFactor = exp(R->at("Ksi")[SubjectNumber]);
-    double TimeShift = R->at("Tau")[SubjectNumber];
-    double T0 = R->at("T0")[0];
+    double AccFactor = exp(R->at("Ksi")(SubjectNumber));
+    double TimeShift = R->at("Tau")(SubjectNumber);
+    double T0 = R->at("T0")(0);
     
     return [AccFactor, TimeShift, T0](double t) { return AccFactor * (t - TimeShift - T0) + T0; };
 }
@@ -582,47 +621,40 @@ LongitudinalModel
     /// Get the vectors P0 and V0
     /////////////////////////
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")[0];
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
-    std::vector<double> Delta = GetPropagationCoefficients(R);
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
+    
 
     /// Compute the transformation to do the Householder reflection in a Euclidean space
-    std::vector<double> U = CastedManifold->GetVelocityTransformToEuclideanSpace(P0, T0, V0, Delta);
-
+    VectorType U = CastedManifold->GetVelocityTransformToEuclideanSpace(P0, T0, V0, Delta);
+    
     /// Compute the initial pivot vector U
-    double Norm = 0;
-    for(auto it : U)
-    {
-        Norm += it * it;
-    }
-    Norm = sqrt(Norm);
-
-    U[0] += copysign(1, -U[0])*Norm;
-
-    double NormU = 0;
-    for(auto it : U)
-    {
-        NormU += it * it;
-    }
+    double Norm = U.magnitude();
+    U(0) += copysign(1, -U(0))*Norm;
+    double NormU = U.magnitude();
 
     /// Compute Q = I(N) - 2U . Ut / (Ut . U)
-    std::vector< std::vector< double > > Q;
-    for(auto it : U)
+    std::vector<VectorType> Q;
+    for(auto it = U.begin(); it != U.end(); ++it)
     {
-        std::vector<double> Coordinate;
-        for(auto it2 : U)
+        VectorType Coordinate(U.size());
+        int i = 0;
+        for(auto it2 = U.begin(); it2 != U.end(); ++it2, ++i)
         {
-            Coordinate.push_back( - 2 * it * it2 / NormU);
+            Coordinate(i) =  - 2 * *it * *it2 / NormU;
         }
         Q.push_back( Coordinate );
     }
 
     for(int i = 0; i < Q.size() ; ++i)
     {
-        Q[i][i] += 1;
+        Q[i](i) += 1;
     }
     
+    
+    /*
     /// TESTS
     
     /// Test colinearity between the first vector and Q[0]
@@ -644,6 +676,7 @@ LongitudinalModel
     /// END TEST
     
     /// Drop the first vector which is colinear to gamma_derivative(t0)
+     */
     Q.erase(Q.begin());
     m_OrthogonalBasis = Q;
 }
@@ -652,23 +685,24 @@ void
 LongitudinalModel
 ::ComputeAMatrix(const std::shared_ptr<MultiRealizations>& R)
 {
-    std::vector<std::vector<double>> AMatrix;
+    MatrixType AMatrix(m_Manifold->GetDimension(), m_NbIndependentComponents);
+    
     for(int i = 0; i < m_NbIndependentComponents ; ++i)
     {
-        std::vector<double> Beta;
+        VectorType Beta(m_Manifold->GetDimension() - 1);
         for(int j = 0; j < m_Manifold->GetDimension() - 1 ; ++j)
         {
             std::string Number = std::to_string(int(j + i*(m_Manifold->GetDimension() - 1)));
-            Beta.push_back( R->at( "Beta#" + Number)[0]);
-
+            Beta(j) = R->at( "Beta#" + Number)(0);
         }
-        std::vector<double> AColumn = LinearCombination(Beta, m_OrthogonalBasis);
-        AMatrix.push_back( AColumn );
+        
+        VectorType V = LinearCombination(Beta, m_OrthogonalBasis)   ;     
+        AMatrix.set_column(i, V);
     }
     
     m_AMatrix = AMatrix;
     
-    
+    /*
     /// TESTS
     auto InitialPosition = GetInitialPosition(R);
     auto InitialVelocity = GetInitialVelocity(R);
@@ -695,13 +729,14 @@ LongitudinalModel
         TestAssert::WarningEquality_Function(f1, f2, "A column not orthogonal to the velocity. LongitudinalModel > ComputeAMatrix");
     }
     /// END TESTS
+     */
 }
 
 void
 LongitudinalModel
 ::ComputeSpaceShifts(const std::shared_ptr<MultiRealizations>& R)
 {
-    std::map< std::string, std::vector<double>> SpaceShifts;
+    std::map< std::string, VectorType> SpaceShifts;
     int NumberOfSubjects = (int)R->at("Tau").size();
     if(NumberOfSubjects != R->at("Ksi").size())
     {
@@ -710,15 +745,14 @@ LongitudinalModel
 
     for(int i = 0; i < NumberOfSubjects; ++i)
     {
-        std::vector<double> Si;
+        VectorType Si(m_NbIndependentComponents);
         for(int j = 0; j < m_NbIndependentComponents; ++j)
         {
-            double Realization = R->at("S#" + std::to_string(j))[i];
-            Si.push_back(Realization);
+            Si(j) = R->at("S#" + std::to_string(j))(i);
         }
 
-
-        std::pair< std::string, std::vector<double> > SpaceShift("W"+std::to_string(i), LinearCombination(Si, m_AMatrix) );
+        VectorType V = m_AMatrix * Si;
+        std::pair< std::string, VectorType > SpaceShift("W"+std::to_string(i),  V);
         SpaceShifts.insert( SpaceShift);
     }
 
@@ -729,7 +763,7 @@ LongitudinalModel
     //// Debugging : Unit tests ///
     ///////////////////////////////
     
-    
+    /*
     /// Get Data
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
     double T0 = R->at("T0")[0];
@@ -801,11 +835,8 @@ LongitudinalModel
         TestAssert::WarningEquality_Function(f1, NullFunction, "Parallel transport not orthogonal to velocity at " + std::to_string(t) + ". LongitudinalModel > ComputeSpaceShifts");
         TestAssert::WarningEquality_Function(f2, ConstantFunction, "Norm of parallel transport not constant over time. LongiudinalModel > ComputeSpaceShifts");
     }
+     */
     
-
-
-
-
     /// DEBUG 6 : <ParallelTransport, ParallelTransport>g(t) = Constant
     /*
     for(double t = 62; t < 75; t += 0.5)
@@ -819,15 +850,11 @@ LongitudinalModel
         std::cout << "Norm at " << t << " : " << Norm << std::endl;
     }
     */
-
-
-
-
+    
     ///////////////////////////////
     ////End Unit tests ///
     ///////////////////////////////
-
-
+    
 }
 
 double
@@ -837,10 +864,10 @@ LongitudinalModel
 
     /// Get the data
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")[0];
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
-    auto Delta = GetPropagationCoefficients(R);
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
     
     /// Compute the likelihood
     double LogLikelihood = 0, K = 0;
@@ -848,14 +875,14 @@ LongitudinalModel
     for(auto IterData = D->begin(); IterData != D->end(); ++IterData, ++i)
     {
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
-        std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
+        VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
         K += IterData->size();
         
         for(auto it : *IterData)
         {
             double TimePoint = SubjectTimePoint(it.second);
-            std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
-            LogLikelihood  += NormOfVectorDifference(it.first, ParallelCurve);
+            VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
+            LogLikelihood  += (it.first - ParallelCurve).squared_magnitude();
         }
     }
     
@@ -865,29 +892,3 @@ LongitudinalModel
     return LogLikelihood ;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Output(s) :
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void
-LongitudinalModel
-::ComputeOutputs()
-{
-    double MeanP0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"))->GetMean();
-    double MeanT0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("T0"))->GetMean();
-    double MeanV0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"))->GetMean();
-    double SigmaKsi = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetVariance();
-    double SigmaTau = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetVariance();
-    double Beta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#0"))->GetMean();
-    double Delta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#0"))->GetMean();
-    double Sigma = m_Noise->GetVariance();
-
-    m_OutputParameters << MeanP0 << ", " << MeanT0 << ", " << MeanV0 << ", ";
-    m_OutputParameters << SigmaKsi << ", " << SigmaTau << ", " << Sigma << ", ";
-    m_OutputParameters << Beta << ", " << Delta << std::endl;
-
-    
-    std::cout << "Parameters : P0: " << MeanP0 << ". T0: " << MeanT0 << ". V0: " << MeanV0;
-    std::cout << ". Ksi: " << SigmaKsi << ". Tau: " << SigmaTau << ". Sigma: " << Sigma;
-    std::cout << ". Beta: " << Beta << ". Delta: " << Delta << std::endl;
-}

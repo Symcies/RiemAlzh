@@ -4,6 +4,7 @@
 
 #include "AbstractModel.h"
 #include "../Utilities/MatrixFunctions.h"
+#include <tuple>
 
 class UnivariateModel : public AbstractModel {
 public:
@@ -47,7 +48,7 @@ public:
     // TODO : TO BE CHANGED ABSOLUTELLY : this is not how the random variables are updated GENERALLY
     // TODO : In fact, this was made because it is not generic by now as for the algorithm maximization step
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const std::vector< std::vector< double >>& StochSufficientStatistics, 
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, 
                                        const std::shared_ptr<Data>& D);
     
     /// Compute the log likelihood of the model for a particular individual
@@ -61,7 +62,15 @@ public:
 
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
+
     
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Outputs
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /// Compute Outputs
+    virtual void ComputeOutputs();
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
@@ -81,10 +90,7 @@ private :
     /// Compute the loglikelihood the most generic ways, without simplification
     double ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
     
-    
-    /// Compute the outputs
-    virtual void ComputeOutputs();
-
+ 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////

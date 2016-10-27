@@ -1,5 +1,6 @@
 #include "NetworkPropagationModel.h"
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7,7 +8,7 @@
 
 NetworkPropagationModel
 ::NetworkPropagationModel(const unsigned int NbIndependentComponents, std::shared_ptr<AbstractManifold> &M, 
-                          MatrixType InvertKernelMatrix, MatrixType InterpolationMatrix) 
+                          MatrixType KernelMatrix, MatrixType InterpolationMatrix) 
 {
     // TODO : check the input data
     //TestAssert::WarningEquality_Object(InterpolationMatrix.is_square(), true);
@@ -16,14 +17,16 @@ NetworkPropagationModel
     /// Get the data
     m_NbIndependentComponents = NbIndependentComponents;
     m_Manifold = M;
-    m_InvertKernelMatrix = InvertKernelMatrix;
+    
+    
+    m_InvertKernelMatrix = inverse(KernelMatrix);
     m_InterpolationMatrix = InterpolationMatrix;
     
     /// Open the output file
     m_OutputParameters.open("Parameters.txt", std::ofstream::out | std::ofstream::trunc);
     
     /// Unitialize the vector Interpolation Coefficient
-    m_InterpolationCoefficients.set_size(InvertKernelMatrix.size());
+    m_InterpolationCoefficients.set_size(m_InvertKernelMatrix.size());
 }
 
 NetworkPropagationModel
@@ -40,7 +43,7 @@ NetworkPropagationModel
 
 void 
 NetworkPropagationModel
-::Initialize(const std::shared_ptr<ControlPoints> &CP, const std::shared_ptr<MeshPoints> &MP)
+::Initialize()
 {
     /// Initialization
     m_PopulationRandomVariables.clear();
@@ -74,14 +77,12 @@ NetworkPropagationModel
     }
     
     /// Delta - temporal translation
-    for(int i = 0; i < CP->size() - 1; ++i)
+    for(int i = 0; i < m_InvertKernelMatrix.size() - 1; ++i)
     {
         auto Delta = std::make_shared< GaussianRandomVariable > ((double)i/10, 0.0001);
         m_PopulationRandomVariables.insert( RandomVariable("Delta#" + std::to_string(i), Delta));
     }
     
-    m_ControlPoints = *CP;
-    m_MeshPoints = *MP;
     
 }
 
@@ -131,7 +132,7 @@ NetworkPropagationModel
 }
 
 
-std::vector< std::vector<double> >
+NetworkPropagationModel::SufficientStatisticsVector
 NetworkPropagationModel
 ::GetSufficientStatistics(const std::shared_ptr<MultiRealizations> &R,
                           const std::shared_ptr<Data> &D) 
@@ -140,59 +141,69 @@ NetworkPropagationModel
     /// Initialization
     /////////////////////////
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    std::vector<double> S1, S2, S3, S4, S9;
-    double T0 = R->at("T0")[0];
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
-    VectorType Prop = GetPropagationCoefficients(R);
-    std::vector<double> Delta = Prop.convert_to_stl();
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
     
     
     /////////////////////////
     /// Compute S1 and S2
     /////////////////////////
+    int K = 0; 
+    for(auto it = D->begin(); it != D->end(); ++it)
+    {
+        K += it->size();
+    }
+    VectorType S1(K), S2(K);
+    
     int i = 0;
-    for(auto Iter = D->begin(); Iter != D->end(); ++Iter, ++i)
+    auto IterS1 = S1.begin();
+    auto IterS2 = S2.begin();
+    for(auto Iter = D->begin(); Iter != D->end() && IterS1 != S1.end() && IterS2 != S2.end(); ++Iter, ++i, ++IterS1, ++IterS2)
     {
         /// Given a particular subject, get its attributes, then, loop over its observation
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
-        auto SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
+        VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
         
         for(auto it : *Iter)
         {
             double TimePoint = SubjectTimePoint(it.second);
+            VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
 
-            std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
-            std::vector<double> Observation = it.first;
-
-            S1.push_back( ComputeEuclideanScalarProduct(ParallelCurve, Observation ) );
-            S2.push_back( ComputeEuclideanScalarProduct(ParallelCurve, ParallelCurve) );
-            
+            *IterS1 = dot_product(ParallelCurve, it.first);
+            *IterS2 = ParallelCurve.squared_magnitude();
         }
 
     }
-    
+
     /////////////////////////
     /// Compute S3 and S4
     /////////////////////////
+    VectorType S3(R->at("Ksi").size()), S4(R->at("Tau").size());
     auto IterKsi = R->at("Ksi").begin();
     auto IterTau = R->at("Tau").begin();
-    for( ; IterKsi != R->at("Ksi").end() && IterTau != R->at("Tau").end(); ++IterKsi, ++IterTau )
+    auto IterS3 = S3.begin();
+    auto IterS4 = S4.begin();
+    for( ; IterKsi != R->at("Ksi").end() && IterTau != R->at("Tau").end() && IterS3 != S3.end() && IterS4 != S4.end()
+            ; ++IterKsi, ++IterTau, ++IterS3, ++IterS4 )
     {
-        S3.push_back(*IterKsi * *IterKsi);
-        S4.push_back(*IterTau * *IterTau); 
+        *IterS3 = *IterKsi * *IterKsi;
+        *IterS4 = *IterTau * *IterTau;
     }
     
     /////////////////////////
     /// Compute S9
     /////////////////////////
-    for(int i = 0; i < (m_Manifold->GetDimension() - 1) * m_NbIndependentComponents; ++i)
+    VectorType S9((m_Manifold->GetDimension() - 1) * m_NbIndependentComponents);
+    int j = 0;
+    for(auto it = S9.begin(); it != S9.end(); ++it, ++j)
     {
-        S9.push_back( R->at("Beta#" + std::to_string(i))[0] );
+        *it = R->at("Beta#" + std::to_string(j))[0];
     }
     
-    SufficientStatisticsVector S = {S1, S2, S3, S4, P0, {T0}, V0, Delta, S9};
-
+    SufficientStatisticsVector S = {S1, S2, S3, S4, P0, VectorType(1, T0), V0, Delta, S9};
+    
     /////////////////////////
     /// Tests
     /////////////////////////
@@ -287,8 +298,8 @@ NetworkPropagationModel
     VarianceKsi /= NumberOfSubjects;
     VarianceTau /= NumberOfSubjects;
     
-    auto AbstractKsi = m_IndividualRandomVariables.at("Ksi");
-    auto AbstractTau = m_IndividualRandomVariables.at("Tau");
+    auto AbstractKsi = m_PopulationRandomVariables.at("Ksi");
+    auto AbstractTau = m_PopulationRandomVariables.at("Tau");
     
     auto Ksi = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractKsi );
     auto Tau = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractTau );
@@ -307,10 +318,7 @@ NetworkPropagationModel
         K += it.size();
         for(auto it2 : it)
         {
-            for(auto it3 : it2.first)
-            {
-                NoiseVariance += it3 * it3;
-            }
+            NoiseVariance += it2.first.squared_magnitude();
         }
     }
 
@@ -325,7 +333,6 @@ NetworkPropagationModel
     /// Divide by N*K, then take the square root
     NoiseVariance /= N*K;
     m_Noise->SetVariance(NoiseVariance);
-    ComputeOutputs();
 }
 
 
@@ -384,15 +391,15 @@ NetworkPropagationModel
 {
     /// Initialize the individual parameters
     std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
-    std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
+    VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
 
     /// Get the global parameters
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")[0];
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
-    VectorType Prop = GetPropagationCoefficients(R);
-    std::vector<double> Delta = Prop.convert_to_stl();
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
+
     
     /// Compute the likelihood
     double LogLikelihood = 0;
@@ -401,8 +408,8 @@ NetworkPropagationModel
     for(auto IterData = D->at(SubjectNumber).begin(); IterData != D->at(SubjectNumber).end(); ++IterData, ++i)
     {
         double TimePoint = SubjectTimePoint(IterData->second);
-        std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
-        LogLikelihood += NormOfVectorDifference(IterData->first, ParallelCurve);
+        VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
+        LogLikelihood += (IterData->first - ParallelCurve).squared_magnitude();
     }
 
     LogLikelihood /= -2*m_Noise->GetVariance();
@@ -411,11 +418,40 @@ NetworkPropagationModel
 }
 
 
-std::vector< std::vector< std::pair< std::vector<double>, double> > >
+NetworkPropagationModel::Data
 NetworkPropagationModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
     
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Output(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void
+NetworkPropagationModel
+::ComputeOutputs() 
+{
+    double MeanP0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"))->GetMean();
+    double MeanT0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("T0"))->GetMean();
+    double MeanV0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"))->GetMean();
+    double SigmaKsi = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetVariance();
+    double SigmaTau = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetVariance();
+    double Beta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#0"))->GetMean();
+    double Delta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#0"))->GetMean();
+    double Sigma = m_Noise->GetVariance();
+
+    m_OutputParameters << MeanP0 << ", " << MeanT0 << ", " << MeanV0 << ", ";
+    m_OutputParameters << SigmaKsi << ", " << SigmaTau << ", " << Sigma << ", ";
+    m_OutputParameters << Beta << ", " << Delta << std::endl;
+
+    
+    std::cout << "Parameters : P0: " << MeanP0 << ". T0: " << MeanT0 << ". V0: " << MeanV0;
+    std::cout << ". Ksi: " << SigmaKsi << ". Tau: " << SigmaTau << ". Sigma: " << Sigma;
+    std::cout << ". Beta: " << Beta << ". Delta: " << Delta << std::endl;
 }
 
 
@@ -438,9 +474,9 @@ std::function<double(double)>
 NetworkPropagationModel
 ::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R)
 {
-    double AccFactor = exp(R->at("Ksi")[SubjectNumber]);
-    double TimeShift = R->at("Tau")[SubjectNumber];
-    double T0 = R->at("T0")[0];
+    double AccFactor = exp(R->at("Ksi")(SubjectNumber));
+    double TimeShift = R->at("Tau")(SubjectNumber);
+    double T0 = R->at("T0")(0);
     
     return [AccFactor, TimeShift, T0](double t) { return AccFactor * (t - TimeShift - T0) + T0; };
 }
@@ -449,50 +485,40 @@ void
 NetworkPropagationModel
 ::ComputeOrthonormalBasis(const std::shared_ptr<MultiRealizations>& R)
 {
-    /////////////////////////
+   /////////////////////////
     /// Get the vectors P0 and V0
     /////////////////////////
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")[0];
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
-    VectorType Prop = GetPropagationCoefficients(R);
-    std::vector<double> Delta = Prop.convert_to_stl();
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
+    
 
     /// Compute the transformation to do the Householder reflection in a Euclidean space
-    std::vector<double> U = CastedManifold->GetVelocityTransformToEuclideanSpace(P0, T0, V0, Delta);
-
+    VectorType U = CastedManifold->GetVelocityTransformToEuclideanSpace(P0, T0, V0, Delta);
+    
     /// Compute the initial pivot vector U
-    double Norm = 0;
-    for(auto it : U)
-    {
-        Norm += it * it;
-    }
-    Norm = sqrt(Norm);
-
-    U[0] += copysign(1, -U[0])*Norm;
-
-    double NormU = 0;
-    for(auto it : U)
-    {
-        NormU += it * it;
-    }
+    double Norm = U.magnitude();
+    U(0) += copysign(1, -U(0))*Norm;
+    double NormU = U.magnitude();
 
     /// Compute Q = I(N) - 2U . Ut / (Ut . U)
-    std::vector< std::vector< double > > Q;
-    for(auto it : U)
+    std::vector<VectorType> Q;
+    for(auto it = U.begin(); it != U.end(); ++it)
     {
-        std::vector<double> Coordinate;
-        for(auto it2 : U)
+        VectorType Coordinate(U.size());
+        int i = 0;
+        for(auto it2 = U.begin(); it2 != U.end(); ++it2, ++i)
         {
-            Coordinate.push_back( - 2 * it * it2 / NormU);
+            Coordinate(i) =  - 2 * *it * *it2 / NormU;
         }
         Q.push_back( Coordinate );
     }
 
     for(int i = 0; i < Q.size() ; ++i)
     {
-        Q[i][i] += 1;
+        Q[i](i) += 1;
     }
     
     /// TESTS
@@ -525,9 +551,21 @@ void
 NetworkPropagationModel
 ::ComputeAMatrix(const std::shared_ptr<MultiRealizations>& R)
 {
-    std::vector<std::vector<double>> AMatrix;
+     MatrixType AMatrix(m_Manifold->GetDimension(), m_NbIndependentComponents);
+    
     for(int i = 0; i < m_NbIndependentComponents ; ++i)
     {
+        VectorType Beta(m_Manifold->GetDimension() - 1);
+        for(int j = 0; j < m_Manifold->GetDimension() - 1 ; ++j)
+        {
+            std::string Number = std::to_string(int(j + i*(m_Manifold->GetDimension() - 1)));
+            Beta(j) = R->at( "Beta#" + Number)(0);
+        }
+        
+        VectorType V = LinearCombination(Beta, m_OrthogonalBasis) ;       
+        AMatrix.set_column(i, V);
+        
+        /*
         std::vector<double> Beta;
         for(int j = 0; j < m_Manifold->GetDimension() - 1 ; ++j)
         {
@@ -537,6 +575,8 @@ NetworkPropagationModel
         }
         std::vector<double> AColumn = LinearCombination(Beta, m_OrthogonalBasis);
         AMatrix.push_back( AColumn );
+         
+         */
     }
     
     m_AMatrix = AMatrix;
@@ -575,7 +615,7 @@ void
 NetworkPropagationModel
 ::ComputeSpaceShifts(const std::shared_ptr<MultiRealizations>& R)
 {
-    std::map< std::string, std::vector<double>> SpaceShifts;
+    std::map< std::string, VectorType> SpaceShifts;
     int NumberOfSubjects = (int)R->at("Tau").size();
     if(NumberOfSubjects != R->at("Ksi").size())
     {
@@ -584,15 +624,14 @@ NetworkPropagationModel
 
     for(int i = 0; i < NumberOfSubjects; ++i)
     {
-        std::vector<double> Si;
+        VectorType Si(m_NbIndependentComponents);
         for(int j = 0; j < m_NbIndependentComponents; ++j)
         {
-            double Realization = R->at("S#" + std::to_string(j))[i];
-            Si.push_back(Realization);
+            Si(j) = R->at("S#" + std::to_string(j))(i);
         }
 
-
-        std::pair< std::string, std::vector<double> > SpaceShift("W"+std::to_string(i), LinearCombination(Si, m_AMatrix) );
+        VectorType V = m_AMatrix * Si;
+        std::pair< std::string, VectorType > SpaceShift("W"+std::to_string(i),  V);
         SpaceShifts.insert( SpaceShift);
     }
 
@@ -709,12 +748,12 @@ NetworkPropagationModel
 ::ComputeInterpolationCoefficients(const std::shared_ptr<MultiRealizations>& R) 
 {
     
-    VectorType Delta(m_ControlPoints.size(), 0.0);
+    VectorType Delta(m_InvertKernelMatrix.size(), 0.0);
     
     int i = 0;
-    for(VectorType::iterator it = Delta.begin() + 1; it != Delta.end(); ++it, ++i)
+    for(auto it = Delta.begin() + 1; it != Delta.end(); ++it, ++i)
     {
-        *it = R->at("Delta#" + std::to_string(i))[0];
+        *it = R->at("Delta#" + std::to_string(i))(0);
     }
     
     m_InterpolationCoefficients = m_InvertKernelMatrix * Delta;
@@ -728,11 +767,10 @@ NetworkPropagationModel
 
     /// Get the data
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")[0];
-    std::vector<double> P0 = { R->at("P0")[0] };
-    std::vector<double> V0 = { R->at("V0")[0] };
-    auto Prop = GetPropagationCoefficients(R);
-    std::vector<double> Delta = Prop.convert_to_stl();
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
     
     /// Compute the likelihood
     double LogLikelihood = 0, K = 0;
@@ -740,14 +778,14 @@ NetworkPropagationModel
     for(auto IterData = D->begin(); IterData != D->end(); ++IterData, ++i)
     {
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
-        std::vector<double> SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
+        VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
         K += IterData->size();
         
         for(auto it : *IterData)
         {
             double TimePoint = SubjectTimePoint(it.second);
-            std::vector<double> ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
-            LogLikelihood  += NormOfVectorDifference(it.first, ParallelCurve);
+            VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
+            LogLikelihood  += (it.first - ParallelCurve).squared_magnitude();
         }
     }
     
@@ -757,33 +795,6 @@ NetworkPropagationModel
     return LogLikelihood ;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Output(s) :
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-void
-NetworkPropagationModel
-::ComputeOutputs() 
-{
-    double MeanP0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"))->GetMean();
-    double MeanT0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("T0"))->GetMean();
-    double MeanV0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"))->GetMean();
-    double SigmaKsi = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetVariance();
-    double SigmaTau = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetVariance();
-    double Beta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#0"))->GetMean();
-    double Delta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#0"))->GetMean();
-    double Sigma = m_Noise->GetVariance();
-
-    m_OutputParameters << MeanP0 << ", " << MeanT0 << ", " << MeanV0 << ", ";
-    m_OutputParameters << SigmaKsi << ", " << SigmaTau << ", " << Sigma << ", ";
-    m_OutputParameters << Beta << ", " << Delta << std::endl;
-
-    
-    std::cout << "Parameters : P0: " << MeanP0 << ". T0: " << MeanT0 << ". V0: " << MeanV0;
-    std::cout << ". Ksi: " << SigmaKsi << ". Tau: " << SigmaTau << ". Sigma: " << Sigma;
-    std::cout << ". Beta: " << Beta << ". Delta: " << Delta << std::endl;
-}
 
 
 

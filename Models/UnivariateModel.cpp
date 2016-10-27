@@ -55,18 +55,24 @@ UnivariateModel
 }
 
 
-std::vector< std::vector< double >> 
+UnivariateModel::SufficientStatisticsVector
 UnivariateModel
 ::GetSufficientStatistics(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D) 
 {
     /// Get the data to compute the geometric operation on the manifold
-    double T0 = R->at("T0")[0];
-    double V0 = R->at("V0")[0];
-    double P0 = R->at("P0")[0];
-    std::vector<double> S1, S2, S3, S4;
+    double T0 = R->at("T0")(0);
+    double V0 = R->at("V0")(0);
+    double P0 = R->at("P0")(0);
     
     /// Compute S1 <- [Data_ij * ParallelCurve_ij]  and  S2 <- [ParrallelCurve_ij ^2]
-    int i = 0;
+    int K = 0;
+    for(auto it = D->begin(); it != D->end(); ++it) 
+    {
+        K += it->size();
+    }
+    VectorType S1(K), S2(K);
+    
+    int i = 0, j = 0;
     for(auto IterData = D->begin(); IterData != D->end(); ++i, ++IterData)
     {
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
@@ -77,22 +83,27 @@ UnivariateModel
             auto ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
             auto Observation = IterIndivData->first[0];
             
-            S1.push_back( ParallelCurve * Observation );
-            S2.push_back( ParallelCurve * ParallelCurve );
+            S1(j) = ParallelCurve * Observation;
+            S2(j) = ParallelCurve * ParallelCurve;
+            ++j;
         }
     }
     
     /// Compute S3 <- [ksi_i * ksi_i]  and  S4 <- [tau_i * tau_i]
+    VectorType S3(R->at("Ksi").size()), S4(R->at("Tau").size());
     auto IterKsi = R->at("Ksi").begin();
     auto IterTau = R->at("Tau").begin();
-    for( ; IterKsi != R->at("Ksi").end() && IterTau != R->at("Tau").end(); ++IterKsi, ++IterTau )
+    auto IterS3 = S3.begin();
+    auto IterS4 = S4.begin();
+    for( ; IterKsi != R->at("Ksi").end() && IterTau != R->at("Tau").end() && IterS3 != S3.end() && IterS4 != S4.end()
+            ; ++IterKsi, ++IterTau, ++IterS3, ++IterS4 )
     {
-        S3.push_back(*IterKsi * *IterKsi);
-        S4.push_back(*IterTau * *IterTau); 
+        *IterS3 = *IterKsi * *IterKsi;
+        *IterS4 = *IterTau * *IterTau;
     }
     
     
-    SufficientStatisticsVector SufficientStatistics = {S1, S2, S3, S4, {P0}, {T0}, {V0}};
+    SufficientStatisticsVector SufficientStatistics = {S1, S2, S3, S4, VectorType(1, P0), VectorType(1, T0), VectorType(1, V0)};
     
     /// Tests
     /// There are two way to compute the logLikelihood. Check if they are equal
@@ -144,9 +155,9 @@ UnivariateModel
     auto T0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractT0 );
     auto V0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractV0 );
    
-    P0->SetMean( StochSufficientStatistics[4][0]);
-    T0->SetMean(StochSufficientStatistics[5][0]); 
-    V0->SetMean(StochSufficientStatistics[6][0]); 
+    P0->SetMean( StochSufficientStatistics[4](0));
+    T0->SetMean(StochSufficientStatistics[5](0)); 
+    V0->SetMean(StochSufficientStatistics[6](0)); 
     
    /// Update Ksi & Tau
     double VarianceKsi = 0, VarianceTau = 0;
@@ -199,8 +210,6 @@ UnivariateModel
     NoiseVariance /= K;
     m_Noise->SetVariance(NoiseVariance);
     
-
-    ComputeOutputs();
 }
 
 
@@ -213,6 +222,8 @@ UnivariateModel
     std::string Name = NameRandomVariable.first.substr(0, NameRandomVariable.first.find_first_of("#"));
     int SubjectNumber = NameRandomVariable.second;
     
+    //bool PreviousEqualCurrentRealizations = (std::get<2>(m_LastLogLikelihood) == std::get<2>(m_LastLogLikelihood));
+    bool u = (VectorType(1, 0) == VectorType(1, 1));
     bool PreviousEqualCurrentRealizations = (*R == std::get<2>(m_LastLogLikelihood));
     bool CurrentIsGeneric = !(Name == "Tau" or Name == "Ksi");
     bool PreviousIsGeneric = std::get<0>(m_LastLogLikelihood);
@@ -242,9 +253,9 @@ UnivariateModel
                                  const std::shared_ptr<Data> &D, const int SubjectNumber) 
 {
     /// Initialize the individual parameters
-    double T0 = R->at("T0")[0];
-    double P0 = R->at("P0")[0];
-    double V0 = R->at("V0")[0];
+    double T0 = R->at("T0")(0);
+    double P0 = R->at("P0")(0);
+    double V0 = R->at("V0")(0);
     std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
     
     /// Compute the loglikelihood
@@ -264,7 +275,7 @@ UnivariateModel
     return LogLikelihood;
 }
 
-std::vector< std::vector< std::pair< std::vector<double>, double> > >
+UnivariateModel::Data
 UnivariateModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
@@ -279,18 +290,19 @@ UnivariateModel
     std::normal_distribution<double> NoiseDistrib(0.0, sqrt(m_Noise->GetVariance()));
     
     Data D;
-    double T0 = R->at("T0")[0];
-    double P0 = R->at("P0")[0];
-    double V0 = R->at("V0")[0];
+    double T0 = R->at("T0")(0);
+    double P0 = R->at("P0")(0);
+    double V0 = R->at("V0")(0);
     
     /// Simulate the data
     for(int i = 0; i < NumberOfSubjects; ++i)
     {
+        int NbObservations = Uni(RNG);
         IndividualData InDa;
         
         /// Generate time points
         std::vector<double> TimePoints;
-        for(int j = 0; j < Uni(RNG); ++j)
+        for(int j = 0; j < NbObservations; ++j)
         {
             TimePoints.push_back(ObsDistrib(RNG));   
         }
@@ -303,9 +315,9 @@ UnivariateModel
             double TimePoint = SubjectTimePoint(it);
             double Noise = NoiseDistrib(RNG);
             double ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
-            auto Scores = { ParallelCurve + Noise };
+            VectorType Scores(1, ParallelCurve + Noise);
             
-            InDa.push_back(std::pair<std::vector<double>, double> (Scores, it));
+            InDa.push_back( std::pair< VectorType, double> (Scores, it));
         }
         
         D.push_back(InDa);
@@ -313,6 +325,30 @@ UnivariateModel
     
     return D;
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Output(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
+UnivariateModel
+::ComputeOutputs() 
+{
+    double MeanP0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"))->GetMean();
+    double MeanT0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("T0"))->GetMean();
+    double MeanV0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"))->GetMean();
+    double SigmaKsi = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetVariance();
+    double SigmaTau = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetVariance();
+    double Sigma = m_Noise->GetVariance();
+
+    m_OutputParameters << MeanP0 << ", " << MeanT0 << ", " << MeanV0 << ", ";
+    m_OutputParameters << SigmaKsi << ", " << SigmaTau << ", " << Sigma << ", " << std::endl;
+
+    
+    std::cout << "Parameters : P0: " << MeanP0 << ". T0: " << MeanT0 << ". V0: " << MeanV0 << ". Ksi: " << SigmaKsi << ". Tau: " << SigmaTau << ". Sigma: " << Sigma << ". " << std::endl;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
@@ -347,9 +383,9 @@ std::function<double(double)>
 UnivariateModel
 ::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R)
 {
-    double AccFactor = exp(R->at("Ksi")[SubjectNumber]);
-    double TimeShift = R->at("Tau")[SubjectNumber];
-    double T0 = R->at("T0")[0];
+    double AccFactor = exp(R->at("Ksi")(SubjectNumber));
+    double TimeShift = R->at("Tau")(SubjectNumber);
+    double T0 = R->at("T0")(0);
     
     return [AccFactor, TimeShift, T0](double t) { return AccFactor * (t - TimeShift - T0) + T0; };
 }
@@ -361,9 +397,9 @@ UnivariateModel
                               const std::shared_ptr<Data> &D) 
 {
     /// Get the data
-    double T0 = R->at("T0")[0];
-    double P0 = R->at("P0")[0];
-    double V0 = R->at("V0")[0];
+    double T0 = R->at("T0")(0);
+    double P0 = R->at("P0")(0);
+    double V0 = R->at("V0")(0);
     
     /// Compute the loglikelihood
     double LogLikelihood = 0, K = 0;
@@ -389,23 +425,6 @@ UnivariateModel
 }
 
 
-void
-UnivariateModel
-::ComputeOutputs() 
-{
-    double MeanP0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"))->GetMean();
-    double MeanT0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("T0"))->GetMean();
-    double MeanV0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"))->GetMean();
-    double SigmaKsi = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetVariance();
-    double SigmaTau = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetVariance();
-    double Sigma = m_Noise->GetVariance();
-
-    m_OutputParameters << MeanP0 << ", " << MeanT0 << ", " << MeanV0 << ", ";
-    m_OutputParameters << SigmaKsi << ", " << SigmaTau << ", " << Sigma << ", " << std::endl;
-
-    
-    std::cout << "Parameters : P0: " << MeanP0 << ". T0: " << MeanT0 << ". V0: " << MeanV0 << ". Ksi: " << SigmaKsi << ". Tau: " << SigmaTau << ". Sigma: " << Sigma << ". " << std::endl;
-}
 
 
 

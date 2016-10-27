@@ -8,6 +8,7 @@
 #include "../RandomVariables/AbstractRandomVariable.h"
 #include "../RandomVariables/LaplaceRandomVariable.h"
 #include "../Manifolds/AbstractManifold.h"
+#include "../LinearAlgebra/LinearAlgebra.h"
 #include <algorithm>
 #include <iostream>
 #include <fstream>
@@ -22,12 +23,17 @@ public:
     /// typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
-    typedef std::vector< std::pair< std::vector<double>, double> > IndividualData;
+        
+    typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
+    typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
+
+    
+    typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
+    typedef std::vector< std::pair< VectorType, double> > IndividualData;
     typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-    typedef std::map<std::string, std::vector<double>> MultiRealizations;
-    typedef std::vector< std::vector< double >> SufficientStatisticsVector;
+    typedef std::map<std::string, VectorType> MultiRealizations;
+    typedef std::vector<VectorType> SufficientStatisticsVector;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +90,13 @@ public:
     /// Simulate some random variable realizations
     MultiRealizations SimulateRealizations(int NumberOfSubjects);
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Outputs
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /// Compute Outputs
+    virtual void ComputeOutputs() = 0;
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,8 +110,6 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Compute the outputs
-    virtual void ComputeOutputs() = 0;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)

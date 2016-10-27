@@ -8,53 +8,53 @@
 
 
 
-std::vector<double>
+AbstractManifold::VectorType
 AbstractManifold
-::ComputeGeodesic(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint)
+::ComputeGeodesic(VectorType P0, double T0, VectorType V0, double TimePoint)
 {
     /// Tests
     TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeGeodesic");
 
     /// Initialization
-    std::vector<double> Geodesic;
+    VectorType Geodesic(P0.size());
     auto IterPos = P0.begin();
     auto IterVel = V0.begin();
+    int i = 0;
 
     /// Compute Geodesic
-    for(    ; IterPos != P0.end() && IterVel != V0.end() ; ++IterPos, ++IterVel)
+    for(    ; IterPos != P0.end() && IterVel != V0.end() ; ++IterPos, ++IterVel, ++i)
     {
-        double Coordinate = m_BaseManifold->ComputeGeodesic(*IterPos, T0, *IterVel, TimePoint);
-        Geodesic.push_back( Coordinate );
+        Geodesic(i) = m_BaseManifold->ComputeGeodesic(*IterPos, T0, *IterVel, TimePoint);
     }
 
     return Geodesic;
 }
 
-std::vector<double>
+AbstractManifold::VectorType
 AbstractManifold
-::ComputeGeodesicDerivative(std::vector<double> P0, double T0, std::vector<double> V0, double TimePoint)
+::ComputeGeodesicDerivative(VectorType P0, double T0, VectorType V0, double TimePoint)
 {
     /// Tests
     TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeGeodesicDerivative");
 
     /// Initialization
-    std::vector<double> GeodesicDerivative;
+    VectorType GeodesicDerivative(P0.size());
     auto IterPos = P0.begin();
     auto IterVel = V0.begin();
+    int i = 0;
 
     /// Compute Geodesic
-    for(    ; IterPos != P0.end() && IterVel != V0.end() ; ++IterPos, ++IterVel)
+    for(    ; IterPos != P0.end() && IterVel != V0.end() ; ++IterPos, ++IterVel, ++i)
     {
-        double Coordinate = m_BaseManifold->ComputeGeodesicDerivative(*IterPos, T0, *IterVel, TimePoint);
-        GeodesicDerivative.push_back( Coordinate );
+        GeodesicDerivative(i) = m_BaseManifold->ComputeGeodesicDerivative(*IterPos, T0, *IterVel, TimePoint);
     }
 
     return GeodesicDerivative;
 }
 
-std::vector<double>
+AbstractManifold::VectorType
 AbstractManifold
-::ComputeParallelTransport(std::vector<double> P0, double T0, std::vector<double> V0, std::vector<double> SpaceShift,
+::ComputeParallelTransport(VectorType P0, double T0, VectorType V0, VectorType SpaceShift,
                            double TimePoint)
 {
     /// Tests
@@ -64,26 +64,25 @@ AbstractManifold
     
 
     /// Initialization
-    std::vector<double> ParallelTransport;
+    VectorType ParallelTransport(P0.size());
     auto IterPos = P0.begin();
     auto IterVel = V0.begin();
     auto IterShift = SpaceShift.begin();
+    int i = 0;
 
     /// Compute Geodesic
-    for(    ; IterPos != P0.end() && IterVel != V0.end() && IterShift != SpaceShift.end(); ++IterPos, ++IterVel, ++IterShift)
+    for(    ; IterPos != P0.end() && IterVel != V0.end() && IterShift != SpaceShift.end(); ++IterPos, ++IterVel, ++IterShift, ++i)
     {
-        double Coordinate = m_BaseManifold->ComputeParallelTransport(*IterPos, T0, *IterVel, *IterShift, TimePoint);
-        ParallelTransport.push_back( Coordinate );
+        ParallelTransport(i) = m_BaseManifold->ComputeParallelTransport(*IterPos, T0, *IterVel, *IterShift, TimePoint);
     }
 
     return ParallelTransport;
 }
 
 
-std::vector<double>
+AbstractManifold::VectorType
 AbstractManifold
-::ComputeParallelCurve(std::vector<double> P0, double T0, std::vector<double> V0, std::vector<double> SpaceShift,
-                       double TimePoint)
+::ComputeParallelCurve(VectorType P0, double T0, VectorType V0, VectorType SpaceShift, double TimePoint)
 {
     /// Tests
     TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeParallelCurve");
@@ -91,16 +90,16 @@ AbstractManifold
     TestAssert::WarningEquality_Object(P0.size(), SpaceShift.size(), "P0 and SpaceShift does not have the same size in AbstractManifold > ComputeParallelCurve");
 
     /// Initialization
-    std::vector<double> ParallelCurve;
+    VectorType ParallelCurve(SpaceShift.size());
     auto IterPos = P0.begin();
     auto IterVel = V0.begin();
     auto IterShift = SpaceShift.begin();
-
+    int i = 0;
+    
     /// Compute Geodesic
-    for(    ; IterPos != P0.end() && IterVel != V0.end() && IterShift != SpaceShift.end(); ++IterPos, ++IterVel, ++IterShift)
+    for(    ; IterPos != P0.end() && IterVel != V0.end() && IterShift != SpaceShift.end(); ++IterPos, ++IterVel, ++IterShift, ++i)
     {
-        double Coordinate = m_BaseManifold->ComputeParallelCurve(*IterPos, T0, *IterVel, *IterShift, TimePoint);
-        ParallelCurve.push_back( Coordinate );
+        ParallelCurve(i) = m_BaseManifold->ComputeParallelCurve(*IterPos, T0, *IterVel, *IterShift, TimePoint);
     }
 
     return ParallelCurve;

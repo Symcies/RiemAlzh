@@ -15,7 +15,7 @@ project(Longitudina2)
 
 file( GLOB_RECURSE PARAMETERS Parameters/*)
 
-file( GLOB_RECURSE OUTPUTS Outputs/* )
+file( GLOB_RECURSE INPUTS inputs/* )
 
 file( GLOB_RECURSE UTILITIES Utilities/* )
 
@@ -24,6 +24,8 @@ file( GLOB_RECURSE LINEARALGEBRA LinearAlgebra/*)
 file( GLOB_RECURSE SAMPLERS Samplers/*)
 
 file( GLOB_RECURSE RANDOMVARIABLES RandomVariables/*)
+
+file( GLOB_RECURSE OUTPUTS Outputs/*)
 
 file( GLOB_RECURSE MANIFOLDS Manifolds/*)
 
@@ -81,6 +83,7 @@ set(ITK_DIR /aramis/dartagnan2/Software/ITK/ITKb-4.5.1)
 add_executable(Longitudina2
         ${SOURCE_FILES}
         ${SOURCES}
+        ${INPUTS}
         ${UTILITIES}
         ${SAMPLERS}
         ${RANDOMVARIABLES}

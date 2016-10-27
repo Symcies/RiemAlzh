@@ -41,9 +41,11 @@
       <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/AbstractBaseManifold.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Parameters/CandidateRandomVariables.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Parameters/CandidateRandomVariables.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Utilities/MatrixFunctions.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Utilities/MatrixFunctions.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Inputs/ReadData.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Inputs/ReadData.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/LinearAlgebra.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloLinearAlgebra.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper.h" isTestSource="false" />

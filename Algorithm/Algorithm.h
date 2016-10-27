@@ -14,10 +14,14 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
+    
+    typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
+    typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
+    
+    typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
     typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
-    typedef std::map<std::string, std::vector<double>> MultiRealizations;
-    typedef std::vector< std::vector< double >> SufficientStatisticsVector;
+    typedef std::map<std::string, VectorType> MultiRealizations;
+    typedef std::vector<VectorType> SufficientStatisticsVector;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
@@ -68,7 +72,7 @@ protected:
     void ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration);
 
     // Compute the stochastic coefficient 
-    void ComputeStochasticApproximation(double iteration, std::vector< std::vector< double >> SufficientStatistics);
+    void ComputeStochasticApproximation(double iteration, SufficientStatisticsVector SufficientStatistics);
 
     // Compute the decreasing step size of the approximation step
     double DecreasingStepSize(double Iteration, double NoMemoryTime);
@@ -88,7 +92,7 @@ protected:
     std::shared_ptr<AbstractSampler> m_Sampler;
 
     /// Stochastic Sufficient Statistics used in the stochastic approximation step
-    std::vector< std::vector< double >> m_StochasticSufficientStatistics;
+    SufficientStatisticsVector m_StochasticSufficientStatistics;
 
     /// Candidates random variables, corresponding to those in the Model
     std::shared_ptr<CandidateRandomVariables> m_CandidateRandomVariables;
@@ -105,7 +109,7 @@ protected:
     void ComputeOutputs();
     
     /// Acceptance Ratios
-    std::map<std::string, std::vector<double>> m_AcceptanceRatios;
+    std::map<std::string, VectorType> m_AcceptanceRatios;
 
     /// Output file
     std::ofstream m_OutputRealizations;

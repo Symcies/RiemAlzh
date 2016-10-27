@@ -2,6 +2,7 @@
 #include <fstream>
 #include <memory>
 
+typedef double ScalarType;
 
 #include "Manifolds/PropagationManifold.h"
 #include "Models/LongitudinalModel.h"
@@ -12,13 +13,14 @@
 #include "Manifolds/BaseManifold/LogisticBaseManifold.h"
 #include "Tests/TestAssert.h"
 #include "Outputs/RandomVariableRealizations.h"
+#include "LinearAlgebra/LinearAlgebra.h"
 
 //#include "itkXMLFile.h"
 
 
 using namespace std;
 
-typedef vector< vector< pair< vector<double>, double> > > Data;
+typedef vector< vector< pair< LinearAlgebra<ScalarType>::VectorType, double> > > Data;
 typedef map<std::string, vector<double>> Realizations;
 
 
@@ -36,8 +38,8 @@ OpenFiles()
     {
         int i = 0;
         string line;
-        vector< pair< vector<double>, double> > IndivData;
-        pair< vector<double>, double> Observations;
+        vector< pair< LinearAlgebra<ScalarType>::VectorType, double> > IndivData;
+        pair< LinearAlgebra<ScalarType>::VectorType, double> Observations;
         
         while(getline(IndivID, line))
         {
@@ -84,10 +86,10 @@ OpenFiles()
         {
             for(auto it2 = it->begin(); it2 != it->end(); ++it2)
             {
-                std::vector<double> X;
-                for(int i = 0; i < 4; ++i)
+                LinearAlgebra<ScalarType>::VectorType X(4);
+                for(auto it = X.begin(); it != X.end(); ++it)
                 {
-                    X.push_back(stod(line));
+                    *it = stod(line);
                     getline(DataY, line);
                 }
                 it2->first = X;
@@ -127,8 +129,8 @@ int main() {
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
     shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
-    //shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
-    shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
+    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
+    //shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
     
      
     

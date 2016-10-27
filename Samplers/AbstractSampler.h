@@ -17,10 +17,14 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::vector< std::vector< std::pair< std::vector<double>, double> > > Data;
+    
+    typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
+    typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
+    
+    typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
     typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-    typedef std::map<std::string, std::vector<double>> MultiRealizations;
+    typedef std::map<std::string, VectorType> MultiRealizations;
     typedef std::map<std::string, double> UniqueRealizations;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -33,7 +33,7 @@ BlockedGibbsSampler
     }
 }
 
-std::map<std::string, std::vector<double>>
+BlockedGibbsSampler::MultiRealizations
 BlockedGibbsSampler
 ::Sample(const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M,
          std::shared_ptr<CandidateRandomVariables> &Candidates, const std::shared_ptr<Data> &D) 
@@ -57,7 +57,7 @@ BlockedGibbsSampler
 /// Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::map<std::string, std::vector<double>>
+BlockedGibbsSampler::MultiRealizations
 BlockedGibbsSampler
 ::SamplePopulation(const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M,
                    std::shared_ptr<CandidateRandomVariables> &Candidates, const std::shared_ptr<Data> &D)
@@ -81,7 +81,7 @@ BlockedGibbsSampler
     auto NewRealization = std::make_shared<MultiRealizations>(*R);
     for(const auto& it : CandidatePopRealizations)
     {
-        NewRealization->at(it.first) = { it.second };
+        NewRealization->at(it.first) = VectorType(1, it.second );
     }
     Ratio += M->ComputeLogLikelihood(NewRealization, D);
     
@@ -109,7 +109,7 @@ BlockedGibbsSampler
     UniqueRealizations PopReal;
     for(const auto& it : m_NamePopulationVariables)
     {
-        PopReal[it] = R->at(it)[0];
+        PopReal[it] = R->at(it)(0);
     }
     
     return PopReal;
@@ -145,7 +145,7 @@ BlockedGibbsSampler
     return CandidateRealizations;
 }
 
-std::map<std::string, std::vector<double>> 
+BlockedGibbsSampler::MultiRealizations
 BlockedGibbsSampler
 ::SampleIndividual(int i, const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M,
                    std::shared_ptr<CandidateRandomVariables> &Candidates,
