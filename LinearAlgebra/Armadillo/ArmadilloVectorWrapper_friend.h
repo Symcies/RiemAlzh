@@ -75,12 +75,12 @@ std::ostream & operator<<(std::ostream& os, ArmadilloVectorWrapper<ScalarType> c
 /// ADDED BY IGOR:
 template <class ScalarType>
 bool operator==(const ArmadilloVectorWrapper<ScalarType> & left, const ArmadilloVectorWrapper<ScalarType> & right) {
-    //arma::umat a =  (left.m_Vector == right.m_Vector);
-    //for(auto it = a.begin(); it != a.end(); ++it)
-    //{
-    //    std::cout << *it << std::endl;
-    //}
-    return false;
+    arma::umat a =  (left.m_Vector == right.m_Vector);
+    for(auto it = a.begin(); it != a.end(); ++it)
+    {
+        if(*it == 0) { return false; }
+    }
+    return true;
 }
 
 

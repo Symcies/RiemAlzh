@@ -7,8 +7,10 @@
 
 
 NetworkPropagationModel
-::NetworkPropagationModel(const unsigned int NbIndependentComponents, std::shared_ptr<AbstractManifold> &M, 
-                          MatrixType KernelMatrix, MatrixType InterpolationMatrix) 
+::NetworkPropagationModel(const unsigned int NbIndependentComponents,
+                          std::shared_ptr<AbstractManifold> &M,
+                          std::shared_ptr<MatrixType> &KernelMatrix,
+                          std::shared_ptr<MatrixType> &InterpolationMatrix) 
 {
     // TODO : check the input data
     //TestAssert::WarningEquality_Object(InterpolationMatrix.is_square(), true);
@@ -19,8 +21,8 @@ NetworkPropagationModel
     m_Manifold = M;
     
     
-    m_InvertKernelMatrix = inverse(KernelMatrix);
-    m_InterpolationMatrix = InterpolationMatrix;
+    m_InvertKernelMatrix = inverse(*KernelMatrix);
+    m_InterpolationMatrix = *InterpolationMatrix;
     
     /// Open the output file
     m_OutputParameters.open("Parameters.txt", std::ofstream::out | std::ofstream::trunc);
@@ -422,7 +424,58 @@ NetworkPropagationModel::Data
 NetworkPropagationModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
+    /// Simulate realizations
+    auto R = std::make_shared<MultiRealizations>( SimulateRealizations(NumberOfSubjects) );
     
+    /// Initialize
+    std::random_device RD;
+    std::mt19937 RNG(RD());
+    std::uniform_int_distribution<int> Uni(MinObs, MaxObs);
+    std::normal_distribution<double> ObsDistrib(70.0, sqrt(3.0));
+    std::normal_distribution<double> NoiseDistrib(0.0, sqrt(m_Noise->GetVariance()));
+    
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
+    
+    Data D;
+    
+    /// Simulate the data
+    for(int i = 0; i < NumberOfSubjects; ++i) 
+    {
+        IndividualData InDa;
+        
+        /// Generate the time points of the subjets
+        std::vector<double> TimePoints;
+        for(int j = 0; j < Uni(RNG); ++j)
+        {
+            TimePoints.push_back(ObsDistrib(RNG));
+        }
+        std::sort(TimePoints.begin(), TimePoints.end());
+        std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
+        auto SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
+        
+        /// Generate observations corresponding to the time points
+        for(auto it : TimePoints)
+        {
+            VectorType Scores(SpaceShift.size());
+            
+            double TimePoint = SubjectTimePoint(it);
+            VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
+            int i = 0;
+            for(auto it2 = ParallelCurve.begin(); it2 != ParallelCurve.end(); ++it2, ++i)
+            {
+                Scores(i) = *it2 + NoiseDistrib(RNG);
+            }
+            InDa.push_back(std::pair<VectorType, double> (Scores, it));
+        }
+        
+        D.push_back(InDa);
+    }
+    
+    return D;
 }
 
 
@@ -452,6 +505,62 @@ NetworkPropagationModel
     std::cout << "Parameters : P0: " << MeanP0 << ". T0: " << MeanT0 << ". V0: " << MeanV0;
     std::cout << ". Ksi: " << SigmaKsi << ". Tau: " << SigmaTau << ". Sigma: " << Sigma;
     std::cout << ". Beta: " << Beta << ". Delta: " << Delta << std::endl;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
+NetworkPropagationModel
+::InitializeFakeRandomVariables() 
+{
+    
+    /////////////////////////////
+    /// Population Parameters ///
+    /////////////////////////////
+    auto P0 = std::make_shared<GaussianRandomVariable>(0.35, 0.000001);
+    auto T0 = std::make_shared<GaussianRandomVariable>(70.0, 0.0001);
+    auto V0 = std::make_shared<GaussianRandomVariable>(0.06, 0.000001);
+    
+    m_PopulationRandomVariables.insert( RandomVariable("P0", P0));
+    m_PopulationRandomVariables.insert(RandomVariable("T0", T0));
+    m_PopulationRandomVariables.insert(RandomVariable("V0", V0));
+
+    m_Noise = std::make_shared< GaussianRandomVariable >(0.0, 0.0001);
+
+    for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension()-1) ; ++i)
+    {
+        auto Beta = std::make_shared< GaussianRandomVariable> ((double)i/5.0, 0.0001);
+        std::string name = "Beta#" + std::to_string(i);
+        m_PopulationRandomVariables.insert(RandomVariable(name, Beta));
+    }
+    
+    for(int i = 0; i < m_Manifold->GetDimension() - 1 ; ++i)
+    {
+        auto Delta = std::make_shared< GaussianRandomVariable >(0.5 + (double)i, 0.0001);
+        m_PopulationRandomVariables.insert(RandomVariable("Delta#" + std::to_string(i), Delta));
+    }
+
+
+    /////////////////////////////
+    /// Individual Parameters ///
+    /////////////////////////////
+    auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.5*0.5);
+    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 5.0*5.0);
+    
+    m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
+    m_IndividualRandomVariables.insert(RandomVariable("Tau", Tau));
+    
+    for(int i = 0; i<m_NbIndependentComponents ; ++i)
+    {
+        auto S = std::make_shared< LaplaceRandomVariable >(0.0, 1.0/2.0);
+        m_IndividualRandomVariables.insert(RandomVariable("S#" + std::to_string(i), S));
+    }
+    
+    
 }
 
 

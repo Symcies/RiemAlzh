@@ -7,6 +7,7 @@ typedef double ScalarType;
 #include "Manifolds/PropagationManifold.h"
 #include "Models/LongitudinalModel.h"
 #include "Models/UnivariateModel.h"
+#include "Models/NetworkPropagationModel.h"
 #include "Algorithm/Algorithm.h"
 #include "Samplers/HMWithinGibbsSampler.h"
 #include "Samplers/BlockedGibbsSampler.h"
@@ -14,6 +15,7 @@ typedef double ScalarType;
 #include "Tests/TestAssert.h"
 #include "Outputs/RandomVariableRealizations.h"
 #include "LinearAlgebra/LinearAlgebra.h"
+#include "Inputs/ReadData.h"
 
 //#include "itkXMLFile.h"
 
@@ -25,116 +27,65 @@ typedef map<std::string, vector<double>> Realizations;
 
 
 
-Data 
-OpenFiles()
-{
-    Data D;
-    std::ifstream IndivID ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Data_Test_SAEM_group.txt");
-    std::ifstream DataX ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Data_Test_SAEM_X.txt");
-    std::ifstream DataY ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Data_Test_SAEM_Y_3.txt");
-    
-    /// Open the DATA_text_SAEM_group file;
-    if(IndivID.is_open())
-    {
-        int i = 0;
-        string line;
-        vector< pair< LinearAlgebra<ScalarType>::VectorType, double> > IndivData;
-        pair< LinearAlgebra<ScalarType>::VectorType, double> Observations;
-        
-        while(getline(IndivID, line))
-        {
-            int j = std::stoi(line);
-            if(j == i)
-            {
-                IndivData.push_back(Observations);
-            }
-            if(j != i)
-            {
-                D.push_back(IndivData);
-                IndivData.clear();
-                IndivData.push_back(Observations);
-                i = j;
-            }
-        }
-        D.push_back(IndivData);
-    }
-    else { cout << "Unable to open indiv id's"; }
-    
-    /// Open the DATA : timepoints
-    if(DataX.is_open())
-    {
-        string line;
-        getline(DataX, line);
-        for(auto it = D.begin(); it != D.end(); it++)
-        {
-            for(auto it2 = it->begin(); it2 != it->end(); ++it2)
-            {
-                it2->second = stod(line);
-                getline(DataX, line);
-            }
-        }
-        std::cout << line << std::endl;
-    }
-    else { cout << "Unable to open timepoints"; }
-    
-    /// Open the DATA : observations
-    if(DataY.is_open())
-    {
-        string line;
-        getline(DataY, line);
-        for(auto it = D.begin(); it != D.end(); ++it)
-        {
-            for(auto it2 = it->begin(); it2 != it->end(); ++it2)
-            {
-                LinearAlgebra<ScalarType>::VectorType X(4);
-                for(auto it = X.begin(); it != X.end(); ++it)
-                {
-                    *it = stod(line);
-                    getline(DataY, line);
-                }
-                it2->first = X;
-            }
-        }
-        std::cout << line << std::endl;
-    }
-    else { cout << "Unable to open the observation values"; }
-    
-    if( D[0].size() == 0) 
-    {
-        D.erase(D.begin());
-    }
- 
-    return D;
-}
-
 int main() {
 
-    //// INITIALIZATION ///
+    ///////////////////
+    /// Python call ///
+    ///////////////////
+    std::string filename = "/Users/igor.koval/PycharmProjects/RiemAlzh/plotGraph.py";
+    std::string command = "python ";
+    command += filename;
+    //system(command.c_str());
+    
+    
+    ///////////////////////
+    //// Initialization ///
+    ///////////////////////
     unsigned int NumberDimension = 4;
     unsigned int NumberIndependentComponents = 1;
     clock_t start = clock();
     
-    /// TESTS ///
+    /////////////
+    /// Tests ///
+    /////////////
     bool Active = true;
     TestAssert::Init(Active);
     
+    /////////////////////////
+    /// Propagation Model ///
+    /////////////////////////
     
-    /// Open a text file /// 
-    shared_ptr<Data> D = std::make_shared<Data>(OpenFiles());
+    /// Open the files
+    std::string KernelMatrixPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kd_toyexample.csv");
+    std::string InterpolationMatrixPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kxd_toyexample.csv");
+    shared_ptr<NetworkPropagationModel::MatrixType> KernelMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
+    shared_ptr<NetworkPropagationModel::MatrixType> InterpolationMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
     
-
-
-    /// Base Manifold, Manifold, Model & Sampler ///
+    /// Initiate the Manifolds and the model
+    shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
+    shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(KernelMatrix->rows(), BaseManifold);
+    shared_ptr<AbstractModel> Model = make_shared<NetworkPropagationModel>(NumberIndependentComponents, Manifold, KernelMatrix, InterpolationMatrix);
+    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
     
+    //////////////////////////
+    /// Multivariate Model ///
+    //////////////////////////
+    /*
+     * 
+    /// Read the data 
+    shared_ptr<Data> D = std::make_shared<Data>(ReadData::OpenFilesMultivariate());
+     
+    /// Initialize the manidolds, model and sampler 
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
     shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
     shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
     //shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-    
+    */
      
-    
-    /// Univariate Model
+    ////////////////////////
+    /// Univariate Model ///
+    ////////////////////////
     /*
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
     shared_ptr<AbstractModel> Model = make_shared<UnivariateModel>(BaseManifold);
@@ -143,23 +94,18 @@ int main() {
     */
     
     
-    /// DATA GENERATION ///
-    /*
+    ////////////////////////////////////////
+    /// Data Generation & Initialization ///
+    ////////////////////////////////////////
+    
     Model->InitializeFakeRandomVariables();
     shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(200, 6, 8) );
-    */
-
-    /// Model
     Model->Initialize();
-
-
-    /// Python call
-    std::string filename = "/Users/igor.koval/PycharmProjects/RiemAlzh/plotGraph.py";
-    std::string command = "python ";
-    command += filename;
-    //system(command.c_str());
-
-    /// Algo
+    
+    
+    //////////////////////////
+    /// Algorithm pipeline ///
+    //////////////////////////
     auto Algo = make_shared<Algorithm>();
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);

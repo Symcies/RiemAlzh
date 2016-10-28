@@ -23,8 +23,8 @@ public:
     /// Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    NetworkPropagationModel(const unsigned int NbIndependantComponents, std::shared_ptr<AbstractManifold>& M, 
-                            MatrixType KernelMatrix, MatrixType InterpolationMatrix);
+    NetworkPropagationModel(const unsigned int NbIndependentComponents, std::shared_ptr<AbstractManifold>& M, 
+                            std::shared_ptr<MatrixType>& KernelMatrix, std::shared_ptr<MatrixType>& InterpolationMatrix);
     ~NetworkPropagationModel();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,6 +75,15 @@ public:
 
     /// Compute outputs
     virtual void ComputeOutputs();
+    
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
+    virtual void InitializeFakeRandomVariables();
     
     
 protected:
