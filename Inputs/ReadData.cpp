@@ -96,6 +96,8 @@ ReadData
     {
         ++NbLines;
     }
+    file.clear();
+    file.seekg(00, std::ios::beg);
     
     
     MatrixType Kernel(NbLines, 5, 0);

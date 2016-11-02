@@ -7,6 +7,7 @@ typedef double ScalarType;
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <ios>
 
 #include "../LinearAlgebra/LinearAlgebra.h"
 

@@ -54,7 +54,7 @@ int main() {
     /////////////////////////
     /// Propagation Model ///
     /////////////////////////
-    
+    /*
     /// Open the files
     std::string KernelMatrixPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kd_toyexample.csv");
     std::string InterpolationMatrixPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kxd_toyexample.csv");
@@ -66,12 +66,11 @@ int main() {
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(KernelMatrix->rows(), BaseManifold);
     shared_ptr<AbstractModel> Model = make_shared<NetworkPropagationModel>(NumberIndependentComponents, Manifold, KernelMatrix, InterpolationMatrix);
     shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
+    */
     
     //////////////////////////
     /// Multivariate Model ///
     //////////////////////////
-    /*
-     * 
     /// Read the data 
     shared_ptr<Data> D = std::make_shared<Data>(ReadData::OpenFilesMultivariate());
      
@@ -81,7 +80,6 @@ int main() {
     shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
     shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
     //shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-    */
      
     ////////////////////////
     /// Univariate Model ///
@@ -98,8 +96,8 @@ int main() {
     /// Data Generation & Initialization ///
     ////////////////////////////////////////
     
-    Model->InitializeFakeRandomVariables();
-    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(200, 6, 8) );
+    //Model->InitializeFakeRandomVariables();
+    //shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(200, 6, 8) );
     Model->Initialize();
     
     
