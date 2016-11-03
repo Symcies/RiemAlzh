@@ -25,10 +25,12 @@ BlockedGibbsSampler
         if(it->second.size() == 1)
         {
             m_NamePopulationVariables.push_back(it->first);
+            std::cout << "Population: " << it->first << std::endl;
         }
         else
         {
             m_NameIndividualVariables.push_back(it->first);
+            std::cout << "Individual: " << it->first << std::endl;
         }
     }
 }
@@ -135,7 +137,7 @@ BlockedGibbsSampler
     UniqueRealizations CandidateRealizations;
     for(const auto& it : *R)
     {
-        double CurrentRealization = R->at(it.first);
+        double CurrentRealization = it.second;
         auto CandidateRandomVariable = Candidates->GetRandomVariable( it.first, CurrentRealization );
         double CandidateRealization = CandidateRandomVariable->Sample();
         

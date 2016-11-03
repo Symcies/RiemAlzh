@@ -13,7 +13,7 @@ LongitudinalModel
 ::LongitudinalModel(const unsigned int NbIndependentComponents, std::shared_ptr<AbstractManifold>& M)
 {
 
-    m_OutputParameters.open("Parameters.txt", std::ofstream::out | std::ofstream::trunc);
+    m_OutputParameters.open("ParametersBlockedTest2.txt", std::ofstream::out | std::ofstream::trunc);
     m_NbIndependentComponents = NbIndependentComponents;
     std::shared_ptr<PropagationManifold> Manifold = std::dynamic_pointer_cast<PropagationManifold>(M);
     m_Manifold = Manifold;
@@ -74,6 +74,12 @@ LongitudinalModel
    
     /// Compute the first outputs
     m_OutputParameters << "P0, T0, V0, sigmaKsi, sigmaTau, sigma, Beta, Delta" << std::endl;
+    
+    
+    
+    /// Tests
+    TestAssert::WarningInequality_GreaterThan(1.0, P0->GetMean(), 0.0, "LongitudinalModel>Initialize : wrong P0");
+    TestAssert::WarningInequality_GreaterThan(m_Noise->GetVariance(), 0.0, "LongitudinalModel>Initialize : wrong noise");
 }
 
 void 
@@ -134,13 +140,23 @@ LongitudinalModel
     
     
     /////////////////////////
+    /// Compute S0
+    /////////////////////////
+    int K = 0;
+    double SumOfObservation = 0.0;
+    for(const auto& it : *D)
+    {
+        K += it.size();
+        for(auto it2 : it)
+        {
+            SumOfObservation += it2.first.squared_magnitude();
+        }
+    }
+    VectorType S0(1, SumOfObservation);
+    
+    /////////////////////////
     /// Compute S1 and S2
     /////////////////////////
-    int K = 0; 
-    for(auto it = D->begin(); it != D->end(); ++it)
-    {
-        K += it->size();
-    }
     VectorType S1(K), S2(K);
     
     int i = 0;
@@ -190,7 +206,6 @@ LongitudinalModel
         *IterS8 = *it;
     }
     
-    
     /////////////////////////
     /// Compute S9
     /////////////////////////
@@ -201,7 +216,7 @@ LongitudinalModel
         *it = R->at("Beta#" + std::to_string(k))[0];
     }
     
-    SufficientStatisticsVector S = {S1, S2, S3, S4, P0, VectorType(1, T0), V0, S8, S9};
+    SufficientStatisticsVector S = {S0, S1, S2, S3, S4, P0, VectorType(1, T0), V0, S8, S9};
     
     
     /////////////////////////
@@ -211,24 +226,13 @@ LongitudinalModel
     std::function<double()> f1 = [=, &D, &R] () { return this->ComputeLogLikelihoodGeneric(R, D); };
     std::function<double()> f2 = [=, &D, &S] ()
     {
-        double Calculation = 0;
-        int K = 0;
-        for(const auto& it : *D)
-        {
-            K += it.size();
-            for(auto it2 : it)
-            {
-                for(auto it3 : it2.first)
-                {
-                    Calculation += it3*it3;
-                }
-            }
-        }
-        for(auto it : S[0])
+        double Calculation = S[0](0);
+
+        for(auto it : S[1])
         {
             Calculation += -2 * it;
         }
-        for(auto it : S[1])
+        for(auto it : S[2])
         {
             Calculation += it;
         }
@@ -250,7 +254,6 @@ void
 LongitudinalModel
 ::UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const std::shared_ptr<Data>& D)
 {
-    
     double NumberOfSubjects = D->size();
     
     /// Update P0(mean), T0(mean) and VO(mean)
@@ -262,13 +265,13 @@ LongitudinalModel
     auto T0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractT0 );
     auto V0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractV0 );
     
-    P0->SetMean(StochSufficientStatistics[4](0));
-    T0->SetMean(StochSufficientStatistics[5](0));
-    V0->SetMean(StochSufficientStatistics[6](0));
+    P0->SetMean(StochSufficientStatistics[5](0));
+    T0->SetMean(StochSufficientStatistics[6](0));
+    V0->SetMean(StochSufficientStatistics[7](0));
     
     /// Update Delta(k)(mean)
     int i = 0;
-    for(auto it = StochSufficientStatistics[7].begin(); it != StochSufficientStatistics[7].end(); ++it, ++i)
+    for(auto it = StochSufficientStatistics[8].begin(); it != StochSufficientStatistics[8].end(); ++it, ++i)
     {
         auto AbstractDelta = m_PopulationRandomVariables.at( "Delta#" + std::to_string(i) );
         auto Delta = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractDelta ) ;
@@ -277,7 +280,7 @@ LongitudinalModel
 
     /// Update Beta(k)(mean)
     i = 0;
-    for(auto it = StochSufficientStatistics[8].begin(); it != StochSufficientStatistics[8].end(); ++it, ++i)
+    for(auto it = StochSufficientStatistics[9].begin(); it != StochSufficientStatistics[9].end(); ++it, ++i)
     {
         auto AbstractBeta = m_PopulationRandomVariables.at( "Beta#" + std::to_string(i) );
         auto Beta = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractBeta );
@@ -288,9 +291,10 @@ LongitudinalModel
     /// Update Ksi & Tau
     double VarianceKsi = 0, VarianceTau = 0;
     
-    auto IterKsi = StochSufficientStatistics[2].begin();
-    auto IterTau = StochSufficientStatistics[3].begin();
-    for( ; IterKsi != StochSufficientStatistics[2].end() && IterTau != StochSufficientStatistics[3].end(); ++IterKsi, ++IterTau)
+    auto IterKsi = StochSufficientStatistics[3].begin();
+    auto IterTau = StochSufficientStatistics[4].begin();
+    for(    ; IterKsi != StochSufficientStatistics[3].end() && IterTau != StochSufficientStatistics[4].end()
+            ; ++IterKsi, ++IterTau)
     {
         VarianceKsi += *IterKsi;
         VarianceTau += *IterTau;
@@ -312,20 +316,17 @@ LongitudinalModel
     double K = 0;
 
     /// Sum Yijk²
-    double NoiseVariance = 0;
+    double NoiseVariance = StochSufficientStatistics[0](0);
     for(auto it : *D)
     {
         K += it.size();
-        for(auto it2 : it)
-        {
-            NoiseVariance += it2.first.squared_magnitude();
-        }
     }
 
     /// Sum -2 S1 + S2
-    auto IterS1 = StochSufficientStatistics[0].begin();
-    auto IterS2 = StochSufficientStatistics[1].begin();
-    for( ; IterS1 != StochSufficientStatistics[0].end() && IterS2 != StochSufficientStatistics[1].end(); ++IterS1, ++IterS2)
+    auto IterS1 = StochSufficientStatistics[1].begin();
+    auto IterS2 = StochSufficientStatistics[2].begin();
+    for(    ; IterS1 != StochSufficientStatistics[1].end() && IterS2 != StochSufficientStatistics[2].end()
+            ; ++IterS1, ++IterS2)
     {
         NoiseVariance += - 2 * *IterS1 + *IterS2;
     }
@@ -333,6 +334,11 @@ LongitudinalModel
     /// Divide by N*K, then take the square root
     NoiseVariance /= N*K;
     m_Noise->SetVariance(NoiseVariance);    
+    
+    
+    /// Tests
+    TestAssert::WarningInequality_GreaterThan(1.0, StochSufficientStatistics[5](0), 0.0, "LongitudinalModel>UpdateRandomVariables ; wrong P0");
+    TestAssert::WarningInequality_GreaterThan(m_Noise->GetVariance(), 0.0, "LongitudinalModel>UpdateRandomVariables ; wrong noise variance");
 }
 
 
@@ -400,6 +406,9 @@ LongitudinalModel
         LogLikelihood += (IterData->first - ParallelCurve).squared_magnitude();
     }
 
+    /// Test
+    TestAssert::WarningInequality_GreaterThan(LogLikelihood, 0.0, "LongitudinalModel>ComputeIndividualLogLikelihood ; wrong Likelihood");
+    
     LogLikelihood /= -2*m_Noise->GetVariance();
     LogLikelihood -= k * log(sqrt( 2 * m_Noise->GetVariance() * M_PI));
     return LogLikelihood;
@@ -905,6 +914,9 @@ LongitudinalModel
             LogLikelihood  += (it.first - ParallelCurve).squared_magnitude();
         }
     }
+    /// Tests
+    TestAssert::WarningInequality_GreaterThan(LogLikelihood, 0.0, "LongitudinalModel>ComputeIndividualLogLikelihood ; wrong Likelihood");
+    
     
     LogLikelihood  /= -2*m_Noise->GetVariance();
     LogLikelihood -= K*log(sqrt(2 * m_Noise->GetVariance() * M_PI ));

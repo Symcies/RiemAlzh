@@ -181,7 +181,8 @@ Algorithm
 void
 Algorithm
 ::ComputeOutputs()
-{
+{   
+    /*
     for(const auto& it : *m_Realizations)
     {
         for(const auto& it2 : it.second)
@@ -190,7 +191,8 @@ Algorithm
         }
     }
     m_OutputRealizations << std::endl;
-
+    */
+    
     m_Model->ComputeOutputs();
 }
 
@@ -228,11 +230,22 @@ Algorithm
         {
             std::cout << it.first << ": ";
             double Ave = 0;
+            double Max = 0;
+            double Min = 1;
             for(auto it2 : m_AcceptanceRatios.at(it.first))
             {
                 Ave += it2;
+                if(m_AcceptanceRatios.at(it.first).size() > 1)
+                {
+                    Max = std::max(it2, Max);
+                    Min = std::min(it2, Min);
+                }
             }
-            std::cout << Ave/it.second.size() << ". ";
+            std::cout << Ave/it.second.size() ;
+            if(Min != 1) std::cout << " & " << Min;
+            if(Max != 0) std::cout << " & " << Max;
+            std::cout << ". ";
+                                   
         }
         std::cout << std::endl;
     }

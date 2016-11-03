@@ -47,7 +47,14 @@ public:
     template <typename F>
     static void WarningEquality_Function(std::function<F> a, std::function<F> b, std::string msg);
     
-
+    /// Assert that the greater_than inequality is fulfilled
+    template <typename T>
+    static void WarningInequality_GreaterThan(T a, T b, std::string msg); 
+    
+    /// Assert that the double greater_than inequality is fulfiled
+    template <typename T>
+            static void WarningInequality_GreaterThan(T a, T b, T c, std::string msg);
+    
     
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,6 +113,36 @@ TestAssert
         throw std::invalid_argument( msg );
         
     }
+}
+
+template <typename T>
+void
+TestAssert
+::WarningInequality_GreaterThan(T a, T b, std::string msg) 
+{
+    if(!Instance()->GetActive()) return;
+    
+    if(a <= b)
+    {
+        std::cout << std::endl << "Should be a: " << a << " > " << b << " :b" << std::endl;
+        throw std::invalid_argument( msg );
+    }
+}
+
+
+template <typename T>
+void
+TestAssert
+::WarningInequality_GreaterThan(T a, T b, T c, std::string msg) 
+{
+    if(!Instance()->GetActive()) return;
+    
+    if(a <= b || b <= c )
+    {
+        std::cout << std::endl << "Should be :" << a << " > " << b << " > " << c << std::endl;
+        throw std::invalid_argument( msg );
+    }
+    
 }
 
 

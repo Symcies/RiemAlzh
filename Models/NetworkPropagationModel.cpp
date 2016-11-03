@@ -85,7 +85,9 @@ NetworkPropagationModel
         m_PopulationRandomVariables.insert( RandomVariable("Delta#" + std::to_string(i), Delta));
     }
     
-    
+    /// Tests
+    TestAssert::WarningInequality_GreaterThan(1.0, P0->GetMean(), 0.0, "NetworkPropagationModel>Initialize : wrong P0");
+    TestAssert::WarningInequality_GreaterThan(m_Noise->GetVariance(), 0.0, "NetworkPropagationModel>Initialize : wrong noise");
 }
 
 void 
@@ -148,21 +150,30 @@ NetworkPropagationModel
     VectorType V0(1, R->at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
     
+    /////////////////////////
+    /// Compute S0
+    /////////////////////////
+    int K = 0;
+    double SumOfObservation = 0.0;
+    for(const auto& it : *D)
+    {
+        K += it.size();
+        for(auto it2 : it)
+        {
+            SumOfObservation += it2.first.squared_magnitude();
+        }
+    }
+    VectorType S0(1, SumOfObservation);
     
     /////////////////////////
     /// Compute S1 and S2
     /////////////////////////
-    int K = 0; 
-    for(auto it = D->begin(); it != D->end(); ++it)
-    {
-        K += it->size();
-    }
     VectorType S1(K), S2(K);
     
     int i = 0;
     auto IterS1 = S1.begin();
     auto IterS2 = S2.begin();
-    for(auto Iter = D->begin(); Iter != D->end() && IterS1 != S1.end() && IterS2 != S2.end(); ++Iter, ++i, ++IterS1, ++IterS2)
+    for(auto Iter = D->begin(); Iter != D->end() && IterS1 != S1.end() && IterS2 != S2.end(); ++Iter, ++i)
     {
         /// Given a particular subject, get its attributes, then, loop over its observation
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
@@ -175,8 +186,9 @@ NetworkPropagationModel
 
             *IterS1 = dot_product(ParallelCurve, it.first);
             *IterS2 = ParallelCurve.squared_magnitude();
+            
+            ++IterS1, ++IterS2;
         }
-
     }
 
     /////////////////////////
@@ -195,6 +207,16 @@ NetworkPropagationModel
     }
     
     /////////////////////////
+    /// Compute S8
+    /////////////////////////
+    VectorType S8(m_Manifold->GetDimension() - 1);
+    auto IterS8 = S8.begin();
+    for(auto it = Delta.begin() + 1; it != Delta.end() && IterS8 != S8.end(); ++it, ++IterS8)
+    {
+        *IterS8 = *it;
+    }
+    
+    /////////////////////////
     /// Compute S9
     /////////////////////////
     VectorType S9((m_Manifold->GetDimension() - 1) * m_NbIndependentComponents);
@@ -204,7 +226,7 @@ NetworkPropagationModel
         *it = R->at("Beta#" + std::to_string(j))[0];
     }
     
-    SufficientStatisticsVector S = {S1, S2, S3, S4, P0, VectorType(1, T0), V0, Delta, S9};
+    SufficientStatisticsVector S = {S0, S1, S2, S3, S4, P0, VectorType(1, T0), V0, S8, S9};
     
     /////////////////////////
     /// Tests
@@ -264,13 +286,13 @@ NetworkPropagationModel
     auto T0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractT0 );
     auto V0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractV0 );
     
-    P0->SetMean(StochSufficientStatistics[4][0]);
-    T0->SetMean(StochSufficientStatistics[5][0]);
-    V0->SetMean(StochSufficientStatistics[6][0]);
+    P0->SetMean(StochSufficientStatistics[5][0]);
+    T0->SetMean(StochSufficientStatistics[6][0]);
+    V0->SetMean(StochSufficientStatistics[7][0]);
 
     /// Update Delta(k)(mean)
     int i = 0;
-    for(auto it = StochSufficientStatistics[7].begin(); it != StochSufficientStatistics[7].end(); ++it, ++i)
+    for(auto it = StochSufficientStatistics[8].begin(); it != StochSufficientStatistics[8].end(); ++it, ++i)
     {
         auto AbstractDelta = m_PopulationRandomVariables.at( "Delta#" + std::to_string(i) );
         auto Delta = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractDelta ) ;
@@ -279,7 +301,7 @@ NetworkPropagationModel
     
     /// Update Beta(k)(mean)
     i = 0;
-    for(auto it = StochSufficientStatistics[8].begin(); it != StochSufficientStatistics[8].end(); ++it, ++i)
+    for(auto it = StochSufficientStatistics[9].begin(); it != StochSufficientStatistics[9].end(); ++it, ++i)
     {
         auto AbstractBeta = m_PopulationRandomVariables.at( "Beta#" + std::to_string(i) );
         auto Beta = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractBeta );
@@ -290,9 +312,9 @@ NetworkPropagationModel
     /// Update Ksi & Tau
     double VarianceKsi = 0, VarianceTau = 0;
     
-    auto IterKsi = StochSufficientStatistics[2].begin();
-    auto IterTau = StochSufficientStatistics[3].begin();
-    for( ; IterKsi != StochSufficientStatistics[2].end() && IterTau != StochSufficientStatistics[3].end(); ++IterKsi, ++IterTau)
+    auto IterKsi = StochSufficientStatistics[3].begin();
+    auto IterTau = StochSufficientStatistics[4].begin();
+    for( ; IterKsi != StochSufficientStatistics[3].end() && IterTau != StochSufficientStatistics[4].end(); ++IterKsi, ++IterTau)
     {
         VarianceKsi += *IterKsi;
         VarianceTau += *IterTau;
@@ -314,20 +336,16 @@ NetworkPropagationModel
     double K = 0;
 
     /// Sum Yijk²
-    double NoiseVariance = 0;
+    double NoiseVariance = StochSufficientStatistics[0](0);
     for(auto it : *D)
     {
         K += it.size();
-        for(auto it2 : it)
-        {
-            NoiseVariance += it2.first.squared_magnitude();
-        }
     }
 
     /// Sum -2 S1 + S2
-    auto IterS1 = StochSufficientStatistics[0].begin();
-    auto IterS2 = StochSufficientStatistics[1].begin();
-    for( ; IterS1 != StochSufficientStatistics[0].end() && IterS2 != StochSufficientStatistics[1].end(); ++IterS1, ++IterS2)
+    auto IterS1 = StochSufficientStatistics[1].begin();
+    auto IterS2 = StochSufficientStatistics[2].begin();
+    for( ; IterS1 != StochSufficientStatistics[1].end() && IterS2 != StochSufficientStatistics[2].end(); ++IterS1, ++IterS2)
     {
         NoiseVariance += - 2 * *IterS1 + *IterS2;
     }
@@ -335,6 +353,11 @@ NetworkPropagationModel
     /// Divide by N*K, then take the square root
     NoiseVariance /= N*K;
     m_Noise->SetVariance(NoiseVariance);
+    
+    
+    /// Tests
+    TestAssert::WarningInequality_GreaterThan(1.0, StochSufficientStatistics[5](0), 0.0, "LongitudinalModel>UpdateRandomVariables ; wrong P0");
+    TestAssert::WarningInequality_GreaterThan(m_Noise->GetVariance(), 0.0, "LongitudinalModel>UpdateRandomVariables ; wrong noise variance");
 }
 
 
@@ -413,6 +436,9 @@ NetworkPropagationModel
         VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
         LogLikelihood += (IterData->first - ParallelCurve).squared_magnitude();
     }
+    
+    /// Test
+    TestAssert::WarningInequality_GreaterThan(LogLikelihood, 0.0, "LongitudinalModel>ComputeIndividualLogLikelihood ; wrong Likelihood");
 
     LogLikelihood /= -2*m_Noise->GetVariance();
     LogLikelihood -= k * log(sqrt( 2 * m_Noise->GetVariance() * M_PI));
@@ -493,18 +519,23 @@ NetworkPropagationModel
     double MeanV0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"))->GetMean();
     double SigmaKsi = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetVariance();
     double SigmaTau = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetVariance();
-    double Beta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#0"))->GetMean();
-    double Delta = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#0"))->GetMean();
+    double Beta0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#0"))->GetMean();
+    double Beta1 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#1"))->GetMean();
+    double Beta2 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#2"))->GetMean();
+    double Delta0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#0"))->GetMean();
+    double Delta1 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#1"))->GetMean();
+    double Delta2 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#2"))->GetMean();
     double Sigma = m_Noise->GetVariance();
 
     m_OutputParameters << MeanP0 << ", " << MeanT0 << ", " << MeanV0 << ", ";
-    m_OutputParameters << SigmaKsi << ", " << SigmaTau << ", " << Sigma << ", ";
-    m_OutputParameters << Beta << ", " << Delta << std::endl;
+    m_OutputParameters << SigmaKsi << ", " << SigmaTau << ", " << Sigma << ", " << Beta1 << ", " << Beta2 << ", ";
+    m_OutputParameters << Delta0 << ", " << Delta1 << ", " << Delta2 << ", " << std::endl;
 
     
     std::cout << "Parameters : P0: " << MeanP0 << ". T0: " << MeanT0 << ". V0: " << MeanV0;
     std::cout << ". Ksi: " << SigmaKsi << ". Tau: " << SigmaTau << ". Sigma: " << Sigma;
-    std::cout << ". Beta: " << Beta << ". Delta: " << Delta << std::endl;
+    std::cout << ". Beta0: " << Beta0 << ". Beta1: " << Beta1 << ". Beta2: " << Beta2 << ". Delta0: " << Delta0;
+    std::cout << ". Delta1: " << Delta1 << ". Delta2: " << Delta2 << std::endl;
 }
 
 

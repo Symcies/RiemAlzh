@@ -42,7 +42,7 @@ int main() {
     //// Initialization ///
     ///////////////////////
     unsigned int NumberDimension = 4;
-    unsigned int NumberIndependentComponents = 1;
+    unsigned int NumberIndependentComponents = 2;
     clock_t start = clock();
     
     /////////////
@@ -78,8 +78,8 @@ int main() {
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
     shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
-    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
-    //shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
+    //shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
+    shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
      
     ////////////////////////
     /// Univariate Model ///
@@ -97,7 +97,7 @@ int main() {
     ////////////////////////////////////////
     
     //Model->InitializeFakeRandomVariables();
-    //shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(200, 6, 8) );
+    //shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(50, 6, 7) );
     Model->Initialize();
     
     
