@@ -40,7 +40,7 @@ public:
     // Sample a new variable thanks to the sampler
     // The model cannot be constant because we modify some of its parameters (m_Orthonormal Basis for instance)
     virtual MultiRealizations Sample(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
-                        std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D);
+                                     const std::shared_ptr<Data>& D, int IterationNumber);
 
 
 protected:

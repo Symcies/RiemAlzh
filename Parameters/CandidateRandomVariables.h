@@ -3,6 +3,7 @@
 
 #include <map>
 
+#include "../LinearAlgebra/LinearAlgebra.h"
 #include "../RandomVariables/ConstantRandomVariable.h"
 #include "../RandomVariables/GaussianRandomVariable.h"
 #include "../RandomVariables/AbstractRandomVariable.h"
@@ -15,13 +16,12 @@ public:
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
+    
     /// Key : Name of the parameter. Value : Value of the parameter
-    typedef std::map<std::string, double > RandomVariableParameters;              // TODO : Maybe changed?
-
-    /// Key : Name of the random variable. Value : <Type of the candidate random variable, list of parameters>
-    typedef std::map<std::string, RandomVariableParameters > RandomVariableParametersMap;
-
-    typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
+    typedef std::map<std::string, ScalarType > RandomVariableParameters;              // TODO : Maybe changed?
+    typedef std::map< std::string, std::vector< GaussianRandomVariable >> PropositionDistribution;
+    typedef std::map<std::string, VectorType> MultiRealizations; 
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,14 +36,15 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Get a candidate random variable
-    std::shared_ptr<AbstractRandomVariable> GetRandomVariable(std::string NameRandomVariable, double Realization);
-
+    GaussianRandomVariable& GetRandomVariable(std::string NameRandomVariable, int SubjectNumber, double CurrentRealization);
+    
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the candidate random variables
-    void InitializeCandidateRandomVariables(std::shared_ptr<AbstractModel>& M);
+    void InitializeCandidateRandomVariables(const std::shared_ptr<MultiRealizations>& R);
 
 
 
@@ -52,21 +53,17 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Gaussian random variable with determined mean
-    std::shared_ptr<AbstractRandomVariable> GetGaussianRandomVariable(double Mean, RandomVariableParameters Parameters);
-
-    /// Constant random variable with determined mean
-    std::shared_ptr<AbstractRandomVariable> GetConstantRandomVariable(double Mean, RandomVariableParameters Parameters);
-
-    /// Read the parameters of a given random variable within a certain file
-    RandomVariableParameters ReadParameters(std::string NameRandomVariable);
+    /// Return the initial proposition distribution corresponding to the variable
+    GaussianRandomVariable ReadInitialPropositionDistribution(std::string NameRandomVariable, ScalarType CurrentState);
+    
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    RandomVariableParametersMap m_RandomVariableParameters;
+    // Proposition laws of the realizations
+    PropositionDistribution m_PropositionDistribution;
 
 };
 

@@ -2,7 +2,6 @@
 #define _Algorithm_h
 
 #include "../Models/AbstractModel.h"
-#include "../Models/AbstractModel.h"
 #include "../Samplers/AbstractSampler.h"
 #include "../Parameters/CandidateRandomVariables.h"
 #include <iostream>
@@ -58,12 +57,9 @@ protected:
 
     // Initialize the realization of the model (and related manifold) random variables
     void InitializeRealization(unsigned int NbIndividuals);
-
-    /// Initialize the candidate random variables
-    void InitializeCandidateRandomVariables();
     
     /// Initialize sampler
-    void InitializeSampler(std::shared_ptr<MultiRealizations>& R);
+    void InitializeSampler();
     
     /// Initialize Manifold
     void InitializeModel(std::shared_ptr<MultiRealizations>& R);
@@ -93,9 +89,6 @@ protected:
 
     /// Stochastic Sufficient Statistics used in the stochastic approximation step
     SufficientStatisticsVector m_StochasticSufficientStatistics;
-
-    /// Candidates random variables, corresponding to those in the Model
-    std::shared_ptr<CandidateRandomVariables> m_CandidateRandomVariables;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

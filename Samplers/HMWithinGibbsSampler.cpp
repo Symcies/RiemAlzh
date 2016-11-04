@@ -22,14 +22,14 @@ void
 HMWithinGibbsSampler
 ::InitializeSampler(const std::shared_ptr<MultiRealizations> &R) 
 {
-    
+    m_CandidateRandomVariables.InitializeCandidateRandomVariables(R);
 }
 
 
 HMWithinGibbsSampler::MultiRealizations
 HMWithinGibbsSampler
 ::Sample(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
-         std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D)
+         const std::shared_ptr<Data>& D, int IterationNumber)
 {
     std::random_device RD;
     std::mt19937 Generator(RD());
@@ -51,8 +51,8 @@ HMWithinGibbsSampler
             double CurrentLogLikelihood = M->ComputeLogLikelihood(GibbsRealizations, D, std::pair<std::string, int> (NameCurrentRV, i));
 
             /// Compute the candidate part
-            auto CandidateRV = Candidates->GetRandomVariable(NameCurrentRV, CurrentRealization);
-            double CandidateRealization = CandidateRV->Sample();
+            auto CandidateRV = m_CandidateRandomVariables.GetRandomVariable(NameCurrentRV, i, CurrentRealization);
+            double CandidateRealization = CandidateRV.Sample();
             double CandidateLogPrior = CurrentRV->LogLikelihood(CandidateRealization);
             *it2 = CandidateRealization;
             double CandidateLogLikelihood = M->ComputeLogLikelihood(GibbsRealizations, D, std::pair<std::string, int> (NameCurrentRV, i));
@@ -71,6 +71,10 @@ HMWithinGibbsSampler
             {
                 //No need to rewrite *it2 as it is already the Candidate Realization
             }
+            
+            //UpdatePropositionDistributionVariance(CandidateRV, exp(Tau), IterationNumber);
+            
+            
         }
     }
 

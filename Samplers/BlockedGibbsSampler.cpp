@@ -20,6 +20,8 @@ void
 BlockedGibbsSampler
 ::InitializeSampler(const std::shared_ptr<MultiRealizations> &R) 
 {
+    m_CandidateRandomVariables.InitializeCandidateRandomVariables(R);
+    
     for(auto it = R->begin(); it != R->end(); ++it)
     {
         if(it->second.size() == 1)
@@ -38,14 +40,14 @@ BlockedGibbsSampler
 BlockedGibbsSampler::MultiRealizations
 BlockedGibbsSampler
 ::Sample(const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M,
-         std::shared_ptr<CandidateRandomVariables> &Candidates, const std::shared_ptr<Data> &D) 
+         const std::shared_ptr<Data> &D, int IterationNumber) 
 {
 
-    auto NewRealizations = std::make_shared<MultiRealizations>( SamplePopulation(R, M, Candidates, D) );
+    auto NewRealizations = std::make_shared<MultiRealizations>( SamplePopulation(R, M, D) );
     
     for(int i = 0; i < D->size(); ++i)
     {
-        *NewRealizations = SampleIndividual(i, NewRealizations, M, Candidates, D);
+        *NewRealizations = SampleIndividual(i, NewRealizations, M, D);
     }
     
     return *NewRealizations;
@@ -61,14 +63,13 @@ BlockedGibbsSampler
 
 BlockedGibbsSampler::MultiRealizations
 BlockedGibbsSampler
-::SamplePopulation(const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M,
-                   std::shared_ptr<CandidateRandomVariables> &Candidates, const std::shared_ptr<Data> &D)
+::SamplePopulation(const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M, const std::shared_ptr<Data> &D)
 {
     /// Get Z_pop(k) : the current population realizations
     auto CurrentPopRealizations = std::make_shared<UniqueRealizations> (GetCurrentPopulationRealizations(R) );
     
     /// Get Z(*) : the candidate population realizations
-    UniqueRealizations CandidatePopRealizations = GetCandidateRealizations(CurrentPopRealizations, Candidates);
+    UniqueRealizations CandidatePopRealizations = GetCandidateRealizations(CurrentPopRealizations);
     
     /// Get the acceptance ratio
     double Ratio = - M->ComputeLogLikelihood(R, D);
@@ -131,15 +132,14 @@ BlockedGibbsSampler
 
 std::map<std::string, double>
 BlockedGibbsSampler
-::GetCandidateRealizations(const std::shared_ptr<UniqueRealizations> &R,
-                                     const std::shared_ptr<CandidateRandomVariables> &Candidates) 
+::GetCandidateRealizations(const std::shared_ptr<UniqueRealizations> &R) 
 {
     UniqueRealizations CandidateRealizations;
     for(const auto& it : *R)
     {
         double CurrentRealization = it.second;
-        auto CandidateRandomVariable = Candidates->GetRandomVariable( it.first, CurrentRealization );
-        double CandidateRealization = CandidateRandomVariable->Sample();
+        auto CandidateRandomVariable = m_CandidateRandomVariables.GetRandomVariable( it.first, 0, CurrentRealization );
+        double CandidateRealization = CandidateRandomVariable.Sample();
         
         CandidateRealizations[it.first] = CandidateRealization;
     }
@@ -150,14 +150,13 @@ BlockedGibbsSampler
 BlockedGibbsSampler::MultiRealizations
 BlockedGibbsSampler
 ::SampleIndividual(int i, const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M,
-                   std::shared_ptr<CandidateRandomVariables> &Candidates,
                    const std::shared_ptr<Data> &D) 
 {
     /// Get the current realization Z(k)_i of individual i
     auto CurrentIndivRealizations = std::make_shared<UniqueRealizations>( GetCurrentIndividualRealizations(R, i) ); 
     
     /// Get the candidate realization Z*_i of the individual i
-    UniqueRealizations CandidateIndivRealizations = GetCandidateRealizations(CurrentIndivRealizations, Candidates);
+    UniqueRealizations CandidateIndivRealizations = GetCandidateRealizations(CurrentIndivRealizations);
     
     ///Get the acceptance ratio
     double Ratio = - M->ComputeIndividualLogLikelihood(R, D, i);

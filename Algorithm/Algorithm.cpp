@@ -28,8 +28,7 @@ Algorithm
     int NbMaxIterations = 700000;
     InitializeRealization((int)D->size());
     InitializeModel(m_Realizations);
-    InitializeSampler(m_Realizations);
-    InitializeCandidateRandomVariables();
+    InitializeSampler();
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
 
 //    double a1 = 0;
@@ -95,13 +94,6 @@ Algorithm
     m_OutputRealizations << std::endl;
 }
 
-void
-Algorithm
-::InitializeCandidateRandomVariables()
-{
-    m_CandidateRandomVariables = std::make_shared<CandidateRandomVariables>();
-    m_CandidateRandomVariables->InitializeCandidateRandomVariables(m_Model);
-}
 
 void
 Algorithm
@@ -112,16 +104,16 @@ Algorithm
 
 void 
 Algorithm
-::InitializeSampler(std::shared_ptr<MultiRealizations>& R)
+::InitializeSampler()
 {
-    m_Sampler->InitializeSampler(R);
+    m_Sampler->InitializeSampler(m_Realizations);
 }
 
 void
 Algorithm
 ::ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration)
 {
-    MultiRealizations R = m_Sampler->Sample(m_Realizations, m_Model, m_CandidateRandomVariables, D);
+    MultiRealizations R = m_Sampler->Sample(m_Realizations, m_Model, D, Iteration);
     ComputeAcceptanceRatio(R, Iteration);
     m_Realizations = std::make_shared<MultiRealizations>(R);
     
@@ -223,6 +215,7 @@ Algorithm
       
   }
     
+    if(Iteration%100 == 0)
     if(Iteration%100 == 0)
     {
         std::cout << "AcceptRatio: ";

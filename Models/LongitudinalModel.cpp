@@ -889,6 +889,7 @@ LongitudinalModel
 double
 LongitudinalModel
 ::ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D)
+
 {
 
     /// Get the data
@@ -907,11 +908,11 @@ LongitudinalModel
         VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
         K += IterData->size();
         
-        for(auto it : *IterData)
+        for(auto it = IterData->begin(); it != IterData->end(); ++it)
         {
-            double TimePoint = SubjectTimePoint(it.second);
+            double TimePoint = SubjectTimePoint(it->second);
             VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
-            LogLikelihood  += (it.first - ParallelCurve).squared_magnitude();
+            LogLikelihood  += (it->first - ParallelCurve).squared_magnitude();
         }
     }
     /// Tests

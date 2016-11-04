@@ -14,15 +14,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="03e71383-5091-4290-9195-e722e3a9d4e8" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Parameters.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ParametersBlocked.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ParametersBlockedTest.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ParametersMH.txt" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Algorithm/Algorithm.cpp" afterPath="$PROJECT_DIR$/Algorithm/Algorithm.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Algorithm/Algorithm.h" afterPath="$PROJECT_DIR$/Algorithm/Algorithm.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/LongitudinalModel.cpp" afterPath="$PROJECT_DIR$/Models/LongitudinalModel.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" afterPath="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp" afterPath="$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Realizations.txt" afterPath="$PROJECT_DIR$/Realizations.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Parameters/CandidateRandomVariables.h" afterPath="$PROJECT_DIR$/Parameters/CandidateRandomVariables.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ParametersBlockedTest2.txt" afterPath="$PROJECT_DIR$/ParametersBlockedTest2.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/AbstractSampler.cpp" afterPath="$PROJECT_DIR$/Samplers/AbstractSampler.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/AbstractSampler.h" afterPath="$PROJECT_DIR$/Samplers/AbstractSampler.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" afterPath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tests/TestAssert.h" afterPath="$PROJECT_DIR$/Tests/TestAssert.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h" afterPath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.cpp" afterPath="$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.h" afterPath="$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.cpp" afterPath="$PROJECT_DIR$/main.cpp" />
     </list>
     <ignored path="RiemAlzh.iws" />
@@ -42,50 +50,48 @@
     <favorites_list name="RiemAlzh" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5397325">
+    <splitter split-orientation="horizontal" split-proportion="0.5350701">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="main.cpp" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/main.cpp">
+          <file leaf-file-name="AbstractSampler.cpp" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Samplers/AbstractSampler.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="444">
-                  <caret line="99" column="68" selection-start-line="99" selection-start-column="67" selection-end-line="99" selection-end-column="68" />
-                  <folding>
-                    <element signature="e#0#19#0" expanded="true" />
-                    <element signature="e#86#128#0" expanded="true" />
-                  </folding>
+                <state relative-caret-position="513">
+                  <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+                  <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="NetworkPropagationModel.cpp" pinned="false" current-in-tab="false">
+          <file leaf-file-name="NetworkPropagationModel.cpp" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="858">
-                  <caret line="592" column="4" selection-start-line="592" selection-start-column="4" selection-end-line="592" selection-end-column="4" />
+                <state relative-caret-position="357">
+                  <caret line="712" column="0" selection-start-line="712" selection-start-column="0" selection-end-line="712" selection-end-column="0" />
                   <folding>
-                    <element signature="e#276#1249#0" expanded="false" />
-                    <element signature="e#1542#3640#0" expanded="false" />
-                    <element signature="e#3642#4685#0" expanded="false" />
-                    <element signature="e#18135#20253#0" expanded="false" />
+                    <element signature="e#276#1252#0" expanded="false" />
+                    <element signature="e#1545#3643#0" expanded="false" />
+                    <element signature="e#3645#4688#0" expanded="false" />
+                    <element signature="e#4691#8968#0" expanded="false" />
+                    <element signature="e#8971#12483#0" expanded="false" />
+                    <element signature="e#12802#14293#0" expanded="false" />
+                    <element signature="e#14296#15847#0" expanded="false" />
+                    <element signature="e#15850#18080#0" expanded="false" />
+                    <element signature="e#18302#20420#0" expanded="false" />
+                    <element signature="e#20729#22613#0" expanded="false" />
+                    <element signature="e#22835#23186#0" expanded="false" />
+                    <element signature="e#27647#33538#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="BlockedGibbsSampler.cpp" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp">
+          <file leaf-file-name="MatrixFunctions.cpp" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Utilities/MatrixFunctions.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="587">
-                  <caret line="135" column="0" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#551#1051#0" expanded="false" />
-                    <element signature="e#1813#3465#0" expanded="false" />
-                    <element signature="e#3468#3759#0" expanded="false" />
-                    <element signature="e#3761#4060#0" expanded="false" />
-                    <element signature="e#4062#4704#0" expanded="false" />
-                    <element signature="e#4706#6419#0" expanded="false" />
-                  </folding>
+                <state relative-caret-position="203">
+                  <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -94,45 +100,54 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="Algorithm.cpp" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.cpp">
+          <file leaf-file-name="HMWithinGibbsSampler.cpp" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="528">
-                  <caret line="225" column="20" selection-start-line="225" selection-start-column="20" selection-end-line="225" selection-end-column="20" />
-                  <folding>
-                    <element signature="e#261#384#0" expanded="false" />
-                    <element signature="e#641#2122#0" expanded="false" />
-                    <element signature="e#2343#2595#0" expanded="false" />
-                    <element signature="e#2597#3025#0" expanded="false" />
-                    <element signature="e#3027#3240#0" expanded="false" />
-                    <element signature="e#3242#3352#0" expanded="false" />
-                    <element signature="e#3354#3469#0" expanded="false" />
-                    <element signature="e#3471#3769#0" expanded="false" />
-                    <element signature="e#3772#5127#0" expanded="false" />
-                    <element signature="e#5590#5801#0" expanded="false" />
-                  </folding>
+                <state relative-caret-position="212">
+                  <caret line="32" column="1" selection-start-line="32" selection-start-column="1" selection-end-line="32" selection-end-column="1" />
+                  <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="LongitudinalModel.cpp" pinned="false" current-in-tab="true">
+          <file leaf-file-name="LongitudinalModel.cpp" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="3250">
-                  <caret line="498" column="28" selection-start-line="498" selection-start-column="28" selection-end-line="498" selection-end-column="28" />
+                <state relative-caret-position="980">
+                  <caret line="707" column="26" selection-start-line="646" selection-start-column="4" selection-end-line="707" selection-end-column="26" />
                   <folding>
                     <element signature="e#370#783#0" expanded="false" />
                     <element signature="e#1290#3391#0" expanded="false" />
-                    <element signature="e#3393#4388#0" expanded="false" />
                     <element signature="e#19732#21590#0" expanded="false" />
                     <element signature="e#21813#22621#0" expanded="false" />
                     <element signature="e#22623#23453#0" expanded="false" />
                     <element signature="e#23455#23803#0" expanded="false" />
                     <element signature="e#23805#24195#0" expanded="false" />
-                    <element signature="e#24197#26364#0" expanded="false" />
-                    <element signature="e#26366#28263#0" expanded="false" />
                     <element signature="e#28265#34210#0" expanded="false" />
-                    <element signature="e#34212#35648#0" expanded="false" />
+                    <element signature="e#34212#35688#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="ArmadilloMatrixWrapper.h" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="203">
+                  <caret line="219" column="0" selection-start-line="219" selection-start-column="0" selection-end-line="219" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/main.cpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="128">
+                  <caret line="43" column="36" selection-start-line="43" selection-start-column="36" selection-end-line="43" selection-end-column="36" />
+                  <folding>
+                    <element signature="e#0#19#0" expanded="true" />
+                    <element signature="e#86#128#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -159,9 +174,6 @@
         <option value="$PROJECT_DIR$/Armadillo/ArmadilloLinearAlgebra.h" />
         <option value="$PROJECT_DIR$/LinearAlgebra/LinearAlgebra.h" />
         <option value="$PROJECT_DIR$/src/Algorithm/Algorithm.h" />
-        <option value="$PROJECT_DIR$/Parameters/CandidateRandomVariables.h" />
-        <option value="$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.h" />
-        <option value="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h" />
         <option value="$PROJECT_DIR$/Manifolds/BaseManifold/LogisticBaseManifold.cpp" />
         <option value="$PROJECT_DIR$/Manifolds/BaseManifold/LogisticBaseManifold.h" />
         <option value="$PROJECT_DIR$/Manifolds/BaseManifold/AbstractBaseManifold.h" />
@@ -172,11 +184,8 @@
         <option value="$PROJECT_DIR$/Manifolds/AbstractManifold.h" />
         <option value="$PROJECT_DIR$/Utilities/MatrixFunctions.h" />
         <option value="$PROJECT_DIR$/Utilities/MatrixFunctions.cpp" />
-        <option value="$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.cpp" />
         <option value="$PROJECT_DIR$/Models/LongitudinalModel.h" />
-        <option value="$PROJECT_DIR$/Samplers/AbstractSampler.h" />
         <option value="$PROJECT_DIR$/Models/AbstractModel.cpp" />
-        <option value="$PROJECT_DIR$/Algorithm/Algorithm.h" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/Models/UnivariateModel.h" />
         <option value="$PROJECT_DIR$/Models/UnivariateModel.cpp" />
@@ -189,12 +198,19 @@
         <option value="$PROJECT_DIR$/Inputs/ReadData.cpp" />
         <option value="$PROJECT_DIR$/Manifolds/PropagationManifold.cpp" />
         <option value="$PROJECT_DIR$/Tests/TestAssert.h" />
-        <option value="$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp" />
+        <option value="$PROJECT_DIR$/Parameters/CandidateRandomVariables.h" />
+        <option value="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h" />
+        <option value="$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.h" />
         <option value="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" />
+        <option value="$PROJECT_DIR$/Algorithm/Algorithm.h" />
+        <option value="$PROJECT_DIR$/Samplers/AbstractSampler.h" />
+        <option value="$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp" />
+        <option value="$PROJECT_DIR$/Samplers/AbstractSampler.cpp" />
+        <option value="$PROJECT_DIR$/Algorithm/Algorithm.cpp" />
+        <option value="$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.cpp" />
         <option value="$PROJECT_DIR$/Models/LongitudinalModel.cpp" />
         <option value="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" />
         <option value="$PROJECT_DIR$/main.cpp" />
-        <option value="$PROJECT_DIR$/Algorithm/Algorithm.cpp" />
       </list>
     </option>
   </component>
@@ -206,8 +222,6 @@
   </component>
   <component name="OCFindUsagesOptions" text="false" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="3120" />
-    <option name="y" value="-598" />
     <option name="width" value="1680" />
     <option name="height" value="1050" />
   </component>
@@ -322,7 +336,81 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="Samplers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Parameters" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="Models" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LinearAlgebra" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LinearAlgebra" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Armadillo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Algorithm" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -331,7 +419,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.General" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Font" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="FullScreen" value="true" />
@@ -556,28 +644,30 @@
       <workItem from="1477658204958" duration="4761000" />
       <workItem from="1478104757136" duration="2975000" />
       <workItem from="1478162307858" duration="16814000" />
+      <workItem from="1478197173987" duration="140000" />
+      <workItem from="1478248509626" duration="16855000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="240522000" />
+    <option name="totallyTimeSpent" value="257517000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="3120" y="-598" width="1680" height="1050" extended-state="0" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.100595236" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10892857" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31152344" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32910156" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32837528" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328125" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32910156" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.234375" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39257812" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32910156" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3764302" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37597656" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -602,7 +692,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="162" />
+      <option name="time" value="180" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -611,13 +701,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="78">
           <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/algorithm">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13">
-          <caret line="1049" column="0" selection-start-line="1049" selection-start-column="0" selection-end-line="1049" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -632,13 +715,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Parameters/CandidateRandomVariables.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="104">
-          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -670,13 +746,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/string">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="642" column="0" selection-start-line="642" selection-start-column="0" selection-end-line="642" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/memory">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="140">
@@ -698,52 +767,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Utilities/MatrixFunctions.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="603">
-          <caret line="58" column="4" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Utilities/MatrixFunctions.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="208">
           <caret line="16" column="108" selection-start-line="16" selection-start-column="108" selection-end-line="16" selection-end-column="108" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/map">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13">
-          <caret line="1577" column="0" selection-start-line="1577" selection-start-column="0" selection-end-line="1577" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="36" column="30" selection-start-line="36" selection-start-column="30" selection-end-line="36" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="39">
-          <caret line="9" column="10" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="50" column="93" selection-start-line="50" selection-start-column="88" selection-end-line="50" selection-end-column="93" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Samplers/AbstractSampler.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -768,18 +795,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3354">
-          <caret line="258" column="9" selection-start-line="258" selection-start-column="9" selection-end-line="258" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Models/AbstractModel.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1118">
           <caret line="86" column="71" selection-start-line="86" selection-start-column="71" selection-end-line="86" selection-end-column="71" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -799,25 +818,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Models/AbstractModel.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-239">
-          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper_friend.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="515">
           <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="248" column="0" selection-start-line="248" selection-start-column="0" selection-end-line="248" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -832,20 +836,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="194">
           <caret line="4581" column="0" selection-start-line="4581" selection-start-column="0" selection-end-line="4581" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper_friend.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="102" column="0" selection-start-line="102" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/include/armadillo_bits/debug.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="136" column="0" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -867,19 +857,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="840">
           <caret line="190" column="0" selection-start-line="190" selection-start-column="0" selection-end-line="190" selection-end-column="0" />
-          <folding>
-            <element signature="e#1011#1606#0" expanded="false" />
-            <element signature="e#1609#2010#0" expanded="false" />
-            <element signature="e#2012#2678#0" expanded="false" />
-            <element signature="e#2680#3111#0" expanded="false" />
-            <element signature="e#3115#4140#0" expanded="false" />
-            <element signature="e#4142#4636#0" expanded="false" />
-            <element signature="e#4638#5594#0" expanded="false" />
-            <element signature="e#5596#6082#0" expanded="false" />
-            <element signature="e#6084#6973#0" expanded="false" />
-            <element signature="e#6975#7414#0" expanded="false" />
-            <element signature="e#7417#8035#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -887,7 +864,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -918,7 +894,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="494">
           <caret line="38" column="48" selection-start-line="38" selection-start-column="23" selection-end-line="38" selection-end-column="48" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -926,7 +901,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="430">
           <caret line="51" column="36" selection-start-line="51" selection-start-column="36" selection-end-line="51" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -934,118 +908,230 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="164">
           <caret line="127" column="0" selection-start-line="127" selection-start-column="0" selection-end-line="127" selection-end-column="0" />
-          <folding>
-            <element signature="e#1453#1465#0" expanded="true" />
-            <element signature="e#1610#1622#0" expanded="true" />
-            <element signature="e#1801#1813#0" expanded="true" />
-            <element signature="e#1974#1986#0" expanded="true" />
-            <element signature="e#3066#3078#0" expanded="true" />
-            <element signature="e#3057#3264#0" expanded="false" />
-            <element signature="e#3674#3686#0" expanded="true" />
-            <element signature="e#3987#3999#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp">
+    <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/algorithm">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="78">
-          <caret line="111" column="0" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
+        <state relative-caret-position="14">
+          <caret line="2653" column="0" selection-start-line="2653" selection-start-column="0" selection-end-line="2653" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="88" column="53" selection-start-line="88" selection-start-column="39" selection-end-line="88" selection-end-column="53" />
+        <state relative-caret-position="-574">
+          <caret line="3" column="36" selection-start-line="3" selection-start-column="36" selection-end-line="3" selection-end-column="36" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Samplers/AbstractSampler.h">
+    <entry file="file://$PROJECT_DIR$/Models/AbstractModel.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="37" column="104" selection-start-line="37" selection-start-column="104" selection-end-line="37" selection-end-column="104" />
+        <state relative-caret-position="210">
+          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding>
+            <element signature="e#51#68#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="392">
+          <caret line="34" column="78" selection-start-line="34" selection-start-column="78" selection-end-line="34" selection-end-column="78" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp">
+    <entry file="file://$PROJECT_DIR$/Parameters/CandidateRandomVariables.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="858">
-          <caret line="592" column="4" selection-start-line="592" selection-start-column="4" selection-end-line="592" selection-end-column="4" />
+        <state relative-caret-position="583">
+          <caret line="56" column="62" selection-start-line="56" selection-start-column="62" selection-end-line="56" selection-end-column="62" />
           <folding>
-            <element signature="e#276#1249#0" expanded="false" />
-            <element signature="e#1542#3640#0" expanded="false" />
-            <element signature="e#3642#4685#0" expanded="false" />
-            <element signature="e#18135#20253#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="99" column="68" selection-start-line="99" selection-start-column="67" selection-end-line="99" selection-end-column="68" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-            <element signature="e#86#128#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="225" column="20" selection-start-line="225" selection-start-column="20" selection-end-line="225" selection-end-column="20" />
-          <folding>
-            <element signature="e#261#384#0" expanded="false" />
-            <element signature="e#641#2122#0" expanded="false" />
-            <element signature="e#2343#2595#0" expanded="false" />
-            <element signature="e#2597#3025#0" expanded="false" />
-            <element signature="e#3027#3240#0" expanded="false" />
-            <element signature="e#3242#3352#0" expanded="false" />
-            <element signature="e#3354#3469#0" expanded="false" />
-            <element signature="e#3471#3769#0" expanded="false" />
-            <element signature="e#3772#5127#0" expanded="false" />
-            <element signature="e#5590#5801#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3250">
-          <caret line="498" column="28" selection-start-line="498" selection-start-column="28" selection-end-line="498" selection-end-column="28" />
-          <folding>
-            <element signature="e#370#783#0" expanded="false" />
-            <element signature="e#1290#3391#0" expanded="false" />
-            <element signature="e#3393#4388#0" expanded="false" />
-            <element signature="e#19732#21590#0" expanded="false" />
-            <element signature="e#21813#22621#0" expanded="false" />
-            <element signature="e#22623#23453#0" expanded="false" />
-            <element signature="e#23455#23803#0" expanded="false" />
-            <element signature="e#23805#24195#0" expanded="false" />
-            <element signature="e#24197#26364#0" expanded="false" />
-            <element signature="e#26366#28263#0" expanded="false" />
-            <element signature="e#28265#34210#0" expanded="false" />
-            <element signature="e#34212#35648#0" expanded="false" />
+            <element signature="e#73#87#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="587">
-          <caret line="135" column="0" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
+        <state relative-caret-position="588">
+          <caret line="42" column="45" selection-start-line="42" selection-start-column="45" selection-end-line="42" selection-end-column="45" />
           <folding>
-            <element signature="e#551#1051#0" expanded="false" />
-            <element signature="e#1813#3465#0" expanded="false" />
-            <element signature="e#3468#3759#0" expanded="false" />
-            <element signature="e#3761#4060#0" expanded="false" />
-            <element signature="e#4062#4704#0" expanded="false" />
-            <element signature="e#4706#6419#0" expanded="false" />
+            <element signature="e#3399#3690#0" expanded="false" />
+            <element signature="e#3692#3991#0" expanded="false" />
+            <element signature="e#3993#4554#0" expanded="false" />
+            <element signature="e#4556#6183#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+          <folding>
+            <element signature="e#63#80#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Samplers/AbstractSampler.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="28">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding>
+            <element signature="e#56#73#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/string">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1752">
+          <caret line="3673" column="0" selection-start-line="3673" selection-start-column="0" selection-end-line="3673" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="492">
+          <caret line="218" column="20" selection-start-line="218" selection-start-column="20" selection-end-line="218" selection-end-column="20" />
+          <folding>
+            <element signature="e#261#384#0" expanded="false" />
+            <element signature="e#2287#2539#0" expanded="false" />
+            <element signature="e#2541#2969#0" expanded="false" />
+            <element signature="e#2972#3082#0" expanded="false" />
+            <element signature="e#3461#4816#0" expanded="false" />
+            <element signature="e#5236#5528#0" expanded="false" />
+            <element signature="e#5279#5490#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="88" column="36" selection-start-line="88" selection-start-column="36" selection-end-line="88" selection-end-column="36" />
+          <folding>
+            <element signature="e#684#1005#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper_friend.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="32" column="1" selection-start-line="32" selection-start-column="1" selection-end-line="32" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="134" column="53" selection-start-line="134" selection-start-column="53" selection-end-line="134" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/map">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="1577" column="0" selection-start-line="1577" selection-start-column="0" selection-end-line="1577" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Samplers/AbstractSampler.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Utilities/MatrixFunctions.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/armadillo_bits/debug.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="94" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="980">
+          <caret line="707" column="26" selection-start-line="646" selection-start-column="4" selection-end-line="707" selection-end-column="26" />
+          <folding>
+            <element signature="e#370#783#0" expanded="false" />
+            <element signature="e#1290#3391#0" expanded="false" />
+            <element signature="e#19732#21590#0" expanded="false" />
+            <element signature="e#21813#22621#0" expanded="false" />
+            <element signature="e#22623#23453#0" expanded="false" />
+            <element signature="e#23455#23803#0" expanded="false" />
+            <element signature="e#23805#24195#0" expanded="false" />
+            <element signature="e#28265#34210#0" expanded="false" />
+            <element signature="e#34212#35688#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="219" column="0" selection-start-line="219" selection-start-column="0" selection-end-line="219" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="712" column="0" selection-start-line="712" selection-start-column="0" selection-end-line="712" selection-end-column="0" />
+          <folding>
+            <element signature="e#276#1252#0" expanded="false" />
+            <element signature="e#1545#3643#0" expanded="false" />
+            <element signature="e#3645#4688#0" expanded="false" />
+            <element signature="e#4691#8968#0" expanded="false" />
+            <element signature="e#8971#12483#0" expanded="false" />
+            <element signature="e#12802#14293#0" expanded="false" />
+            <element signature="e#14296#15847#0" expanded="false" />
+            <element signature="e#15850#18080#0" expanded="false" />
+            <element signature="e#18302#20420#0" expanded="false" />
+            <element signature="e#20729#22613#0" expanded="false" />
+            <element signature="e#22835#23186#0" expanded="false" />
+            <element signature="e#27647#33538#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="43" column="36" selection-start-line="43" selection-start-column="36" selection-end-line="43" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#86#128#0" expanded="true" />
           </folding>
         </state>
       </provider>

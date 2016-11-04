@@ -39,7 +39,7 @@ public:
     // Sample a new variable thanks to the sampler
     // The model cannot be constant because we modify some of its parameters (m_Orthonormal Basis for instance)
     virtual MultiRealizations Sample(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
-                        std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D);
+                                     const std::shared_ptr<Data>& D, int IterationNumber);
 
 
 protected:
@@ -48,8 +48,7 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Sample the population variables
-    MultiRealizations SamplePopulation(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
-                        std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D);
+    MultiRealizations SamplePopulation(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M, const std::shared_ptr<Data>& D);
     
     /// Get current population realizations
     UniqueRealizations GetCurrentPopulationRealizations(const std::shared_ptr<MultiRealizations>& R);
@@ -58,13 +57,12 @@ protected:
     UniqueRealizations GetCurrentIndividualRealizations(const std::shared_ptr<MultiRealizations>& R, int i);
     
     /// Get Candidatepopulation realizations
-    UniqueRealizations GetCandidateRealizations(const std::shared_ptr<UniqueRealizations>& R, 
-                                                    const std::shared_ptr<CandidateRandomVariables>& Candidates);
+    UniqueRealizations GetCandidateRealizations(const std::shared_ptr<UniqueRealizations>& R);
     
     
     /// Sample the individual variables
     MultiRealizations SampleIndividual(int i, const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
-                        std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D);
+                         const std::shared_ptr<Data>& D);
     
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

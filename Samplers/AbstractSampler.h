@@ -50,7 +50,7 @@ public:
     // Sample a new variable thanks to the sampler
     // The model cannot be constant because we modify some of its parameters (m_Orthonormal Basis for instance)
     virtual MultiRealizations Sample(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
-                        std::shared_ptr<CandidateRandomVariables>& Candidates, const std::shared_ptr<Data>& D) = 0;
+                                     const std::shared_ptr<Data>& D, int IterationNumber) = 0;
 
 
 protected:
@@ -58,11 +58,19 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
+    /// Compute the decreasing step size of the adaptive variances
+    double DecreasingStepSize(int Iteration, int NoMemoryTime);
+    
+    /// Update the variance of the gaussian proposition distribution
+    void UpdatePropositionDistributionVariance(GaussianRandomVariable& GRV, double Ratio, int Iteration);
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /// Candidates random variables, corresponding to those in the Model
+    CandidateRandomVariables m_CandidateRandomVariables;
+    
 
 
 };

@@ -28,7 +28,7 @@ NetworkPropagationModel
     m_OutputParameters.open("Parameters.txt", std::ofstream::out | std::ofstream::trunc);
     
     /// Unitialize the vector Interpolation Coefficient
-    m_InterpolationCoefficients.set_size(m_InvertKernelMatrix.size());
+    m_InterpolationCoefficients.set_size(m_InvertKernelMatrix.columns());
 }
 
 NetworkPropagationModel
@@ -453,6 +453,12 @@ NetworkPropagationModel
     /// Simulate realizations
     auto R = std::make_shared<MultiRealizations>( SimulateRealizations(NumberOfSubjects) );
     
+    /// Initialize model attributes
+    ComputeInterpolationCoefficients(R);
+    ComputeOrthonormalBasis(R);
+    ComputeAMatrix(R);
+    ComputeSpaceShifts(R);
+    
     /// Initialize
     std::random_device RD;
     std::mt19937 RNG(RD());
@@ -592,6 +598,7 @@ NetworkPropagationModel
     }
     
     
+    
 }
 
 
@@ -623,49 +630,49 @@ NetworkPropagationModel
 
 void
 NetworkPropagationModel
-::ComputeOrthonormalBasis(const std::shared_ptr<MultiRealizations>& R)
-{
-   /////////////////////////
+::ComputeOrthonormalBasis(const std::shared_ptr<MultiRealizations>& R) {
+
+    /////////////////////////
     /// Get the vectors P0 and V0
     /////////////////////////
-    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(
+            m_Manifold);
     double T0 = R->at("T0")(0);
-    VectorType P0(1, R->at("P0")(0) );
-    VectorType V0(1, R->at("V0")(0) );
+    VectorType P0(1, R->at("P0")(0));
+    VectorType V0(1, R->at("V0")(0));
     VectorType Delta = GetPropagationCoefficients(R);
-    
+
 
     /// Compute the transformation to do the Householder reflection in a Euclidean space
     VectorType U = CastedManifold->GetVelocityTransformToEuclideanSpace(P0, T0, V0, Delta);
-    
+
     /// Compute the initial pivot vector U
     double Norm = U.magnitude();
-    U(0) += copysign(1, -U(0))*Norm;
-    double NormU = U.magnitude();
+    U(0) += copysign(1, -U(0)) * Norm;
+    double NormU = U.squared_magnitude();
 
     /// Compute Q = I(N) - 2U . Ut / (Ut . U)
     std::vector<VectorType> Q;
-    for(auto it = U.begin(); it != U.end(); ++it)
-    {
+    for (auto it = U.begin(); it != U.end(); ++it) {
         VectorType Coordinate(U.size());
         int i = 0;
-        for(auto it2 = U.begin(); it2 != U.end(); ++it2, ++i)
-        {
-            Coordinate(i) =  - 2 * *it * *it2 / NormU;
+        for (auto it2 = U.begin(); it2 != U.end(); ++it2, ++i) {
+            Coordinate(i) = -2 * *it * *it2 / NormU;
         }
-        Q.push_back( Coordinate );
+        Q.push_back(Coordinate);
     }
 
-    for(int i = 0; i < Q.size() ; ++i)
-    {
+    for (int i = 0; i < Q.size(); ++i) {
         Q[i](i) += 1;
     }
-    
+
+
+
     /// TESTS
-    
+    /*
     /// Test colinearity between the first vector and Q[0]
     
-    /*
+    
     /// Orthogonality between the basis vectors and the velocity
     auto InitialPosition = GetInitialPosition(R);
     auto InitialVelocity = GetInitialVelocity(R);
@@ -680,9 +687,9 @@ NetworkPropagationModel
     }   
     
     /// END TEST
-     */
-    
+    */
     /// Drop the first vector which is colinear to gamma_derivative(t0)
+
     Q.erase(Q.begin());
     m_OrthogonalBasis = Q;
 }
@@ -691,7 +698,7 @@ void
 NetworkPropagationModel
 ::ComputeAMatrix(const std::shared_ptr<MultiRealizations>& R)
 {
-     MatrixType AMatrix(m_Manifold->GetDimension(), m_NbIndependentComponents);
+    MatrixType AMatrix(m_Manifold->GetDimension(), m_NbIndependentComponents);
     
     for(int i = 0; i < m_NbIndependentComponents ; ++i)
     {
@@ -702,21 +709,8 @@ NetworkPropagationModel
             Beta(j) = R->at( "Beta#" + Number)(0);
         }
         
-        VectorType V = LinearCombination(Beta, m_OrthogonalBasis) ;       
+        VectorType V = LinearCombination(Beta, m_OrthogonalBasis)   ;     
         AMatrix.set_column(i, V);
-        
-        /*
-        std::vector<double> Beta;
-        for(int j = 0; j < m_Manifold->GetDimension() - 1 ; ++j)
-        {
-            std::string Number = std::to_string(int(j + i*(m_Manifold->GetDimension() - 1)));
-            Beta.push_back( R->at( "Beta#" + Number)[0]);
-
-        }
-        std::vector<double> AColumn = LinearCombination(Beta, m_OrthogonalBasis);
-        AMatrix.push_back( AColumn );
-         
-         */
     }
     
     m_AMatrix = AMatrix;
@@ -727,8 +721,9 @@ NetworkPropagationModel
     auto InitialVelocity = GetInitialVelocity(R);
     
     /// Check if the basis is orthogonal to the velocity
-    for(auto it : m_AMatrix)
+    for(int i = 0; i < m_AMatrix.columns(); ++i)
     {
+        auto it = m_AMatrix.get_column(i);
         std::function<double()> f1 = [=, &InitialPosition, &InitialVelocity, &it] ()
         {
             return this->m_Manifold->ComputeScalarProduct(it, InitialVelocity, InitialPosition);
@@ -888,7 +883,7 @@ NetworkPropagationModel
 ::ComputeInterpolationCoefficients(const std::shared_ptr<MultiRealizations>& R) 
 {
     
-    VectorType Delta(m_InvertKernelMatrix.size(), 0.0);
+    VectorType Delta(m_InvertKernelMatrix.columns(), 0.0);
     
     int i = 0;
     for(auto it = Delta.begin() + 1; it != Delta.end(); ++it, ++i)
