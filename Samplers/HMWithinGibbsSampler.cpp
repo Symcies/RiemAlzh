@@ -34,7 +34,7 @@ HMWithinGibbsSampler
     std::random_device RD;
     std::mt19937 Generator(RD());
     std::uniform_real_distribution<double> Distribution(0.0, 1.0);
-
+    /*
     std::shared_ptr<MultiRealizations> GibbsRealizations = std::make_shared<MultiRealizations>(*R);
     for(auto&& it : *GibbsRealizations)
     {
@@ -45,17 +45,19 @@ HMWithinGibbsSampler
         for(auto it2 = it.second.begin(); it2 != it.second.end(); ++it2, ++i)
         {
 
+            int SubjectNumber = (it.second.size() == 1) ? -1 : i;
+            
             /// Compute the current part
             double CurrentRealization = *it2;
             double CurrentLogPrior = CurrentRV->LogLikelihood(CurrentRealization);
-            double CurrentLogLikelihood = M->ComputeLogLikelihood(GibbsRealizations, D, std::pair<std::string, int> (NameCurrentRV, i));
+            double CurrentLogLikelihood = M->ComputeLogLikelihood(GibbsRealizations, D, {NameCurrentRV}, SubjectNumber);
 
             /// Compute the candidate part
             auto CandidateRV = m_CandidateRandomVariables.GetRandomVariable(NameCurrentRV, i, CurrentRealization);
             double CandidateRealization = CandidateRV.Sample();
             double CandidateLogPrior = CurrentRV->LogLikelihood(CandidateRealization);
             *it2 = CandidateRealization;
-            double CandidateLogLikelihood = M->ComputeLogLikelihood(GibbsRealizations, D, std::pair<std::string, int> (NameCurrentRV, i));
+            double CandidateLogLikelihood = M->ComputeLogLikelihood(GibbsRealizations, D, {NameCurrentRV}, SubjectNumber);
             
             /// Sampling
             double Tau = CandidateLogPrior + CandidateLogLikelihood - (CurrentLogPrior + CurrentLogLikelihood);
@@ -65,7 +67,7 @@ HMWithinGibbsSampler
             if(log(UnifSample) > Tau) /// It means that the new state is the previous one : no change
             {
                 *it2 = CurrentRealization;
-                M->UpdateParameters(GibbsRealizations, NameCurrentRV);
+                //M->UpdateParameters(GibbsRealizations, NameCurrentRV);
             }
             else
             {
@@ -76,7 +78,10 @@ HMWithinGibbsSampler
             
             
         }
+        
     }
+    */
 
-    return *GibbsRealizations;
+    //return *GibbsRealizations;
+    return *R;
 }

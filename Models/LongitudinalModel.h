@@ -38,7 +38,7 @@ public:
     
     
     /// Initialize parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
-    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, std::string Name = "All");
+    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Names = {"All"});
 
      /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
@@ -48,13 +48,12 @@ public:
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D, 
-                                        const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0));
+    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations>& R, 
-                                                  const std::shared_ptr<Data>& D, const int SubjectNumber);
-
+    double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations>& R, 
+                                          const std::shared_ptr<Data>& D, const int SubjectNumber);
+    
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
 
@@ -99,10 +98,6 @@ protected:
 
     // Compute the space shifts
     void ComputeSpaceShifts(const std::shared_ptr<MultiRealizations>& R);
-
-    /// Compute the Likelihood the most generic way, without simplification
-    double ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
-
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)

@@ -84,45 +84,60 @@ LongitudinalModel
 
 void 
 LongitudinalModel
-::UpdateParameters(const std::shared_ptr<MultiRealizations> &R, std::string Name) 
+::UpdateParameters(const std::shared_ptr<MultiRealizations> &R, const std::vector<std::string> Names) 
 {
-    /// Preprocess the name to delete the # if any
-    Name = Name.substr(0, Name.find_first_of("#"));
+    int UpdateCase = 1;
     
+    for(auto it = Names.begin(); it != Names.end(); ++it)
+    {
+        std::string Name = it->substr(0, it->find_first_of("#"));
+        
+        if(Name == "None" or Name == "Ksi" or Name == "Tau") 
+        {
+            continue;
+        }
+        else if(Name == "S")
+        {
+            UpdateCase = std::max(UpdateCase, 2);
+        }
+        else if(Name == "Beta")
+        {
+            UpdateCase = std::max(UpdateCase, 3);
+        }
+        else if(Name == "P0" or Name == "T0" or Name == "V0" or Name == "Delta" or Name == "All")
+        {
+            UpdateCase = 4;
+            break;
+        }
+        else
+        {
+            UpdateCase = 4;
+            std::cout << "Should be" << Name << "be in LongitudinalModel > Update Parameters?" << std::endl;
+            break;
+        }
+    }
     
-    if(Name == "P0" or Name == "T0" or Name == "V0" or Name == "Delta")
-    {   
-        ComputeOrthonormalBasis(R);
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
-    }
-    else if(Name == "Beta")
+    /// Update Case in fonction of the the vector of names
+    switch(UpdateCase)
     {
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
+        case 1:
+            break;
+        case 2:
+            ComputeSpaceShifts(R);
+            break;
+        case 3:
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
+            break;
+        case 4:
+            ComputeOrthonormalBasis(R);
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
+            break;
+        default:
+            std::cout << "Error?";
+            break;
     }
-    else if(Name == "S")
-    {
-        ComputeSpaceShifts(R);
-    }
-    else if(Name == "Ksi" or Name == "Tau")
-    {
-        // Nothing to do
-    }
-    else if(Name == "All")
-    {
-        ComputeOrthonormalBasis(R);
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
-    } 
-    else
-    {
-        std::cout << "Should be name in LongitudinalModel > Update Parameters?" << std::endl;
-        ComputeOrthonormalBasis(R);
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
-    }
-
 }
 
 LongitudinalModel::SufficientStatisticsVector
@@ -223,7 +238,7 @@ LongitudinalModel
     /// Tests
     /////////////////////////
     /// There are two ways to compute the logLikelihood. Check if they are equal
-    std::function<double()> f1 = [=, &D, &R] () { return this->ComputeLogLikelihoodGeneric(R, D); };
+    std::function<double()> f1 = [=, &D, &R] () { return this->ComputeLogLikelihood(R, D); };
     std::function<double()> f2 = [=, &D, &S] ()
     {
         double Calculation = S[0](0);
@@ -344,38 +359,40 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D,
-                       const std::pair<std::string, int> NameRandomVariable) 
+::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D) 
 {
-    /// Get the name of the realization, and its number (in case it is subject specific)
-    std::string Name = NameRandomVariable.first.substr(0, NameRandomVariable.first.find_first_of("#"));
-    int SubjectNumber = NameRandomVariable.second;
-
-
-    bool PreviousEqualCurrentRealizations = (*R == std::get<2>(m_LastLogLikelihood));
-    bool CurrentIsGeneric = !(Name == "Tau" or Name == "Ksi");
-    bool PreviousIsGeneric = std::get<0>(m_LastLogLikelihood);
-
-    /// COMPUTE LIKELIHOOD
-    double LogLikelihood;
-    if (PreviousEqualCurrentRealizations && CurrentIsGeneric && PreviousIsGeneric)
+    /// Get the data
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+    double T0 = R->at("T0")(0);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
+    
+    /// Compute the likelihood
+    double LogLikelihood = 0, K = 0;
+    int i = 0;
+    for(auto IterData = D->begin(); IterData != D->end(); ++IterData, ++i)
     {
-        LogLikelihood = std::get<1>(m_LastLogLikelihood);
+        std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
+        VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
+        K += IterData->size();
+        
+        for(auto it = IterData->begin(); it != IterData->end(); ++it)
+        {
+            double TimePoint = SubjectTimePoint(it->second);
+            VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
+            LogLikelihood  += (it->first - ParallelCurve).squared_magnitude();
+        }
     }
-    else if (!CurrentIsGeneric)
-    {
-        UpdateParameters(R, Name); // In fact useless because Ksi and Tau do not influence the parameters
-        LogLikelihood = ComputeIndividualLogLikelihood(R, D, SubjectNumber);
-    }
-    else
-    {
-        /// Here it can be assumed that CurrentIsGeneric / (CurrentIs Generic && PreviousIsGeneric && PreviousEqualCurrentRealizations)
-        UpdateParameters(R, Name);
-        LogLikelihood = ComputeLogLikelihoodGeneric(R, D);
-    }
+    /// Tests
+    TestAssert::WarningInequality_GreaterThan(LogLikelihood, 0.0, "LongitudinalModel>ComputeIndividualLogLikelihood ; wrong Likelihood");
+    
+    
+    LogLikelihood  /= -2*m_Noise->GetVariance();
+    LogLikelihood -= K*log(sqrt(2 * m_Noise->GetVariance() * M_PI ));
+    
+    return LogLikelihood ;
 
-    m_LastLogLikelihood = std::tuple<bool, double, MultiRealizations>(CurrentIsGeneric, LogLikelihood, *R);
-    return LogLikelihood;
 }
 
 double
@@ -383,6 +400,8 @@ LongitudinalModel
 ::ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> &R,
                                  const std::shared_ptr<Data> &D, const int SubjectNumber) 
 {
+    // TODO : send only D(i) to the function?!
+    
     /// Initialize the individual parameters
     std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
     VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
@@ -886,42 +905,4 @@ LongitudinalModel
     
 }
 
-double
-LongitudinalModel
-::ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D)
-
-{
-
-    /// Get the data
-    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")(0);
-    VectorType P0(1, R->at("P0")(0) );
-    VectorType V0(1, R->at("V0")(0) );
-    VectorType Delta = GetPropagationCoefficients(R);
-    
-    /// Compute the likelihood
-    double LogLikelihood = 0, K = 0;
-    int i = 0;
-    for(auto IterData = D->begin(); IterData != D->end(); ++IterData, ++i)
-    {
-        std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
-        VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
-        K += IterData->size();
-        
-        for(auto it = IterData->begin(); it != IterData->end(); ++it)
-        {
-            double TimePoint = SubjectTimePoint(it->second);
-            VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);
-            LogLikelihood  += (it->first - ParallelCurve).squared_magnitude();
-        }
-    }
-    /// Tests
-    TestAssert::WarningInequality_GreaterThan(LogLikelihood, 0.0, "LongitudinalModel>ComputeIndividualLogLikelihood ; wrong Likelihood");
-    
-    
-    LogLikelihood  /= -2*m_Noise->GetVariance();
-    LogLikelihood -= K*log(sqrt(2 * m_Noise->GetVariance() * M_PI ));
-    
-    return LogLikelihood ;
-}
 

@@ -38,7 +38,7 @@ public:
     
     /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
     /// This update can depend on the parameter that has changed, provided by the Name argument
-    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, std::string Name = "All");
+    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Name = {"All"});
 
 
     /// Update the sufficient statistics according to the model variables / parameters 
@@ -51,15 +51,15 @@ public:
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, 
                                        const std::shared_ptr<Data>& D);
     
-    /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations>& R, 
-                                                  const std::shared_ptr<Data>& D, const int SubjectNumber);
-
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason, e.g. when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D, 
-                                        const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0));
+    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
 
+    /// Compute the log likelihood of the model for a particular individual
+    double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations>& R, 
+                                          const std::shared_ptr<Data>& D, const int SubjectNumber);
+
+    
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
 
@@ -86,11 +86,7 @@ private :
 
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
     std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R);
-        
-    /// Compute the loglikelihood the most generic ways, without simplification
-    double ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
     
- 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////

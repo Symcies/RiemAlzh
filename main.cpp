@@ -10,6 +10,7 @@ typedef double ScalarType;
 #include "Models/NetworkPropagationModel.h"
 #include "Algorithm/Algorithm.h"
 #include "Samplers/HMWithinGibbsSampler.h"
+#include "Samplers/BlockedGibbsSampler2.h"
 #include "Samplers/BlockedGibbsSampler.h"
 #include "Manifolds/BaseManifold/LogisticBaseManifold.h"
 #include "Tests/TestAssert.h"
@@ -41,8 +42,8 @@ int main() {
     ///////////////////////
     //// Initialization ///
     ///////////////////////
-    unsigned int NumberDimension = 25;
-    unsigned int NumberIndependentComponents = 2;
+    unsigned int NumberDimension = 10;
+    unsigned int NumberIndependentComponents = 3;
     clock_t start = clock();
     
     /////////////
@@ -54,7 +55,7 @@ int main() {
     /////////////////////////
     /// Propagation Model ///
     /////////////////////////
-    
+    /*
     /// Open the files
     std::string KernelMatrixPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kd_toyexample.csv");
     std::string InterpolationMatrixPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kxd_toyexample.csv");
@@ -63,24 +64,25 @@ int main() {
     
     /// Initiate the Manifolds and the model
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
-    shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(KernelMatrix->rows(), BaseManifold);
+    shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(InterpolationMatrix->rows(), BaseManifold);
     shared_ptr<AbstractModel> Model = make_shared<NetworkPropagationModel>(NumberIndependentComponents, Manifold, KernelMatrix, InterpolationMatrix);
-    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
-    
+    //shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
+    shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
+    */
     
     //////////////////////////
     /// Multivariate Model ///
     //////////////////////////
     /// Read the data 
     //shared_ptr<Data> D = std::make_shared<Data>(ReadData::OpenFilesMultivariate());
-    /*
+    
     /// Initialize the manidolds, model and sampler 
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
     shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
     shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
-    shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
-    //shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-     */
+    //shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
+    shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
+    
     ////////////////////////
     /// Univariate Model ///
     ////////////////////////
@@ -97,7 +99,7 @@ int main() {
     ////////////////////////////////////////
     
     Model->InitializeFakeRandomVariables();
-    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(50, 4, 6) );
+    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(50, 3, 5) );
     Model->Initialize();
     
     

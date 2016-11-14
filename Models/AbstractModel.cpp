@@ -54,15 +54,6 @@ AbstractModel
 // Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-double 
-AbstractModel
-::ComputeLikelihood(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D,
-                    const std::pair<std::string, int> NameRandomVariable) 
-{
-    double LogLikelihood = ComputeLogLikelihood(R, D, NameRandomVariable);
-    return exp(LogLikelihood);
-}
-
 
 
 AbstractModel::MultiRealizations

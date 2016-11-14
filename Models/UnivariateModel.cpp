@@ -49,7 +49,7 @@ UnivariateModel
 
 void 
 UnivariateModel
-::UpdateParameters(const std::shared_ptr<MultiRealizations> &R, std::string Name) 
+::UpdateParameters(const std::shared_ptr<MultiRealizations> &R, const std::vector<std::string> Names) 
 {
     // TODO : Check if something has to be added
 }
@@ -107,7 +107,7 @@ UnivariateModel
     
     /// Tests
     /// There are two way to compute the logLikelihood. Check if they are equal
-    std::function<double()> f1 = [=, &D, &R] () { return this->ComputeLogLikelihoodGeneric(R, D); };
+    std::function<double()> f1 = [=, &D, &R] () { return this->ComputeLogLikelihood(R, D); };
     std::function<double()> f2 = [=, &D, &SufficientStatistics] ()
     {
         double Calculation = 0;
@@ -215,35 +215,33 @@ UnivariateModel
 
 double 
 UnivariateModel
-::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D,
-                       const std::pair<std::string, int> NameRandomVariable) 
+::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D) 
 {
-    /// Get the name of the realization, and its number (in case it is subject specific)
-    std::string Name = NameRandomVariable.first.substr(0, NameRandomVariable.first.find_first_of("#"));
-    int SubjectNumber = NameRandomVariable.second;
+    /// Get the data
+    double T0 = R->at("T0")(0);
+    double P0 = R->at("P0")(0);
+    double V0 = R->at("V0")(0);
     
-    //bool PreviousEqualCurrentRealizations = (std::get<2>(m_LastLogLikelihood) == std::get<2>(m_LastLogLikelihood));
-    bool u = (VectorType(1, 0) == VectorType(1, 1));
-    bool PreviousEqualCurrentRealizations = (*R == std::get<2>(m_LastLogLikelihood));
-    bool CurrentIsGeneric = !(Name == "Tau" or Name == "Ksi");
-    bool PreviousIsGeneric = std::get<0>(m_LastLogLikelihood);
-    
-    /// Compute LogLikelihood
-    double LogLikelihood;
-    if(PreviousEqualCurrentRealizations && CurrentIsGeneric && PreviousIsGeneric)
+    /// Compute the loglikelihood
+    double LogLikelihood = 0, K = 0;
+    int i = 0;
+    for(auto IterData = D->begin(); IterData != D->end(); ++i, ++IterData)
     {
-        LogLikelihood = std::get<1>(m_LastLogLikelihood);
-    }
-    else if(!CurrentIsGeneric)
-    {
-        LogLikelihood = ComputeIndividualLogLikelihood(R, D, SubjectNumber);
-    }
-    else
-    {
-        LogLikelihood = ComputeLogLikelihoodGeneric(R, D);
+        std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
+        K += IterData->size();
+        for(const auto& IterIndivData : *IterData)
+        {
+            double TimePoint = SubjectTimePoint(IterIndivData.second);
+            auto ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
+            double Norm = (IterIndivData.first[0] - ParallelCurve);
+            LogLikelihood += Norm * Norm ;
+        }
     }
     
-    m_LastLogLikelihood = std::tuple<bool, double, MultiRealizations>(CurrentIsGeneric, LogLikelihood, *R);
+    LogLikelihood /= -2*m_Noise->GetVariance();
+    
+    LogLikelihood -= K * log(sqrt( 2 * M_PI * m_Noise->GetVariance() ));
+    
     return LogLikelihood;
 }
 
@@ -274,6 +272,7 @@ UnivariateModel
     LogLikelihood -= k * log(sqrt( 2 * m_Noise->GetVariance() * M_PI));
     return LogLikelihood;
 }
+
 
 UnivariateModel::Data
 UnivariateModel
@@ -390,39 +389,6 @@ UnivariateModel
     return [AccFactor, TimeShift, T0](double t) { return AccFactor * (t - TimeShift - T0) + T0; };
 }
 
-
-double 
-UnivariateModel
-::ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations> &R,
-                              const std::shared_ptr<Data> &D) 
-{
-    /// Get the data
-    double T0 = R->at("T0")(0);
-    double P0 = R->at("P0")(0);
-    double V0 = R->at("V0")(0);
-    
-    /// Compute the loglikelihood
-    double LogLikelihood = 0, K = 0;
-    int i = 0;
-    for(auto IterData = D->begin(); IterData != D->end(); ++i, ++IterData)
-    {
-        std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
-        K += IterData->size();
-        for(const auto& IterIndivData : *IterData)
-        {
-            double TimePoint = SubjectTimePoint(IterIndivData.second);
-            auto ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
-            double Norm = (IterIndivData.first[0] - ParallelCurve);
-            LogLikelihood += Norm * Norm ;
-        }
-    }
-    
-    LogLikelihood /= -2*m_Noise->GetVariance();
-    
-    LogLikelihood -= K * log(sqrt( 2 * M_PI * m_Noise->GetVariance() ));
-    
-    return LogLikelihood;
-}
 
 
 

@@ -1,8 +1,10 @@
 #include "BlockedGibbsSampler.h"
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 BlockedGibbsSampler
 ::BlockedGibbsSampler() 
@@ -12,47 +14,140 @@ BlockedGibbsSampler
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Other method(s) :
+/// Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-void
+void 
 BlockedGibbsSampler
 ::InitializeSampler(const std::shared_ptr<MultiRealizations> &R) 
 {
     m_CandidateRandomVariables.InitializeCandidateRandomVariables(R);
     
+    // TODO : CHECK IF IT THE ONLY ONE?
+    m_IndividualRandomVariables = {"Ksi", "Tau", "S#0", "S#1", "S#2"};
+    
+    //////////////////
+    ///   Test 1   ///
+    //////////////////
+    /*
     for(auto it = R->begin(); it != R->end(); ++it)
     {
-        if(it->second.size() == 1)
+        for(int i = 0; i < it->second.size(); ++i)
         {
-            m_NamePopulationVariables.push_back(it->first);
-            std::cout << "Population: " << it->first << std::endl;
-        }
-        else
-        {
-            m_NameIndividualVariables.push_back(it->first);
-            std::cout << "Individual: " << it->first << std::endl;
+            auto Block = std::make_tuple(it->first, i);
+            m_Blocks.push_back({Block});
         }
     }
+     */
+    
+    
+    
+    //////////////////
+    ///   Test 2   ///
+    //////////////////
+    
+    
+    /// Population Variables
+    auto P0 = std::make_tuple("P0", 0);
+    auto V0 = std::make_tuple("V0", 0);
+    auto T0 = std::make_tuple("T0", 0);
+    Block Pop = {P0, T0, V0};
+    m_Blocks.push_back(Pop);
+    
+    /// Beta
+    Block BetaPop;
+    for(unsigned int i = 0; i < 27; ++i) 
+    {
+        auto Beta = std::make_tuple("Beta#" + std::to_string(i), 0);
+        BetaPop.push_back(Beta);
+    }
+    m_Blocks.push_back(BetaPop);
+    
+    
+    /// Delta
+    Block DeltaPop;
+    for(unsigned int i = 0; i < 9; ++i) 
+    {
+        auto Delta = std::make_tuple("Delta#" + std::to_string(i), 0);
+        DeltaPop.push_back(Delta);
+    }
+    m_Blocks.push_back(DeltaPop);
+    
+    /// Individual Variables
+    for(unsigned int i = 0; i < R->at("Ksi").size(); ++i)
+    {
+        auto Ksi = std::make_tuple("Ksi", i);
+        auto Tau = std::make_tuple("Tau", i);
+        auto S0 = std::make_tuple("S#0", i);
+        auto S1 = std::make_tuple("S#1", i);
+        auto S2 = std::make_tuple("S#2", i);
+        
+        Block IndividualBlock = {Ksi, Tau, S0, S1, S2};
+        m_Blocks.push_back(IndividualBlock);
+    }
+    /*
+    /// Other variables (Ksi, Tau and Sji)
+    for(auto it = R->begin(); it != R->end(); ++it)
+    {
+        std::string Name = it->first;
+        std::string N = Name.substr(0, Name.find_first_of("#"));
+        
+        if(N == "P0" || N == "T0" || N == "V0" || N == "Beta" || N == "Delta")
+        {
+            continue;
+        }
+        for(int i = 0; i < it->second.size(); ++i)
+        {
+            auto Mono = std::make_tuple(it->first, i);
+            Block MonoBlock = {Mono};
+            m_Blocks.push_back( MonoBlock );
+        }
+    } 
+     */
+    
+    
+    //////////////////
+    ///   Test 3   ///
+    //////////////////
+    
+    // TODO : Try to group all the population variables
+    // TODO : Try to group each individual 
+    // TODO : Send the names of the variables to the model
+    // TODO : In the model, analyze the names that have been send. Create a switch for each case !
+    
+    
+    
+    /////////////////
+    /// End Tests ///
+    /////////////////
+    
+    
+    
+    
+    
 }
+
 
 BlockedGibbsSampler::MultiRealizations
 BlockedGibbsSampler
 ::Sample(const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M,
          const std::shared_ptr<Data> &D, int IterationNumber) 
 {
-
-    auto NewRealizations = std::make_shared<MultiRealizations>( SamplePopulation(R, M, D) );
+    ////////////////////////////////////////
+    // TODO : Check if the update is needed
+    M->UpdateParameters(R);
+    m_LastLikelihoodComputed = 0;
+    ////////////////////////////////////////
     
-    for(int i = 0; i < D->size(); ++i)
+    
+    auto NewRealizations = std::make_shared<MultiRealizations>(*R);
+    
+    for(int i = 0; i < m_Blocks.size(); ++i)
     {
-        *NewRealizations = SampleIndividual(i, NewRealizations, M, D);
+        NewRealizations = std::make_shared<MultiRealizations>(OneBlockSample(i, NewRealizations, M, D, IterationNumber));
     }
-    
+        
     return *NewRealizations;
-    
-    
 }
 
 
@@ -61,132 +156,121 @@ BlockedGibbsSampler
 /// Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 BlockedGibbsSampler::MultiRealizations
 BlockedGibbsSampler
-::SamplePopulation(const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M, const std::shared_ptr<Data> &D)
+::OneBlockSample(int BlockNumber, const std::shared_ptr<MultiRealizations>& R,
+                 std::shared_ptr<AbstractModel> &M, const std::shared_ptr<Data> &D,
+                 int IterationNumber) 
 {
-    /// Get Z_pop(k) : the current population realizations
-    auto CurrentPopRealizations = std::make_shared<UniqueRealizations> (GetCurrentPopulationRealizations(R) );
+    /// Initialization
+    auto NewRealizations = std::make_shared<MultiRealizations>(*R);
+    Block CurrentBlock = m_Blocks[BlockNumber];
+    double ComputedLikelihood = 0;
+    double AcceptationRatio = 0;
+    std::vector<std::string> CurrentParameters; 
     
-    /// Get Z(*) : the candidate population realizations
-    UniqueRealizations CandidatePopRealizations = GetCandidateRealizations(CurrentPopRealizations);
-    
-    /// Get the acceptance ratio
-    double Ratio = - M->ComputeLogLikelihood(R, D);
-    for(const auto& it : *CurrentPopRealizations)
+    /// Loop over the realizations of the block to update the ratio and the realizations
+    for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it) 
     {
-        auto RandomVariable = M->GetRandomVariable(it.first);
-        Ratio -= RandomVariable->LogLikelihood(it.second);
-        double CandidateRealization = CandidatePopRealizations.at(it.first);
-        Ratio += RandomVariable->LogLikelihood( CandidateRealization );
-    }
-    
-    auto NewRealization = std::make_shared<MultiRealizations>(*R);
-    for(const auto& it : CandidatePopRealizations)
-    {
-        NewRealization->at(it.first) = VectorType(1, it.second );
-    }
-    Ratio += M->ComputeLogLikelihood(NewRealization, D);
-    
-    /// Compare the ratio to a uniform distribution
-    std::random_device RD;
-    std::mt19937 Generator(RD());
-    std::uniform_real_distribution<double> Distribution(0.0, 1.0);
-    double UniformSample = Distribution(Generator);
-    
-    if(log(UniformSample) > Ratio)
-    {
-        return *R;
-    }
-    else
-    {
-        return *NewRealization;
-    }
-}
-
-
-std::map<std::string, double>
-BlockedGibbsSampler
-::GetCurrentPopulationRealizations(const std::shared_ptr<MultiRealizations> &R) 
-{
-    UniqueRealizations PopReal;
-    for(const auto& it : m_NamePopulationVariables)
-    {
-        PopReal[it] = R->at(it)(0);
-    }
-    
-    return PopReal;
-}
-
-std::map<std::string, double>
-BlockedGibbsSampler
-::GetCurrentIndividualRealizations(const std::shared_ptr<MultiRealizations> &R, int i) 
-{
-    UniqueRealizations IndivReal;
-    for(const auto& it : m_NameIndividualVariables)
-    {
-        IndivReal[it] = R->at(it)[i];
-    }
-    return IndivReal;
-}
-
-std::map<std::string, double>
-BlockedGibbsSampler
-::GetCandidateRealizations(const std::shared_ptr<UniqueRealizations> &R) 
-{
-    UniqueRealizations CandidateRealizations;
-    for(const auto& it : *R)
-    {
-        double CurrentRealization = it.second;
-        auto CandidateRandomVariable = m_CandidateRandomVariables.GetRandomVariable( it.first, 0, CurrentRealization );
-        double CandidateRealization = CandidateRandomVariable.Sample();
+        /// Initialization
+        std::string NameRealization = std::get<0>(*it); 
+        CurrentParameters.push_back(NameRealization);
+        unsigned int SubjectNumber = std::get<1>(*it);
         
-        CandidateRealizations[it.first] = CandidateRealization;
+        ///Get the current (for the ratio) and candidate random variables (to sample a candidate)
+        ScalarType CurrentRealization = R->at(NameRealization)(SubjectNumber);
+        ScalarType CandidaRealization = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization).Sample();
+        
+        /// Get the random variable
+        auto RandomVariable = M->GetRandomVariable(NameRealization);
+        AcceptationRatio += RandomVariable->LogLikelihood(CandidaRealization);
+        AcceptationRatio -= RandomVariable->LogLikelihood(CurrentRealization);
+        
+        /// Update the NewRealizations
+        NewRealizations->at(NameRealization)(SubjectNumber) = CandidaRealization;
     }
-
-    return CandidateRealizations;
-}
-
-BlockedGibbsSampler::MultiRealizations
-BlockedGibbsSampler
-::SampleIndividual(int i, const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M,
-                   const std::shared_ptr<Data> &D) 
-{
-    /// Get the current realization Z(k)_i of individual i
-    auto CurrentIndivRealizations = std::make_shared<UniqueRealizations>( GetCurrentIndividualRealizations(R, i) ); 
     
-    /// Get the candidate realization Z*_i of the individual i
-    UniqueRealizations CandidateIndivRealizations = GetCandidateRealizations(CurrentIndivRealizations);
+    /// Compute the likelihood
+    bool Individual = IndividualRandomVariables(CurrentBlock);
     
-    ///Get the acceptance ratio
-    double Ratio = - M->ComputeIndividualLogLikelihood(R, D, i);
-    for(const auto& it : *CurrentIndivRealizations)
+    if(Individual)
     {
-        auto RandomVariable = M->GetRandomVariable(it.first);
-        Ratio -= RandomVariable->LogLikelihood(it.second);
-        double CandidateRealization = CandidateIndivRealizations.at(it.first);
-        Ratio += RandomVariable->LogLikelihood( CandidateRealization );
-    }
-    
-    auto NewRealization = std::make_shared<MultiRealizations>(*R);
-    for(const auto& it : CandidateIndivRealizations)
+        
+        int SubjectNumber = std::get<1>(CurrentBlock[0]);
+        AcceptationRatio -= M->ComputeIndividualLogLikelihood(R, D, SubjectNumber);
+        
+        M->UpdateParameters(NewRealizations, CurrentParameters);
+        AcceptationRatio += M->ComputeIndividualLogLikelihood(NewRealizations, D, SubjectNumber);
+        
+        /*std::cout << "Individual : " << SubjectNumber << " & Parameters ";
+        for(auto it = CurrentParameters.begin(); it != CurrentParameters.end(); ++it)
+        {
+            std::cout << *it << " - ";
+        }
+        std::cout << std::endl;*/
+    } 
+    else
     {
-        NewRealization->at(it.first)[i] = it.second;
+        if(m_LastLikelihoodComputed == 0)
+        {
+            AcceptationRatio -= M->ComputeLogLikelihood(R, D);
+            //std::cout << "LENT" << std::endl;
+        }
+        else
+        {
+            AcceptationRatio -= m_LastLikelihoodComputed;
+            //std::cout << "RAPIDE" << std::endl;
+        }
+        
+        M->UpdateParameters(NewRealizations, CurrentParameters);
+        ComputedLikelihood = M->ComputeLogLikelihood(NewRealizations, D); 
+        AcceptationRatio += ComputedLikelihood;
     }
-    Ratio += M->ComputeIndividualLogLikelihood(NewRealization, D, i);
+    m_LastLikelihoodComputed = ComputedLikelihood;
     
-    /// Compare the ratio to a uniform distribution
+    /// Return the new realizations
     std::random_device RD;
     std::mt19937 Generator(RD());
     std::uniform_real_distribution<double> Distribution(0.0, 1.0);
-    double UniformSample = Distribution(Generator);
+    double UnifSample = Distribution(Generator);
     
-    if(log(UniformSample) > Ratio)
+    if(log(UnifSample) > AcceptationRatio)
     {
+        M->UpdateParameters(R, CurrentParameters);
         return *R;
     }
     else
     {
-        return *NewRealization;
+        return *NewRealizations;
     }
+    
 }
+
+
+bool 
+BlockedGibbsSampler
+::IndividualRandomVariables(Block B) 
+{
+    int SubjectNumber = std::get<1>(B[0]);
+    
+    for(auto it = B.begin(); it != B.end(); ++it)
+    {
+        if(std::get<1>(*it) != SubjectNumber)
+        {
+            return false;
+        }
+        std::string Name = std::get<0>(*it);
+        if(std::find(m_IndividualRandomVariables.begin(), m_IndividualRandomVariables.end(), Name) != m_IndividualRandomVariables.end())
+        {
+            continue;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    return true;
+}
+

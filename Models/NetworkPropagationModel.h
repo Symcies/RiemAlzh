@@ -40,7 +40,7 @@ public:
     virtual void Initialize();
     
     /// Update parameters of the model, if any has to be updated
-    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, std::string Name = "All");
+    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Names = {"All"});
     
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
@@ -51,20 +51,16 @@ public:
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const std::shared_ptr<Data>& D);
 
-    /// Compute the likelihood of the model
-    virtual double ComputeLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D, 
-                                     const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0));
-
-
+    
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D, 
-                                        const std::pair<std::string, int> NameRandomVariable = std::pair<std::string, int> ("All", 0));
+    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations>& R, 
-                                                  const std::shared_ptr<Data>& D, const int SubjectNumber);
+    double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations>& R, 
+                                          const std::shared_ptr<Data>& D, const int SubjectNumber);
 
+    
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
 
@@ -106,8 +102,6 @@ protected:
     /// Compute the space shifts
     void ComputeSpaceShifts(const std::shared_ptr<MultiRealizations>& R); // TODO : Use a library to do it faster
 
-    /// Compute the likelihood in the most generic way, without simplification
-    double ComputeLogLikelihoodGeneric(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
     
     /// Compute the interpolation coefficients
     void ComputeInterpolationCoefficients(const std::shared_ptr<MultiRealizations>& R);
@@ -145,15 +139,6 @@ protected:
     
     /// Kernel Matrix K 
     MatrixType m_InvertKernelMatrix;
-    
-    /// Coordinates of the Control points
-    //ControlPoints m_ControlPoints;
-    
-    /// Coordinates of the mesh points
-    //MeshPoints m_MeshPoints;
-    
-
-    
     
     
 };

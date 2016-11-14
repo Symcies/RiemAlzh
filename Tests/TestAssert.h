@@ -107,11 +107,16 @@ TestAssert
     if(!Instance()->GetActive()) return;
     
     double Val = fabs(a() - b());
-    if(fabs(Val) > 10e-8)
+
+    if(fabs(Val) > 10e-5)
     {
         std::cout << std::endl << "Value : |" << a() << " - " << b() << "| = " << Val << std::endl;
         throw std::invalid_argument( msg );
-        
+    }
+    if(fabs(Val) > 10e-8 && a() < 10e3 && b() < 10e3)
+    {
+        std::cout << std::endl << "Value : |" << a() << " - " << b() << "| = " << Val << std::endl;
+        throw std::invalid_argument( msg );
     }
 }
 

@@ -9,7 +9,9 @@
       <sourceFolder url="file://$MODULE_DIR$/Samplers/HMWithinGibbsSampler.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/HMWithinGibbsSampler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler2.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/AbstractSampler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler2.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.cpp" isTestSource="false" />
