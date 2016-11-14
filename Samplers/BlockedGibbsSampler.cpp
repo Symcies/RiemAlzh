@@ -196,31 +196,21 @@ BlockedGibbsSampler
     
     if(Individual)
     {
-        
         int SubjectNumber = std::get<1>(CurrentBlock[0]);
         AcceptationRatio -= M->ComputeIndividualLogLikelihood(R, D, SubjectNumber);
         
         M->UpdateParameters(NewRealizations, CurrentParameters);
         AcceptationRatio += M->ComputeIndividualLogLikelihood(NewRealizations, D, SubjectNumber);
-        
-        /*std::cout << "Individual : " << SubjectNumber << " & Parameters ";
-        for(auto it = CurrentParameters.begin(); it != CurrentParameters.end(); ++it)
-        {
-            std::cout << *it << " - ";
-        }
-        std::cout << std::endl;*/
     } 
     else
     {
         if(m_LastLikelihoodComputed == 0)
         {
             AcceptationRatio -= M->ComputeLogLikelihood(R, D);
-            //std::cout << "LENT" << std::endl;
         }
         else
         {
             AcceptationRatio -= m_LastLikelihoodComputed;
-            //std::cout << "RAPIDE" << std::endl;
         }
         
         M->UpdateParameters(NewRealizations, CurrentParameters);
