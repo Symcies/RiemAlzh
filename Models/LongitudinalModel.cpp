@@ -41,12 +41,12 @@ LongitudinalModel
     m_PopulationRandomVariables.clear();
     m_IndividualRandomVariables.clear();
     
-    auto P0 = std::make_shared< GaussianRandomVariable >(0.35, 0.000001);
-    auto T0 = std::make_shared< GaussianRandomVariable >(70.0, 0.000025);
-    auto V0 = std::make_shared< GaussianRandomVariable >(0.06, 0.00000001);
-    auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.16);
-    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 36.0);
-    m_Noise = std::make_shared< GaussianRandomVariable >(0.0, 0.0001);
+    auto P0 = std::make_shared<GaussianRandomVariable>(0.40, 0.000001);
+    auto T0 = std::make_shared<GaussianRandomVariable>(72.0, 0.0001);
+    auto V0 = std::make_shared<GaussianRandomVariable>(0.04, 0.000001);
+    auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.40);
+    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 16.0);
+    m_Noise = std::make_shared< GaussianRandomVariable >(0.0, 0.0005);
     
     m_PopulationRandomVariables.insert( RandomVariable("P0", P0) );
     m_PopulationRandomVariables.insert( RandomVariable("T0", T0) );
@@ -56,13 +56,13 @@ LongitudinalModel
     
     for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension()-1) ; ++i)
     {
-        auto Beta = std::make_shared< GaussianRandomVariable> ((double)i/2.0 - 0.5 , 0.000001);
+        auto Beta = std::make_shared< GaussianRandomVariable> ((double)i/5.0 + 0.1 , 0.0001);
         m_PopulationRandomVariables.insert(RandomVariable("Beta#" + std::to_string(i), Beta));
     }
     
     for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
     {
-        auto Delta = std::make_shared< GaussianRandomVariable >((double)i - 3.0, 0.000001);
+        auto Delta = std::make_shared< GaussianRandomVariable >((double)i , 0.000001);
         m_PopulationRandomVariables.insert( RandomVariable("Delta#" + std::to_string(i), Delta) );
     }
 
@@ -570,7 +570,7 @@ LongitudinalModel
     /// Individual Parameters ///
     /////////////////////////////
     auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.5*0.5);
-    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 5.0*5.0);
+    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 3.0*3.0);
     
     m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
     m_IndividualRandomVariables.insert(RandomVariable("Tau", Tau));

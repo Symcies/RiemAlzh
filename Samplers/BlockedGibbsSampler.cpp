@@ -29,7 +29,7 @@ BlockedGibbsSampler
     //////////////////
     ///   Test 1   ///
     //////////////////
-    /*
+    
     for(auto it = R->begin(); it != R->end(); ++it)
     {
         for(int i = 0; i < it->second.size(); ++i)
@@ -38,7 +38,7 @@ BlockedGibbsSampler
             m_Blocks.push_back({Block});
         }
     }
-     */
+    
     
     
     
@@ -46,7 +46,7 @@ BlockedGibbsSampler
     ///   Test 2   ///
     //////////////////
     
-    
+    /*
     /// Population Variables
     auto P0 = std::make_tuple("P0", 0);
     auto V0 = std::make_tuple("V0", 0);
@@ -85,26 +85,8 @@ BlockedGibbsSampler
         Block IndividualBlock = {Ksi, Tau, S0, S1, S2};
         m_Blocks.push_back(IndividualBlock);
     }
-    /*
-    /// Other variables (Ksi, Tau and Sji)
-    for(auto it = R->begin(); it != R->end(); ++it)
-    {
-        std::string Name = it->first;
-        std::string N = Name.substr(0, Name.find_first_of("#"));
-        
-        if(N == "P0" || N == "T0" || N == "V0" || N == "Beta" || N == "Delta")
-        {
-            continue;
-        }
-        for(int i = 0; i < it->second.size(); ++i)
-        {
-            auto Mono = std::make_tuple(it->first, i);
-            Block MonoBlock = {Mono};
-            m_Blocks.push_back( MonoBlock );
-        }
-    } 
-     */
     
+    */
     
     //////////////////
     ///   Test 3   ///
@@ -218,6 +200,21 @@ BlockedGibbsSampler
         AcceptationRatio += ComputedLikelihood;
     }
     m_LastLikelihoodComputed = ComputedLikelihood;
+    AcceptationRatio = std::min(AcceptationRatio, 0.0);
+    
+    /// Adaptative variances for the realizations
+    for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it)
+    {
+        /// Initialization
+        std::string NameRealization = std::get<0>(*it);
+        unsigned int SubjectNumber = std::get<1>(*it);
+        ScalarType CurrentRealization = R->at(NameRealization)(SubjectNumber);
+        
+        /// Update variance
+        //GaussianRandomVariable GRV = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization);
+        //UpdatePropositionDistributionVariance(GRV, AcceptationRatio, IterationNumber);
+    }
+    
     
     /// Return the new realizations
     std::random_device RD;
