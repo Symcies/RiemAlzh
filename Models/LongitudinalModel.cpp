@@ -13,7 +13,7 @@ LongitudinalModel
 ::LongitudinalModel(const unsigned int NbIndependentComponents, std::shared_ptr<AbstractManifold>& M)
 {
 
-    m_OutputParameters.open("ParametersBlockedTest2.txt", std::ofstream::out | std::ofstream::trunc);
+    m_OutputParameters.open("Parameters.txt", std::ofstream::out | std::ofstream::trunc);
     m_NbIndependentComponents = NbIndependentComponents;
     std::shared_ptr<PropagationManifold> Manifold = std::dynamic_pointer_cast<PropagationManifold>(M);
     m_Manifold = Manifold;

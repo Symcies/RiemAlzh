@@ -17,14 +17,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="03e71383-5091-4290-9195-e722e3a9d4e8" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Parameters.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Realizations.txt" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/LongitudinalModel.cpp" afterPath="$PROJECT_DIR$/Models/LongitudinalModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/LongitudinalModel.h" afterPath="$PROJECT_DIR$/Models/LongitudinalModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp" afterPath="$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ParametersBlockedTest2.txt" afterPath="$PROJECT_DIR$/ParametersBlockedTest2.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Realizations.txt" afterPath="$PROJECT_DIR$/Realizations.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/AbstractSampler.cpp" afterPath="$PROJECT_DIR$/Samplers/AbstractSampler.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" afterPath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" />
     </list>
     <ignored path="RiemAlzh.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -81,28 +78,60 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="LongitudinalModel.cpp" pinned="false" current-in-tab="true">
+          <file leaf-file-name="LongitudinalModel.cpp" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="378">
-                  <caret line="682" column="29" selection-start-line="697" selection-start-column="16" selection-end-line="697" selection-end-column="20" />
+                <state relative-caret-position="168">
+                  <caret line="15" column="39" selection-start-line="15" selection-start-column="39" selection-end-line="15" selection-end-column="39" />
                   <folding>
-                    <element signature="e#370#783#0" expanded="false" />
-                    <element signature="e#3251#4715#0" expanded="false" />
-                    <element signature="e#4717#8866#0" expanded="false" />
-                    <element signature="e#8869#12490#0" expanded="false" />
-                    <element signature="e#12493#13964#0" expanded="false" />
-                    <element signature="e#13966#15568#0" expanded="false" />
-                    <element signature="e#15571#17746#0" expanded="false" />
-                    <element signature="e#17966#20078#0" expanded="false" />
-                    <element signature="e#20386#22129#0" expanded="false" />
-                    <element signature="e#22350#22528#0" expanded="false" />
-                    <element signature="e#22531#23341#0" expanded="false" />
-                    <element signature="e#23343#24175#0" expanded="false" />
-                    <element signature="e#24177#24525#0" expanded="false" />
-                    <element signature="e#27087#28984#0" expanded="false" />
-                    <element signature="e#28986#34933#0" expanded="false" />
+                    <element signature="e#3239#4703#0" expanded="false" />
+                    <element signature="e#4705#8854#0" expanded="false" />
+                    <element signature="e#8857#12478#0" expanded="false" />
+                    <element signature="e#12481#13952#0" expanded="false" />
+                    <element signature="e#13954#15556#0" expanded="false" />
+                    <element signature="e#15559#17734#0" expanded="false" />
+                    <element signature="e#17954#20066#0" expanded="false" />
+                    <element signature="e#20374#22117#0" expanded="false" />
+                    <element signature="e#22338#22516#0" expanded="false" />
+                    <element signature="e#22519#23329#0" expanded="false" />
+                    <element signature="e#23331#24163#0" expanded="false" />
+                    <element signature="e#24165#24513#0" expanded="false" />
+                    <element signature="e#27075#28972#0" expanded="false" />
+                    <element signature="e#28974#34921#0" expanded="false" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="NetworkPropagationModel.cpp" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="4044">
+                  <caret line="886" column="0" selection-start-line="886" selection-start-column="0" selection-end-line="886" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#4910#9187#0" expanded="false" />
+                    <element signature="e#9190#12702#0" expanded="false" />
+                    <element signature="e#12705#13985#0" expanded="false" />
+                    <element signature="e#13987#15538#0" expanded="false" />
+                    <element signature="e#17994#20112#0" expanded="false" />
+                    <element signature="e#20421#22305#0" expanded="false" />
+                    <element signature="e#22527#22878#0" expanded="false" />
+                    <element signature="e#22880#23276#0" expanded="false" />
+                    <element signature="e#23278#25427#0" expanded="false" />
+                    <element signature="e#25429#27337#0" expanded="false" />
+                    <element signature="e#27339#33230#0" expanded="false" />
+                    <element signature="e#33232#33632#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="UnivariateModel.cpp" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/Models/UnivariateModel.cpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="5474">
+                  <caret line="391" column="0" selection-start-line="391" selection-start-column="0" selection-end-line="391" selection-end-column="0" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -124,7 +153,7 @@
           <file leaf-file-name="Algorithm.cpp" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="515">
+                <state relative-caret-position="2534">
                   <caret line="194" column="0" selection-start-line="194" selection-start-column="0" selection-end-line="194" selection-end-column="0" />
                   <folding>
                     <element signature="e#5234#5526#0" expanded="false" />
@@ -189,11 +218,11 @@
         <option value="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" />
         <option value="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h" />
         <option value="$PROJECT_DIR$/Models/LongitudinalModel.h" />
-        <option value="$PROJECT_DIR$/Models/LongitudinalModel.cpp" />
         <option value="$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp" />
         <option value="$PROJECT_DIR$/Algorithm/Algorithm.cpp" />
         <option value="$PROJECT_DIR$/Samplers/AbstractSampler.cpp" />
         <option value="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" />
+        <option value="$PROJECT_DIR$/Models/LongitudinalModel.cpp" />
       </list>
     </option>
   </component>
@@ -632,12 +661,12 @@
       <workItem from="1479111843825" duration="13323000" />
       <workItem from="1479195209473" duration="2071000" />
       <workItem from="1479477767618" duration="15202000" />
-      <workItem from="1479802282413" duration="15530000" />
+      <workItem from="1479802282413" duration="15700000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="348301000" />
+    <option name="totallyTimeSpent" value="348471000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -860,40 +889,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Models/UnivariateModel.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="391" column="0" selection-start-line="391" selection-start-column="0" selection-end-line="391" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Models/UnivariateModel.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="245">
           <caret line="68" column="14" selection-start-line="68" selection-start-column="14" selection-end-line="68" selection-end-column="14" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="772">
-          <caret line="886" column="0" selection-start-line="886" selection-start-column="0" selection-end-line="886" selection-end-column="0" />
-          <folding>
-            <element signature="e#276#1252#0" expanded="false" />
-            <element signature="e#4910#9187#0" expanded="false" />
-            <element signature="e#9190#12702#0" expanded="false" />
-            <element signature="e#12705#13985#0" expanded="false" />
-            <element signature="e#13987#15538#0" expanded="false" />
-            <element signature="e#17994#20112#0" expanded="false" />
-            <element signature="e#20421#22305#0" expanded="false" />
-            <element signature="e#22527#22878#0" expanded="false" />
-            <element signature="e#22880#23276#0" expanded="false" />
-            <element signature="e#23278#25427#0" expanded="false" />
-            <element signature="e#25429#27337#0" expanded="false" />
-            <element signature="e#27339#33230#0" expanded="false" />
-            <element signature="e#33232#33632#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1060,17 +1060,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="515">
-          <caret line="194" column="0" selection-start-line="194" selection-start-column="0" selection-end-line="194" selection-end-column="0" />
-          <folding>
-            <element signature="e#5234#5526#0" expanded="false" />
-            <element signature="e#5529#7184#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -1079,27 +1068,66 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2534">
+          <caret line="194" column="0" selection-start-line="194" selection-start-column="0" selection-end-line="194" selection-end-column="0" />
+          <folding>
+            <element signature="e#5234#5526#0" expanded="false" />
+            <element signature="e#5529#7184#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="682" column="29" selection-start-line="697" selection-start-column="16" selection-end-line="697" selection-end-column="20" />
+        <state relative-caret-position="168">
+          <caret line="15" column="39" selection-start-line="15" selection-start-column="39" selection-end-line="15" selection-end-column="39" />
           <folding>
-            <element signature="e#370#783#0" expanded="false" />
-            <element signature="e#3251#4715#0" expanded="false" />
-            <element signature="e#4717#8866#0" expanded="false" />
-            <element signature="e#8869#12490#0" expanded="false" />
-            <element signature="e#12493#13964#0" expanded="false" />
-            <element signature="e#13966#15568#0" expanded="false" />
-            <element signature="e#15571#17746#0" expanded="false" />
-            <element signature="e#17966#20078#0" expanded="false" />
-            <element signature="e#20386#22129#0" expanded="false" />
-            <element signature="e#22350#22528#0" expanded="false" />
-            <element signature="e#22531#23341#0" expanded="false" />
-            <element signature="e#23343#24175#0" expanded="false" />
-            <element signature="e#24177#24525#0" expanded="false" />
-            <element signature="e#27087#28984#0" expanded="false" />
-            <element signature="e#28986#34933#0" expanded="false" />
+            <element signature="e#3239#4703#0" expanded="false" />
+            <element signature="e#4705#8854#0" expanded="false" />
+            <element signature="e#8857#12478#0" expanded="false" />
+            <element signature="e#12481#13952#0" expanded="false" />
+            <element signature="e#13954#15556#0" expanded="false" />
+            <element signature="e#15559#17734#0" expanded="false" />
+            <element signature="e#17954#20066#0" expanded="false" />
+            <element signature="e#20374#22117#0" expanded="false" />
+            <element signature="e#22338#22516#0" expanded="false" />
+            <element signature="e#22519#23329#0" expanded="false" />
+            <element signature="e#23331#24163#0" expanded="false" />
+            <element signature="e#24165#24513#0" expanded="false" />
+            <element signature="e#27075#28972#0" expanded="false" />
+            <element signature="e#28974#34921#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4044">
+          <caret line="886" column="0" selection-start-line="886" selection-start-column="0" selection-end-line="886" selection-end-column="0" />
+          <folding>
+            <element signature="e#4910#9187#0" expanded="false" />
+            <element signature="e#9190#12702#0" expanded="false" />
+            <element signature="e#12705#13985#0" expanded="false" />
+            <element signature="e#13987#15538#0" expanded="false" />
+            <element signature="e#17994#20112#0" expanded="false" />
+            <element signature="e#20421#22305#0" expanded="false" />
+            <element signature="e#22527#22878#0" expanded="false" />
+            <element signature="e#22880#23276#0" expanded="false" />
+            <element signature="e#23278#25427#0" expanded="false" />
+            <element signature="e#25429#27337#0" expanded="false" />
+            <element signature="e#27339#33230#0" expanded="false" />
+            <element signature="e#33232#33632#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/UnivariateModel.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5474">
+          <caret line="391" column="0" selection-start-line="391" selection-start-column="0" selection-end-line="391" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
