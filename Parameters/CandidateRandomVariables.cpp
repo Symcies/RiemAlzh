@@ -83,7 +83,7 @@ CandidateRandomVariables
     /////////////////////////////////////////////////////
 
     /// QUICK CHANGES IN THE INITIALIZATION
-    double P0Variance = 0.000002;
+    double P0Variance = 0.00002;
     double T0Variance = 0.00002;
     double V0Variance = 0.0000005;
     double DeltaVariance = 0.00001;

@@ -38,11 +38,22 @@ AbstractSampler
 ::UpdatePropositionDistributionVariance(GaussianRandomVariable &GRV, double Ratio, int Iteration) 
 {
     // TODO : where to put these parameters
-    double Goal = 0.3;
-    int NoMemoryTime = 400;
-    Ratio = std::exp(Ratio);
+    double Goal = 0.4;
+    int NoMemoryTime = 10000;
     
-    double CurrentVariance = GRV.GetVariance();
-    double NewVariance = CurrentVariance + DecreasingStepSize(Iteration, NoMemoryTime) * (Ratio - Goal);
+    double Epsilon = DecreasingStepSize(Iteration, NoMemoryTime);
+    double Denom;
+    
+    if(Ratio > Goal)
+    {
+        Denom = 1 - Goal;
+    } 
+    else
+    {
+        Denom = Goal; 
+    }
+    
+    double NewVariance = GRV.GetVariance();
+    NewVariance *= (1 + Epsilon * (Ratio - Goal) / Denom / 20);
     GRV.SetVariance( NewVariance );
 }

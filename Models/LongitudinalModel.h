@@ -78,6 +78,9 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
+    /// Get the initial time 
+    double GetInitialTime();
+    
     /// Get the initial position = gamma(t0)
     VectorType GetInitialPosition(const std::shared_ptr<MultiRealizations>& R);
 

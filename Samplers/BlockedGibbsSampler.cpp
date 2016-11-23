@@ -29,7 +29,7 @@ BlockedGibbsSampler
     //////////////////
     ///   Test 1   ///
     //////////////////
-    
+    /*
     for(auto it = R->begin(); it != R->end(); ++it)
     {
         for(int i = 0; i < it->second.size(); ++i)
@@ -38,6 +38,7 @@ BlockedGibbsSampler
             m_Blocks.push_back({Block});
         }
     }
+     */
     
     
     
@@ -46,12 +47,11 @@ BlockedGibbsSampler
     ///   Test 2   ///
     //////////////////
     
-    /*
+    
     /// Population Variables
     auto P0 = std::make_tuple("P0", 0);
     auto V0 = std::make_tuple("V0", 0);
-    auto T0 = std::make_tuple("T0", 0);
-    Block Pop = {P0, T0, V0};
+    Block Pop = {P0, V0};
     m_Blocks.push_back(Pop);
     
     /// Beta
@@ -86,7 +86,7 @@ BlockedGibbsSampler
         m_Blocks.push_back(IndividualBlock);
     }
     
-    */
+    
     
     //////////////////
     ///   Test 3   ///
@@ -152,6 +152,13 @@ BlockedGibbsSampler
     double AcceptationRatio = 0;
     std::vector<std::string> CurrentParameters; 
     
+    
+    if(std::get<0>(*CurrentBlock.begin()) == "P0")
+    {
+        double a = 0;
+    }
+    
+    
     /// Loop over the realizations of the block to update the ratio and the realizations
     for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it) 
     {
@@ -201,6 +208,7 @@ BlockedGibbsSampler
     }
     m_LastLikelihoodComputed = ComputedLikelihood;
     AcceptationRatio = std::min(AcceptationRatio, 0.0);
+    AcceptationRatio = exp(AcceptationRatio);
     
     /// Adaptative variances for the realizations
     for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it)
@@ -210,9 +218,14 @@ BlockedGibbsSampler
         unsigned int SubjectNumber = std::get<1>(*it);
         ScalarType CurrentRealization = R->at(NameRealization)(SubjectNumber);
         
+        if(NameRealization == "P0")
+        {
+            double a = 0;
+        }
+        
         /// Update variance
-        //GaussianRandomVariable GRV = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization);
-        //UpdatePropositionDistributionVariance(GRV, AcceptationRatio, IterationNumber);
+        GaussianRandomVariable& GRV = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization);
+        UpdatePropositionDistributionVariance(GRV, AcceptationRatio, IterationNumber);
     }
     
     
@@ -221,8 +234,7 @@ BlockedGibbsSampler
     std::mt19937 Generator(RD());
     std::uniform_real_distribution<double> Distribution(0.0, 1.0);
     double UnifSample = Distribution(Generator);
-    
-    if(log(UnifSample) > AcceptationRatio)
+    if(UnifSample > AcceptationRatio)
     {
         M->UpdateParameters(R, CurrentParameters);
         return *R;
