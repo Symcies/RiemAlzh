@@ -40,6 +40,8 @@ public:
     /// This update can depend on the parameter that has changed, provided by the Name argument
     virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Name = {"All"});
 
+    /// Get the parameters of the model
+    virtual std::map< std::string, double > GetParameters();
 
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, 
@@ -84,6 +86,17 @@ private :
     /// Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /// Get initial time
+    double GetInitialTime();
+    
+    /// Get initial position
+    double GetInitialPosition(const std::shared_ptr<MultiRealizations>& R);
+    
+    /// Get the initial velocity
+    double GetInitialVelocity();
+    
+    
+    
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
     std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R);
     

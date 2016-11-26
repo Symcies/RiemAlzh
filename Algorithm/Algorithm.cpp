@@ -25,7 +25,7 @@ Algorithm
 ::ComputeMCMCSAEM(const std::shared_ptr<Data>& D)
 {
 
-    int NbMaxIterations = 700000;
+    int NbMaxIterations = 100000;
     InitializeRealization((int)D->size());
     InitializeModel(m_Realizations);
     InitializeSampler();
@@ -38,7 +38,7 @@ Algorithm
 
     for(int k = 0; k<NbMaxIterations; ++k)
     {
-        if( k%50 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
+        if( k%100 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
         //clock_t a = clock();
         ComputeSimulationStep(D, k);
         //clock_t b = clock();
@@ -48,7 +48,7 @@ Algorithm
         //clock_t d = clock();
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
         //clock_t e = clock();
-        if( k%50 == 0 ) { ComputeOutputs(); }
+        if( k%100 == 0 ) { ComputeOutputs(); }
 //        a1 += b - a;
 //        a2 += c - b;
 //        a3 += d - c;
@@ -215,7 +215,7 @@ Algorithm
       
   }
     
-    if(Iteration%50 == 0)
+    if(Iteration%100 == 0)
     {
         std::cout << "AcceptRatio: ";
         for(const auto& it : *m_Realizations)

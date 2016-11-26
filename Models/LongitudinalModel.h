@@ -40,6 +40,9 @@ public:
     /// Initialize parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
     virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Names = {"All"});
 
+    /// Get the parameters of the model
+    virtual std::map< std::string, double > GetParameters();
+    
      /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
 

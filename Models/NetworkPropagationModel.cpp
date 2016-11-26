@@ -13,6 +13,7 @@ NetworkPropagationModel
                           std::shared_ptr<MatrixType> &InterpolationMatrix) 
 {
     // TODO : check the input data
+    
     //TestAssert::WarningEquality_Object(InterpolationMatrix.is_square(), true);
     //TestAssert::WarningEquality_Object(InvertKernelMatrix.is_square(), true);
     
@@ -52,14 +53,13 @@ NetworkPropagationModel
     m_IndividualRandomVariables.clear();
     
     auto P0 = std::make_shared< GaussianRandomVariable >(0.35, 0.000001);
-    auto T0 = std::make_shared< GaussianRandomVariable >(70.0, 0.000025);
     auto V0 = std::make_shared< GaussianRandomVariable >(0.06, 0.00000001);
     auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.16);
-    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 36.0);
+    double T0 = 70.0;
+    auto Tau = std::make_shared< GaussianRandomVariable >(T0, 16.0);
     m_Noise = std::make_shared< GaussianRandomVariable >(0.0, 0.0001);
     
     m_PopulationRandomVariables.insert( RandomVariable("P0", P0) );
-    m_PopulationRandomVariables.insert( RandomVariable("T0", T0) );
     m_PopulationRandomVariables.insert( RandomVariable("V0", V0) );
     m_IndividualRandomVariables.insert( RandomVariable("Ksi", Ksi));
     m_IndividualRandomVariables.insert( RandomVariable("Tau", Tau));
@@ -94,51 +94,109 @@ void
 NetworkPropagationModel
 ::UpdateParameters(const std::shared_ptr<MultiRealizations> &R, const std::vector<std::string> Names) 
 {
-    std::string Name = Names[0];
-    Name = Name.substr(0, Name.find_first_of("#"));
+
+    /// This first part inspects the parameters names to update
+    int UpdateCase = 1;
     
-    if(Name == "Delta")
+    for(auto it = Names.begin(); it != Names.end(); ++it) 
     {
-        ComputeInterpolationCoefficients(R);
-        ComputeOrthonormalBasis(R);
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
+        std::string Name = it->substr(0, it->find_first_of("#"));
+    
+        if(Name == "None" or Name == "Ksi" or Name == "Tau")
+        {
+            continue;
+        }
+        else if(Name == "S")
+        {
+            UpdateCase = std::max(UpdateCase, 2);
+        }
+        else if(Name == "Beta")
+        {
+            UpdateCase = std::max(UpdateCase, 3);
+        }
+        else if(Name == "P0" or Name == "V0")
+        {
+            UpdateCase = std::max(UpdateCase, 4);
+        }
+        else if(Name == "Delta" or Name == "All")
+        {
+            UpdateCase = 5;
+            break;
+        } 
+        else
+        {
+            UpdateCase = 5;
+            std::cout << "Should be" << Name << "be in NetworkPropagationModel > Update Parameters?" << std::endl;
+            break;
+        }
     }
-    else if(Name == "P0" or Name == "T0" or Name == "V0")
-    {   
-        ComputeOrthonormalBasis(R);
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
-    }
-    else if(Name == "Beta")
+    
+    
+    /// Update Case in fonction of the the vector of names
+    switch(UpdateCase)
     {
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
+        case 1:
+            break;
+        case 2:
+            ComputeSpaceShifts(R);
+            break;
+        case 3:
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
+        case 4:
+            ComputeOrthonormalBasis(R);
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
+            break;
+        case 5:
+            ComputeInterpolationCoefficients(R);
+            ComputeOrthonormalBasis(R);
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
+            break;
+        default:
+            std::cout << "Error? NetworkPropagationModel > UpdateParameters";
+            break;
     }
-    else if(Name == "S")
-    {
-        ComputeSpaceShifts(R);
-    }
-    else if(Name == "Ksi" or Name == "Tau" or Name == "Individual")
-    {
-        // Nothing to do
-    }
-    else if(Name == "All")
-    {
-        ComputeInterpolationCoefficients(R);
-        ComputeOrthonormalBasis(R);
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
-    } 
-    else
-    {
-        std::cout << "Should be name in NetworkPropagationModel > Update Parameters  - " << Name << std::endl;
-        ComputeOrthonormalBasis(R);
-        ComputeAMatrix(R);
-        ComputeSpaceShifts(R);
-    }
+    
 }
 
+
+std::map< std::string, double >
+NetworkPropagationModel
+::GetParameters() 
+{
+    auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
+    auto V0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"));
+    auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));
+    auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));
+    
+    std::map<std::string, double> Parameters;
+    
+    Parameters["P0"] = P0->GetMean();
+    Parameters["T0"] = Tau->GetMean();
+    Parameters["V0"] = V0->GetMean();
+    Parameters["Ksi"] = Ksi->GetVariance();
+    Parameters["Tau"] = Tau->GetVariance();
+    Parameters["NoiseVariance"] = m_Noise->GetVariance();
+    
+    
+    for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension()-1) ; ++i)
+    {
+        std::string Name = "Beta#" + std::to_string(i);
+        auto Beta = std::static_pointer_cast< GaussianRandomVariable>(m_PopulationRandomVariables.at(Name));
+        Parameters[Name] = Beta->GetMean();
+    }
+    
+    for(int i = 0; i < m_InvertKernelMatrix.size() - 1; ++i)
+    {
+        std::string Name = "Delta#" + std::to_string(i);
+        auto Delta = std::static_pointer_cast< GaussianRandomVariable >(m_PopulationRandomVariables.at(Name));
+        Parameters[Name] = Delta->GetMean();
+    }
+    
+    return Parameters;
+}
 
 NetworkPropagationModel::SufficientStatisticsVector
 NetworkPropagationModel
@@ -149,14 +207,17 @@ NetworkPropagationModel
     /// Initialization
     /////////////////////////
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")(0);
+    double T0 = GetInitialTime();
     VectorType P0(1, R->at("P0")(0) );
     VectorType V0(1, R->at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
     
+    
     /////////////////////////
     /// Compute S0
     /////////////////////////
+    // TODO :Calculate only once -> It is always equal to the same value.
+    
     int K = 0;
     double SumOfObservation = 0.0;
     for(const auto& it : *D)
@@ -196,18 +257,20 @@ NetworkPropagationModel
     }
 
     /////////////////////////
-    /// Compute S3 and S4
+    /// Compute S3, S4 and S5
     /////////////////////////
-    VectorType S3(R->at("Ksi").size()), S4(R->at("Tau").size());
+    VectorType S3(R->at("Ksi").size()), S4(R->at("Tau").size()), S5(R->at("Tau").size());
     auto IterKsi = R->at("Ksi").begin();
     auto IterTau = R->at("Tau").begin();
     auto IterS3 = S3.begin();
     auto IterS4 = S4.begin();
-    for( ; IterKsi != R->at("Ksi").end() && IterTau != R->at("Tau").end() && IterS3 != S3.end() && IterS4 != S4.end()
-            ; ++IterKsi, ++IterTau, ++IterS3, ++IterS4 )
+    auto IterS5 = S5.begin();
+    for( ; IterKsi != R->at("Ksi").end() && IterTau != R->at("Tau").end() && IterS3 != S3.end() && IterS4 != S4.end() && IterS5 != S5.end() 
+            ; ++IterKsi, ++IterTau, ++IterS3, ++IterS4, ++IterS5 )
     {
         *IterS3 = *IterKsi * *IterKsi;
         *IterS4 = *IterTau * *IterTau;
+        *IterS5 = *IterTau;
     }
     
     /////////////////////////
@@ -230,34 +293,22 @@ NetworkPropagationModel
         *it = R->at("Beta#" + std::to_string(j))[0];
     }
     
-    SufficientStatisticsVector S = {S0, S1, S2, S3, S4, P0, VectorType(1, T0), V0, S8, S9};
+    SufficientStatisticsVector S = {S0, S1, S2, S3, S4, S5, P0, V0, S8, S9};
     
     /////////////////////////
     /// Tests
     /////////////////////////
-    /*
     /// There are two ways to compute the logLikelihood. Check if they are equal
-    std::function<double()> f1 = [=, &D, &R] () { return this->ComputeLogLikelihoodGeneric(R, D); };
+    std::function<double()> f1 = [=, &D, &R] () { return this->ComputeLogLikelihood(R, D); };
     std::function<double()> f2 = [=, &D, &S] ()
     {
-        double Calculation = 0;
-        int K = 0;
-        for(const auto& it : *D)
-        {
-            K += it.size();
-            for(auto it2 : it)
-            {
-                for(auto it3 : it2.first)
-                {
-                    Calculation += it3*it3;
-                }
-            }
-        }
-        for(auto it : S[0])
+        double Calculation = S[0](0);
+
+        for(auto it : S[1])
         {
             Calculation += -2 * it;
         }
-        for(auto it : S[1])
+        for(auto it : S[2])
         {
             Calculation += it;
         }
@@ -268,9 +319,9 @@ NetworkPropagationModel
     };
     
     TestAssert::WarningEquality_Function(f1, f2, "Likelihood not correct. LongitudinalModel > GetSufficientStatistics");
-    */
     
-    return  S;
+     
+    return S;
 }
 
 
@@ -283,15 +334,12 @@ NetworkPropagationModel
     
     /// Update P0(mean), T0(mean) and VO(mean)
     auto AbstractP0 = m_PopulationRandomVariables.at("P0");
-    auto AbstractT0 = m_PopulationRandomVariables.at("T0");
     auto AbstractV0 = m_PopulationRandomVariables.at("V0");
     
     auto P0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractP0 );
-    auto T0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractT0 );
     auto V0 = std::dynamic_pointer_cast< GaussianRandomVariable >( AbstractV0 );
     
-    P0->SetMean(StochSufficientStatistics[5][0]);
-    T0->SetMean(StochSufficientStatistics[6][0]);
+    P0->SetMean(StochSufficientStatistics[6][0]);
     V0->SetMean(StochSufficientStatistics[7][0]);
 
     /// Update Delta(k)(mean)
@@ -313,28 +361,41 @@ NetworkPropagationModel
         Beta->SetMean(*it);
     }
     
-    /// Update Ksi & Tau
-    double VarianceKsi = 0, VarianceTau = 0;
+    /// Update Ksi
+    double VarianceKsi = 0;
     
-    auto IterKsi = StochSufficientStatistics[3].begin();
-    auto IterTau = StochSufficientStatistics[4].begin();
-    for( ; IterKsi != StochSufficientStatistics[3].end() && IterTau != StochSufficientStatistics[4].end(); ++IterKsi, ++IterTau)
+    for(auto IterKsi = StochSufficientStatistics[3].begin(); IterKsi != StochSufficientStatistics[3].end(); ++IterKsi)
     {
         VarianceKsi += *IterKsi;
-        VarianceTau += *IterTau;
     }
     VarianceKsi /= NumberOfSubjects;
-    VarianceTau /= NumberOfSubjects;
     
     auto AbstractKsi = m_IndividualRandomVariables.at("Ksi");
-    auto AbstractTau = m_IndividualRandomVariables.at("Tau");
-    
     auto Ksi = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractKsi );
-    auto Tau = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractTau );
-    
-    Ksi->SetVariance(VarianceKsi);   
-    Tau->SetVariance(VarianceTau);
+    Ksi->SetVariance(VarianceKsi);
 
+    /// Update T0 and Tau
+    double T0 = 0, VarianceTau = 0;
+    
+    for(auto IterT0 = StochSufficientStatistics[5].begin(); IterT0 != StochSufficientStatistics[5].end(); ++IterT0)
+    {
+        T0 += *IterT0;
+    }
+    T0 /= NumberOfSubjects;
+    
+    for(auto IterTau = StochSufficientStatistics[4].begin(); IterTau != StochSufficientStatistics[4].end(); ++IterTau)
+    {
+        VarianceTau += *IterTau;
+    }
+    
+    VarianceTau -= NumberOfSubjects * T0 * T0;
+    VarianceTau /= NumberOfSubjects;
+    
+    auto AbstractTau = m_IndividualRandomVariables.at("Tau");
+    auto Tau = std::static_pointer_cast<GaussianRandomVariable>( AbstractTau );
+    Tau->SetMean(T0);
+    Tau->SetVariance(VarianceTau);
+    
     /// Update Uncertainty variance
     double N = m_Manifold->GetDimension();
     double K = 0;
@@ -360,7 +421,7 @@ NetworkPropagationModel
     
     
     /// Tests
-    TestAssert::WarningInequality_GreaterThan(1.0, StochSufficientStatistics[5](0), 0.0, "LongitudinalModel>UpdateRandomVariables ; wrong P0");
+    TestAssert::WarningInequality_GreaterThan(1.0, StochSufficientStatistics[6](0), 0.0, "LongitudinalModel>UpdateRandomVariables ; wrong P0");
     TestAssert::WarningInequality_GreaterThan(m_Noise->GetVariance(), 0.0, "LongitudinalModel>UpdateRandomVariables ; wrong noise variance");
 }
 
@@ -371,7 +432,7 @@ NetworkPropagationModel
 {
      /// Get the data
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")(0);
+    double T0 = GetInitialTime();
     VectorType P0(1, R->at("P0")(0) );
     VectorType V0(1, R->at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
@@ -392,6 +453,8 @@ NetworkPropagationModel
             LogLikelihood  += (it.first - ParallelCurve).squared_magnitude();
         }
     }
+    /// Tests
+    TestAssert::WarningInequality_GreaterThan(LogLikelihood, 0.0, "NetworkPropagationModel>ComputeIndividualLogLikelihood ; wrong Likelihood");
     
     LogLikelihood  /= -2*m_Noise->GetVariance();
     LogLikelihood -= K*log(sqrt(2 * m_Noise->GetVariance() * M_PI ));
@@ -404,17 +467,18 @@ NetworkPropagationModel
 ::ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> &R,
                                  const std::shared_ptr<Data> &D, const int SubjectNumber) 
 {
+    // TODO : Send only D(i) to the function
+    
     /// Initialize the individual parameters
     std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
     VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
 
     /// Get the global parameters
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")(0);
+    double T0 = GetInitialTime();
     VectorType P0(1, R->at("P0")(0) );
     VectorType V0(1, R->at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
-
     
     /// Compute the likelihood
     double LogLikelihood = 0;
@@ -428,7 +492,7 @@ NetworkPropagationModel
     }
     
     /// Test
-    TestAssert::WarningInequality_GreaterThan(LogLikelihood, 0.0, "LongitudinalModel>ComputeIndividualLogLikelihood ; wrong Likelihood");
+    TestAssert::WarningInequality_GreaterThan(LogLikelihood, 0.0, "NetworkPropagationModel>ComputeIndividualLogLikelihood ; wrong Likelihood");
 
     LogLikelihood /= -2*m_Noise->GetVariance();
     LogLikelihood -= k * log(sqrt( 2 * m_Noise->GetVariance() * M_PI));
@@ -458,7 +522,7 @@ NetworkPropagationModel
     std::normal_distribution<double> NoiseDistrib(0.0, sqrt(m_Noise->GetVariance()));
     
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")(0);
+    double T0 = GetInitialTime();
     VectorType P0(1, R->at("P0")(0) );
     VectorType V0(1, R->at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
@@ -512,7 +576,7 @@ NetworkPropagationModel
 ::ComputeOutputs() 
 {
     double MeanP0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"))->GetMean();
-    double MeanT0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("T0"))->GetMean();
+    double MeanT0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double MeanV0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"))->GetMean();
     double SigmaKsi = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetVariance();
     double SigmaTau = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetVariance();
@@ -550,11 +614,9 @@ NetworkPropagationModel
     /// Population Parameters ///
     /////////////////////////////
     auto P0 = std::make_shared<GaussianRandomVariable>(0.35, 0.000001);
-    auto T0 = std::make_shared<GaussianRandomVariable>(70.0, 0.0001);
     auto V0 = std::make_shared<GaussianRandomVariable>(0.06, 0.000001);
     
     m_PopulationRandomVariables.insert( RandomVariable("P0", P0));
-    m_PopulationRandomVariables.insert(RandomVariable("T0", T0));
     m_PopulationRandomVariables.insert(RandomVariable("V0", V0));
 
     m_Noise = std::make_shared< GaussianRandomVariable >(0.0, 0.0001);
@@ -576,8 +638,9 @@ NetworkPropagationModel
     /////////////////////////////
     /// Individual Parameters ///
     /////////////////////////////
+    double T0 = 70.0;
     auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.5*0.5);
-    auto Tau = std::make_shared< GaussianRandomVariable >(0.0, 5.0*5.0);
+    auto Tau = std::make_shared< GaussianRandomVariable >(T0, 3.0*3.0);
     
     m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
     m_IndividualRandomVariables.insert(RandomVariable("Tau", Tau));
@@ -598,6 +661,59 @@ NetworkPropagationModel
 // Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+double
+NetworkPropagationModel
+::GetInitialTime() 
+{
+    auto T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));
+    return T0->GetMean();
+}
+
+
+NetworkPropagationModel::VectorType
+NetworkPropagationModel
+::GetInitialPosition(const std::shared_ptr<MultiRealizations> &R) 
+{
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+
+    double T0 = GetInitialTime();
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+    VectorType Delta = GetPropagationCoefficients(R);
+
+    auto InitialPosition = CastedManifold->ComputeGeodesic(P0, T0, V0, T0, Delta);
+    
+    /// Tests
+    std::function<double()> f1 = [&R]() { return R->at("P0")(0); };
+    std::function<double()> f2 = [&InitialPosition]() { return InitialPosition[0]; };
+    TestAssert::WarningEquality_Function(f1, f2, "P0 != InitialPosition[0]. LongitudinalModel > GetInitialPosition");
+    
+    return InitialPosition;
+}
+
+
+NetworkPropagationModel::VectorType
+NetworkPropagationModel
+::GetInitialVelocity(const std::shared_ptr<MultiRealizations> &R) 
+{
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+
+    double T0 = GetInitialTime();
+    VectorType Delta = GetPropagationCoefficients(R);
+    VectorType P0(1, R->at("P0")(0) );
+    VectorType V0(1, R->at("V0")(0) );
+
+    VectorType InitialVelocity = CastedManifold->ComputeGeodesicDerivative(P0, T0, V0, T0, Delta);
+    
+    /// Tests 
+    std::function<double()> f1 = [&R]() { return R->at("V0")(0); };
+    std::function<double()> f2 = [&InitialVelocity]() { return InitialVelocity[0]; };
+    TestAssert::WarningEquality_Function(f1, f2, "P0 != InitialVelocity[0]. LongitudinalModel > GetInitialVelocity");
+    
+    return InitialVelocity;
+}
+
+
 NetworkPropagationModel::VectorType
 NetworkPropagationModel
 ::GetPropagationCoefficients(const std::shared_ptr<MultiRealizations> &R) 
@@ -614,21 +730,21 @@ NetworkPropagationModel
 {
     double AccFactor = exp(R->at("Ksi")(SubjectNumber));
     double TimeShift = R->at("Tau")(SubjectNumber);
-    double T0 = R->at("T0")(0);
+    double T0 = GetInitialTime();
     
-    return [AccFactor, TimeShift, T0](double t) { return AccFactor * (t - TimeShift - T0) + T0; };
+    return [AccFactor, TimeShift, T0](double t) { return AccFactor * (t - TimeShift) + T0; };
 }
 
 void
 NetworkPropagationModel
-::ComputeOrthonormalBasis(const std::shared_ptr<MultiRealizations>& R) {
+::ComputeOrthonormalBasis(const std::shared_ptr<MultiRealizations>& R) 
+{
 
     /////////////////////////
     /// Get the vectors P0 and V0
     /////////////////////////
-    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(
-            m_Manifold);
-    double T0 = R->at("T0")(0);
+    std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
+    double T0 = GetInitialTime();
     VectorType P0(1, R->at("P0")(0));
     VectorType V0(1, R->at("V0")(0));
     VectorType Delta = GetPropagationCoefficients(R);
@@ -660,7 +776,7 @@ NetworkPropagationModel
 
 
     /// TESTS
-    /*
+    
     /// Test colinearity between the first vector and Q[0]
     
     
@@ -678,7 +794,7 @@ NetworkPropagationModel
     }   
     
     /// END TEST
-    */
+    
     /// Drop the first vector which is colinear to gamma_derivative(t0)
 
     Q.erase(Q.begin());
@@ -706,7 +822,7 @@ NetworkPropagationModel
     
     m_AMatrix = AMatrix;
     
-    /*
+    
     /// TESTS
     auto InitialPosition = GetInitialPosition(R);
     auto InitialVelocity = GetInitialVelocity(R);
@@ -734,7 +850,7 @@ NetworkPropagationModel
         TestAssert::WarningEquality_Function(f1, f2, "A column not orthogonal to the velocity. LongitudinalModel > ComputeAMatrix");
     }
     /// END TESTS
-     */
+    
 }
 
 void
@@ -763,19 +879,20 @@ NetworkPropagationModel
 
     m_SpaceShifts = SpaceShifts;
 
-    /*
+    
     ///////////////////////////////
     //// Debugging : Unit tests ///
     ///////////////////////////////
     
-    
+    /*
     /// Get Data
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
-    double T0 = R->at("T0")[0];
+    double T0 = GetInitialPosition();
     auto InitialPosition = GetInitialPosition(R);
     auto InitialVelocity = GetInitialVelocity(R);
     auto Delta = GetPropagationCoefficients(R);
     std::function<double()> NullFunction = []() { return 0;};
+    
     
     /// DEBUG 1 : The orthonormal basis is orthogonal to the velocity
     for(auto it : m_AMatrix)
@@ -857,7 +974,7 @@ NetworkPropagationModel
         double Norm = m_Manifold->ComputeScalarProduct(ParallelTransport, ParallelTransport, Geodesic);
         std::cout << "Norm at " << t << " : " << Norm << std::endl;
     }
-    
+    */
 
 
 
@@ -865,7 +982,7 @@ NetworkPropagationModel
     ///////////////////////////////
     ////End Unit tests ///
     ///////////////////////////////
-    */
+    
 
 }
 

@@ -14,8 +14,8 @@ LogitNormalRandomVariable
     m_Variance = Variance;
 }
 
-GaussianRandomVariable
-::~GaussianRandomVariable()
+LogitNormalRandomVariable
+::~LogitNormalRandomVariable()
 { }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

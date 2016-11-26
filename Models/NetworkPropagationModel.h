@@ -42,6 +42,9 @@ public:
     /// Update parameters of the model, if any has to be updated
     virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Names = {"All"});
     
+    /// Get the parameters of the model
+    virtual std::map< std::string, double > GetParameters();
+    
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
 
@@ -86,6 +89,15 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /// Get the initial time
+    double GetInitialTime();   
+    
+    /// Get the initial position = gamma(t0)
+    VectorType GetInitialPosition(const std::shared_ptr<MultiRealizations>& R);
+
+    /// Get the initial velocity = diff(gamma(t0))
+    VectorType GetInitialVelocity(const std::shared_ptr<MultiRealizations>& R); 
     
     /// Get the propagation coefficients = (delta(k))
     VectorType GetPropagationCoefficients(const std::shared_ptr<MultiRealizations>& R);

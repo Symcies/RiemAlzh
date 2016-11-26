@@ -44,7 +44,7 @@ LongitudinalModel
     auto P0 = std::make_shared<GaussianRandomVariable>(0.40, 0.000001);
     auto V0 = std::make_shared<GaussianRandomVariable>(0.04, 0.000001);
     auto Ksi = std::make_shared< GaussianRandomVariable >(0.0, 0.40);
-    double T0 = 70;
+    double T0 = 70.0;
     auto Tau = std::make_shared< GaussianRandomVariable >(T0, 16.0);
     m_Noise = std::make_shared< GaussianRandomVariable >(0.0, 0.0005);
     
@@ -83,6 +83,7 @@ void
 LongitudinalModel
 ::UpdateParameters(const std::shared_ptr<MultiRealizations> &R, const std::vector<std::string> Names) 
 {
+    /// This first part inspects the parameters names to update
     int UpdateCase = 1;
     
     for(auto it = Names.begin(); it != Names.end(); ++it)
@@ -132,10 +133,49 @@ LongitudinalModel
             ComputeSpaceShifts(R);
             break;
         default:
-            std::cout << "Error?";
+            std::cout << "Error? LongitudinalModel > UpdateParameters";
             break;
     }
 }
+
+
+std::map< std::string, double> 
+LongitudinalModel
+::GetParameters() 
+{    
+    auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
+    auto V0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("V0"));
+    auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));
+    auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));
+    
+    std::map<std::string, double> Parameters;
+    
+    Parameters["P0"] = P0->GetMean();
+    Parameters["T0"] = Tau->GetMean();
+    Parameters["V0"] = V0->GetMean();
+    Parameters["Ksi"] = Ksi->GetVariance();
+    Parameters["Tau"] = Tau->GetVariance();
+    Parameters["NoiseVariance"] = m_Noise->GetMean();
+    
+    
+    for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension()-1) ; ++i)
+    {
+        std::string Name = "Beta#" + std::to_string(i);
+        auto Beta = std::static_pointer_cast< GaussianRandomVariable>(m_PopulationRandomVariables.at(Name));
+        Parameters[Name] = Beta->GetMean();
+    }
+    
+    for(int i = 0; i < m_Manifold->GetDimension() - 1; ++i)
+    {
+        std::string Name = "Delta#" + std::to_string(i);
+        auto Delta = std::static_pointer_cast< GaussianRandomVariable >(m_PopulationRandomVariables.at(Name));
+        Parameters[Name] = Delta->GetMean();
+    }
+    
+    return Parameters;
+    
+}
+
 
 LongitudinalModel::SufficientStatisticsVector
 LongitudinalModel
@@ -303,7 +343,6 @@ LongitudinalModel
 
     /// Update Ksi
     double VarianceKsi = 0;
-    
     for(auto IterKsi = StochSufficientStatistics[3].begin(); IterKsi != StochSufficientStatistics[3].end(); ++IterKsi)
     {
         VarianceKsi += *IterKsi;
@@ -335,7 +374,6 @@ LongitudinalModel
     auto Tau = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractTau );
     Tau->SetMean(T0);
     Tau->SetVariance(VarianceTau);
-    
     
     /// Update Uncertainty variance
     double N = m_Manifold->GetDimension();
@@ -398,12 +436,10 @@ LongitudinalModel
     /// Tests
     TestAssert::WarningInequality_GreaterThan(LogLikelihood, 0.0, "LongitudinalModel>ComputeIndividualLogLikelihood ; wrong Likelihood");
     
-    
     LogLikelihood  /= -2*m_Noise->GetVariance();
     LogLikelihood -= K*log(sqrt(2 * m_Noise->GetVariance() * M_PI ));
     
     return LogLikelihood ;
-
 }
 
 double
@@ -425,7 +461,6 @@ LongitudinalModel
     VectorType Delta = GetPropagationCoefficients(R);
     
     /// Compute the likelihood
-    
     double LogLikelihood = 0;
     double k = D->at(SubjectNumber).size();
     int i = 0;

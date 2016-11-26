@@ -47,7 +47,7 @@ BlockedGibbsSampler
     ///   Test 2   ///
     //////////////////
     
-    
+    /*
     /// Population Variables
     auto P0 = std::make_tuple("P0", 0);
     auto V0 = std::make_tuple("V0", 0);
@@ -84,20 +84,30 @@ BlockedGibbsSampler
         
         Block IndividualBlock = {Ksi, Tau, S0, S1, S2};
         m_Blocks.push_back(IndividualBlock);
+    }*/
+    
+    
+    
+    ////////////////////////////////////
+    ///   Test 3 : Univariate Model  ///
+    ////////////////////////////////////
+    
+    /// Population block
+    auto P0 = std::make_tuple("P0", 0);
+    Block Pop = {P0};
+    m_Blocks.push_back(Pop);
+    
+    /// Individual variables block
+    for(unsigned int i = 0; i < R->at("Ksi").size(); ++i)
+    {
+        auto Ksi = std::make_tuple("Ksi", i);
+        auto Tau = std::make_tuple("Tau", i);
+        
+        Block IndividualBlock = {Ksi, Tau};
+        m_Blocks.push_back(IndividualBlock);
     }
     
-    
-    
-    //////////////////
-    ///   Test 3   ///
-    //////////////////
-    
-    // TODO : Try to group all the population variables
-    // TODO : Try to group each individual 
-    // TODO : Send the names of the variables to the model
-    // TODO : In the model, analyze the names that have been send. Create a switch for each case !
-    
-    
+   
     
     /////////////////
     /// End Tests ///

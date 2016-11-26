@@ -74,6 +74,7 @@ int main() {
     /// Multivariate Model ///
     //////////////////////////
     /// Read the data 
+    /*
     //shared_ptr<Data> D = std::make_shared<Data>(ReadData::OpenFilesMultivariate());
     
     /// Initialize the manidolds, model and sampler 
@@ -82,16 +83,17 @@ int main() {
     shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
     //shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
     shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-    
+    */
+     
     ////////////////////////
     /// Univariate Model ///
     ////////////////////////
-    /*
+    
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
     shared_ptr<AbstractModel> Model = make_shared<UnivariateModel>(BaseManifold);
     //shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
     shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-    */
+    
     
     
     ////////////////////////////////////////
@@ -99,7 +101,7 @@ int main() {
     ////////////////////////////////////////
     
     Model->InitializeFakeRandomVariables();
-    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(50, 3, 5) );
+    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(200, 3, 5) );
     Model->Initialize();
     
     
@@ -110,6 +112,13 @@ int main() {
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
     Algo->ComputeMCMCSAEM(D);
+    auto Parameters = Model->GetParameters();
+    
+    
+    for(auto it = Parameters.begin(); it != Parameters.end(); ++it)
+    {
+        std::cout << it->first << " --> " << it->second << std::endl;
+    }
 
 
 

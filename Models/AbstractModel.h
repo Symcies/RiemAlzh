@@ -61,6 +61,8 @@ public:
     /// This update can depend on the parameter that has changed, provided by the Name argument
     virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Names = {"All"}) = 0;
 
+    /// Get the parameters of the model
+    virtual std::map< std::string, double > GetParameters() = 0;
 
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D) = 0;

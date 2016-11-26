@@ -14,22 +14,26 @@
       <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler2.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/LongitudinalModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/LongitudinalModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/LongitudinalModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LogNormalRandomVariable.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RandomVariables/AbstractRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/GaussianRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LogitNormalRandomVariable.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RandomVariables/ConstantRandomVariable.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LaplaceRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/GaussianRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/AbstractRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LaplaceRandomVariable.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RandomVariables/ConstantRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LogNormalRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/AbstractRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/GaussianRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LogitNormalRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LaplaceRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/GaussianRandomVariable.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Algorithm/Algorithm.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Algorithm/Algorithm.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
@@ -50,10 +54,10 @@
       <sourceFolder url="file://$MODULE_DIR$/Inputs/ReadData.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/LinearAlgebra.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloLinearAlgebra.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper_friend.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper_friend.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper.h" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
