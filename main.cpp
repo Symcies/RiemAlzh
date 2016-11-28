@@ -101,7 +101,7 @@ int main() {
     ////////////////////////////////////////
     
     Model->InitializeFakeRandomVariables();
-    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(200, 3, 5) );
+    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(200, 4, 6) );
     Model->Initialize();
     
     

@@ -227,12 +227,7 @@ BlockedGibbsSampler
         std::string NameRealization = std::get<0>(*it);
         unsigned int SubjectNumber = std::get<1>(*it);
         ScalarType CurrentRealization = R->at(NameRealization)(SubjectNumber);
-        
-        if(NameRealization == "P0")
-        {
-            double a = 0;
-        }
-        
+                
         /// Update variance
         GaussianRandomVariable& GRV = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization);
         UpdatePropositionDistributionVariance(GRV, AcceptationRatio, IterationNumber);

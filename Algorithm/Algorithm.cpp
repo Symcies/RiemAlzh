@@ -25,7 +25,7 @@ Algorithm
 ::ComputeMCMCSAEM(const std::shared_ptr<Data>& D)
 {
 
-    int NbMaxIterations = 100000;
+    int NbMaxIterations = 30000;
     InitializeRealization((int)D->size());
     InitializeModel(m_Realizations);
     InitializeSampler();
@@ -127,7 +127,7 @@ Algorithm
     typedef std::vector< VectorType > SufficientStatisticsVector;
     SufficientStatisticsVector NewStochasticSufficientStatistics;
 
-    double NoMemoryTime = 400000;  // TODO : Initialize, maybe out of the Compute function? Maybe in the decreasing step size function 
+    double NoMemoryTime = 15000;  // TODO : Initialize, maybe out of the Compute function? Maybe in the decreasing step size function 
     double StepSize = DecreasingStepSize(iteration, NoMemoryTime);
 
     auto IterStat = SufficientStatistics.begin();

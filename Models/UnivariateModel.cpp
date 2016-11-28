@@ -323,7 +323,7 @@ UnivariateModel
     std::random_device RD;
     std::mt19937 RNG(RD());
     std::uniform_int_distribution<int> Uni(MinObs, MaxObs);
-    std::normal_distribution<double> ObsDistrib(70.0, sqrt(3.0));
+    std::normal_distribution<double> ObsDistrib(50.0, 15);
     std::normal_distribution<double> NoiseDistrib(0.0, sqrt(m_Noise->GetVariance()));
     
     Data D;
@@ -365,6 +365,7 @@ UnivariateModel
         D.push_back(InDa);
     }
     
+    std::cout << "P0 / T0 / V0 : " << P0 << " / " << T0 << " / " << V0 << std::endl;
     std::cout << "Real Noise : " << SumNoise/q << std::endl;
     
     return D;
@@ -443,6 +444,9 @@ UnivariateModel
 ::GetInitialPosition(const std::shared_ptr<MultiRealizations>& R)
 {
     double P0 = R->at("P0")(0);
+    return P0;
+    
+    // It's not a logit function anymore
     double LogitP0 = 1.0 / (1.0 + exp(-P0));
     
     return LogitP0;
