@@ -38,7 +38,7 @@ AbstractSampler
 ::UpdatePropositionDistributionVariance(GaussianRandomVariable &GRV, double Ratio, int Iteration) 
 {
     // TODO : where to put these parameters
-    double Goal = 0.35;
+    double Goal = 0.3;
     int NoMemoryTime = 10000;
     
     double Epsilon = DecreasingStepSize(Iteration, NoMemoryTime);

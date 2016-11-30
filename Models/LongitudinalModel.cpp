@@ -724,6 +724,23 @@ LongitudinalModel
     VectorType V0(1, R->at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
     
+    /*
+    /// MANON ET MAXIME CODE
+    double T0 = 71.9920;
+    VectorType P0(1, 0.3096);
+    VectorType V0(1, 0.0403);
+    VectorType Delta(4, 0);
+     
+    
+    std::vector<double> PPPP = {0, -15.4249, -13.2227, -5.3881};
+    int i = 0;
+    for(auto it = Delta.begin(); it != Delta.end(); ++it)
+    {
+        *it = PPPP[i];
+    }
+    
+    /// LOL ///
+     */
 
     /// Compute the transformation to do the Householder reflection in a Euclidean space
     VectorType U = CastedManifold->GetVelocityTransformToEuclideanSpace(P0, T0, V0, Delta);
@@ -751,7 +768,16 @@ LongitudinalModel
         Q[i](i) += 1;
     }
     
-    
+    /*
+    for(auto it = Q.begin(); it != Q.end(); ++it)
+    {
+        for(auto it2 = it->begin(); it2 != it->end(); ++it2)
+        {
+            std::cout << *it2 << ". ";
+        }
+        std::cout << std::endl;
+    }
+    */
     
     /// TESTS
     

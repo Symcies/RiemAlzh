@@ -5,6 +5,7 @@
 #include "AbstractModel.h"
 #include "../Utilities/MatrixFunctions.h"
 #include <functional>
+#include <vector>
 
 class LongitudinalModel : public AbstractModel {
 public:

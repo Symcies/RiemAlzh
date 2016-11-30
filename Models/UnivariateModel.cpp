@@ -31,11 +31,11 @@ UnivariateModel
     m_PopulationRandomVariables.clear();
     m_IndividualRandomVariables.clear();
     
-    auto P0 = std::make_shared<GaussianRandomVariable>( 0.2, 0.00001 );
-    auto Tau = std::make_shared< GaussianRandomVariable >(70.0, 3*3);
-    auto Ksi = std::make_shared< GaussianRandomVariable >(-3, 0.025); 
+    auto P0 = std::make_shared<GaussianRandomVariable>( 0.5, 0.00001 );
+    auto Tau = std::make_shared< GaussianRandomVariable >(72.0, 2*2);
+    auto Ksi = std::make_shared< GaussianRandomVariable >(-2.5, 0.020); 
     
-    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.0001);
+    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.00001);
     
     m_PopulationRandomVariables.insert( RandomVariable("P0", P0));
     m_IndividualRandomVariables.insert( RandomVariable("Tau", Tau));
@@ -66,7 +66,7 @@ UnivariateModel
     Parameters["Ksi"] = Ksi->GetVariance();
     Parameters["T0"] = Tau->GetMean();
     Parameters["Tau"] = Tau->GetVariance();
-    Parameters["NoiseVariance"] = m_Noise->GetMean();
+    Parameters["NoiseVariance"] = m_Noise->GetVariance();
     
     return Parameters;
 }
@@ -276,6 +276,7 @@ UnivariateModel
         }
     }
     
+    //std::cout << "Noise (param) : " << m_Noise->GetVariance() << std::endl;
     LogLikelihood /= -2*m_Noise->GetVariance();
     
     LogLikelihood -= K * log(sqrt( 2 * M_PI * m_Noise->GetVariance() ));
@@ -320,10 +321,13 @@ UnivariateModel
     auto R = std::make_shared<MultiRealizations>( SimulateRealizations(NumberOfSubjects) );
     
     /// Initialize
+    std::ofstream IOTimePoints, IOSimulatedData;
+    IOTimePoints.open("TimePoints.txt", std::ofstream::out | std::ofstream::trunc);
+    IOSimulatedData.open("SimulatedData.txt", std::ofstream::out | std::ofstream::trunc);
     std::random_device RD;
     std::mt19937 RNG(RD());
     std::uniform_int_distribution<int> Uni(MinObs, MaxObs);
-    std::normal_distribution<double> ObsDistrib(50.0, 15);
+    std::uniform_real_distribution<double> ObsDistrib(45, 95);
     std::normal_distribution<double> NoiseDistrib(0.0, sqrt(m_Noise->GetVariance()));
     
     Data D;
@@ -350,23 +354,38 @@ UnivariateModel
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
         
         /// Generate observations corresponding to the time points
-        for(auto it : TimePoints)
+        for(auto it = TimePoints.begin(); it != TimePoints.end(); ++it)
         {
             q += 1;
-            double TimePoint = SubjectTimePoint(it);
+            double TimePoint = SubjectTimePoint(*it);
             double Noise = NoiseDistrib(RNG);
             SumNoise += Noise;
             double ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
             VectorType Scores(1, ParallelCurve + Noise);
             
-            InDa.push_back( std::pair< VectorType, double> (Scores, it));
+            InDa.push_back( std::pair< VectorType, double> (Scores, *it));
+            
+            IOTimePoints << *it;
+            IOSimulatedData << ParallelCurve + Noise;
+            if(it != TimePoints.end() -1)
+            {
+                IOTimePoints << " ";
+                IOSimulatedData << " ";
+            }
         }
+        IOTimePoints << std::endl;
+        IOSimulatedData << std::endl;
         
         D.push_back(InDa);
     }
-    
-    std::cout << "P0 / T0 / V0 : " << P0 << " / " << T0 << " / " << V0 << std::endl;
+    double A = ComputeLogLikelihood(R, std::make_shared<Data>(D)) ; 
     std::cout << "Real Noise : " << SumNoise/q << std::endl;
+    std::cout << "P0 / T0 / V0 : " << P0 << " / " << T0 << " / " << V0 << std::endl;
+    std::cout << "Likelihood : " << A << std::endl;
+    
+    
+    
+    
     
     return D;
 }
@@ -402,11 +421,11 @@ UnivariateModel
     m_PopulationRandomVariables.clear();
     m_IndividualRandomVariables.clear();
     
-    auto P0 = std::make_shared<GaussianRandomVariable>( 0.2, 0.00001 );
-    auto Tau = std::make_shared< GaussianRandomVariable >(70.0, 3*3);
-    auto Ksi = std::make_shared< GaussianRandomVariable >(-3, 0.025); 
+    auto P0 = std::make_shared<GaussianRandomVariable>( 0.4, 0.001 );
+    auto Tau = std::make_shared< GaussianRandomVariable >(75.0, 10);
+    auto Ksi = std::make_shared< GaussianRandomVariable >(-3, 0.3); 
     
-    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.00001);
+    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.000001);
     
     m_PopulationRandomVariables.insert( RandomVariable("P0", P0));
     m_IndividualRandomVariables.insert( RandomVariable("Tau", Tau));

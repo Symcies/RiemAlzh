@@ -113,7 +113,7 @@ TestAssert
         std::cout << std::endl << "Value : |" << a() << " - " << b() << "| = " << Val << std::endl;
         throw std::invalid_argument( msg );
     }
-    if(fabs(Val) > 10e-8 && a() < 10e3 && b() < 10e3)
+    if(fabs(Val) > 10e-6 && a() < 10e3 && b() < 10e3)
     {
         std::cout << std::endl << "Value : |" << a() << " - " << b() << "| = " << Val << std::endl;
         throw std::invalid_argument( msg );

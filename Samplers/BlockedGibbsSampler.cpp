@@ -91,7 +91,7 @@ BlockedGibbsSampler
     ////////////////////////////////////
     ///   Test 3 : Univariate Model  ///
     ////////////////////////////////////
-    
+    /*
     /// Population block
     auto P0 = std::make_tuple("P0", 0);
     Block Pop = {P0};
@@ -106,8 +106,28 @@ BlockedGibbsSampler
         Block IndividualBlock = {Ksi, Tau};
         m_Blocks.push_back(IndividualBlock);
     }
+    */
     
-   
+    //////////////////
+    /// Test Model ///
+    //////////////////
+    
+    for(unsigned int i = 0; i < R->at("A").size(); ++i)
+    {
+        auto A = std::make_tuple("A", i);
+        auto B = std::make_tuple("B", i);
+        Block Pop = {A, B};
+        m_Blocks.push_back(Pop);
+    }
+    /*
+    for(unsigned int i = 0; i < R->at("B").size(); ++i)
+    {
+        auto B = std::make_tuple("B", i);
+        Block Pop = {B};
+        m_Blocks.push_back(Pop);
+    }
+     */
+
     
     /////////////////
     /// End Tests ///
@@ -137,6 +157,7 @@ BlockedGibbsSampler
     for(int i = 0; i < m_Blocks.size(); ++i)
     {
         NewRealizations = std::make_shared<MultiRealizations>(OneBlockSample(i, NewRealizations, M, D, IterationNumber));
+        //NewRealizations = std::make_shared<MultiRealizations>(OneBlockSampleNoOpt(i, NewRealizations, M, D, IterationNumber));
     }
         
     return *NewRealizations;
@@ -161,12 +182,6 @@ BlockedGibbsSampler
     double ComputedLikelihood = 0;
     double AcceptationRatio = 0;
     std::vector<std::string> CurrentParameters; 
-    
-    
-    if(std::get<0>(*CurrentBlock.begin()) == "P0")
-    {
-        double a = 0;
-    }
     
     
     /// Loop over the realizations of the block to update the ratio and the realizations
@@ -216,7 +231,6 @@ BlockedGibbsSampler
         ComputedLikelihood = M->ComputeLogLikelihood(NewRealizations, D); 
         AcceptationRatio += ComputedLikelihood;
     }
-    m_LastLikelihoodComputed = ComputedLikelihood;
     AcceptationRatio = std::min(AcceptationRatio, 0.0);
     AcceptationRatio = exp(AcceptationRatio);
     
@@ -239,9 +253,81 @@ BlockedGibbsSampler
     std::mt19937 Generator(RD());
     std::uniform_real_distribution<double> Distribution(0.0, 1.0);
     double UnifSample = Distribution(Generator);
+    
+        ///  Rejection : Candidate not accepted
     if(UnifSample > AcceptationRatio)
     {
         M->UpdateParameters(R, CurrentParameters);
+        return *R;
+    }
+        /// Acceptation : Candidate is accepted
+    else
+    {
+        m_LastLikelihoodComputed = ComputedLikelihood;
+        return *NewRealizations;
+    }
+    
+}
+
+
+BlockedGibbsSampler::MultiRealizations
+BlockedGibbsSampler
+::OneBlockSampleNoOpt(int BlockNumber, const std::shared_ptr<MultiRealizations> &R,
+                      std::shared_ptr<AbstractModel> &M, const std::shared_ptr<Data> &D,
+                      int IterationNumber) 
+{
+    /// Initialization
+    auto NewRealizations = std::make_shared<MultiRealizations>(*R);
+    Block CurrentBlock = m_Blocks[BlockNumber];
+    double AcceptationRatio = 0.0;
+    std::vector<std::string> CurrentParameters;
+    
+    
+    /// Loop over the realizations of the block to update the ration and the realizations
+    for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it)
+    {
+        
+        /// Initialization
+        std::string NameRealization = std::get<0>(*it); 
+        CurrentParameters.push_back(NameRealization);
+        unsigned int SubjectNumber = std::get<1>(*it);
+        
+        /// Get the current and candidate random variables 
+        ScalarType CurrentRealization = R->at(NameRealization)(SubjectNumber);
+        ScalarType CandidaRealization = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization).Sample();
+        
+        /// Get the random variable
+        auto RandomVariable = M->GetRandomVariable(NameRealization);
+        AcceptationRatio += RandomVariable->LogLikelihood(CandidaRealization);
+        AcceptationRatio -= RandomVariable->LogLikelihood(CurrentRealization);
+        
+        /// Update the NewRealizations
+        NewRealizations->at(NameRealization)(SubjectNumber) = CandidaRealization;
+    }
+    
+    /// Compute the likelihood
+    
+    M->UpdateParameters(R);
+    double A = M->ComputeLogLikelihood(R, D);
+    AcceptationRatio -= A;
+    
+    M->UpdateParameters(NewRealizations);
+    double B = M->ComputeLogLikelihood(NewRealizations, D);
+    AcceptationRatio += B;
+    
+    //std::cout << "Before / After : " << A << " / " << B << std::endl;
+    
+    AcceptationRatio = std::min(AcceptationRatio, 0.0);
+    AcceptationRatio = exp(AcceptationRatio);
+    
+    /// Return the new realizations
+    std::random_device RD;
+    std::mt19937 Generator(RD());
+    std::uniform_real_distribution<double> Distribution(0.0, 1.0);
+    double UnifSample = Distribution(Generator);
+    
+    if(UnifSample > AcceptationRatio)
+    {
         return *R;
     }
     else

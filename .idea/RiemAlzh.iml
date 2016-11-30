@@ -7,20 +7,26 @@
       <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/AbstractSampler.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/HMWithinGibbsSampler.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockGibbsSampler.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockGibbsSampler.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/HMWithinGibbsSampler.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler2.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/AbstractSampler.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler2.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/TestModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/LongitudinalModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/TestModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/LongitudinalModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel2.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel2.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LogNormalRandomVariable.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RandomVariables/AbstractRandomVariable.cpp" isTestSource="false" />
@@ -38,8 +44,8 @@
       <sourceFolder url="file://$MODULE_DIR$/Algorithm/Algorithm.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Manifolds/AbstractManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/PropagationManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Manifolds/AbstractManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Manifolds/PropagationManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Manifolds/PropagationManifold.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/LogisticBaseManifold.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/LogisticBaseManifold.h" isTestSource="false" />

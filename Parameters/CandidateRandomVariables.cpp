@@ -83,7 +83,7 @@ CandidateRandomVariables
     /////////////////////////////////////////////////////
 
     /// QUICK CHANGES IN THE INITIALIZATION
-    double P0Variance = 0.0002;
+    double P0Variance = 0.000002;
     double T0Variance = 0.0002;
     double V0Variance = 0.0000005;
     double DeltaVariance = 0.00001;
@@ -125,6 +125,14 @@ CandidateRandomVariables
     else if(NameRandomVariable == "S")
     {
         return GaussianRandomVariable(CurrentState, SVariance);
+    }
+    else if(NameRandomVariable == "A")
+    {
+        return GaussianRandomVariable(CurrentState, 0.001);
+    }
+        else if(NameRandomVariable == "B")
+    {
+        return GaussianRandomVariable(CurrentState, 0.001);
     }
     else
     {

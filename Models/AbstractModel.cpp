@@ -38,17 +38,6 @@ AbstractModel
 }
 
 
-AbstractModel::RandomVariableMap
-AbstractModel
-::GetRandomVariables()
-{
-    RandomVariableMap RandomVariables;
-    
-    RandomVariables.insert(m_PopulationRandomVariables.begin(), m_PopulationRandomVariables.end());
-    RandomVariables.insert(m_IndividualRandomVariables.begin(), m_IndividualRandomVariables.end());
-
-    return RandomVariables;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Other method(s) :

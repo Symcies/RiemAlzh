@@ -1,25 +1,23 @@
-#ifndef _BlockedGibbsSampler_h
-#define _BlockedGibbsSampler_h
+#ifndef _BlockGibbsSampler_h
+#define _BlockGibbsSampler_h
 
 
 #include "AbstractSampler.h"
 
-class BlockedGibbsSampler : public AbstractSampler {
-
+class BlockGibbsSampler : public AbstractSampler {
 public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    // For each block; vector of Name + SubjectNumber
-    typedef std::vector< std::tuple< std::string, unsigned int>> Block;
+    typedef std::vector< std::pair< std::string, int>> Block;
     
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    BlockedGibbsSampler();
+    BlockGibbsSampler();
+    ~BlockGibbsSampler();
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,47 +33,44 @@ public:
     virtual void InitializeSampler(const std::shared_ptr<MultiRealizations>& R);
     
     // Sample a new variable thanks to the sampler
-    // The model cannot be constant because we modify some of its parameters (m_Orthonormal Basis for instance)
     virtual MultiRealizations Sample(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
                                      const std::shared_ptr<Data>& D, int IterationNumber);
-
-
+    
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Sample one block 
+    MultiRealizations BlockSample(int BlockNumber, const MultiRealizations& R, std::shared_ptr<AbstractModel>& M, 
+                                  const std::shared_ptr<Data>& D, int IterationNumber);
     
-    /// Sample one block
-    MultiRealizations OneBlockSample(int BlockNumber, const std::shared_ptr<MultiRealizations>& R, 
-                                     std::shared_ptr<AbstractModel>& M,
-                                     const std::shared_ptr<Data>& D, int IterationNumber);
+
+    /// Compute likelihood
+    double ComputeLikelihood(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M, 
+                             const std::shared_ptr<Data>& D, int Type);
+            
+    /// Check the type of the random variables in the block --> In order to compute the loglikelihood
+    int TypeRandomVariables(Block B);
     
-    /// Sample one block but without optimization
-    MultiRealizations OneBlockSampleNoOpt(int BlockNumber, const std::shared_ptr<MultiRealizations>& R, 
-                                     std::shared_ptr<AbstractModel>& M,
-                                     const std::shared_ptr<Data>& D, int IterationNumber);
-    
-    
-    /// Check if all the random variables are from one individual
-    bool IndividualRandomVariables(Block B);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    /// Candidates random variables, corresponding to those in the Model
-    CandidateRandomVariables m_CandidateRandomVariables;
+    
     
     /// Blocks of the sampler
     std::vector<Block> m_Blocks;
     
-    /// Last likelihood computed : reused 
-    double m_LastLikelihoodComputed = 0;
+    /// Last loglikelihood computed : each coordinate is an individual likelihood
+    VectorType m_LogLikelihood;
     
-    /// Names of the random variables that are individual
-    std::vector<std::string> m_IndividualRandomVariables;
+    /// Candidate random variables
+    CandidateRandomVariables m_CandidateRandomVariables;
+    
     
 };
 
 
-#endif //_BlockedGibbsSampler_h
+#endif //_BlockGibbsSampler_h
