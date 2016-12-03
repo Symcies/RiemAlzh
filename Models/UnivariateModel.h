@@ -85,17 +85,6 @@ private :
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /// Get initial time
-    double GetInitialTime();
-    
-    /// Get initial position
-    double GetInitialPosition(const std::shared_ptr<MultiRealizations>& R);
-    
-    /// Get the initial velocity
-    double GetInitialVelocity();
-    
-    
     
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
     std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R);
@@ -113,8 +102,6 @@ private :
     
     /// Abstract Base Manifold - because do not need an AbstractManifold
     std::shared_ptr<AbstractBaseManifold> m_BaseManifold;
-    
-    
 };
 
 

@@ -24,7 +24,7 @@ BlockedGibbsSampler
     m_CandidateRandomVariables.InitializeCandidateRandomVariables(R);
     
     // TODO : CHECK IF IT THE ONLY ONE?
-    m_IndividualRandomVariables = {"Ksi", "Tau", "S#0", "S#1", "S#2"};
+    //m_IndividualRandomVariables = {"Ksi", "Tau", "S#0", "S#1", "S#2"};
     
     //////////////////
     ///   Test 1   ///
@@ -91,11 +91,11 @@ BlockedGibbsSampler
     ////////////////////////////////////
     ///   Test 3 : Univariate Model  ///
     ////////////////////////////////////
-    /*
+    
     /// Population block
-    auto P0 = std::make_tuple("P0", 0);
-    Block Pop = {P0};
-    m_Blocks.push_back(Pop);
+    auto P0 = std::make_tuple("P0", -1);
+    m_Blocks.push_back({P0});
+    
     
     /// Individual variables block
     for(unsigned int i = 0; i < R->at("Ksi").size(); ++i)
@@ -106,12 +106,14 @@ BlockedGibbsSampler
         Block IndividualBlock = {Ksi, Tau};
         m_Blocks.push_back(IndividualBlock);
     }
-    */
+
+
     
+     
     //////////////////
     /// Test Model ///
     //////////////////
-    
+    /*
     for(unsigned int i = 0; i < R->at("A").size(); ++i)
     {
         auto A = std::make_tuple("A", i);
@@ -119,15 +121,10 @@ BlockedGibbsSampler
         Block Pop = {A, B};
         m_Blocks.push_back(Pop);
     }
-    /*
-    for(unsigned int i = 0; i < R->at("B").size(); ++i)
-    {
-        auto B = std::make_tuple("B", i);
-        Block Pop = {B};
-        m_Blocks.push_back(Pop);
-    }
-     */
-
+    
+    auto C = std::make_tuple("C", -1);
+    m_Blocks.push_back({C});
+    */
     
     /////////////////
     /// End Tests ///
@@ -148,7 +145,8 @@ BlockedGibbsSampler
     ////////////////////////////////////////
     // TODO : Check if the update is needed
     M->UpdateParameters(R);
-    m_LastLikelihoodComputed = 0;
+    VectorType LL = ComputeLogLikelihood(-1, R, M, D);
+    UpdateLastLogLikelihood(-1, LL);
     ////////////////////////////////////////
     
     
@@ -157,8 +155,8 @@ BlockedGibbsSampler
     for(int i = 0; i < m_Blocks.size(); ++i)
     {
         NewRealizations = std::make_shared<MultiRealizations>(OneBlockSample(i, NewRealizations, M, D, IterationNumber));
-        //NewRealizations = std::make_shared<MultiRealizations>(OneBlockSampleNoOpt(i, NewRealizations, M, D, IterationNumber));
     }
+    
         
     return *NewRealizations;
 }
@@ -179,7 +177,6 @@ BlockedGibbsSampler
     /// Initialization
     auto NewRealizations = std::make_shared<MultiRealizations>(*R);
     Block CurrentBlock = m_Blocks[BlockNumber];
-    double ComputedLikelihood = 0;
     double AcceptationRatio = 0;
     std::vector<std::string> CurrentParameters; 
     
@@ -190,7 +187,7 @@ BlockedGibbsSampler
         /// Initialization
         std::string NameRealization = std::get<0>(*it); 
         CurrentParameters.push_back(NameRealization);
-        unsigned int SubjectNumber = std::get<1>(*it);
+        unsigned int SubjectNumber = std::max(std::get<1>(*it), 0);
         
         ///Get the current (for the ratio) and candidate random variables (to sample a candidate)
         ScalarType CurrentRealization = R->at(NameRealization)(SubjectNumber);
@@ -206,31 +203,14 @@ BlockedGibbsSampler
     }
     
     /// Compute the likelihood
-    bool Individual = IndividualRandomVariables(CurrentBlock);
+    int Type = TypeRandomVariables(CurrentBlock);
+
+    AcceptationRatio -= GetPreviousLogLikelihood(Type, M, R, D);
     
-    if(Individual)
-    {
-        int SubjectNumber = std::get<1>(CurrentBlock[0]);
-        AcceptationRatio -= M->ComputeIndividualLogLikelihood(R, D, SubjectNumber);
-        
-        M->UpdateParameters(NewRealizations, CurrentParameters);
-        AcceptationRatio += M->ComputeIndividualLogLikelihood(NewRealizations, D, SubjectNumber);
-    } 
-    else
-    {
-        if(m_LastLikelihoodComputed == 0)
-        {
-            AcceptationRatio -= M->ComputeLogLikelihood(R, D);
-        }
-        else
-        {
-            AcceptationRatio -= m_LastLikelihoodComputed;
-        }
-        
-        M->UpdateParameters(NewRealizations, CurrentParameters);
-        ComputedLikelihood = M->ComputeLogLikelihood(NewRealizations, D); 
-        AcceptationRatio += ComputedLikelihood;
-    }
+    M->UpdateParameters(NewRealizations, CurrentParameters);
+    VectorType ComputedLogLikelihood = ComputeLogLikelihood(Type, NewRealizations, M, D);
+    AcceptationRatio += ComputedLogLikelihood.sum();
+    
     AcceptationRatio = std::min(AcceptationRatio, 0.0);
     AcceptationRatio = exp(AcceptationRatio);
     
@@ -239,7 +219,7 @@ BlockedGibbsSampler
     {
         /// Initialization
         std::string NameRealization = std::get<0>(*it);
-        unsigned int SubjectNumber = std::get<1>(*it);
+        unsigned int SubjectNumber = std::max(std::get<1>(*it), 0);
         ScalarType CurrentRealization = R->at(NameRealization)(SubjectNumber);
                 
         /// Update variance
@@ -263,84 +243,17 @@ BlockedGibbsSampler
         /// Acceptation : Candidate is accepted
     else
     {
-        m_LastLikelihoodComputed = ComputedLikelihood;
+        //m_LastLikelihoodComputed = ComputedLogLikelihood.sum();
+        UpdateLastLogLikelihood(Type, ComputedLogLikelihood);
         return *NewRealizations;
     }
     
 }
 
 
-BlockedGibbsSampler::MultiRealizations
+int  
 BlockedGibbsSampler
-::OneBlockSampleNoOpt(int BlockNumber, const std::shared_ptr<MultiRealizations> &R,
-                      std::shared_ptr<AbstractModel> &M, const std::shared_ptr<Data> &D,
-                      int IterationNumber) 
-{
-    /// Initialization
-    auto NewRealizations = std::make_shared<MultiRealizations>(*R);
-    Block CurrentBlock = m_Blocks[BlockNumber];
-    double AcceptationRatio = 0.0;
-    std::vector<std::string> CurrentParameters;
-    
-    
-    /// Loop over the realizations of the block to update the ration and the realizations
-    for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it)
-    {
-        
-        /// Initialization
-        std::string NameRealization = std::get<0>(*it); 
-        CurrentParameters.push_back(NameRealization);
-        unsigned int SubjectNumber = std::get<1>(*it);
-        
-        /// Get the current and candidate random variables 
-        ScalarType CurrentRealization = R->at(NameRealization)(SubjectNumber);
-        ScalarType CandidaRealization = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization).Sample();
-        
-        /// Get the random variable
-        auto RandomVariable = M->GetRandomVariable(NameRealization);
-        AcceptationRatio += RandomVariable->LogLikelihood(CandidaRealization);
-        AcceptationRatio -= RandomVariable->LogLikelihood(CurrentRealization);
-        
-        /// Update the NewRealizations
-        NewRealizations->at(NameRealization)(SubjectNumber) = CandidaRealization;
-    }
-    
-    /// Compute the likelihood
-    
-    M->UpdateParameters(R);
-    double A = M->ComputeLogLikelihood(R, D);
-    AcceptationRatio -= A;
-    
-    M->UpdateParameters(NewRealizations);
-    double B = M->ComputeLogLikelihood(NewRealizations, D);
-    AcceptationRatio += B;
-    
-    //std::cout << "Before / After : " << A << " / " << B << std::endl;
-    
-    AcceptationRatio = std::min(AcceptationRatio, 0.0);
-    AcceptationRatio = exp(AcceptationRatio);
-    
-    /// Return the new realizations
-    std::random_device RD;
-    std::mt19937 Generator(RD());
-    std::uniform_real_distribution<double> Distribution(0.0, 1.0);
-    double UnifSample = Distribution(Generator);
-    
-    if(UnifSample > AcceptationRatio)
-    {
-        return *R;
-    }
-    else
-    {
-        return *NewRealizations;
-    }
-    
-}
-
-
-bool 
-BlockedGibbsSampler
-::IndividualRandomVariables(Block B) 
+::TypeRandomVariables(Block B) 
 {
     int SubjectNumber = std::get<1>(B[0]);
     
@@ -348,19 +261,52 @@ BlockedGibbsSampler
     {
         if(std::get<1>(*it) != SubjectNumber)
         {
-            return false;
-        }
-        std::string Name = std::get<0>(*it);
-        if(std::find(m_IndividualRandomVariables.begin(), m_IndividualRandomVariables.end(), Name) != m_IndividualRandomVariables.end())
-        {
-            continue;
-        }
-        else
-        {
-            return false;
+            return -1;
         }
     }
     
-    return true;
+    return SubjectNumber;
 }
 
+
+BlockedGibbsSampler::VectorType
+BlockedGibbsSampler
+::ComputeLogLikelihood(int Type, const std::shared_ptr<MultiRealizations> R,
+                       const std::shared_ptr<AbstractModel> M, const std::shared_ptr<Data> D) 
+{
+    if(Type == -1) 
+    {
+        VectorType LogLikelihood(D->size(), 0);
+        int i = 0;
+        for (auto it = LogLikelihood.begin(); it != LogLikelihood.end(); ++it, ++i) {
+            *it = M->ComputeIndividualLogLikelihood(R, D, i);
+
+        }
+        return LogLikelihood;
+    }
+    else 
+    {
+        return VectorType(1, M->ComputeIndividualLogLikelihood(R, D, Type));
+    }
+}
+
+double
+BlockedGibbsSampler
+::GetPreviousLogLikelihood(int Type, const std::shared_ptr<AbstractModel> M, 
+                           const std::shared_ptr<MultiRealizations> R, const std::shared_ptr<Data> D) 
+{
+    if(Type == -1)
+        return m_LastLikelihoodComputed.sum();
+    else
+        return m_LastLikelihoodComputed(Type);
+}
+
+void 
+BlockedGibbsSampler
+::UpdateLastLogLikelihood(int Type, VectorType ComputedLogLikelihood) 
+{
+    if(Type == -1)
+        m_LastLikelihoodComputed = ComputedLogLikelihood;
+    else
+        m_LastLikelihoodComputed(Type) = ComputedLogLikelihood.sum();
+}

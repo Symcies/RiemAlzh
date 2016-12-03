@@ -39,8 +39,9 @@ GaussianRandomVariable
     std::mt19937_64 Generator(RD());
     std::normal_distribution<double> Distribution(m_Mean, sqrt(m_Variance));
 
-    return Distribution(Generator);
-
+    double Sample =  Distribution(Generator);
+    //std::cout << "Sample (Mean/Std = "  << m_Mean << "/" << sqrt(m_Variance) << ") --> " << Sample << std::endl;
+    return Sample;
 }
 
 double

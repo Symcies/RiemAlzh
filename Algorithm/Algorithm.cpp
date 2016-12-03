@@ -48,7 +48,11 @@ Algorithm
         //clock_t d = clock();
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
         //clock_t e = clock();
-        if( k%100 == 0 ) { ComputeOutputs(); }
+        if( k%100 == 0 ) 
+        { 
+            ComputeOutputs();
+            std::cout << "LogLikelihood : " << m_Model->ComputeLogLikelihood(m_Realizations, D) << std::endl; 
+        }
 //        a1 += b - a;
 //        a2 += c - b;
 //        a3 += d - c;

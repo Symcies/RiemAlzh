@@ -1,7 +1,7 @@
 #ifndef _AbstractModel_h
 #define _AbstractModel_h
 
-#include <memory>
+
 
 #include "../Utilities/MatrixFunctions.h"
 #include "../Tests/TestAssert.h"
@@ -9,10 +9,13 @@
 #include "../RandomVariables/LaplaceRandomVariable.h"
 #include "../Manifolds/AbstractManifold.h"
 #include "../LinearAlgebra/LinearAlgebra.h"
+
 #include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <functional>
+#include <math.h>
+#include <memory>
 
 
 

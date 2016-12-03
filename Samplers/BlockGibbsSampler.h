@@ -47,9 +47,13 @@ protected:
     
 
     /// Compute likelihood
-    double ComputeLikelihood(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M, 
+    VectorType ComputeLikelihood(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M, 
                              const std::shared_ptr<Data>& D, int Type);
             
+    /// Get the previously computed likelihood
+    double GetPreviousLogLikelihood(int Type);
+    
+    
     /// Check the type of the random variables in the block --> In order to compute the loglikelihood
     int TypeRandomVariables(Block B);
     

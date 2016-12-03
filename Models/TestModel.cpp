@@ -33,10 +33,12 @@ TestModel
     
     auto A = std::make_shared<GaussianRandomVariable>(0, 1.1);
     auto B = std::make_shared<GaussianRandomVariable>(1.2, 0.3);
+    auto C = std::make_shared<GaussianRandomVariable>(-1.2, 0.00001);
     m_Noise = std::make_shared<GaussianRandomVariable>(0.0, 0.001);
     
     m_IndividualRandomVariables.insert(RandomVariable("A", A));
     m_IndividualRandomVariables.insert(RandomVariable("B", B));
+    m_PopulationRandomVariables.insert(RandomVariable("C", C));
 }
 
 
@@ -54,11 +56,14 @@ TestModel
 {
     auto A = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("A"));
     auto B = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("B"));
+    auto C = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("C"));
     std::map<std::string, double> Parameters;
     Parameters["A_Mean"] = A->GetMean();
     Parameters["A_Var"] = A->GetVariance();
     Parameters["B_Mean"] = B->GetMean();
     Parameters["B_Var"] = B->GetVariance();
+    Parameters["C_Mean"] = C->GetMean();
+    Parameters["C_Var"] = C->GetVariance();
     return Parameters;
 }
 
@@ -93,7 +98,7 @@ TestModel
         for(auto IterIndivData = IterData->begin(); IterIndivData != IterData->end(); ++IterIndivData)
         {
             double TimePoint = IterIndivData->second;
-            double at = GetA(i, R) * TimePoint + GetB(i, R);
+            double at = GetA(i, R) * TimePoint + GetB(i, R) + GetC(R) * TimePoint * TimePoint;
             double y = IterIndivData->first[0];
             
             *IterS1 = at * y;
@@ -114,7 +119,7 @@ TestModel
         *IterS4 = a*a;
     }
     
-    /// Compute S5 et S6
+    /// Compute S5 and S6
     VectorType S5(NumberOfSubjects), S6(NumberOfSubjects);
     auto IterS5 = S5.begin();
     auto IterS6 = S6.begin();
@@ -127,8 +132,11 @@ TestModel
     }
     
     
+    /// Compute S7 
+    VectorType S7(1, R->at("C")(0));
     
-    SufficientStatisticsVector S = {S0, S1, S2, S3, S4, S5, S6};
+    
+    SufficientStatisticsVector S = {S0, S1, S2, S3, S4, S5, S6, S7};
     
     /// Test
     std::function<double()> f1 = [=, &D, &R] () { return this->ComputeLogLikelihood(R, D); };
@@ -203,6 +211,15 @@ TestModel
     B->SetMean(BMean);
     B->SetVariance(BVariance);
     
+    
+    /// Update c mean
+    double CMean = StochSufficientStatistics[7](0);
+    
+    auto AbstractC = m_PopulationRandomVariables.at("C");
+    auto C = std::static_pointer_cast<GaussianRandomVariable>(AbstractC);
+    
+    C->SetMean(CMean);
+    
     /// Update noise
     double K = 0.0;
     for(const auto& it : *D)
@@ -237,7 +254,8 @@ TestModel
         for(auto IterIndivData = IterData->begin(); IterIndivData != IterData->end(); ++IterIndivData)
         {
             double y = IterIndivData->first(0);
-            double at = GetA(i, R) * IterIndivData->second + GetB(i, R);
+            double t = IterIndivData->second ;
+            double at = GetA(i, R) * t + GetB(i, R) + GetC(R)*t*t;
             double Norm = (y - at);
             LogLikelihood += Norm * Norm;
         }
@@ -255,15 +273,16 @@ TestModel
 ::ComputeIndividualLogLikelihood(const std::shared_ptr <MultiRealizations> &R,
                                  const std::shared_ptr <Data> &D, const int SubjectNumber) 
 {
-    double LogLikelihood = 0.0, K = 0.0;
+    double LogLikelihood = 0.0;
     for(auto IterData = D->at(SubjectNumber).begin(); IterData != D->at(SubjectNumber).end(); ++IterData)
     {
         double y = IterData->first(0);
-        double at = GetA(SubjectNumber, R) * IterData->second + GetB(SubjectNumber, R);
+        double t = IterData->second;
+        double at = GetA(SubjectNumber, R) * t + GetB(SubjectNumber, R) + GetC(R) * t * t;
         double Norm = y - at;
         LogLikelihood += Norm * Norm;
     }
-    
+    double K = D->at(SubjectNumber).size();
     LogLikelihood /= -2 * m_Noise->GetVariance();
     LogLikelihood -= K *log( sqrt( 2 * M_PI * m_Noise->GetVariance() ));
     
@@ -297,7 +316,7 @@ TestModel
         
         for(auto it = TimePoints.begin(); it != TimePoints.end(); ++it)
         {
-            double at = GetA(i, R) * *it + GetB(i, R);
+            double at = GetA(i, R) * *it + GetB(i, R) + GetC(R) * *it * *it;
             double Noise = NoiseDistrib(RNG);
             SumNoise += Noise;
             q += 1;
@@ -324,14 +343,16 @@ TestModel
 {
     auto A = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("A"));
     auto B = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("B"));
+    auto C = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("C"));
     double AMean = A->GetMean();
     double AVar = A->GetVariance();
     double BMean = B->GetMean();
     double BVar = B->GetVariance();
+    double CMean = C->GetMean();
     double Sigma = m_Noise->GetVariance();
     
     std::cout << "Parameters : AMean " << AMean << ". AVar : " << AVar << ". BMean : " << BMean;
-    std::cout << ". BVar : " << BVar <<  ". Sigma : " << Sigma << std::endl;
+    std::cout << ". BVar : " << BVar << ". CMean : " << CMean <<  ". Sigma : " << Sigma << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -344,10 +365,12 @@ TestModel
 {
     auto A = std::make_shared<GaussianRandomVariable>(2, 0.2);
     auto B = std::make_shared<GaussianRandomVariable>(-2, 0.4);
+    auto C = std::make_shared<GaussianRandomVariable>(0.5, 0.00001);
     m_Noise = std::make_shared<GaussianRandomVariable>(0.0, 0.00001);
     
     m_IndividualRandomVariables.insert(RandomVariable("A", A));
     m_IndividualRandomVariables.insert(RandomVariable("B", B));
+    m_PopulationRandomVariables.insert(RandomVariable("C", C));
 }
 
 
@@ -367,4 +390,12 @@ TestModel
 ::GetB(int i, const std::shared_ptr<MultiRealizations>& R) 
 {
     return R->at("B")(i);
+}
+
+
+double 
+TestModel
+::GetC(const std::shared_ptr<MultiRealizations> R)
+{
+    return R->at("C")(0);
 }

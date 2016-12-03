@@ -12,8 +12,8 @@ typedef double ScalarType;
 #include "Models/NetworkPropagationModel.h"
 #include "Models/TestModel.h"
 #include "Samplers/HMWithinGibbsSampler.h"
-#include "Samplers/BlockedGibbsSampler2.h"
 #include "Samplers/BlockedGibbsSampler.h"
+#include "Samplers/BlockGibbsSampler.h"
 #include "Tests/TestAssert.h"
 #include "Outputs/RandomVariableRealizations.h"
 #include "LinearAlgebra/LinearAlgebra.h"
@@ -89,26 +89,28 @@ int main() {
     ////////////////////////
     /// Univariate Model ///
     ////////////////////////
-    /*
+    
     shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
     shared_ptr<AbstractModel> Model = make_shared<UnivariateModel>(BaseManifold);
     //shared_ptr<AbstractSampler> Sampler = make_shared<HMWithinGibbsSampler>();
     shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-    */
+    
     
     //////////////////
     /// Test Model ///
     //////////////////
+    /*
     shared_ptr<AbstractModel> Model = make_shared<TestModel>();
     shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-    
+    //shared_ptr<AbstractSampler> Sampler = make_shared<BlockGibbsSampler>();
+    */
     
     ////////////////////////////////////////
     /// Data Generation & Initialization ///
     ////////////////////////////////////////
     
     Model->InitializeFakeRandomVariables();
-    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(400, 4, 7) );
+    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(2000, 5, 7) );
     Model->Initialize();
     
     

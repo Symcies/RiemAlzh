@@ -29,7 +29,7 @@ AbstractSampler
 ::DecreasingStepSize(int Iteration, int NoMemoryTime) 
 {
     double Epsilon = std::max(1, Iteration - NoMemoryTime);
-    double Lambda = 0.6; // Lambda should belong to ]1/2 ; 1]
+    double Lambda = 0.51; // Lambda should belong to ]1/2 ; 1]
     return 1.0 / pow(Epsilon, Lambda);
 }
 
@@ -38,7 +38,7 @@ AbstractSampler
 ::UpdatePropositionDistributionVariance(GaussianRandomVariable &GRV, double Ratio, int Iteration) 
 {
     // TODO : where to put these parameters
-    double Goal = 0.3;
+    double Goal = 0.234;
     int NoMemoryTime = 10000;
     
     double Epsilon = DecreasingStepSize(Iteration, NoMemoryTime);
@@ -54,7 +54,7 @@ AbstractSampler
     }
     
     double NewVariance = GRV.GetVariance();
-    NewVariance *= (1 + Epsilon * (Ratio - Goal) / Denom / 20);
+    NewVariance *= (1 + Epsilon * (Ratio - Goal) / Denom / 5);
     NewVariance = std::max(NewVariance, 0.0000001);
     GRV.SetVariance( NewVariance );
 }

@@ -27,6 +27,8 @@ void
 BlockGibbsSampler
 ::InitializeSampler(const std::shared_ptr<MultiRealizations> &R) 
 {
+    
+    m_CandidateRandomVariables.InitializeCandidateRandomVariables(R);
     //////////////////
     /// Test Model ///
     //////////////////    
@@ -37,6 +39,8 @@ BlockGibbsSampler
         Block Pop = {A, B};
         m_Blocks.push_back(Pop);
     }
+    auto C = std::pair<std::string, int>("C", -1);
+    m_Blocks.push_back({C});
     
     VectorType LL(R->at("A").size());
     m_LogLikelihood = LL;
@@ -102,33 +106,91 @@ BlockGibbsSampler
         auto RandomVariable = M->GetRandomVariable(NameRealization);
         AcceptanceRatio += RandomVariable->LogLikelihood(CandidaRealization);
         AcceptanceRatio -= RandomVariable->LogLikelihood(CurrentRealization);
+        
+        /// Update the NewRealizations
+        NewRealizations.at(NameRealization)(SubjectNumber) = CandidaRealization;
     }
     
    /// Compute the type of likelihood to compute 
     int Type = TypeRandomVariables(CurrentBlock);
     
-    AcceptanceRatio -= m_LogLikelihood.sum();
+    AcceptanceRatio -= GetPreviousLogLikelihood(Type);
+    auto XXX = std::make_shared<MultiRealizations>(R);
+    VectorType NewLogLikelihood = ComputeLikelihood(XXX, M, D, Type);
+    AcceptanceRatio += NewLogLikelihood.sum();
     
+    AcceptanceRatio = std::min(AcceptanceRatio, 0.0);
+    AcceptanceRatio = exp(AcceptanceRatio);
     
+    /// Adaptative variances for the realizations
+    for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it)
+    {
+        /// Initialization
+        std::string NameRealization = std::get<0>(*it);
+        unsigned int SubjectNumber = std::max(0, std::get<1>(*it));
+        ScalarType CurrentRealization = R.at(NameRealization)(SubjectNumber);
+                
+        /// Update variance
+        GaussianRandomVariable& GRV = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization);
+        UpdatePropositionDistributionVariance(GRV, AcceptanceRatio, IterationNumber);
+    }
     
+    /// Return the new realizations
+    std::random_device RD;
+    std::mt19937 Generator(RD());
+    std::uniform_real_distribution<double> Distribution(0.0, 1.0);
+    double UniformDraw = Distribution(Generator);
+    
+    /// Rejection
+    if(UniformDraw > AcceptanceRatio)
+    {
+        M->UpdateParameters(std::make_shared<MultiRealizations>(R), CurrentParameters);
+        return R;
+    }
+    else
+    {
+        //UpdateLogLikelihood(NewLogLikelihood);
+        return NewRealizations;
+    }
 }
 
 
 
 
 
-double 
+BlockGibbsSampler::VectorType
 BlockGibbsSampler
 ::ComputeLikelihood(const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M,
                     const std::shared_ptr<Data> &D, int Type) 
 {
     if(Type == -1)
     {
-        return M->ComputeLogLikelihood(R, D);
+        VectorType LogLikelihood(D->size());
+        int i = 0;
+        for(auto it = LogLikelihood.begin(); it != LogLikelihood.end(); ++it, ++i)
+        {
+            *it = M->ComputeIndividualLogLikelihood(R, D, i);
+        }
+        return LogLikelihood;
     }
     else
     {
-        return M->ComputeIndividualLogLikelihood(R, D, Type);
+        VectorType A(1, M->ComputeIndividualLogLikelihood(R, D, Type));
+        return A;
+    }
+}
+
+double 
+BlockGibbsSampler
+::GetPreviousLogLikelihood(int Type)
+{
+    if(Type == -1)
+    {
+        return m_LogLikelihood.sum();
+    }
+    else
+    {
+        return m_LogLikelihood(Type);
     }
 }
 
