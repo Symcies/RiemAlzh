@@ -75,9 +75,9 @@ int main() {
     /// Open the files - real example
     
     std::string KernelMatrixPath("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/invKd.csv");
-    auto KernelMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
+    auto KernelMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
     std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/Kxd.csv");
-    auto InterpolationMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
+    auto InterpolationMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
     shared_ptr<Data> D = std::make_shared<Data>(ReadData::OpenFilesMultivariate());
     
     //TODO : Check the data 
