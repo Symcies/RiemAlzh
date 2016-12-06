@@ -97,9 +97,9 @@ BlockedGibbsSampler
         auto Tau = std::make_tuple("Tau", i);
         auto S0 = std::make_tuple("S#0", i);
         auto S1 = std::make_tuple("S#1", i);
-        auto S2 = std::make_tuple("S#2", i);
-        
-        Block IndividualBlock = {Ksi, Tau, S0, S1, S2};
+        //auto S2 = std::make_tuple("S#2", i);
+        // TODO : add also to next block is uncommented
+        Block IndividualBlock = {Ksi, Tau, S0, S1};
         m_Blocks.push_back(IndividualBlock);
     }
     

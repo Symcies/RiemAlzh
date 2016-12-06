@@ -14,16 +14,18 @@ NetworkPropagationModel2
 {
     m_NbIndependentComponents = NbIndependentComponents;
     m_Manifold = M;
-    m_InvertKernelMatrix = inverse(*KernelMatrix);
+    //m_InvertKernelMatrix = inverse(*KernelMatrix);
+    m_InvertKernelMatrix = *KernelMatrix;
     m_InterpolationMatrix = *InterpolationMatrix;
     m_OutputParameters.open("Parameters.txt", std::ofstream::out | std::ofstream::trunc);
     m_NbControlPoints = m_InvertKernelMatrix.columns();
     m_InterpolationCoefficients.set_size(m_NbControlPoints);
     
     //// Tests
-    TestAssert::WarningEquality_Object(m_Manifold->GetDimension(), (double)m_InvertKernelMatrix.size(), "Network Propagation Constructor");
-    TestAssert::WarningEquality_Object(m_Manifold->GetDimension(), (double)m_InterpolationMatrix.rows(), "Network Propagation Constructor");
-    TestAssert::WarningEquality_Object(m_NbControlPoints, m_InterpolationMatrix.columns(), "Network Propagation Constructor");
+    TestAssert::WarningEquality_Object(m_Manifold->GetDimension(), (double)m_InterpolationMatrix.rows(), "Error Network Propagation Constructor > 1");
+    TestAssert::WarningEquality_Object(m_NbControlPoints, m_InterpolationMatrix.columns(), "Error Network Propagation Constructor > 2");
+    TestAssert::WarningEquality_Object(m_NbControlPoints, m_InvertKernelMatrix.rows(), "Error Network Propagation Constructor > 3");
+    TestAssert::WarningEquality_Object(m_NbControlPoints, m_InvertKernelMatrix.columns(), "Network Propagation Constructor > 4");
     
 }
 
@@ -38,45 +40,42 @@ void
 NetworkPropagationModel2
 ::Initialize(const std::shared_ptr<Data> D) 
 {
+    m_IndividualRandomVariables.clear();
+    m_PopulationRandomVariables.clear();
+    
     /////////////////////////////
     /// Population Parameters ///
     /////////////////////////////
     
-    auto P0 = std::make_shared<GaussianRandomVariable>(20, 0.0000001);
+    auto P0 = std::make_shared<GaussianRandomVariable>(1.9, 0.000001);
     m_PopulationRandomVariables.insert( RandomVariable("P0", P0) );
     
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.0000001 );
-    
-    for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension() - 1); ++i)
-    {
-        auto Beta = std::make_shared<GaussianRandomVariable>((double)i/20.0, 0.0001);
-        std::string Name = "Beta#" + std::to_string(i);
-        m_PopulationRandomVariables.insert(RandomVariable(Name, Beta));
-    }
-    
-    for(int i = 0; i < m_NbControlPoints - 1; ++i)
-    {
-        auto Delta = std::make_shared<GaussianRandomVariable>(-0.5 - (double)i/20, 0.0001);
-        std::string Name = "Delta#" + std::to_string(i);
-        m_PopulationRandomVariables.insert(RandomVariable(Name, Delta));
-    }    
     
     /////////////////////////////
     /// Individual Parameters ///
     /////////////////////////////
     
-    auto Ksi = std::make_shared<GaussianRandomVariable>(0.0, 0.00001);
-    auto Tau = std::make_shared<GaussianRandomVariable>(70.0, 3.0);
+    auto Ksi = std::make_shared<GaussianRandomVariable>(-2, 0.001);
+    auto Tau = std::make_shared<GaussianRandomVariable>(60.0, 2.0);
     
     m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
     m_IndividualRandomVariables.insert(RandomVariable("Tau", Tau));
     
     for(int i = 0; i < m_NbIndependentComponents; ++i)
     {
-        auto S = std::make_shared<GaussianRandomVariable>(0.0, 0.05);
+        auto S = std::make_shared<GaussianRandomVariable>(0.0, 0.5V);
         std::string Name = "S#" + std::to_string(i);
         m_IndividualRandomVariables.insert(RandomVariable(Name, S));
     }
+    
+    for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension() - 1); ++i)
+    {
+        auto Beta = std::make_shared<GaussianRandomVariable>(0, 0.0001);
+        std::string Name = "Beta#" + std::to_string(i);
+        m_PopulationRandomVariables.insert(RandomVariable(Name, Beta));
+    }
+    
     
     ///////////////////////////////////
     ///   Sufficient Statistic S0   ///
@@ -93,6 +92,28 @@ NetworkPropagationModel2
     }
     m_SumObservations = SumObservations;
     m_NbTotalOfObservations = K;
+    
+    
+    
+    //////////////////////////////////
+    ///   Read the initial delta   ///
+    //////////////////////////////////
+    std::ifstream DeltaFile ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/delta.csv");
+    if(DeltaFile.is_open())
+    {
+        unsigned int i = 0;
+        std::string line;
+        while(getline(DeltaFile, line))
+        {
+            double DeltaMean = std::stod(line);
+            auto Delta = std::make_shared<GaussianRandomVariable>(DeltaMean, 0.00001);
+            std::string Name = "Delta#" + std::to_string(i);
+            m_PopulationRandomVariables.insert(RandomVariable(Name, Delta));
+            ++i;
+        }
+        TestAssert::WarningEquality_Object(i, m_NbControlPoints, "Network Propagation Model > Initialize - deltas");
+    }
+    else { std::cout << "Unable to open the initial delta"; }
     
 }
 

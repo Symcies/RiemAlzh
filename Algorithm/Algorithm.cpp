@@ -26,7 +26,6 @@ Algorithm
 {
 
     int NbMaxIterations = 15000;
-    InitializeRealization((int)D->size());
     InitializeModel(D);
     InitializeSampler();
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
@@ -38,7 +37,7 @@ Algorithm
 
     for(int k = 0; k<NbMaxIterations; ++k)
     {
-        if( k%10 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
+        if( k%1 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
         //clock_t a = clock();
         //ComputeOutputs();
         ComputeSimulationStep(D, k);
@@ -52,7 +51,7 @@ Algorithm
         //ComputeOutputs();
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
         //clock_t e = clock();
-        if( k%10 == 0 ) 
+        if( k%1 == 0 ) 
         { 
             ComputeOutputs();
             std::cout << "LogLikelihood : " << m_Model->ComputeLogLikelihood(m_Realizations, D) << std::endl; 
@@ -89,9 +88,19 @@ void
 Algorithm
 ::InitializeRealization(unsigned int NbIndividuals)
 {
-    MultiRealizations R = m_Model->SimulateRealizations(NbIndividuals);
-    m_Realizations = std::make_shared<MultiRealizations>(R);
 
+}
+
+
+void
+Algorithm
+::InitializeModel(const std::shared_ptr<Data> D) 
+{
+    m_Model->Initialize(D);
+    MultiRealizations R = m_Model->SimulateRealizations((int)D->size());
+    m_Realizations = std::make_shared<MultiRealizations>(R);
+    m_Model->UpdateParameters(m_Realizations);
+    
     for(auto&& it : *m_Realizations)
     {
         m_OutputRealizations << it.first << ", ";
@@ -100,15 +109,6 @@ Algorithm
         m_AcceptanceRatios[it.first] = v;
     }
     m_OutputRealizations << std::endl;
-}
-
-
-void
-Algorithm
-::InitializeModel(const std::shared_ptr<Data> D) 
-{
-    m_Model->UpdateParameters(m_Realizations);
-    m_Model->Initialize(D);
 }
 
 void 
@@ -224,7 +224,7 @@ Algorithm
       
   }
     
-    if(Iteration%10 == 0)
+    if(Iteration%1 == 0)
     {
         std::cout << "AcceptRatio: ";
         for(const auto& it : *m_Realizations)

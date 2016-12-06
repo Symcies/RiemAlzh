@@ -6,11 +6,11 @@ ReadData
 ::OpenFilesMultivariate()
 {
     Data D;
-    std::ifstream IndivID ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Data_Test_SAEM_group.txt");
-    std::ifstream DataX ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Data_Test_SAEM_X.txt");
-    std::ifstream DataY ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Data_Test_SAEM_Y_3.txt");
+    std::ifstream IndivID ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/group.csv");
+    std::ifstream DataX ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/X.csv");
+    std::ifstream DataY ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/Y.csv");
     
-    /// Open the DATA_text_SAEM_group file;
+    /// Open the Group file;
     if(IndivID.is_open())
     {
         int i = 0;
@@ -63,13 +63,18 @@ ReadData
         {
             for(auto it2 = it->begin(); it2 != it->end(); ++it2)
             {
-                LinearAlgebra<ScalarType>::VectorType X(4);
-                for(auto it = X.begin(); it != X.end(); ++it)
+                LinearAlgebra<ScalarType>::VectorType X(1827);
+                // TODO : check if everything was parsed
+                int i = 0;
+                std::stringstream LineStream(line);
+                std::string cell;
+                while(std::getline(LineStream, cell, ','))
                 {
-                    *it = std::stod(line);
-                    getline(DataY, line);
+                    X(i) = std::stod(cell);
+                    i++;
                 }
                 it2->first = X;
+                getline(DataY, line);
             }
         }
         std::cout << line << std::endl;
@@ -100,7 +105,7 @@ ReadData
     file.seekg(00, std::ios::beg);
     
     
-    MatrixType Kernel(NbLines, 5, 0);
+    MatrixType Kernel(NbLines, 250, 0);
 
    
     if(file.is_open())
@@ -114,7 +119,7 @@ ReadData
             std:: string cell;
             while(std::getline(LineStream, cell, ','))
             {
-                Kernel(i, j) = std::stod(cell);
+                Kernel(i, j) = std::stold(cell);
                 ++j;
             }
             ++i;

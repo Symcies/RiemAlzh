@@ -45,6 +45,8 @@ public:
     /// Open network propagation files
     static MatrixType OpenKernel(std::string FilePath);
     
+    
+    
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :

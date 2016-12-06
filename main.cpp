@@ -51,7 +51,7 @@ int main() {
     //// Initialization ///
     ///////////////////////
     //unsigned int NumberDimension = 10;
-    unsigned int NumberIndependentComponents = 3;
+    unsigned int NumberIndependentComponents = 2;
     clock_t start = clock();
     
     /////////////
@@ -63,21 +63,32 @@ int main() {
     /////////////////////////////////
     /// Network Propagation Model ///
     /////////////////////////////////
-    
-    /// Open the files - real example
-    std::string KernelMatrixPath("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kd_toyexample.csv");
-    
-    
+        
     /// Open the files - toy model
-    std::string KernelMatrixPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kd_toyexample.csv");
-    std::string InterpolationMatrixPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kxd_toyexample.csv");
-    shared_ptr<NetworkPropagationModel::MatrixType> KernelMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
-    shared_ptr<NetworkPropagationModel::MatrixType> InterpolationMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
+    /*
+    std::string KernelMatrixToyPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kd_toyexample.csv");
+    std::string InterpolationMatrixToyPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kxd_toyexample.csv");
+    shared_ptr<NetworkPropagationModel::MatrixType> KernelMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(KernelMatrixToyPath));
+    shared_ptr<NetworkPropagationModel::MatrixType> InterpolationMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(InterpolationMatrixToyPath));
+    */
+     
+    /// Open the files - real example
+    
+    std::string KernelMatrixPath("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/invKd.csv");
+    auto KernelMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
+    std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/Kxd.csv");
+    auto InterpolationMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
+    shared_ptr<Data> D = std::make_shared<Data>(ReadData::OpenFilesMultivariate());
+    
+    //TODO : Check the data 
+    // Read the initializations
     
     /// Initiate the Manifolds and the model
     shared_ptr<AbstractManifold> Manifold = make_shared<ExponentialCurveManifold>(InterpolationMatrix->rows());
     shared_ptr<AbstractModel> Model = make_shared<NetworkPropagationModel2>(NumberIndependentComponents, Manifold, KernelMatrix, InterpolationMatrix);
     shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
+    //Model->InitializeFakeRandomVariables();
+    //shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(300, 4, 6) );
     
     
     //////////////////////////
@@ -114,10 +125,6 @@ int main() {
     ////////////////////////////////////////
     /// Data Generation & Initialization ///
     ////////////////////////////////////////
-    
-    Model->InitializeFakeRandomVariables();
-    // TODO : Move on the data!
-    shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(300, 4, 6) );
     
     
     //////////////////////////
