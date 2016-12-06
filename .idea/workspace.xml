@@ -13,14 +13,7 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="03e71383-5091-4290-9195-e722e3a9d4e8" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel.h" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Samplers/HMWithinGibbsSampler.h" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.cpp" afterPath="$PROJECT_DIR$/main.cpp" />
-    </list>
+    <list default="true" id="03e71383-5091-4290-9195-e722e3a9d4e8" name="Default" comment="" />
     <ignored path="RiemAlzh.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -573,12 +566,12 @@
       <workItem from="1480860033166" duration="5030000" />
       <workItem from="1480874585408" duration="2631000" />
       <workItem from="1480928717318" duration="22641000" />
-      <workItem from="1481021572822" duration="15726000" />
+      <workItem from="1481021572822" duration="15921000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="528798000" />
+    <option name="totallyTimeSpent" value="528993000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="6" />
