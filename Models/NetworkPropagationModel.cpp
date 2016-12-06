@@ -46,7 +46,7 @@ NetworkPropagationModel
 
 void 
 NetworkPropagationModel
-::Initialize()
+::Initialize(const std::shared_ptr<Data> D)
 {
     /// Initialization
     m_PopulationRandomVariables.clear();
@@ -357,7 +357,6 @@ NetworkPropagationModel
     {
         auto AbstractBeta = m_PopulationRandomVariables.at( "Beta#" + std::to_string(i) );
         auto Beta = std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractBeta );
-        std::dynamic_pointer_cast<GaussianRandomVariable>( AbstractBeta );
         Beta->SetMean(*it);
     }
     

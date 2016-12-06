@@ -38,7 +38,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::Initialize()
+::Initialize(const std::shared_ptr<Data> D)
 {
     m_PopulationRandomVariables.clear();
     m_IndividualRandomVariables.clear();

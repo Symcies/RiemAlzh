@@ -64,9 +64,23 @@ AbstractModel
     for(auto it : m_IndividualRandomVariables)
     {
         VectorType Realization(NumberOfSubjects);
+        double Var = 0.0, Mean = 0.0;
         for(auto it2 = Realization.begin(); it2 != Realization.end(); ++it2)
         {
-            *it2 = it.second->Sample();
+            double Sample = it.second->Sample(); 
+            *it2 = Sample;
+            Mean += Sample;
+            Var += Sample*Sample ;
+        }
+        if(it.first == "Ksi")
+        {
+            std::cout << "Ksi Mean : " << Mean / NumberOfSubjects << std::endl;
+            std::cout << "Ksi Var : " <<  (Var - Mean * Mean /NumberOfSubjects)/NumberOfSubjects << std::endl; 
+        }
+        if(it.first == "Tau")
+        {
+            std::cout << "Tau Mean : " << Mean / NumberOfSubjects << std::endl;
+            std::cout << "Tau Var : " << (Var - Mean * Mean /NumberOfSubjects) / NumberOfSubjects << std::endl;
         }
         R.insert(std::pair< std::string, VectorType> (it.first, Realization));
     }

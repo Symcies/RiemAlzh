@@ -52,33 +52,6 @@ AbstractManifold
     return GeodesicDerivative;
 }
 
-AbstractManifold::VectorType
-AbstractManifold
-::ComputeParallelTransport(VectorType P0, double T0, VectorType V0, VectorType SpaceShift,
-                           double TimePoint)
-{
-    /// Tests
-    TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeParallelTransport");
-    TestAssert::WarningEquality_Object(V0.size(), SpaceShift.size(), "V0 and SpaceShift does not have the same size in AbstractManifold > ComputeParallelTransport");
-    TestAssert::WarningEquality_Object(P0.size(), SpaceShift.size(), "P0 and SpaceShift does not have the same size in AbstractManifold > ComputeParallelTransport");
-    
-
-    /// Initialization
-    VectorType ParallelTransport(P0.size());
-    auto IterPos = P0.begin();
-    auto IterVel = V0.begin();
-    auto IterShift = SpaceShift.begin();
-    int i = 0;
-
-    /// Compute Geodesic
-    for(    ; IterPos != P0.end() && IterVel != V0.end() && IterShift != SpaceShift.end(); ++IterPos, ++IterVel, ++IterShift, ++i)
-    {
-        ParallelTransport(i) = m_BaseManifold->ComputeParallelTransport(*IterPos, T0, *IterVel, *IterShift, TimePoint);
-    }
-
-    return ParallelTransport;
-}
-
 
 AbstractManifold::VectorType
 AbstractManifold

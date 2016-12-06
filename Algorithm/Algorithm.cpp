@@ -27,7 +27,7 @@ Algorithm
 
     int NbMaxIterations = 15000;
     InitializeRealization((int)D->size());
-    InitializeModel(m_Realizations);
+    InitializeModel(D);
     InitializeSampler();
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
 
@@ -38,17 +38,21 @@ Algorithm
 
     for(int k = 0; k<NbMaxIterations; ++k)
     {
-        if( k%100 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
+        if( k%10 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
         //clock_t a = clock();
+        //ComputeOutputs();
         ComputeSimulationStep(D, k);
         //clock_t b = clock();
+        //ComputeOutputs();
         SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
         //clock_t c = clock();
+        //ComputeOutputs();
         ComputeStochasticApproximation(k, SufficientStatistics);
         //clock_t d = clock();
+        //ComputeOutputs();
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
         //clock_t e = clock();
-        if( k%100 == 0 ) 
+        if( k%10 == 0 ) 
         { 
             ComputeOutputs();
             std::cout << "LogLikelihood : " << m_Model->ComputeLogLikelihood(m_Realizations, D) << std::endl; 
@@ -101,9 +105,10 @@ Algorithm
 
 void
 Algorithm
-::InitializeModel(std::shared_ptr<MultiRealizations> &R) 
+::InitializeModel(const std::shared_ptr<Data> D) 
 {
-    m_Model->UpdateParameters(R);
+    m_Model->UpdateParameters(m_Realizations);
+    m_Model->Initialize(D);
 }
 
 void 
@@ -219,7 +224,7 @@ Algorithm
       
   }
     
-    if(Iteration%100 == 0)
+    if(Iteration%10 == 0)
     {
         std::cout << "AcceptRatio: ";
         for(const auto& it : *m_Realizations)

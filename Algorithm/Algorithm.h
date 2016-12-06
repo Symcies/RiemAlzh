@@ -62,7 +62,7 @@ protected:
     void InitializeSampler();
     
     /// Initialize Manifold
-    void InitializeModel(std::shared_ptr<MultiRealizations>& R);
+    void InitializeModel(const std::shared_ptr<Data> D);
 
     // Compute the simulation step : Gibbs Sampling
     void ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration);

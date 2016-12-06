@@ -35,7 +35,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the model
-    virtual void Initialize();
+    virtual void Initialize(const std::shared_ptr<Data> D);
     
     
     /// Initialize parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance

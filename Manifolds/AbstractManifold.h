@@ -6,6 +6,7 @@ typedef double ScalarType;
 
 #include <memory>
 #include <string>
+#include "../Tests/TestAssert.h"
 #include "../RandomVariables/GaussianRandomVariable.h"
 #include "../RandomVariables/AbstractRandomVariable.h"
 #include "BaseManifold/AbstractBaseManifold.h"
@@ -50,9 +51,6 @@ public:
     /// Compute the geodesic derivative
     virtual VectorType ComputeGeodesicDerivative(VectorType P0, double T0, VectorType V0, double TimePoint);
 
-    /// Compute the parallel transport
-    virtual VectorType ComputeParallelTransport(VectorType P0, double T0, VectorType V0,
-                                                         VectorType SpaceShift, double TimePoint);
     /// Compute the parallel curve
     virtual VectorType ComputeParallelCurve(VectorType P0, double T0, VectorType V0,
                                                      VectorType SpaceShift, double TimePoint );

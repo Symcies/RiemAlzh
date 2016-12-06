@@ -79,8 +79,6 @@ protected:
     /// Last likelihood computed : reused 
     VectorType m_LastLikelihoodComputed;
     
-    /// Names of the random variables that are individual
-    std::vector<std::string> m_IndividualRandomVariables;
     
 };
 

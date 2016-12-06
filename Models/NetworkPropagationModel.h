@@ -37,7 +37,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the model : The random variables, the Kernel matrix and the interpolation matrix
-    virtual void Initialize();
+    virtual void Initialize(const std::shared_ptr<Data> D);
     
     /// Update parameters of the model, if any has to be updated
     virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Names = {"All"});
@@ -113,7 +113,6 @@ protected:
 
     /// Compute the space shifts
     void ComputeSpaceShifts(const std::shared_ptr<MultiRealizations>& R); // TODO : Use a library to do it faster
-
     
     /// Compute the interpolation coefficients
     void ComputeInterpolationCoefficients(const std::shared_ptr<MultiRealizations>& R);
@@ -130,6 +129,8 @@ protected:
     
     /// Number of independent components
     unsigned int m_NbIndependentComponents;
+    
+
     
     /// Noise model
     std::shared_ptr< GaussianRandomVariable > m_Noise;

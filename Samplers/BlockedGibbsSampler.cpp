@@ -46,19 +46,34 @@ BlockedGibbsSampler
     //////////////////
     ///   Test 2   ///
     //////////////////
+    unsigned int NbDelta = 0, NbBeta = 0;
+    for(auto it = R->begin(); it != R->end(); ++it)
+    {
+        std::string Name = it->first;
+        Name = Name.substr(0, Name.find_first_of("#"));
+        if(Name == "Beta")
+        {
+            NbBeta += 1;
+        }
+        if(Name == "Delta")
+        {
+            NbDelta += 1;
+        }
+    }
     
-    /*
+    
+    
+    
     /// Population Variables
-    auto P0 = std::make_tuple("P0", 0);
-    auto V0 = std::make_tuple("V0", 0);
-    Block Pop = {P0, V0};
-    m_Blocks.push_back(Pop);
+    auto P0 = std::make_tuple("P0", -1);
+    m_Blocks.push_back({P0});
     
     /// Beta
     Block BetaPop;
-    for(unsigned int i = 0; i < 27; ++i) 
+    // TODO : How to get the number of beta?
+    for(unsigned int i = 0; i < NbBeta; ++i) 
     {
-        auto Beta = std::make_tuple("Beta#" + std::to_string(i), 0);
+        auto Beta = std::make_tuple("Beta#" + std::to_string(i), -1);
         BetaPop.push_back(Beta);
     }
     m_Blocks.push_back(BetaPop);
@@ -66,12 +81,14 @@ BlockedGibbsSampler
     
     /// Delta
     Block DeltaPop;
-    for(unsigned int i = 0; i < 9; ++i) 
+    // TODO : How to get the number of delta?
+    for(unsigned int i = 0; i < NbDelta; ++i) 
     {
-        auto Delta = std::make_tuple("Delta#" + std::to_string(i), 0);
+        auto Delta = std::make_tuple("Delta#" + std::to_string(i), -1);
         DeltaPop.push_back(Delta);
     }
     m_Blocks.push_back(DeltaPop);
+    
     
     /// Individual Variables
     for(unsigned int i = 0; i < R->at("Ksi").size(); ++i)
@@ -84,14 +101,14 @@ BlockedGibbsSampler
         
         Block IndividualBlock = {Ksi, Tau, S0, S1, S2};
         m_Blocks.push_back(IndividualBlock);
-    }*/
+    }
     
     
     
     ////////////////////////////////////
     ///   Test 3 : Univariate Model  ///
     ////////////////////////////////////
-    
+    /*
     /// Population block
     auto P0 = std::make_tuple("P0", -1);
     m_Blocks.push_back({P0});
@@ -106,7 +123,7 @@ BlockedGibbsSampler
         Block IndividualBlock = {Ksi, Tau};
         m_Blocks.push_back(IndividualBlock);
     }
-
+    */
 
     
      
@@ -185,13 +202,14 @@ BlockedGibbsSampler
     for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it) 
     {
         /// Initialization
-        std::string NameRealization = std::get<0>(*it); 
+        std::string NameRealization = std::get<0>(*it);
         CurrentParameters.push_back(NameRealization);
         unsigned int SubjectNumber = std::max(std::get<1>(*it), 0);
         
         ///Get the current (for the ratio) and candidate random variables (to sample a candidate)
         ScalarType CurrentRealization = R->at(NameRealization)(SubjectNumber);
         ScalarType CandidaRealization = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization).Sample();
+        //std::cout << "Name: " << NameRealization << ". Current : " << CurrentRealization << ". Candidate : " << CandidaRealization << std::endl;
         
         /// Get the random variable
         auto RandomVariable = M->GetRandomVariable(NameRealization);
@@ -228,6 +246,7 @@ BlockedGibbsSampler
     }
     
     
+    
     /// Return the new realizations
     std::random_device RD;
     std::mt19937 Generator(RD());
@@ -237,13 +256,14 @@ BlockedGibbsSampler
         ///  Rejection : Candidate not accepted
     if(UnifSample > AcceptationRatio)
     {
+        //std::cout << "NO!!" << std::endl;
         M->UpdateParameters(R, CurrentParameters);
         return *R;
     }
         /// Acceptation : Candidate is accepted
     else
     {
-        //m_LastLikelihoodComputed = ComputedLogLikelihood.sum();
+        //std::cout << "YES!!" << std::endl;
         UpdateLastLogLikelihood(Type, ComputedLogLikelihood);
         return *NewRealizations;
     }

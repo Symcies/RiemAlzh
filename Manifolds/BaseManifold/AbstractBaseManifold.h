@@ -2,6 +2,7 @@
 #define _AbstractBaseManifold_h
 
 #include <iostream>
+#include <cmath>
 
 class AbstractBaseManifold {
 public:
@@ -31,10 +32,7 @@ public:
 
     /// Compute the geodesic derivative
     virtual double ComputeGeodesicDerivative(double P0, double T0, double V0, double TimePoint) = 0;
-
-    /// Compute the parallel transport
-    virtual double ComputeParallelTransport(double P0, double T0, double V0, double SpaceShift, double TimePoint) = 0;
-
+    
     /// Compute the parallel curve
     virtual double ComputeParallelCurve(double P0, double T0, double V0, double SpaceShift, double TimePoint) = 0;
 
