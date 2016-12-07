@@ -64,7 +64,7 @@ NetworkPropagationModel2
     
     for(int i = 0; i < m_NbIndependentComponents; ++i)
     {
-        auto S = std::make_shared<GaussianRandomVariable>(0.0, 0.5V);
+        auto S = std::make_shared<GaussianRandomVariable>(0.0, 0.5);
         std::string Name = "S#" + std::to_string(i);
         m_IndividualRandomVariables.insert(RandomVariable(Name, S));
     }
@@ -98,7 +98,7 @@ NetworkPropagationModel2
     //////////////////////////////////
     ///   Read the initial delta   ///
     //////////////////////////////////
-    std::ifstream DeltaFile ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/delta.csv");
+    std::ifstream DeltaFile ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/delta.csv");
     if(DeltaFile.is_open())
     {
         unsigned int i = 0;

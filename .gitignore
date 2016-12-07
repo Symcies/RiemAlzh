@@ -1,2 +1,5 @@
-#ignore the datasets
+# Ignore the datasets
 datatest/
+
+# Ignore the results
+*.txt

@@ -6,9 +6,9 @@ ReadData
 ::OpenFilesMultivariate()
 {
     Data D;
-    std::ifstream IndivID ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/group.csv");
-    std::ifstream DataX ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/X.csv");
-    std::ifstream DataY ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/Y.csv");
+    std::ifstream IndivID ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/group.csv");
+    std::ifstream DataX ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/X.csv");
+    std::ifstream DataY ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/Y.csv");
     
     /// Open the Group file;
     if(IndivID.is_open())

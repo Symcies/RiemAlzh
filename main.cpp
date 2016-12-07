@@ -10,12 +10,9 @@ typedef double ScalarType;
 #include "Manifolds/BaseManifold/LogisticBaseManifold.h"
 #include "Models/LongitudinalModel.h"
 #include "Models/UnivariateModel.h"
-#include "Models/NetworkPropagationModel.h"
 #include "Models/NetworkPropagationModel2.h"
 #include "Models/TestModel.h"
-#include "Samplers/HMWithinGibbsSampler.h"
 #include "Samplers/BlockedGibbsSampler.h"
-#include "Samplers/BlockGibbsSampler.h"
 #include "Tests/TestAssert.h"
 #include "Outputs/RandomVariableRealizations.h"
 #include "LinearAlgebra/LinearAlgebra.h"
@@ -74,9 +71,9 @@ int main() {
      
     /// Open the files - real example
     
-    std::string KernelMatrixPath("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/invKd.csv");
+    std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/invKd.csv");
     auto KernelMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
-    std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/DataCorticalThickness/Kxd.csv");
+    std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/Kxd.csv");
     auto InterpolationMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
     shared_ptr<Data> D = std::make_shared<Data>(ReadData::OpenFilesMultivariate());
     
