@@ -355,6 +355,13 @@ TestModel
     std::cout << ". BVar : " << BVar << ". CMean : " << CMean <<  ". Sigma : " << Sigma << std::endl;
 }
 
+void 
+TestModel
+::SaveData(unsigned int IterationNumber) 
+{
+    
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
 ////////////////////////////////////////////////////////////////////////////////////////////////////

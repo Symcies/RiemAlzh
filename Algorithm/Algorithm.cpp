@@ -30,42 +30,20 @@ Algorithm
     InitializeSampler();
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
 
-//    double a1 = 0;
-//    double a2 = 0;
-//    double a3 = 0;
-//    double a4 = 0;
-
     for(int k = 0; k<NbMaxIterations; ++k)
     {
-        if( k%1 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
-        //clock_t a = clock();
-        //ComputeOutputs();
+        if( k%20 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
         ComputeSimulationStep(D, k);
-        //clock_t b = clock();
-        //ComputeOutputs();
         SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
-        //clock_t c = clock();
-        //ComputeOutputs();
         ComputeStochasticApproximation(k, SufficientStatistics);
-        //clock_t d = clock();
-        //ComputeOutputs();
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
-        //clock_t e = clock();
-        if( k%1 == 0 ) 
+        if( k%20 == 0 ) 
         { 
             ComputeOutputs();
             std::cout << "LogLikelihood : " << m_Model->ComputeLogLikelihood(m_Realizations, D) << std::endl; 
         }
-//        a1 += b - a;
-//        a2 += c - b;
-//        a3 += d - c;
-//        a4 += e - d;
+        if( k%200 == 0) { m_Model->SaveData(k); };
     }
-
-//    std::cout << "Simulate : " << double(a1) << std::endl;
-//    std::cout << "SuffStat : " << double(a2) << std::endl;
-//    std::cout << "Stochast : " << double(a3) << std::endl;
-//    std::cout << "Maximize : " << double(a4) << std::endl;
 }
 
 
@@ -182,18 +160,7 @@ Algorithm
 void
 Algorithm
 ::ComputeOutputs()
-{   
-    /*
-    for(const auto& it : *m_Realizations)
-    {
-        for(const auto& it2 : it.second)
-        {
-            m_OutputRealizations << it2 << ",";
-        }
-    }
-    m_OutputRealizations << std::endl;
-    */
-    
+{
     m_Model->ComputeOutputs();
 }
 
@@ -224,7 +191,7 @@ Algorithm
       
   }
     
-    if(Iteration%1 == 0)
+    if(Iteration%20 == 0)
     {
         std::cout << "AcceptRatio: ";
         for(const auto& it : *m_Realizations)

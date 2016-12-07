@@ -65,7 +65,8 @@ public:
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
 
-    
+    /// Save the data into a file
+    virtual void SaveData(unsigned int IterationNumber);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Outputs

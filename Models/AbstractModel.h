@@ -95,6 +95,9 @@ public:
     /// Compute Outputs
     virtual void ComputeOutputs() = 0;
     
+    /// Save the data into a file
+    virtual void SaveData(unsigned int IterationNumber) = 0;
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
     ////////////////////////////////////////////////////////////////////////////////////////////////////

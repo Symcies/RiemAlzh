@@ -52,12 +52,37 @@ NetworkPropagationModel2
     
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.0000001 );
     
+    
+    
+        
+    //////////////////////////////////
+    ///   Read the initial delta   ///
+    //////////////////////////////////
+    std::ifstream DeltaFile ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/delta.csv");
+    if(DeltaFile.is_open())
+    {
+        unsigned int i = 0;
+        std::string line;
+        while(getline(DeltaFile, line))
+        {
+            if(i != 0) {
+                double DeltaMean = std::stod(line);
+                auto Delta = std::make_shared<GaussianRandomVariable>(DeltaMean, 0.00001);
+                std::string Name = "Delta#" + std::to_string(i);
+                m_PopulationRandomVariables.insert(RandomVariable(Name, Delta));
+            }
+            ++i;
+        }
+        TestAssert::WarningEquality_Object(i, m_NbControlPoints, "Network Propagation Model > Initialize - deltas");
+    }
+    else { std::cout << "Unable to open the initial delta"; }
+    
     /////////////////////////////
     /// Individual Parameters ///
     /////////////////////////////
     
     auto Ksi = std::make_shared<GaussianRandomVariable>(-2, 0.001);
-    auto Tau = std::make_shared<GaussianRandomVariable>(60.0, 2.0);
+    auto Tau = std::make_shared<GaussianRandomVariable>(70.0, 10.0);
     
     m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
     m_IndividualRandomVariables.insert(RandomVariable("Tau", Tau));
@@ -94,26 +119,7 @@ NetworkPropagationModel2
     m_NbTotalOfObservations = K;
     
     
-    
-    //////////////////////////////////
-    ///   Read the initial delta   ///
-    //////////////////////////////////
-    std::ifstream DeltaFile ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/delta.csv");
-    if(DeltaFile.is_open())
-    {
-        unsigned int i = 0;
-        std::string line;
-        while(getline(DeltaFile, line))
-        {
-            double DeltaMean = std::stod(line);
-            auto Delta = std::make_shared<GaussianRandomVariable>(DeltaMean, 0.00001);
-            std::string Name = "Delta#" + std::to_string(i);
-            m_PopulationRandomVariables.insert(RandomVariable(Name, Delta));
-            ++i;
-        }
-        TestAssert::WarningEquality_Object(i, m_NbControlPoints, "Network Propagation Model > Initialize - deltas");
-    }
-    else { std::cout << "Unable to open the initial delta"; }
+
     
 }
 
@@ -421,7 +427,7 @@ NetworkPropagationModel2
     
     /// S9 <- delta_k
     VectorType S9(m_NbControlPoints - 1);
-    i = 0;
+    i = 1;
     for(auto it = S9.begin();  it != S9.end(); ++it, ++i)
     {
         *it = R->at("Delta#" + std::to_string(i))(0);
@@ -458,7 +464,7 @@ NetworkPropagationModel2
     }
     
     /// Update Delta_k
-    i = 0;
+    i = 1;
     for(auto it = SS[8].begin(); it != SS[8].end(); ++it, ++i)
     {
         auto AbstractDelta = m_PopulationRandomVariables.at("Delta#" + std::to_string(i));
@@ -529,15 +535,52 @@ NetworkPropagationModel2
     auto Beta0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#0"));   
     auto Beta1 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#1"));   
     auto Beta2 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#2"));   
-    auto Delta0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#0"));
+    auto Delta1 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#1"));
     double Sigma = m_Noise->GetVariance();
     
     std::cout << "P0 : " << P0->GetMean() << "\t T0 : " << Tau->GetMean() << "\t Var(Tau) : " << Tau->GetVariance();
     std::cout << "\t V0 : " << exp(Ksi->GetMean()) << "\t Var(Ksi) : " << Ksi->GetVariance() << "\t Beta0 : ";
     std::cout << Beta0->GetMean() << "\t Beta1 : " << Beta1->GetMean() << "\t Beta2 : " << Beta2->GetMean();
-    std::cout << "\t Delta0 : " << Delta0->GetMean() << "\t Sigma : " << Sigma << std::endl;
+    std::cout << "\t Delta0 : " << Delta1->GetMean() << "\t Sigma : " << Sigma << std::endl;
 }   
 
+
+void 
+NetworkPropagationModel2
+::SaveData(unsigned int IterationNumber) 
+{
+    /// Save the data in case it crashes and a re-init is needed
+    std::ofstream ModelParameters;    
+    ModelParameters.open("ModelParameters.txt", std::ofstream::out | std::ofstream::trunc);
+    ModelParameters << "Iteration : " << IterationNumber << std::endl;
+    for(auto it = m_PopulationRandomVariables.begin(); it != m_PopulationRandomVariables.end(); ++it)
+    {
+        auto RV = std::static_pointer_cast<GaussianRandomVariable>(it->second);
+        ModelParameters << "0, " << it->first << ", " << RV->GetMean() << ", " << RV->GetVariance() << std::endl;
+    }
+    for(auto it = m_IndividualRandomVariables.begin(); it != m_IndividualRandomVariables.end(); ++it)
+    {
+        auto RV = std::static_pointer_cast<GaussianRandomVariable>(it->second);
+        ModelParameters << "1, " << it->first << ", " << RV->GetMean() << ", " << RV->GetVariance() << std::endl;
+    }
+    
+    
+    
+    /// Save the delta_k for visualization
+    std::ofstream DeltaViz;    
+    DeltaViz.open("DeltaVisualization.txt", std::ofstream::out | std::ofstream::trunc);    
+        
+    for(auto it = m_PopulationRandomVariables.begin(); it != m_PopulationRandomVariables.end(); ++it)
+    {
+        std::string Name = it->first;
+        if(Name.substr(0, Name.find_first_of("#")) == "Delta")
+        {
+            std::string Number = Name.substr(Name.find_first_of("#"));
+            auto RV = std::static_pointer_cast<GaussianRandomVariable>(it->second);
+            DeltaViz << Number << ", " << RV->GetMean() << std::endl;
+        }
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
@@ -619,7 +662,7 @@ NetworkPropagationModel2
 {
     VectorType Delta(m_NbControlPoints, 0.0);
     
-    int i = 0;
+    int i = 1;
     for(auto it = Delta.begin() + 1; it != Delta.end(); ++it, ++i)
     {
         *it = R->at("Delta#" + std::to_string(i))(0);

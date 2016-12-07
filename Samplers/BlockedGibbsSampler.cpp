@@ -82,7 +82,7 @@ BlockedGibbsSampler
     /// Delta
     Block DeltaPop;
     // TODO : How to get the number of delta?
-    for(unsigned int i = 0; i < NbDelta; ++i) 
+    for(unsigned int i = 1; i < NbDelta + 1; ++i) 
     {
         auto Delta = std::make_tuple("Delta#" + std::to_string(i), -1);
         DeltaPop.push_back(Delta);

@@ -75,6 +75,9 @@ public:
     
     /// Compute Outputs
     virtual void ComputeOutputs();
+    
+    /// Save the data into a file
+    virtual void SaveData(unsigned int IterationNumber);
 
 
 protected:
