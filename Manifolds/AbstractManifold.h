@@ -46,20 +46,20 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the geodesic
-    virtual VectorType ComputeGeodesic(VectorType P0, double T0, VectorType V0, double TimePoint);
+    virtual VectorType ComputeGeodesic(VectorType& P0, double T0, VectorType& V0, double TimePoint);
 
     /// Compute the geodesic derivative
-    virtual VectorType ComputeGeodesicDerivative(VectorType P0, double T0, VectorType V0, double TimePoint);
+    virtual VectorType ComputeGeodesicDerivative(VectorType& P0, double T0, VectorType& V0, double TimePoint);
 
     /// Compute the parallel curve
-    virtual VectorType ComputeParallelCurve(VectorType P0, double T0, VectorType V0,
-                                                     VectorType SpaceShift, double TimePoint );
+    virtual VectorType ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0,
+                                                     VectorType& SpaceShift, double TimePoint );
 
     /// Get V0 transformation  wrt the metric at the application point P0 (used in the householder method)
-    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType P0, double T0, VectorType V0) = 0;
+    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0) = 0;
 
     /// Compute the scalar product corresponding to the manifold metric
-    virtual double ComputeScalarProduct(VectorType U, VectorType V, VectorType ApplicationPoint) = 0;
+    virtual double ComputeScalarProduct(VectorType& U, VectorType& V, VectorType& ApplicationPoint) = 0;
 
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////

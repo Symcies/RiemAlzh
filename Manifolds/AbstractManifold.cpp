@@ -10,7 +10,7 @@
 
 AbstractManifold::VectorType
 AbstractManifold
-::ComputeGeodesic(VectorType P0, double T0, VectorType V0, double TimePoint)
+::ComputeGeodesic(VectorType& P0, double T0, VectorType& V0, double TimePoint)
 {
     /// Tests
     TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeGeodesic");
@@ -32,7 +32,7 @@ AbstractManifold
 
 AbstractManifold::VectorType
 AbstractManifold
-::ComputeGeodesicDerivative(VectorType P0, double T0, VectorType V0, double TimePoint)
+::ComputeGeodesicDerivative(VectorType& P0, double T0, VectorType& V0, double TimePoint)
 {
     /// Tests
     TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeGeodesicDerivative");
@@ -55,7 +55,7 @@ AbstractManifold
 
 AbstractManifold::VectorType
 AbstractManifold
-::ComputeParallelCurve(VectorType P0, double T0, VectorType V0, VectorType SpaceShift, double TimePoint)
+::ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift, double TimePoint)
 {
     /// Tests
     TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeParallelCurve");

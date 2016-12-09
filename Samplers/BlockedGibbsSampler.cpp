@@ -23,9 +23,6 @@ BlockedGibbsSampler
 {
     m_CandidateRandomVariables.InitializeCandidateRandomVariables(R);
     
-    // TODO : CHECK IF IT THE ONLY ONE?
-    //m_IndividualRandomVariables = {"Ksi", "Tau", "S#0", "S#1", "S#2"};
-    
     //////////////////
     ///   Test 1   ///
     //////////////////
@@ -46,6 +43,7 @@ BlockedGibbsSampler
     //////////////////
     ///   Test 2   ///
     //////////////////
+    
     unsigned int NbDelta = 0, NbBeta = 0;
     for(auto it = R->begin(); it != R->end(); ++it)
     {
@@ -60,9 +58,7 @@ BlockedGibbsSampler
             NbDelta += 1;
         }
     }
-    
-    
-    
+        
     
     /// Population Variables
     auto P0 = std::make_tuple("P0", -1);
@@ -70,24 +66,34 @@ BlockedGibbsSampler
     
     /// Beta
     Block BetaPop;
-    // TODO : How to get the number of beta?
+    int SizeOfBetaBlocks = (int)NbBeta/3;
     for(unsigned int i = 0; i < NbBeta; ++i) 
     {
         auto Beta = std::make_tuple("Beta#" + std::to_string(i), -1);
         BetaPop.push_back(Beta);
+        if(i == NbBeta - 1 || i%SizeOfBetaBlocks == 0)
+        {
+            m_Blocks.push_back(BetaPop);
+            BetaPop.clear();
+        }
     }
-    m_Blocks.push_back(BetaPop);
+    //m_Blocks.push_back(BetaPop);
     
     
     /// Delta
     Block DeltaPop;
-    // TODO : How to get the number of delta?
+    int SizeOfDeltaBlocks = (int)NbDelta/5;
     for(unsigned int i = 1; i < NbDelta + 1; ++i) 
     {
         auto Delta = std::make_tuple("Delta#" + std::to_string(i), -1);
         DeltaPop.push_back(Delta);
+        if(i == NbDelta - 1 || i%SizeOfDeltaBlocks == 0)
+        {
+            m_Blocks.push_back(DeltaPop);
+            DeltaPop.clear();
+        }
     }
-    m_Blocks.push_back(DeltaPop);
+    
     
     
     /// Individual Variables
@@ -99,10 +105,16 @@ BlockedGibbsSampler
         auto S1 = std::make_tuple("S#1", i);
         //auto S2 = std::make_tuple("S#2", i);
         // TODO : add also to next block is uncommented
-        Block IndividualBlock = {Ksi, Tau, S0, S1};
+        Block IndividualBlock = {Tau, Ksi, S0, S1};
         m_Blocks.push_back(IndividualBlock);
     }
     
+    for(unsigned int i = 0; i < R->at("Tau").size(); ++i)
+    {
+        auto Tau = std::make_tuple("Tau", i);
+        //Block IndividualBlock = {Tau};
+        //m_Blocks.push_back(IndividualBlock);
+    }
     
     
     ////////////////////////////////////

@@ -18,6 +18,8 @@ typedef double ScalarType;
 #include "LinearAlgebra/LinearAlgebra.h"
 #include "Inputs/ReadData.h"
 
+#include "omp.h"
+
 //#include "itkXMLFile.h"
 
 
@@ -30,9 +32,6 @@ typedef map<std::string, vector<double>> Realizations;
 
 int main() {
     // TODO : Remplacer les const 'std::shared<T>&' par 'std::shared<const T>'
-    // TODO : Sortir les delta_barre à la fin
-    // TODO : S0 <- Sum(Data) only once
-    // TODO : dynamic_pointer_cast to static_pointer_cast
     // TODO : Change Model->UpdateParameters because it ain't parameters
     
 

@@ -1,5 +1,5 @@
 #include "ExponentialCurveManifold.h"
-
+#include <cassert>
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,25 +26,34 @@ ExponentialCurveManifold
 
 ExponentialCurveManifold::VectorType
 ExponentialCurveManifold
-::ComputeParallelCurve(VectorType P0, double T0, VectorType V0, VectorType SpaceShift,
-                       double TimePoint, VectorType Delta) 
+::ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift,
+                       double TimePoint, VectorType& Delta) 
 {
+    
+    assert(SpaceShift.size() == Delta.size());
     /// Initialization
     VectorType ParallelCurve(SpaceShift.size());
     double InitialPosition = P0(0);
-    double InitialVelocity = V0(0);
-    auto IterS = SpaceShift.begin(), IterD = Delta.begin(), IterP = ParallelCurve.begin();
-    
+    //double InitialVelocity = V0(0);
+    //auto IterS = SpaceShift.begin(), IterD = Delta.begin(), IterP = ParallelCurve.begin();
+    ScalarType * p = ParallelCurve.memptr();
+    ScalarType * s = SpaceShift.memptr();
+    ScalarType * d = Delta.memptr();
+    auto N = ParallelCurve.size();
+#pragma omp simd
+    for(size_t i = 0; i < N; ++i)
+        p[i] = InitialPosition * exp(s[i] / (InitialPosition * exp(d[i])) + d[i] - TimePoint / InitialPosition);
+        
+     /*   
     /// Compute coordinates
+// TODO : AJouter #pragma omp simd
     for(    ; IterS != SpaceShift.end() && IterD != Delta.end() && IterP != ParallelCurve.end(); ++IterS, ++IterD, ++IterP)
     {
         double Val = *IterS / (InitialPosition * exp(*IterD)) + *IterD - TimePoint / InitialPosition;
         // TODO : BE FUCKING CAREFUL ABOUT " - TimePoint" OR " + TimePoint" !!
         *IterP = InitialPosition * exp(Val);
-        //std::cout << *IterS / (InitialPosition * exp(*IterD)) << " & " << *IterD << " & " << - TimePoint / InitialPosition << std::endl;
-        //std::cout << "W_i & 1/(P0*exp) : " << *IterS << " & " << 1 / (InitialPosition * exp(*IterD)) << std::endl;
-        //std::cout << *IterP << std::endl;
     }
+      */
     
     return ParallelCurve;
 }
@@ -52,7 +61,7 @@ ExponentialCurveManifold
 
 ExponentialCurveManifold::VectorType
 ExponentialCurveManifold
-::ComputeParallelCurve(VectorType P0, double T0, VectorType V0, VectorType SpaceShift,
+::ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift,
                        double TimePoint) 
 {
     throw std::invalid_argument( "Wrong overloaded function ComputeParallelCurve called - in Exponential Curve Manifold" );
@@ -60,7 +69,7 @@ ExponentialCurveManifold
 
 ExponentialCurveManifold::VectorType
 ExponentialCurveManifold
-::GetVelocityTransformToEuclideanSpace(VectorType P0, double T0, VectorType V0, VectorType Delta) 
+::GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0, VectorType& Delta) 
 {
     
     /// Initialization
@@ -82,14 +91,14 @@ ExponentialCurveManifold
 
 ExponentialCurveManifold::VectorType
 ExponentialCurveManifold
-::GetVelocityTransformToEuclideanSpace(VectorType P0, double T0, VectorType V0) 
+::GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0) 
 {
     throw std::invalid_argument( "Wrong overloaded function GetVelocityTransformToEuclidianSpace called - in ExponentialCurve Manifold" );
 }
 
 double 
 ExponentialCurveManifold
-::ComputeScalarProduct(VectorType U, VectorType V, VectorType ApplicationPoint) 
+::ComputeScalarProduct(VectorType& U, VectorType& V, VectorType& ApplicationPoint) 
 {
     TestAssert::WarningEquality_Object(U.size(), V.size(), "ExponentialCurveManifold > ComputeScalarProduct");
     TestAssert::WarningEquality_Object(U.size(), ApplicationPoint.size(), "ExponentialCurveManifold > ComputeScalarProduct");

@@ -37,6 +37,7 @@ file( GLOB_RECURSE TESTS Tests/* )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
 set(SOURCE_FILES main.cpp)
 
@@ -54,6 +55,15 @@ else()
     Message(FATAL_ERROR " -- IMPOSSIBLE TO FIND ARMADILLO -- ")
 endif()
 
+
+
+find_package(OpenMP)
+if (OPENMP_FOUND)
+   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    Message("OpenMP has been found")
+else()
+    Message("NOOOOO")    
+endif()
 
 
 

@@ -25,24 +25,26 @@ Algorithm
 ::ComputeMCMCSAEM(const std::shared_ptr<Data>& D)
 {
 
-    int NbMaxIterations = 15000;
+    int NbMaxIterations = 20002;
     InitializeModel(D);
     InitializeSampler();
     InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
 
     for(int k = 0; k<NbMaxIterations; ++k)
     {
-        if( k%20 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
+        if( k%50 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
         ComputeSimulationStep(D, k);
         SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
         ComputeStochasticApproximation(k, SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
-        if( k%20 == 0 ) 
+        if( k%50 == 0 ) 
         { 
             ComputeOutputs();
-            std::cout << "LogLikelihood : " << m_Model->ComputeLogLikelihood(m_Realizations, D) << std::endl; 
+            //std::cout << "LogLikelihood : " << m_Model->ComputeLogLikelihood(m_Realizations, D) << std::endl; 
         }
-        if( k%200 == 0) { m_Model->SaveData(k); };
+        if( k%200 == 0) { 
+            m_Model->SaveData(k); 
+        };
     }
 }
 
@@ -114,7 +116,7 @@ Algorithm
     typedef std::vector< VectorType > SufficientStatisticsVector;
     SufficientStatisticsVector NewStochasticSufficientStatistics;
 
-    double NoMemoryTime = 7500;  // TODO : Initialize, maybe out of the Compute function? Maybe in the decreasing step size function 
+    double NoMemoryTime = 12000;  // TODO : Initialize, maybe out of the Compute function? Maybe in the decreasing step size function 
     double StepSize = DecreasingStepSize(iteration, NoMemoryTime);
 
     auto IterStat = SufficientStatistics.begin();
@@ -191,7 +193,7 @@ Algorithm
       
   }
     
-    if(Iteration%20 == 0)
+    if(Iteration%50 == 0)
     {
         std::cout << "AcceptRatio: ";
         for(const auto& it : *m_Realizations)

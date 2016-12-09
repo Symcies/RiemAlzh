@@ -28,7 +28,7 @@ PropagationManifold
 
 PropagationManifold::VectorType
 PropagationManifold
-::ComputeGeodesic(VectorType P0, double T0, VectorType V0, double TimePoint, VectorType Delta)
+::ComputeGeodesic(VectorType& P0, double T0, VectorType& V0, double TimePoint, VectorType& Delta)
 {
     /// Initialization
     VectorType Geodesic(Delta.size());
@@ -47,7 +47,7 @@ PropagationManifold
 
 PropagationManifold::VectorType
 PropagationManifold
-::ComputeGeodesic(VectorType P0, double T0, VectorType V0, double TimePoint)
+::ComputeGeodesic(VectorType& P0, double T0, VectorType& V0, double TimePoint)
 {
     // TODO : When no more bug, from throw(Error)
     throw std::invalid_argument( "Wrong overloaded function ComputeGeodesic called - in PropagationManifold" );
@@ -58,8 +58,8 @@ PropagationManifold
 
 PropagationManifold::VectorType
 PropagationManifold
-::ComputeGeodesicDerivative(VectorType P0, double T0, VectorType V0, double TimePoint,
-                            VectorType Delta)
+::ComputeGeodesicDerivative(VectorType& P0, double T0, VectorType& V0, double TimePoint,
+                            VectorType& Delta)
 {
     /// Initialize
     VectorType GeodesicDerivative(Delta.size());
@@ -78,7 +78,7 @@ PropagationManifold
 
 PropagationManifold::VectorType
 PropagationManifold
-::ComputeGeodesicDerivative(VectorType P0, double T0, VectorType V0, double TimePoint)
+::ComputeGeodesicDerivative(VectorType& P0, double T0, VectorType& V0, double TimePoint)
 {
     // TODO : When no more bug, from throw(Error)
     throw std::invalid_argument( "Wrong overloaded function ComputeGeodesicDerivative called - in PropagationManifold" );
@@ -91,8 +91,8 @@ PropagationManifold
 
 PropagationManifold::VectorType
 PropagationManifold
-::ComputeParallelTransport(VectorType P0, double T0, VectorType V0, VectorType SpaceShift,
-                       double TimePoint, VectorType Delta)
+::ComputeParallelTransport(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift,
+                       double TimePoint, VectorType& Delta)
 {
         /// Initialization
     VectorType ParallelTransport(SpaceShift.size());
@@ -116,7 +116,7 @@ PropagationManifold
 
 PropagationManifold::VectorType
 PropagationManifold
-::ComputeParallelTransport(VectorType P0, double T0, VectorType V0, VectorType SpaceShift,
+::ComputeParallelTransport(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift,
                        double TimePoint)
 {
     // TODO : When no more bug, from throw(Error)
@@ -128,8 +128,8 @@ PropagationManifold
 
 PropagationManifold::VectorType
 PropagationManifold
-::ComputeParallelCurve(VectorType P0, double T0, VectorType V0, VectorType SpaceShift,
-                       double TimePoint, VectorType Delta)
+::ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift,
+                       double TimePoint, VectorType& Delta)
 {
     /// Initialization
     VectorType ParallelCurve(SpaceShift.size());
@@ -153,7 +153,7 @@ PropagationManifold
 
 PropagationManifold::VectorType
 PropagationManifold
-::ComputeParallelCurve(VectorType P0, double T0, VectorType V0, VectorType SpaceShift,
+::ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift,
                            double TimePoint)
 {
     // TODO : When no more bug, from throw(Error)
@@ -165,7 +165,7 @@ PropagationManifold
 
 PropagationManifold::VectorType
 PropagationManifold
-::GetVelocityTransformToEuclideanSpace(VectorType P0, double T0, VectorType V0, VectorType Delta)
+::GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0, VectorType& Delta)
 {
     /// Initialization
     VectorType TransformedVelocity(Delta.size());
@@ -187,7 +187,7 @@ PropagationManifold
 
 PropagationManifold::VectorType
 PropagationManifold
-::GetVelocityTransformToEuclideanSpace(VectorType P0, double T0, VectorType V0)
+::GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0)
 {
     // TODO : When no more bug, from throw(Error)
     throw std::invalid_argument( "Wrong overloaded function GetVelocityTransformToEuclidianSpace called - in PropagationManifold" );
@@ -199,7 +199,7 @@ PropagationManifold
 
 double
 PropagationManifold
-::ComputeScalarProduct(VectorType U, VectorType V, VectorType ApplicationPoint)
+::ComputeScalarProduct(VectorType& U, VectorType& V, VectorType& ApplicationPoint)
 {
     if(U.size() != V.size() or U.size() != ApplicationPoint.size())
     {

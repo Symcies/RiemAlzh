@@ -86,8 +86,8 @@ CandidateRandomVariables
     double P0Variance = 0.000035;
     double T0Variance = 0.0002;
     double V0Variance = 0.0000005;
-    double DeltaVariance = 0.000002;
-    double BetaVariance = 0.00000000000001;
+    double DeltaVariance = 0.00002;
+    double BetaVariance = 0.00000001;
     double TauVariance = 0.1;
     double KsiVariance = 0.0004;
     double SVariance = 0.001;
