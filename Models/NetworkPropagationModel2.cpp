@@ -16,7 +16,7 @@ NetworkPropagationModel2
     m_Manifold = M;
     m_InvertKernelMatrix = *KernelMatrix;
     m_InterpolationMatrix = *InterpolationMatrix;
-    m_OutputParameters.open("ParametersTest2.txt", std::ofstream::out | std::ofstream::trunc);
+    m_OutputParameters.open("ParametersMciConverters_Linear.txt", std::ofstream::out | std::ofstream::trunc);
     m_NbControlPoints = m_InvertKernelMatrix.columns();
     m_InterpolationCoefficients.set_size(m_NbControlPoints);
     
@@ -46,7 +46,7 @@ NetworkPropagationModel2
     /////////////////////////////
     /// Population Parameters ///
     /////////////////////////////
-    auto P0 = std::make_shared<GaussianRandomVariable>(2.3, 0.0000001);
+    auto P0 = std::make_shared<GaussianRandomVariable>(0.932, 0.00000001);
     m_PopulationRandomVariables.insert( RandomVariable("P0", P0) );
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.0000001 );
     
@@ -54,7 +54,7 @@ NetworkPropagationModel2
     ///   Read the initial delta   ///
     //////////////////////////////////
     /*
-    std::ifstream DeltaFile ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/delta.csv");
+    std::ifstream DeltaFile ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/delta_init.csv");
     if(DeltaFile.is_open())
     {
         unsigned int i = 0;
@@ -63,7 +63,7 @@ NetworkPropagationModel2
         {
             if(i != 0) {
                 double DeltaMean = std::stod(line);
-                auto Delta = std::make_shared<GaussianRandomVariable>(DeltaMean, 0.00001);
+                auto Delta = std::make_shared<GaussianRandomVariable>(DeltaMean, 0.0001);
                 std::string Name = "Delta#" + std::to_string(i);
                 m_PopulationRandomVariables.insert(RandomVariable(Name, Delta));
             }
@@ -74,12 +74,15 @@ NetworkPropagationModel2
     else { std::cout << "Unable to open the initial delta"; }
     */
     
+
+     
+    
     /////////////////////////////
     /// Individual Parameters ///
     /////////////////////////////
     
-    auto Ksi = std::make_shared<GaussianRandomVariable>(-2, 0.4);
-    auto Tau = std::make_shared<GaussianRandomVariable>(65.0, 5.0);
+    auto Ksi = std::make_shared<GaussianRandomVariable>(-3.06, 0.4);
+    auto Tau = std::make_shared<GaussianRandomVariable>(65, 1.0);
     
     m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
     m_IndividualRandomVariables.insert(RandomVariable("Tau", Tau));
@@ -93,14 +96,14 @@ NetworkPropagationModel2
     
     for(int i = 0; i < m_NbIndependentComponents*(m_Manifold->GetDimension() - 1); ++i)
     {
-        auto Beta = std::make_shared<GaussianRandomVariable>(0, 0.00000001);
+        auto Beta = std::make_shared<GaussianRandomVariable>(0, 0.0005);
         std::string Name = "Beta#" + std::to_string(i);
         m_PopulationRandomVariables.insert(RandomVariable(Name, Beta));
     }
     
     for(int i = 1; i < m_NbControlPoints; ++i)
     {
-        auto Delta = std::make_shared<GaussianRandomVariable>(0, 0.0000001);
+        auto Delta = std::make_shared<GaussianRandomVariable>(0, 0.0008*0.0008);
         std::string Name = "Delta#" + std::to_string(i);
         m_PopulationRandomVariables.insert(RandomVariable(Name, Delta));
     }
@@ -128,7 +131,7 @@ NetworkPropagationModel2
     /// From previous run     ///
     /////////////////////////////
     /*
-    std::ifstream Parameters("/Users/igor.koval/Documents/Work/RiemAlzh/ModelParameters.txt");
+    std::ifstream Parameters("/Users/igor.koval/Documents/Work/RiemAlzh/ModelParametersMCIConverters.txt");
     if(Parameters.is_open())
     {
         std::string line;
@@ -157,8 +160,10 @@ NetworkPropagationModel2
                 double a = 1+1;
             }
             
-            if(Name == "Tau") { Var = 5.0;  }
-            if(Name == "Ksi") { Var = 0.001; }
+            if(Name == "Tau") { Var = 5.0; }
+            //if(Name == "Ksi") { Var = 0.001; }
+            //if(Name == "Delta") {Var = 0.0001; }
+            //if(Name == "Beta") { Var = 0.0001; }
             
             auto RV = std::make_shared<GaussianRandomVariable>(Mean, Var);
             if(Pop) { m_PopulationRandomVariables.insert(RandomVariable(Name, RV)); }
@@ -273,7 +278,7 @@ NetworkPropagationModel2
     double T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double KsiMean = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
     VectorType V0(1, exp(KsiMean));
-    VectorType P0(1, R->at("P0")(0));
+    VectorType P0(1, exp(R->at("P0")(0)));
     VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     
     Data D;
@@ -338,7 +343,7 @@ NetworkPropagationModel2
     double T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double KsiMean = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
     VectorType V0(1, exp(KsiMean));
-    VectorType P0(1, R->at("P0")(0));
+    VectorType P0(1, exp(R->at("P0")(0)));
     VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     
     /// Compute the likelihood
@@ -376,7 +381,7 @@ NetworkPropagationModel2
     double T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double KsiMean = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
     VectorType V0(1, exp(KsiMean));
-    VectorType P0(1, R->at("P0")(0));
+    VectorType P0(1, exp(R->at("P0")(0)));
     VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     
     std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
@@ -384,8 +389,8 @@ NetworkPropagationModel2
     
     /// Compute the likelihood
     double LogLikelihood = 0.0;
-    //for(auto it = D->at(SubjectNumber).begin(); it != D->at(SubjectNumber).end(); ++it)
     auto N = D->at(SubjectNumber).size(); 
+    
 #pragma omp parallel for reduction(+:LogLikelihood)    
     for(size_t i = 0; i < N; ++i)
     {
@@ -398,7 +403,7 @@ NetworkPropagationModel2
     TestAssert::WarningInequality_GreaterThan(LogLikelihood, 0.0, "NetworkPropagationModel>ComputeIndividualLogLikelihood ; wrong Likelihood");
 
     LogLikelihood /= -2*m_Noise->GetVariance();
-    LogLikelihood -= D->at(SubjectNumber).size() * log(sqrt( 2 * m_Noise->GetVariance() * M_PI));
+    LogLikelihood -= N * log(2 * m_Noise->GetVariance() * M_PI) / 2.0;
     
     return LogLikelihood;
 }
@@ -413,12 +418,13 @@ NetworkPropagationModel2
     double T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double KsiMean = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
     VectorType V0(1, exp(KsiMean));
-    VectorType P0(1, R->at("P0")(0));
+    VectorType P0(1, exp(R->at("P0")(0)));
     VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     double NumberOfSubjects = R->at("Ksi").size();
     
     
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
+    
     VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
     int i = 0;
     auto IterS1 = S1.begin(), IterS2 = S2.begin();
@@ -435,6 +441,30 @@ NetworkPropagationModel2
             ++IterS1, ++IterS2;
         }
     }
+     
+ /*   
+    VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
+    ScalarType * it1 = S1.memptr();
+    ScalarType * it2 = S2.memptr();
+    
+
+#pragma omp simd
+    for(size_t i = 0; i < m_NbTotalOfObservations, ++i)
+    {
+        std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
+        VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
+        auto NbObs = D->at(i).size();
+        
+#pragma omp simd        
+        for(size_t j = 0; j < NbObs; ++j)
+        {
+            auto& it = D->at(i).at(j);
+            double TimePoint = SubjectTimePoint(it.second);
+            VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, PropagationCoefficients);
+            it1[i*+j]
+        }
+    }
+    */
     
     
     /// S3 <- Ksi_i   &    S4 <- Ksi_i * Ksi_i
@@ -575,15 +605,16 @@ NetworkPropagationModel2
     auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));   
     auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));   
     auto Beta0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#0"));   
-    auto Beta1 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#1"));   
-    auto Beta2 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#2"));   
+    auto Beta1 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Beta#1"));
     auto Delta1 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#1"));
+    auto Delta2 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#2"));
+    auto Delta170 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Delta#170"));
     double Sigma = m_Noise->GetVariance();
     
-    std::cout << "P0 : " << P0->GetMean() << "\t T0 : " << Tau->GetMean() << "\t Var(Tau) : " << Tau->GetVariance();
-    std::cout << "\t V0 : " << exp(Ksi->GetMean()) << "\t Var(Ksi) : " << Ksi->GetVariance() << "\t Beta0 : ";
-    std::cout << Beta0->GetMean() << "\t Beta1 : " << Beta1->GetMean() << "\t Beta2 : " << Beta2->GetMean();
-    std::cout << "\t Delta0 : " << Delta1->GetMean() << "\t Sigma : " << Sigma << std::endl;
+    std::cout << "P0 : " << exp(P0->GetMean()) << " - T0 : " << Tau->GetMean() << " - Var(Tau) : " << Tau->GetVariance();
+    std::cout << " - V0 : " << exp(Ksi->GetMean()) << " - Var(Ksi) : " << Ksi->GetVariance() << " - Beta0 : ";
+    std::cout << Beta0->GetMean() << " - Beta1 : " << Beta1->GetMean() << " - Delta1 : " << Delta1->GetMean();
+    std::cout << " Delta2 : " << Delta2->GetMean() << " - Delta#170 : " << Delta170->GetMean() << " - Sigma : " << Sigma << std::endl;
 }   
 
 
@@ -593,7 +624,7 @@ NetworkPropagationModel2
 {
     /// Save the data in case it crashes and a re-init is needed
     std::ofstream ModelParameters;    
-    ModelParameters.open("ModelParametersTest2.txt", std::ofstream::out | std::ofstream::trunc);
+    ModelParameters.open("ModelParametersMciConverters_Linear.txt", std::ofstream::out | std::ofstream::trunc);
     ModelParameters << "Iteration : " << IterationNumber << std::endl;
     for(auto it = m_PopulationRandomVariables.begin(); it != m_PopulationRandomVariables.end(); ++it)
     {
@@ -610,7 +641,7 @@ NetworkPropagationModel2
     
     /// Save the delta_k for visualization
     std::ofstream DeltaViz;    
-    DeltaViz.open("DeltaVisualizationTest2.txt", std::ofstream::out | std::ofstream::trunc);    
+    DeltaViz.open("DeltaVisualizationMciConverters_Linear.txt", std::ofstream::out | std::ofstream::trunc);    
         
     for(auto it = m_PopulationRandomVariables.begin(); it != m_PopulationRandomVariables.end(); ++it)
     {
@@ -719,7 +750,7 @@ NetworkPropagationModel2
     double T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double KsiMean = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
     VectorType V0(1, exp(KsiMean));
-    VectorType P0(1, R->at("P0")(0));
+    VectorType P0(1, exp(R->at("P0")(0)));
     VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     
     /// Compute the transformation to do the Householder reflection in a Euclidean space

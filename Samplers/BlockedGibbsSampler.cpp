@@ -44,7 +44,7 @@ BlockedGibbsSampler
     ///   Test 2   ///
     //////////////////
     
-    unsigned int NbDelta = 0, NbBeta = 0;
+    unsigned int NbDelta = 0, NbBeta = 0, NbS = 0, NbRho = 0, NbNu = 0;
     for(auto it = R->begin(); it != R->end(); ++it)
     {
         std::string Name = it->first;
@@ -53,44 +53,107 @@ BlockedGibbsSampler
         {
             NbBeta += 1;
         }
-        if(Name == "Delta")
+        else if(Name == "Delta")
         {
             NbDelta += 1;
+        }
+        else if(Name == "S")
+        {
+            NbS += 1;
+            
+        }
+        else if(Name == "Rho")
+        {
+            NbRho += 1;
+        }
+        else if(Name == "Nu")
+        {
+            NbNu += 1;
         }
     }
         
     
-    /// Population Variables
-    auto P0 = std::make_tuple("P0", -1);
-    m_Blocks.push_back({P0});
-    
     /// Beta
     Block BetaPop;
-    int SizeOfBetaBlocks = (int)NbBeta/3;
+    int SizeOfBetaBlocks = (int)NbBeta/2;
     for(unsigned int i = 0; i < NbBeta; ++i) 
     {
         auto Beta = std::make_tuple("Beta#" + std::to_string(i), -1);
+        
         BetaPop.push_back(Beta);
-        if(i == NbBeta - 1 || i%SizeOfBetaBlocks == 0)
+        if((i == NbBeta - 1 || i%SizeOfBetaBlocks == 0) && i != 0)
         {
             m_Blocks.push_back(BetaPop);
             BetaPop.clear();
         }
     }
-    //m_Blocks.push_back(BetaPop);
     
     
     /// Delta
     Block DeltaPop;
-    int SizeOfDeltaBlocks = (int)NbDelta/5;
+    int SizeOfDeltaBlocks = (int)NbDelta/2;
     for(unsigned int i = 1; i < NbDelta + 1; ++i) 
     {
         auto Delta = std::make_tuple("Delta#" + std::to_string(i), -1);
         DeltaPop.push_back(Delta);
-        if(i == NbDelta - 1 || i%SizeOfDeltaBlocks == 0)
+        
+        if(i == NbDelta - 1)
+        {
+            auto DeltaEnd = std::make_tuple("Delta#" + std::to_string(i + 1), -1);
+            DeltaPop.push_back(DeltaEnd);
+            m_Blocks.push_back(DeltaPop);
+            break;
+        }
+        
+        if(i%SizeOfDeltaBlocks == 0)
         {
             m_Blocks.push_back(DeltaPop);
             DeltaPop.clear();
+        }
+        
+    }
+    
+    /// Rho
+    Block RhoPop;
+    int SizeOfRhoBlocks = (int)NbRho/2;
+    for(unsigned int i = 1; i < NbRho + 1; ++i)
+    {
+        auto Rho = std::make_tuple("Rho#" + std::to_string(i), -1);
+        RhoPop.push_back(Rho);
+        
+        if(i == NbRho - 1) 
+        {
+            auto RhoEnd = std::make_tuple("Rho#" + std::to_string(i + 1), -1);
+            RhoPop.push_back(RhoEnd);
+            m_Blocks.push_back(RhoPop);
+            break;
+        }
+        if(i%SizeOfRhoBlocks == 0)
+        {
+            m_Blocks.push_back(RhoPop);
+            RhoPop.clear();
+        }
+    }
+    
+    /// Nu
+    Block NuPop;
+    int SizeOfNuBlocks = (int)NbNu/2;
+    for(unsigned int i = 1; i < NbRho + 1; ++i)
+    {
+        auto Nu = std::make_tuple("Nu#" + std::to_string(i + 1), -1);
+        NuPop.push_back(Nu);
+        
+        if(i == NbNu - 1)
+        {
+            auto NuEnd = std::make_tuple("Nu#" + std::to_string(i + 1), -1);
+            NuPop.push_back(NuEnd);
+            m_Blocks.push_back(NuPop);
+            break;
+        }
+        if(i%SizeOfNuBlocks == 0)
+        {
+            m_Blocks.push_back(NuPop);
+            NuPop.clear();
         }
     }
     
@@ -101,66 +164,15 @@ BlockedGibbsSampler
     {
         auto Ksi = std::make_tuple("Ksi", i);
         auto Tau = std::make_tuple("Tau", i);
-        auto S0 = std::make_tuple("S#0", i);
-        auto S1 = std::make_tuple("S#1", i);
-        //auto S2 = std::make_tuple("S#2", i);
-        // TODO : add also to next block is uncommented
-        Block IndividualBlock = {Tau, Ksi, S0, S1};
-        m_Blocks.push_back(IndividualBlock);
-    }
-    
-    for(unsigned int i = 0; i < R->at("Tau").size(); ++i)
-    {
-        auto Tau = std::make_tuple("Tau", i);
-        //Block IndividualBlock = {Tau};
-        //m_Blocks.push_back(IndividualBlock);
-    }
-    
-    
-    ////////////////////////////////////
-    ///   Test 3 : Univariate Model  ///
-    ////////////////////////////////////
-    /*
-    /// Population block
-    auto P0 = std::make_tuple("P0", -1);
-    m_Blocks.push_back({P0});
-    
-    
-    /// Individual variables block
-    for(unsigned int i = 0; i < R->at("Ksi").size(); ++i)
-    {
-        auto Ksi = std::make_tuple("Ksi", i);
-        auto Tau = std::make_tuple("Tau", i);
+        Block IndividualBlock = {Tau, Ksi};
+        for(int j = 0; j < NbS; ++j) 
+        {
+            auto S = std::make_tuple("S#" + std::to_string(j), i);
+            IndividualBlock.push_back(S);
+        }
         
-        Block IndividualBlock = {Ksi, Tau};
         m_Blocks.push_back(IndividualBlock);
     }
-    */
-
-    
-     
-    //////////////////
-    /// Test Model ///
-    //////////////////
-    /*
-    for(unsigned int i = 0; i < R->at("A").size(); ++i)
-    {
-        auto A = std::make_tuple("A", i);
-        auto B = std::make_tuple("B", i);
-        Block Pop = {A, B};
-        m_Blocks.push_back(Pop);
-    }
-    
-    auto C = std::make_tuple("C", -1);
-    m_Blocks.push_back({C});
-    */
-    
-    /////////////////
-    /// End Tests ///
-    /////////////////
-    
-    
-    
     
     
 }
@@ -181,11 +193,13 @@ BlockedGibbsSampler
     
     auto NewRealizations = std::make_shared<MultiRealizations>(*R);
     
-    for(int i = 0; i < m_Blocks.size(); ++i)
+    for(int j = 0; j < 1; ++j) 
     {
-        NewRealizations = std::make_shared<MultiRealizations>(OneBlockSample(i, NewRealizations, M, D, IterationNumber));
+        for (int i = 0; i < m_Blocks.size(); ++i) {
+            NewRealizations = std::make_shared<MultiRealizations>(
+                    OneBlockSample(i, NewRealizations, M, D, IterationNumber));
+        }
     }
-    
         
     return *NewRealizations;
 }
@@ -208,20 +222,22 @@ BlockedGibbsSampler
     Block CurrentBlock = m_Blocks[BlockNumber];
     double AcceptationRatio = 0;
     std::vector<std::string> CurrentParameters; 
-    
+    bool Delta = false;
     
     /// Loop over the realizations of the block to update the ratio and the realizations
     for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it) 
     {
         /// Initialization
         std::string NameRealization = std::get<0>(*it);
+        if(NameRealization.substr(0, NameRealization.find_first_of("#")) == "Delta") { Delta = true; }
         CurrentParameters.push_back(NameRealization);
         unsigned int SubjectNumber = std::max(std::get<1>(*it), 0);
         
         ///Get the current (for the ratio) and candidate random variables (to sample a candidate)
         ScalarType CurrentRealization = R->at(NameRealization)(SubjectNumber);
-        ScalarType CandidaRealization = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization).Sample();
-        //std::cout << "Name: " << NameRealization << ". Current : " << CurrentRealization << ". Candidate : " << CandidaRealization << std::endl;
+        auto X = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization);
+        ScalarType CandidaRealization = X.Sample();
+        //std::cout << "Name: " << NameRealization << ". STD_Div : " << sqrt(X.GetVariance()) << ". Current : " << CurrentRealization << ". Candidate : " << CandidaRealization << std::endl;
         
         /// Get the random variable
         auto RandomVariable = M->GetRandomVariable(NameRealization);
@@ -235,14 +251,26 @@ BlockedGibbsSampler
     /// Compute the likelihood
     int Type = TypeRandomVariables(CurrentBlock);
 
-    AcceptationRatio -= GetPreviousLogLikelihood(Type, M, R, D);
+    double PreviousLikelihood = GetPreviousLogLikelihood(Type, M, R, D);
+    AcceptationRatio -= PreviousLikelihood;
     
     M->UpdateParameters(NewRealizations, CurrentParameters);
     VectorType ComputedLogLikelihood = ComputeLogLikelihood(Type, NewRealizations, M, D);
-    AcceptationRatio += ComputedLogLikelihood.sum();
+    double NewLikelihood = ComputedLogLikelihood.sum();
+    AcceptationRatio += NewLikelihood;
     
     AcceptationRatio = std::min(AcceptationRatio, 0.0);
     AcceptationRatio = exp(AcceptationRatio);
+    
+    
+    if(Delta)
+    {
+        double a = 0;
+    }
+    else 
+    { 
+        double b = 0;
+    }
     
     /// Adaptative variances for the realizations
     for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it)
@@ -310,9 +338,9 @@ BlockedGibbsSampler
     {
         VectorType LogLikelihood(D->size(), 0);
         int i = 0;
-        for (auto it = LogLikelihood.begin(); it != LogLikelihood.end(); ++it, ++i) {
+        for (auto it = LogLikelihood.begin(); it != LogLikelihood.end(); ++it, ++i) 
+        {
             *it = M->ComputeIndividualLogLikelihood(R, D, i);
-
         }
         return LogLikelihood;
     }
@@ -335,7 +363,7 @@ BlockedGibbsSampler
 
 void 
 BlockedGibbsSampler
-::UpdateLastLogLikelihood(int Type, VectorType ComputedLogLikelihood) 
+::UpdateLastLogLikelihood(int Type, VectorType& ComputedLogLikelihood) 
 {
     if(Type == -1)
         m_LastLikelihoodComputed = ComputedLogLikelihood;

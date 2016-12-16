@@ -6,9 +6,9 @@ ReadData
 ::OpenFilesMultivariate()
 {
     Data D;
-    std::ifstream IndivID ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/group.csv");
-    std::ifstream DataX ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/X.csv");
-    std::ifstream DataY ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/Y.csv");
+    std::ifstream IndivID ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/MCIconvertAD_group.csv");
+    std::ifstream DataX ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/MCIconvertAD_X.csv");
+    std::ifstream DataY ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/MCIconvertAD_Y.csv");
     
     /// Open the Group file;
     if(IndivID.is_open())
@@ -32,8 +32,12 @@ ReadData
                 IndivData.push_back(Observations);
                 i = j;
             }
+            if(i >= 120)
+            {   
+                break;
+            }
         }
-        D.push_back(IndivData);
+        //D.push_back(IndivData);
     }
     else { std::cout << "Unable to open indiv id's"; }
     
@@ -50,7 +54,7 @@ ReadData
                 getline(DataX, line);
             }
         }
-        std::cout << line << std::endl;
+        //std::cout << line << std::endl;
     }
     else { std::cout << "Unable to open timepoints"; }
     
@@ -105,7 +109,7 @@ ReadData
     file.seekg(00, std::ios::beg);
     
     
-    MatrixType Kernel(NbLines, 250, 0);
+    MatrixType Kernel(NbLines, 258, 0);
 
    
     if(file.is_open())
@@ -119,7 +123,16 @@ ReadData
             std:: string cell;
             while(std::getline(LineStream, cell, ','))
             {
-                Kernel(i, j) = std::stold(cell);
+                auto a = std::stold(cell);
+                if(fabs(a) < 10e-20)
+                { 
+                    Kernel(i, j) = 0; 
+                } 
+                else
+                {
+                   Kernel(i, j) = std::stold(cell);  
+                }
+                
                 ++j;
             }
             ++i;

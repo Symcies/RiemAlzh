@@ -64,7 +64,7 @@ protected:
                                     const std::shared_ptr<MultiRealizations> R, const std::shared_ptr<Data> D);
     
     /// Update the last log likelihood computed
-    void UpdateLastLogLikelihood(int Type, VectorType ComputedLogLikelihood);
+    void UpdateLastLogLikelihood(int Type, VectorType& ComputedLogLikelihood);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)

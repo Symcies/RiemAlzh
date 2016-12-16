@@ -32,17 +32,17 @@ Algorithm
 
     for(int k = 0; k<NbMaxIterations; ++k)
     {
-        if( k%50 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
+        if( k%10 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
         ComputeSimulationStep(D, k);
         SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
         ComputeStochasticApproximation(k, SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
-        if( k%50 == 0 ) 
+        if( k%10 == 0 ) 
         { 
             ComputeOutputs();
             //std::cout << "LogLikelihood : " << m_Model->ComputeLogLikelihood(m_Realizations, D) << std::endl; 
         }
-        if( k%200 == 0) { 
+        if( k%100 == 0) { 
             m_Model->SaveData(k); 
         };
     }
@@ -193,7 +193,7 @@ Algorithm
       
   }
     
-    if(Iteration%50 == 0)
+    if(Iteration%10 == 0)
     {
         std::cout << "AcceptRatio: ";
         for(const auto& it : *m_Realizations)

@@ -8,8 +8,10 @@ typedef double ScalarType;
 #include "Manifolds/ExponentialCurveManifold.h"
 #include "Manifolds/PropagationManifold.h"
 #include "Manifolds/BaseManifold/LogisticBaseManifold.h"
+#include "Manifolds/LinearManifold.h"
 #include "Models/LongitudinalModel.h"
 #include "Models/UnivariateModel.h"
+#include "Models/NetworkPropagationModel.h"
 #include "Models/NetworkPropagationModel2.h"
 #include "Models/TestModel.h"
 #include "Samplers/BlockedGibbsSampler.h"
@@ -27,14 +29,13 @@ using namespace std;
 
 typedef vector< vector< pair< LinearAlgebra<ScalarType>::VectorType, double> > > Data;
 typedef map<std::string, vector<double>> Realizations;
-
+typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
 
 
 int main() {
     // TODO : Remplacer les const 'std::shared<T>&' par 'std::shared<const T>'
     // TODO : Change Model->UpdateParameters because it ain't parameters
-    
-
+   
     ///////////////////
     /// Python call ///
     ///////////////////
@@ -48,13 +49,13 @@ int main() {
     //// Initialization ///
     ///////////////////////
     //unsigned int NumberDimension = 10;
-    unsigned int NumberIndependentComponents = 2;
+    unsigned int NumberIndependentComponents = 5;
     clock_t start = clock();
     
     /////////////
     /// Tests ///
     /////////////
-    bool Active = true;
+    bool Active = false;
     TestAssert::Init(Active);
     
     /////////////////////////////////
@@ -71,22 +72,50 @@ int main() {
      
     /// Open the files - real example
     
-    std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/invKd.csv");
+    std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/invKd_16.csv");
     auto KernelMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
-    std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/DataCorticalThickness/Kxd.csv");
+    std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/Kxd_16.csv");
     auto InterpolationMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
     shared_ptr<Data> D = std::make_shared<Data>(ReadData::OpenFilesMultivariate());
-    
     //TODO : Check the data 
     // Read the initializations
     
     /// Initiate the Manifolds and the model
-    shared_ptr<AbstractManifold> Manifold = make_shared<ExponentialCurveManifold>(InterpolationMatrix->rows());
-    shared_ptr<AbstractModel> Model = make_shared<NetworkPropagationModel2>(NumberIndependentComponents, Manifold, KernelMatrix, InterpolationMatrix);
+    //shared_ptr<AbstractManifold> Manifold = make_shared<ExponentialCurveManifold>(InterpolationMatrix->rows());
+    //shared_ptr<AbstractManifold> Manifold = make_shared<LinearManifold>(InterpolationMatrix->rows());
+    //shared_ptr<AbstractModel> Model = make_shared<NetworkPropagationModel2>(NumberIndependentComponents, Manifold, KernelMatrix, InterpolationMatrix);
+    shared_ptr<AbstractModel> Model = make_shared<NetworkPropagationModel>(NumberIndependentComponents, KernelMatrix, InterpolationMatrix);
     shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
     //Model->InitializeFakeRandomVariables();
     //shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(300, 4, 6) );
     
+    
+    ///////////////////////////////////////
+    /// STUPID TEST ... ///
+    ///////////////////////////////////////
+    /*
+    std::ifstream DeltaFile ("/Users/igor.koval/Documents/Work/RiemAlzh/delta_TEST.csv");
+    VectorType Deltas(236, 0.0);
+    if(DeltaFile.is_open()) {
+        unsigned int i = 0;
+        std::string line;
+        while (getline(DeltaFile, line)) 
+        {
+            double DeltaMean = std::stod(line);
+            Deltas(i) = DeltaMean;
+            ++i;
+        }
+    }
+    else { std::cout << "Unable to open the initial delta"; }
+    
+    VectorType m_InterpolationCoefficients = *KernelMatrix * Deltas;
+    VectorType PropagationCoefficients = *InterpolationMatrix * m_InterpolationCoefficients;
+    int i = 1;
+    for(auto it = PropagationCoefficients.begin(); it != PropagationCoefficients.end(); ++it, ++i)
+    {
+        std::cout << i << " : " << *it << std::endl;
+    }
+    */
     
     //////////////////////////
     /// Multivariate Model ///
