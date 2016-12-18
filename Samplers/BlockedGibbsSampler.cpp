@@ -44,7 +44,7 @@ BlockedGibbsSampler
     ///   Test 2   ///
     //////////////////
     
-    unsigned int NbDelta = 0, NbBeta = 0, NbS = 0, NbRho = 0, NbNu = 0;
+    unsigned int NbDelta = 0, NbBeta = 0, NbS = 0, NbNu = 0;
     for(auto it = R->begin(); it != R->end(); ++it)
     {
         std::string Name = it->first;
@@ -60,17 +60,16 @@ BlockedGibbsSampler
         else if(Name == "S")
         {
             NbS += 1;
-            
-        }
-        else if(Name == "Rho")
-        {
-            NbRho += 1;
         }
         else if(Name == "Nu")
         {
             NbNu += 1;
         }
     }
+    
+    /// P0 
+    auto P0 = std::make_tuple("P0", -1);
+    m_Blocks.push_back({P0});
         
     
     /// Beta
@@ -113,32 +112,10 @@ BlockedGibbsSampler
         
     }
     
-    /// Rho
-    Block RhoPop;
-    int SizeOfRhoBlocks = (int)NbRho/2;
-    for(unsigned int i = 1; i < NbRho + 1; ++i)
-    {
-        auto Rho = std::make_tuple("Rho#" + std::to_string(i), -1);
-        RhoPop.push_back(Rho);
-        
-        if(i == NbRho - 1) 
-        {
-            auto RhoEnd = std::make_tuple("Rho#" + std::to_string(i + 1), -1);
-            RhoPop.push_back(RhoEnd);
-            m_Blocks.push_back(RhoPop);
-            break;
-        }
-        if(i%SizeOfRhoBlocks == 0)
-        {
-            m_Blocks.push_back(RhoPop);
-            RhoPop.clear();
-        }
-    }
-    
     /// Nu
     Block NuPop;
     int SizeOfNuBlocks = (int)NbNu/2;
-    for(unsigned int i = 1; i < NbRho + 1; ++i)
+    for(unsigned int i = 1; i < NbNu + 1; ++i)
     {
         auto Nu = std::make_tuple("Nu#" + std::to_string(i + 1), -1);
         NuPop.push_back(Nu);

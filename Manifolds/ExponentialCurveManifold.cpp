@@ -58,7 +58,7 @@ ExponentialCurveManifold
 
 ExponentialCurveManifold::VectorType
 ExponentialCurveManifold
-::GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0, VectorType& Delta) 
+:: GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0, VectorType& Delta) 
 {
     
     /// Initialization

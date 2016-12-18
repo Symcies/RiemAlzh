@@ -82,9 +82,6 @@ protected:
     /// Get the beta - v0 related - for all nodes
     VectorType GetNu(const std::shared_ptr<MultiRealizations> R);
     
-    /// Get the p - P0 related - for all nodes
-    VectorType GetRho(const std::shared_ptr<MultiRealizations> R);
-    
      /// Get the timepoint reparametrization for a given subject
     std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations> R);
     
@@ -93,10 +90,7 @@ protected:
     
     /// Compute the interpolation coefficients beta
     void ComputeInterpoCoeffNu(const std::shared_ptr<MultiRealizations> R);
-    
-    /// Compute the interpolation coefficients p
-    void ComputeInterpoCoeffRho(const std::shared_ptr<MultiRealizations> R);
-    
+        
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
     void ComputeOrthonormalBasis( const std::shared_ptr<MultiRealizations> R); 
 
@@ -108,7 +102,7 @@ protected:
     
     
     /// Compute the parallel curve
-    VectorType ComputeParallelCurve(VectorType& Rho, VectorType& Delta, VectorType& Nu, VectorType& SpaceShift, double Timepoint);
+    VectorType ComputeParallelCurve(VectorType& P0, VectorType& Delta, VectorType& Nu, VectorType& SpaceShift, double Timepoint);
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,8 +137,6 @@ protected:
     /// Interpolation coefficients of beta
     VectorType m_InterpolationCoeffNu;
     
-    /// Interpolation coefficients of p
-    VectorType m_InterpolationCoeffRho;
     
     /// Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns> (Basis orthogonal to gamma0_deriv(T0)
     std::vector< VectorType > m_OrthogonalBasis;
