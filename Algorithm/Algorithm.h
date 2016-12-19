@@ -18,7 +18,6 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
-    typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
     typedef std::map<std::string, VectorType> MultiRealizations;
     typedef std::vector<VectorType> SufficientStatisticsVector;
 
@@ -37,7 +36,7 @@ public:
 
     inline void SetModel(const std::shared_ptr<AbstractModel>& M ) { m_Model = M; }
 
-    inline void SetSampler(const std::shared_ptr<AbstractSampler>& S) { m_Sampler = S; }
+    inline void SetSampler(std::shared_ptr<AbstractSampler> S) { m_Sampler = S; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
@@ -54,10 +53,7 @@ protected:
 
     // Initialize the stochastic approximation
     void InitializeStochasticSufficientStatistics(const SufficientStatisticsVector& S);
-
-    // Initialize the realization of the model (and related manifold) random variables
-    void InitializeRealization(unsigned int NbIndividuals);
-    
+        
     /// Initialize sampler
     void InitializeSampler();
     
@@ -68,7 +64,7 @@ protected:
     void ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration);
 
     // Compute the stochastic coefficient 
-    void ComputeStochasticApproximation(double iteration, SufficientStatisticsVector SufficientStatistics);
+    void ComputeStochasticApproximation(double iteration, SufficientStatisticsVector& SufficientStatistics);
 
     // Compute the decreasing step size of the approximation step
     double DecreasingStepSize(double Iteration, double NoMemoryTime);

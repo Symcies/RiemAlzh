@@ -33,13 +33,11 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
   
     /// Initialize the model : random variables, interpolation matrix, parameters
-    virtual void Initialize(const std::shared_ptr<Data> D);
+    virtual void Initialize(const std::shared_ptr<const Data> D);
     
     /// Update the model parameters != random variables parameters
-    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations> R, const std::vector<std::string> Names = {"All"});
-    
-    /// Get the random variables parameters of the model
-    virtual std::map<std::string, double> GetParameters();
+    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations> R, 
+                                  const std::vector<std::string> Names = {"All"});
     
     /// Simulate data according to the model and the parameters
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int  MaxObs);

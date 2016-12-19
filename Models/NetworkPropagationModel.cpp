@@ -27,8 +27,10 @@ NetworkPropagationModel
 
 void
 NetworkPropagationModel
-::Initialize(const std::shared_ptr<Data> D) 
+::Initialize(const std::shared_ptr<const Data> D) 
 {
+    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+    
      /// Population variables
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.0000001 );
     auto P0 = std::make_shared<GaussianRandomVariable>(0.932, 0.0001 * 0.0001);
@@ -37,7 +39,7 @@ NetworkPropagationModel
     for(int i = 1; i < m_NbControlPoints; ++i)
     {
         auto Delta = std::make_shared<GaussianRandomVariable>(0, 0.0008*0.0008);
-        auto Nu = std::make_shared<GaussianRandomVariable>(1, 0.0008*0.0008);
+        auto Nu = std::make_shared<GaussianRandomVariable>(1, 0.003*0.003);
         
         std::string Name1 = "Delta#" + std::to_string(i);
         std::string Name2 = "Nu#" + std::to_string(i);
@@ -87,7 +89,7 @@ NetworkPropagationModel
 void 
 NetworkPropagationModel
 ::UpdateParameters(const std::shared_ptr<MultiRealizations> R,
-                   const std::vector<std::string, std::allocator<std::string>> Names) 
+                   const std::vector<std::string> Names) 
 {
     // TODO : it is not the best case : separate rho, nu and delta
     int UpdateCase = 1;
@@ -145,14 +147,6 @@ NetworkPropagationModel
     }
 }
 
-
-std::map<std::string, double>
-NetworkPropagationModel
-::GetParameters()
-{
-    // None
-}
-
 NetworkPropagationModel::Data
 NetworkPropagationModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
@@ -165,7 +159,8 @@ NetworkPropagationModel
 
 double 
 NetworkPropagationModel
-::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> R, const std::shared_ptr<Data> D) 
+::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> R, 
+                       const std::shared_ptr<const Data> D) 
 {
     /// Get the data
     return 0;
@@ -174,7 +169,8 @@ NetworkPropagationModel
 double
 NetworkPropagationModel
 ::ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> R,
-                                 const std::shared_ptr<Data> D, const int SubjectNumber) 
+                                 const std::shared_ptr<const Data> D, 
+                                 const int SubjectNumber) 
 {
     /// Get the data
     VectorType Rho(1, exp(R->at("P0")(0)));
@@ -205,7 +201,7 @@ NetworkPropagationModel
 NetworkPropagationModel::SufficientStatisticsVector
 NetworkPropagationModel
 ::GetSufficientStatistics(const std::shared_ptr<MultiRealizations> R,
-                          const std::shared_ptr<Data> D) 
+                          const std::shared_ptr<const Data> D) 
 {
     /// 
     VectorType P0(1, exp(R->at("P0")(0)));
@@ -276,7 +272,7 @@ NetworkPropagationModel
 
 void
 NetworkPropagationModel
-::UpdateRandomVariables(const SufficientStatisticsVector &SS, const std::shared_ptr<Data> D) 
+::UpdateRandomVariables(const SufficientStatisticsVector &SS, const std::shared_ptr<const Data> D) 
 {
     double NumberOfSubjects = D->size();
     
@@ -531,8 +527,7 @@ NetworkPropagationModel
     /// END OF TESTS
     
     Q.erase(Q.begin());
-    // TODO : mettre un std::move(m_OrthogonalBasis, Q) ...
-    m_OrthogonalBasis = Q;
+    m_OrthogonalBasis = std::move(Q);
     
 }
 
@@ -555,7 +550,7 @@ NetworkPropagationModel
         AMatrix.set_column(i, V);
     }
     
-    m_AMatrix = AMatrix;
+    m_AMatrix = std::move(AMatrix);
     
     /// TESTS NEEDED
     // TODO : Mettre des tests
@@ -583,7 +578,7 @@ NetworkPropagationModel
         SpaceShifts.insert( SpaceShift);
     }
 
-    m_SpaceShifts = SpaceShifts;
+    m_SpaceShifts = std::move(SpaceShifts);
     
     /// TESTS NEEDED
     // TODO : Mettre des tests

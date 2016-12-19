@@ -26,8 +26,10 @@ TestModel
 
 void
 TestModel
-::Initialize(const std::shared_ptr<Data> D) 
+::Initialize(const std::shared_ptr<const Data> D) 
 {
+    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+    
     m_PopulationRandomVariables.clear();
     m_IndividualRandomVariables.clear();
     
@@ -47,24 +49,6 @@ TestModel
 ::UpdateParameters(const std::shared_ptr <MultiRealizations> &R, const std::vector<std::string> Names) 
 {
     // TODO : Check if something has to be added
-}
-
-
-std::map< std::string, double >
-TestModel
-::GetParameters() 
-{
-    auto A = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("A"));
-    auto B = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("B"));
-    auto C = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("C"));
-    std::map<std::string, double> Parameters;
-    Parameters["A_Mean"] = A->GetMean();
-    Parameters["A_Var"] = A->GetVariance();
-    Parameters["B_Mean"] = B->GetMean();
-    Parameters["B_Var"] = B->GetVariance();
-    Parameters["C_Mean"] = C->GetMean();
-    Parameters["C_Var"] = C->GetVariance();
-    return Parameters;
 }
 
 TestModel::SufficientStatisticsVector
@@ -370,6 +354,8 @@ void
 TestModel
 ::InitializeFakeRandomVariables()
 {
+    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+    
     auto A = std::make_shared<GaussianRandomVariable>(2, 0.2);
     auto B = std::make_shared<GaussianRandomVariable>(-2, 0.4);
     auto C = std::make_shared<GaussianRandomVariable>(0.5, 0.00001);

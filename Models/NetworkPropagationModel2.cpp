@@ -37,8 +37,10 @@ NetworkPropagationModel2
 
 void
 NetworkPropagationModel2
-::Initialize(const std::shared_ptr<Data> D) 
+::Initialize(const std::shared_ptr<const Data> D) 
 {
+    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+    
     m_IndividualRandomVariables.clear();
     m_PopulationRandomVariables.clear();
     
@@ -249,13 +251,6 @@ NetworkPropagationModel2
             break;
     }
     
-}
-
-std::map<std::string, double> 
-NetworkPropagationModel2
-::GetParameters() 
-{
-
 }
 
 NetworkPropagationModel2::Data
@@ -663,6 +658,8 @@ void
 NetworkPropagationModel2
 ::InitializeFakeRandomVariables() 
 {
+    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+    
     /////////////////////////////
     /// Population Parameters ///
     /////////////////////////////

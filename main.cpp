@@ -50,7 +50,6 @@ int main() {
     ///////////////////////
     //unsigned int NumberDimension = 10;
     unsigned int NumberIndependentComponents = 5;
-    clock_t start = clock();
     
     /////////////
     /// Tests ///
@@ -160,18 +159,7 @@ int main() {
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
     Algo->ComputeMCMCSAEM(D);
-    auto Parameters = Model->GetParameters();
     
-    
-    for(auto it = Parameters.begin(); it != Parameters.end(); ++it)
-    {
-        std::cout << it->first << " --> " << it->second << std::endl;
-    }
-
-
-
-    clock_t end = clock();
-    cout <<  endl << "Time : " << (end - start) / CLOCKS_PER_SEC << " secondes" << endl;
     return 0;
 
     //

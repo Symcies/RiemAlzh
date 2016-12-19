@@ -270,10 +270,9 @@ BlockedGibbsSampler
     std::uniform_real_distribution<double> Distribution(0.0, 1.0);
     double UnifSample = Distribution(Generator);
     
-        ///  Rejection : Candidate not accepted
+    ///  Rejection : Candidate not accepted
     if(UnifSample > AcceptationRatio)
     {
-        //std::cout << "NO!!" << std::endl;
         M->UpdateParameters(R, CurrentParameters);
         return *R;
     }

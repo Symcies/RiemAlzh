@@ -26,8 +26,11 @@ UnivariateModel
 
 void
 UnivariateModel
-::Initialize(const std::shared_ptr<Data> D)
+::Initialize(const std::shared_ptr<const Data> D)
 {
+    
+    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+    
     m_PopulationRandomVariables.clear();
     m_IndividualRandomVariables.clear();
     
@@ -48,27 +51,6 @@ UnivariateModel
 ::UpdateParameters(const std::shared_ptr<MultiRealizations> &R, const std::vector<std::string> Names) 
 {
     // TODO : Check if something has to be added
-}
-
-
-std::map< std::string, double >
-UnivariateModel
-::GetParameters() 
-{
-    auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
-    auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));
-    auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));
-    
-    std::map<std::string, double> Parameters;
-    
-    Parameters["P0"] = P0->GetMean();
-    Parameters["V0"] = Ksi->GetMean();
-    Parameters["Ksi"] = Ksi->GetVariance();
-    Parameters["T0"] = Tau->GetMean();
-    Parameters["Tau"] = Tau->GetVariance();
-    Parameters["NoiseVariance"] = m_Noise->GetVariance();
-    
-    return Parameters;
 }
 
 
@@ -434,6 +416,8 @@ void
 UnivariateModel
 ::InitializeFakeRandomVariables() 
 {
+    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+    
     m_PopulationRandomVariables.clear();
     m_IndividualRandomVariables.clear();
     

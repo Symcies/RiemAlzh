@@ -26,13 +26,11 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
   
     /// Initialize the model
-    virtual void Initialize(const std::shared_ptr<Data> D);
+    virtual void Initialize(const std::shared_ptr<const Data> D);
     
     /// Update the parameters
     virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Names = {"All"});
     
-    /// Get the parameters of the model
-    virtual std::map< std::string, double > GetParameters();
 
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);

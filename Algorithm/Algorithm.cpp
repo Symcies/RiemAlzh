@@ -64,13 +64,6 @@ Algorithm
     }
 }
 
-void
-Algorithm
-::InitializeRealization(unsigned int NbIndividuals)
-{
-
-}
-
 
 void
 Algorithm
@@ -111,7 +104,7 @@ Algorithm
 
 void 
 Algorithm
-::ComputeStochasticApproximation(double iteration, SufficientStatisticsVector SufficientStatistics)
+::ComputeStochasticApproximation(double iteration, SufficientStatisticsVector& SufficientStatistics)
 {
     typedef std::vector< VectorType > SufficientStatisticsVector;
     SufficientStatisticsVector NewStochasticSufficientStatistics;

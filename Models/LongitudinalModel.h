@@ -35,28 +35,29 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the model
-    virtual void Initialize(const std::shared_ptr<Data> D);
+    virtual void Initialize(const std::shared_ptr<const Data> D);
     
     
     /// Initialize parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
-    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Names = {"All"});
-
-    /// Get the parameters of the model
-    virtual std::map< std::string, double > GetParameters();
+    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations> R, const std::vector<std::string> Names = {"All"});
     
      /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations> R, 
+                                                               const std::shared_ptr<const Data> D);
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const std::shared_ptr<Data>& D);
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector StochSufficientStatistics, 
+                                       const std::shared_ptr<const Data> D);
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
+    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> R, 
+                                        const std::shared_ptr<const Data> D);
     
     /// Compute the log likelihood of the model for a particular individual
-    double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations>& R, 
-                                          const std::shared_ptr<Data>& D, const int SubjectNumber);
+    double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> R, 
+                                          const std::shared_ptr<const Data> D, 
+                                          const int SubjectNumber);
     
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
@@ -89,25 +90,25 @@ protected:
     double GetInitialTime();
     
     /// Get the initial position = gamma(t0)
-    VectorType GetInitialPosition(const std::shared_ptr<MultiRealizations>& R);
+    VectorType GetInitialPosition(const std::shared_ptr<MultiRealizations> R);
 
     /// Get the initial velocity = diff(gamma(t0))
-    VectorType GetInitialVelocity(const std::shared_ptr<MultiRealizations>& R);
+    VectorType GetInitialVelocity(const std::shared_ptr<MultiRealizations> R);
 
     /// Get the propagation coefficients = (delta(k))
-    VectorType GetPropagationCoefficients(const std::shared_ptr<MultiRealizations>& R);
+    VectorType GetPropagationCoefficients(const std::shared_ptr<MultiRealizations> R);
     
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
-    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R);
+    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations> R);
 
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
-    void ComputeOrthonormalBasis( const std::shared_ptr<MultiRealizations>& R);
+    void ComputeOrthonormalBasis( const std::shared_ptr<MultiRealizations> R);
 
     /// Compute the A Matrix used to get the space shifts
-    void ComputeAMatrix( const std::shared_ptr<MultiRealizations>& R);
+    void ComputeAMatrix( const std::shared_ptr<MultiRealizations> R);
 
     // Compute the space shifts
-    void ComputeSpaceShifts(const std::shared_ptr<MultiRealizations>& R);
+    void ComputeSpaceShifts(const std::shared_ptr<MultiRealizations> R);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
