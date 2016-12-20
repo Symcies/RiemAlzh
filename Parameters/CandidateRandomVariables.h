@@ -43,7 +43,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the candidate random variables
-    void InitializeCandidateRandomVariables(const std::shared_ptr<Realizations>& R);
+    void InitializeCandidateRandomVariables(const Realizations& R);
 
 
 
@@ -60,7 +60,7 @@ protected:
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Proposition laws of the realizations
+    /// Proposition laws of the realizations
     PropositionDistribution m_PropositionDistribution;
 
 };

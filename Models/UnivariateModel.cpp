@@ -48,7 +48,7 @@ UnivariateModel
 
 void 
 UnivariateModel
-::UpdateParameters(const std::shared_ptr<Realizations> &R, const std::vector<std::string> Names) 
+::UpdateParameters(const Realizations& R, const std::vector<std::string> Names) 
 {
     // TODO : Check if something has to be added
 }

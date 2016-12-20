@@ -72,7 +72,7 @@ Algorithm
     m_Model->Initialize(D);
     Realizations R = m_Model->SimulateRealizations((int)D->size());
     m_Realizations = std::make_shared<Realizations>(R);
-    m_Model->UpdateParameters(m_Realizations);
+    m_Model->UpdateParameters(R);
     
     for(auto&& it : *m_Realizations)
     {
@@ -88,14 +88,15 @@ void
 Algorithm
 ::InitializeSampler()
 {
-    m_Sampler->InitializeSampler(m_Realizations);
+    m_Sampler->InitializeSampler(*m_Realizations);
 }
 
 void
 Algorithm
 ::ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration)
 {
-    Realizations&& R = m_Sampler->Sample(m_Realizations, m_Model, D, Iteration);
+    Realizations RRR = *m_Realizations;
+    Realizations&& R = m_Sampler->Sample(RRR, *m_Model, *D, Iteration);
     ComputeAcceptanceRatio(R, Iteration);
     m_Realizations = std::make_shared<Realizations>(R);
     

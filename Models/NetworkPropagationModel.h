@@ -33,7 +33,7 @@ public:
     virtual void Initialize(const std::shared_ptr<const Data> D);
     
     /// Update the model parameters != random variables parameters
-    virtual void UpdateParameters(const std::shared_ptr<Realizations> R, 
+    virtual void UpdateParameters(const Realizations& R, 
                                   const std::vector<std::string> Names = {"All"});
     
     /// Simulate data according to the model and the parameters

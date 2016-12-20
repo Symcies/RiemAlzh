@@ -42,12 +42,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(const std::shared_ptr<Realizations>& R) = 0;
+    virtual void InitializeSampler(const Realizations& R) = 0;
     
-    // Sample a new variable thanks to the sampler
-    // The model cannot be constant because we modify some of its parameters (m_Orthonormal Basis for instance)
-    virtual Realizations Sample(const std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
-                                     const std::shared_ptr<Data>& D, int IterationNumber) = 0;
+    /// Sample new realizations of the model random variables
+    virtual Realizations Sample(const Realizations& R, AbstractModel& M, const Data& D, int IterationNumber) = 0;
 
 
 protected:
@@ -65,10 +63,12 @@ protected:
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    /// Candidates random variables, corresponding to those in the Model
-    CandidateRandomVariables m_CandidateRandomVariables;
+    /// Sampling time without memory
+    unsigned int m_MemorylessSamplingTime = 10000;
     
-
+    /// Acceptation ratio 
+    double m_ExpectedAcceptanceRatio = 0.301;
+    
 
 };
 

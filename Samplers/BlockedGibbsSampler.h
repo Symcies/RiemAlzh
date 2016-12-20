@@ -20,8 +20,11 @@ public:
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /// Constructor
     BlockedGibbsSampler();
-
+    
+    /// Constructor 2
+    BlockedGibbsSampler(unsigned int MemorylessSamplingTime, double ExpectedAcceptanceRatio);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Encapsulation method(s) :
@@ -33,12 +36,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(const std::shared_ptr<Realizations>& R);
+    virtual void InitializeSampler(const Realizations& R);
     
-    // Sample a new variable thanks to the sampler
-    // The model cannot be constant because we modify some of its parameters (m_Orthonormal Basis for instance)
-    virtual Realizations Sample(const std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
-                                     const std::shared_ptr<Data>& D, int IterationNumber);
+    /// Sample new realizations
+    virtual Realizations Sample(const Realizations& R, AbstractModel& M, const Data& D, int IterationNumber);
 
 
 protected:
@@ -47,21 +48,18 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Sample one block
-    Realizations OneBlockSample(int BlockNumber, const std::shared_ptr<Realizations>& R, 
-                                     std::shared_ptr<AbstractModel>& M,
-                                     const std::shared_ptr<Data>& D, int IterationNumber);
+    Realizations OneBlockSample(int BlockNumber, const Realizations& R, AbstractModel& M, 
+                                const Data& D, int IterationNumber);
     
     
     /// Check if all the random variables are from one individual
-    int TypeRandomVariables(Block B);
+    int TypeRandomVariables(Block& B);
     
     /// Compute likelihood based on the block type
-    VectorType ComputeLogLikelihood(int Type, const std::shared_ptr<Realizations> R, 
-                                    const std::shared_ptr<AbstractModel> M, const std::shared_ptr<Data> D);
+    VectorType ComputeLogLikelihood(int Type, const Realizations& R, AbstractModel& M, const Data& D);
     
     /// Get previously computed log likelihood
-    double GetPreviousLogLikelihood(int Type, const std::shared_ptr<AbstractModel> M, 
-                                    const std::shared_ptr<Realizations> R, const std::shared_ptr<Data> D);
+    double GetPreviousLogLikelihood(int Type, AbstractModel& M, const Realizations& R, const Data& D);
     
     /// Update the last log likelihood computed
     void UpdateLastLogLikelihood(int Type, VectorType& ComputedLogLikelihood);

@@ -41,12 +41,12 @@ CandidateRandomVariables
 
 void
 CandidateRandomVariables
-::InitializeCandidateRandomVariables(const std::shared_ptr<Realizations> &R)
+::InitializeCandidateRandomVariables(const Realizations& R)
 {
     /// Initialization
     PropositionDistribution PD;
     
-    for(auto it = R->begin(); it != R->end(); ++it)
+    for(auto it = R.begin(); it != R.end(); ++it)
     {
         std::vector< GaussianRandomVariable > PropDistribPerRealization;
         for(auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)

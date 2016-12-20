@@ -185,7 +185,7 @@ NetworkPropagationModel2
 
 void 
 NetworkPropagationModel2
-::UpdateParameters(const std::shared_ptr<Realizations> R,
+::UpdateParameters(const Realizations& R,
                    const std::vector<std::string> Names) 
 {
     /// This first part inspects the parameters names to update
@@ -224,27 +224,29 @@ NetworkPropagationModel2
         }
     }
     
+    auto R1 = std::make_shared<Realizations>(R);
+    
     /// Update Case in fonction of the the vector of names
     switch(UpdateCase)
     {
         case 1:
             break;
         case 2:
-            ComputeSpaceShifts(R);
+            ComputeSpaceShifts(R1);
             break;
         case 3:
-            ComputeAMatrix(R);
-            ComputeSpaceShifts(R);
+            ComputeAMatrix(R1);
+            ComputeSpaceShifts(R1);
         case 4:
-            ComputeOrthonormalBasis(R);
-            ComputeAMatrix(R);
-            ComputeSpaceShifts(R);
+            ComputeOrthonormalBasis(R1);
+            ComputeAMatrix(R1);
+            ComputeSpaceShifts(R1);
             break;
         case 5:
-            ComputeInterpolationCoefficients(R);
-            ComputeOrthonormalBasis(R);
-            ComputeAMatrix(R);
-            ComputeSpaceShifts(R);
+            ComputeInterpolationCoefficients(R1);
+            ComputeOrthonormalBasis(R1);
+            ComputeAMatrix(R1);
+            ComputeSpaceShifts(R1);
             break;
         default:
             std::cout << "Error? NetworkPropagationModel > UpdateParameters";

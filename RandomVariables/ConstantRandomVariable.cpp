@@ -12,6 +12,12 @@ ConstantRandomVariable
 }
 
 ConstantRandomVariable
+::ConstantRandomVariable(const ConstantRandomVariable &CRV) 
+{
+    m_Mean = CRV.m_Mean;
+}
+
+ConstantRandomVariable
 ::~ConstantRandomVariable() 
 {
     

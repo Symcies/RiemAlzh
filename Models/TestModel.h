@@ -29,7 +29,7 @@ public:
     virtual void Initialize(const std::shared_ptr<const Data> D);
     
     /// Update the parameters
-    virtual void UpdateParameters(const std::shared_ptr<Realizations>& R, const std::vector<std::string> Names = {"All"});
+    virtual void UpdateParameters(const Realizations& R, const std::vector<std::string> Names = {"All"});
     
 
     /// Update the sufficient statistics according to the model variables / parameters 

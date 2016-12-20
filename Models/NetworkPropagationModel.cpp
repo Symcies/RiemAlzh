@@ -88,7 +88,7 @@ NetworkPropagationModel
 
 void 
 NetworkPropagationModel
-::UpdateParameters(const std::shared_ptr<Realizations> R,
+::UpdateParameters(const Realizations& R,
                    const std::vector<std::string> Names) 
 {
     // TODO : it is not the best case : separate rho, nu and delta
@@ -116,6 +116,8 @@ NetworkPropagationModel
             break;
         }
     }
+    
+    auto R1 = std::make_shared<Realizations>(R);
         
     
     switch(UpdateCase)
@@ -123,23 +125,23 @@ NetworkPropagationModel
         case 1:
             break;
         case 2:
-            ComputeSpaceShifts(R);
+            ComputeSpaceShifts(R1);
             break;
         case 3:
-            ComputeAMatrix(R);
-            ComputeSpaceShifts(R);
+            ComputeAMatrix(R1);
+            ComputeSpaceShifts(R1);
             break;
         case 4:
-            ComputeOrthonormalBasis(R);
-            ComputeAMatrix(R);
-            ComputeSpaceShifts(R);
+            ComputeOrthonormalBasis(R1);
+            ComputeAMatrix(R1);
+            ComputeSpaceShifts(R1);
             break;
         case 5:
-            ComputeInterpoCoeffDelta(R);
-            ComputeInterpoCoeffNu(R);
-            ComputeOrthonormalBasis(R);
-            ComputeAMatrix(R);
-            ComputeSpaceShifts(R);
+            ComputeInterpoCoeffDelta(R1);
+            ComputeInterpoCoeffNu(R1);
+            ComputeOrthonormalBasis(R1);
+            ComputeAMatrix(R1);
+            ComputeSpaceShifts(R1);
             break;
         default:
             std::cout << "Error? NetworkPropagationModel > UpdateParameters";
