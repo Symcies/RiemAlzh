@@ -14,28 +14,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="03e71383-5091-4290-9195-e722e3a9d4e8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/igor_koval.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/igor_koval.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Algorithm/Algorithm.cpp" afterPath="$PROJECT_DIR$/Algorithm/Algorithm.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/AbstractModel.h" afterPath="$PROJECT_DIR$/Models/AbstractModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/LongitudinalModel.cpp" afterPath="$PROJECT_DIR$/Models/LongitudinalModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/LongitudinalModel.h" afterPath="$PROJECT_DIR$/Models/LongitudinalModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" afterPath="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel.h" afterPath="$PROJECT_DIR$/Models/NetworkPropagationModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel2.cpp" afterPath="$PROJECT_DIR$/Models/NetworkPropagationModel2.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel2.h" afterPath="$PROJECT_DIR$/Models/NetworkPropagationModel2.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/TestModel.cpp" afterPath="$PROJECT_DIR$/Models/TestModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/TestModel.h" afterPath="$PROJECT_DIR$/Models/TestModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/UnivariateModel.cpp" afterPath="$PROJECT_DIR$/Models/UnivariateModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/UnivariateModel.h" afterPath="$PROJECT_DIR$/Models/UnivariateModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp" afterPath="$PROJECT_DIR$/Parameters/CandidateRandomVariables.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Parameters/CandidateRandomVariables.h" afterPath="$PROJECT_DIR$/Parameters/CandidateRandomVariables.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandomVariables/AbstractRandomVariable.h" afterPath="$PROJECT_DIR$/RandomVariables/AbstractRandomVariable.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandomVariables/ConstantRandomVariable.cpp" afterPath="$PROJECT_DIR$/RandomVariables/ConstantRandomVariable.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandomVariables/ConstantRandomVariable.h" afterPath="$PROJECT_DIR$/RandomVariables/ConstantRandomVariable.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/AbstractSampler.cpp" afterPath="$PROJECT_DIR$/Samplers/AbstractSampler.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/AbstractSampler.h" afterPath="$PROJECT_DIR$/Samplers/AbstractSampler.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" afterPath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h" afterPath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Inputs/ReadData.cpp" afterPath="$PROJECT_DIR$/Inputs/ReadData.cpp" />
     </list>
     <ignored path="RiemAlzh.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -49,63 +29,56 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="DockManager">
-    <window id="1">
-      <content type="file-editors">
-        <state>
-          <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file leaf-file-name="AbstractModel.h" pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/Models/AbstractModel.h">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="294">
-                    <caret line="50" column="104" selection-start-line="50" selection-start-column="104" selection-end-line="50" selection-end-column="104" />
-                    <folding />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
-  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="RiemAlzh" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.49932885">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="BlockedGibbsSampler.h" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="387">
-                  <caret line="41" column="51" selection-start-line="41" selection-start-column="51" selection-end-line="41" selection-end-column="51" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="BlockedGibbsSampler.cpp" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="498">
-                  <caret line="322" column="0" selection-start-line="322" selection-start-column="0" selection-end-line="322" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#782#4004#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf>
+      <file leaf-file-name="Algorithm.cpp" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="295">
+              <caret line="74" column="33" selection-start-line="74" selection-start-column="33" selection-end-line="74" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ReadData.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Inputs/ReadData.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="530">
+              <caret line="106" column="5" selection-start-line="106" selection-start-column="5" selection-end-line="106" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Algorithm.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="106">
+              <caret line="55" column="8" selection-start-line="55" selection-start-column="8" selection-end-line="55" selection-end-column="8" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="113">
+              <caret line="77" column="25" selection-start-line="77" selection-start-column="25" selection-end-line="77" selection-end-column="48" />
+              <folding>
+                <element signature="e#0#19#0" expanded="true" />
+                <element signature="e#86#118#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -127,14 +100,11 @@
         <option value="$PROJECT_DIR$/Manifolds/ExponentialCurveManifold.h" />
         <option value="$PROJECT_DIR$/Manifolds/PropagationManifold.h" />
         <option value="$PROJECT_DIR$/Manifolds/PropagationManifold.cpp" />
-        <option value="$PROJECT_DIR$/Inputs/ReadData.cpp" />
         <option value="$PROJECT_DIR$/Manifolds/LinearManifold.cpp" />
         <option value="$PROJECT_DIR$/Manifolds/LinearManifold.h" />
         <option value="$PROJECT_DIR$/Models/AbstractModel.cpp" />
         <option value="$PROJECT_DIR$/Manifolds/ExponentialCurveManifold.cpp" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/main.cpp" />
-        <option value="$PROJECT_DIR$/Algorithm/Algorithm.h" />
         <option value="$PROJECT_DIR$/RandomVariables/GaussianRandomVariable.h" />
         <option value="$PROJECT_DIR$/RandomVariables/LaplaceRandomVariable.cpp" />
         <option value="$PROJECT_DIR$/RandomVariables/LaplaceRandomVariable.h" />
@@ -151,7 +121,6 @@
         <option value="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h" />
         <option value="$PROJECT_DIR$/Samplers/AbstractSampler.h" />
         <option value="$PROJECT_DIR$/Models/AbstractModel.h" />
-        <option value="$PROJECT_DIR$/Algorithm/Algorithm.cpp" />
         <option value="$PROJECT_DIR$/Models/LongitudinalModel.h" />
         <option value="$PROJECT_DIR$/Models/NetworkPropagationModel.h" />
         <option value="$PROJECT_DIR$/Models/NetworkPropagationModel2.h" />
@@ -164,6 +133,10 @@
         <option value="$PROJECT_DIR$/Models/NetworkPropagationModel2.cpp" />
         <option value="$PROJECT_DIR$/Samplers/AbstractSampler.cpp" />
         <option value="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" />
+        <option value="$PROJECT_DIR$/Inputs/ReadData.cpp" />
+        <option value="$PROJECT_DIR$/Algorithm/Algorithm.h" />
+        <option value="$PROJECT_DIR$/main.cpp" />
+        <option value="$PROJECT_DIR$/Algorithm/Algorithm.cpp" />
       </list>
     </option>
   </component>
@@ -289,7 +262,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Samplers" />
+              <option name="myItemId" value="Inputs" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -303,7 +276,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Models" />
+              <option name="myItemId" value="Algorithm" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -574,12 +547,12 @@
       <workItem from="1481649776675" duration="49193000" />
       <workItem from="1482088874293" duration="480000" />
       <workItem from="1482137255159" duration="10299000" />
-      <workItem from="1482225247302" duration="9268000" />
+      <workItem from="1482225247302" duration="11802000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="714095000" />
+    <option name="totallyTimeSpent" value="716629000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -592,7 +565,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2529297" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32910156" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3359375" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3359375" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32837528" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -711,13 +684,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Inputs/ReadData.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="34" column="23" selection-start-line="34" selection-start-column="23" selection-end-line="34" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Manifolds/ExponentialCurveManifold.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="476">
@@ -780,14 +746,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="649">
           <caret line="2144" column="0" selection-start-line="2144" selection-start-column="0" selection-end-line="2144" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="20" column="46" selection-start-line="20" selection-start-column="46" selection-end-line="20" selection-end-column="46" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -873,17 +831,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="51" column="49" selection-start-line="51" selection-start-column="49" selection-end-line="51" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-            <element signature="e#86#118#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Parameters/CandidateRandomVariables.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="341">
@@ -936,14 +883,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="742">
           <caret line="53" column="55" selection-start-line="53" selection-start-column="54" selection-end-line="53" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-35">
-          <caret line="74" column="33" selection-start-line="74" selection-start-column="33" selection-end-line="74" selection-end-column="33" />
           <folding />
         </state>
       </provider>
@@ -1043,19 +982,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Samplers/BlockedGibbsSampler.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
+        <state relative-caret-position="65">
           <caret line="41" column="51" selection-start-line="41" selection-start-column="51" selection-end-line="41" selection-end-column="51" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="498">
-          <caret line="322" column="0" selection-start-line="322" selection-start-column="0" selection-end-line="322" selection-end-column="0" />
-          <folding>
-            <element signature="e#782#4004#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1075,6 +1004,51 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="294">
           <caret line="50" column="104" selection-start-line="50" selection-start-column="104" selection-end-line="50" selection-end-column="104" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="325" column="8" selection-start-line="325" selection-start-column="8" selection-end-line="325" selection-end-column="8" />
+          <folding>
+            <element signature="e#782#4004#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Inputs/ReadData.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="530">
+          <caret line="106" column="5" selection-start-line="106" selection-start-column="5" selection-end-line="106" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="113">
+          <caret line="77" column="25" selection-start-line="77" selection-start-column="25" selection-end-line="77" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#86#118#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="106">
+          <caret line="55" column="8" selection-start-line="55" selection-start-column="8" selection-end-line="55" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="74" column="33" selection-start-line="74" selection-start-column="33" selection-end-line="74" selection-end-column="33" />
           <folding />
         </state>
       </provider>

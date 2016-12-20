@@ -81,7 +81,7 @@ ReadData
                 getline(DataY, line);
             }
         }
-        std::cout << line << std::endl;
+        //std::cout << line << std::endl;
     }
     else { std::cout << "Unable to open the observation values"; }
     
