@@ -22,10 +22,7 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
-    typedef std::map< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariableMap;
-    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-    typedef std::map<std::string, VectorType> MultiRealizations;
-    typedef std::map<std::string, double> UniqueRealizations;
+    typedef std::map<std::string, VectorType> Realizations;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
@@ -45,11 +42,11 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(const std::shared_ptr<MultiRealizations>& R) = 0;
+    virtual void InitializeSampler(const std::shared_ptr<Realizations>& R) = 0;
     
     // Sample a new variable thanks to the sampler
     // The model cannot be constant because we modify some of its parameters (m_Orthonormal Basis for instance)
-    virtual MultiRealizations Sample(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
+    virtual Realizations Sample(const std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
                                      const std::shared_ptr<Data>& D, int IterationNumber) = 0;
 
 

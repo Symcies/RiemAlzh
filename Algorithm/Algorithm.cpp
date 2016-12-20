@@ -70,8 +70,8 @@ Algorithm
 ::InitializeModel(const std::shared_ptr<Data> D) 
 {
     m_Model->Initialize(D);
-    MultiRealizations R = m_Model->SimulateRealizations((int)D->size());
-    m_Realizations = std::make_shared<MultiRealizations>(R);
+    Realizations R = m_Model->SimulateRealizations((int)D->size());
+    m_Realizations = std::make_shared<Realizations>(R);
     m_Model->UpdateParameters(m_Realizations);
     
     for(auto&& it : *m_Realizations)
@@ -95,9 +95,9 @@ void
 Algorithm
 ::ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration)
 {
-    MultiRealizations&& R = m_Sampler->Sample(m_Realizations, m_Model, D, Iteration);
+    Realizations&& R = m_Sampler->Sample(m_Realizations, m_Model, D, Iteration);
     ComputeAcceptanceRatio(R, Iteration);
-    m_Realizations = std::make_shared<MultiRealizations>(R);
+    m_Realizations = std::make_shared<Realizations>(R);
     
 }
 
@@ -162,7 +162,7 @@ Algorithm
 
 void
 Algorithm
-::ComputeAcceptanceRatio(MultiRealizations& R, int Iteration)
+::ComputeAcceptanceRatio(Realizations& R, int Iteration)
 { 
     
 

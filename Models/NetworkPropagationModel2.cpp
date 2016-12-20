@@ -185,7 +185,7 @@ NetworkPropagationModel2
 
 void 
 NetworkPropagationModel2
-::UpdateParameters(const std::shared_ptr<MultiRealizations> R,
+::UpdateParameters(const std::shared_ptr<Realizations> R,
                    const std::vector<std::string> Names) 
 {
     /// This first part inspects the parameters names to update
@@ -257,7 +257,7 @@ NetworkPropagationModel2::Data
 NetworkPropagationModel2
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
-    auto R = std::make_shared<MultiRealizations>(SimulateRealizations(NumberOfSubjects));
+    auto R = std::make_shared<Realizations>(SimulateRealizations(NumberOfSubjects));
     ComputeInterpolationCoefficients(R);
     ComputeOrthonormalBasis(R);
     ComputeAMatrix(R);
@@ -331,7 +331,7 @@ NetworkPropagationModel2
 
 double
 NetworkPropagationModel2
-::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> R, const std::shared_ptr<Data> D) 
+::ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const std::shared_ptr<Data> D) 
 {
     /// Get the data
     std::shared_ptr<ExponentialCurveManifold> CastedManifold = std::static_pointer_cast<ExponentialCurveManifold>(m_Manifold);
@@ -368,7 +368,7 @@ NetworkPropagationModel2
 
 double
 NetworkPropagationModel2
-::ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> R,
+::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R,
                                  const std::shared_ptr<Data> D, const int SubjectNumber) 
 {
     /// Get the data
@@ -405,7 +405,7 @@ NetworkPropagationModel2
 
 NetworkPropagationModel2::SufficientStatisticsVector
 NetworkPropagationModel2
-::GetSufficientStatistics(const std::shared_ptr<MultiRealizations> R,
+::GetSufficientStatistics(const std::shared_ptr<Realizations> R,
                           const std::shared_ptr<Data> D) 
 {
     //// Initialization
@@ -707,7 +707,7 @@ NetworkPropagationModel2
 
 NetworkPropagationModel2::VectorType
 NetworkPropagationModel2
-::GetPropagationCoefficients(const std::shared_ptr<MultiRealizations> R) 
+::GetPropagationCoefficients(const std::shared_ptr<Realizations> R) 
 {
     VectorType PropagationCoefficients = m_InterpolationMatrix * m_InterpolationCoefficients;
     return PropagationCoefficients;    
@@ -715,7 +715,7 @@ NetworkPropagationModel2
 
 std::function<double(double)>
 NetworkPropagationModel2
-::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations> R) 
+::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations> R) 
 {
     double AccFactor = exp(R->at("Ksi")(SubjectNumber));
     double TimeShift = R->at("Tau")(SubjectNumber);
@@ -725,7 +725,7 @@ NetworkPropagationModel2
 
 void
 NetworkPropagationModel2
-::ComputeInterpolationCoefficients(const std::shared_ptr<MultiRealizations> R) 
+::ComputeInterpolationCoefficients(const std::shared_ptr<Realizations> R) 
 {
     VectorType Delta(m_NbControlPoints, 0.0);
     
@@ -740,7 +740,7 @@ NetworkPropagationModel2
 
 void
 NetworkPropagationModel2
-::ComputeOrthonormalBasis(const std::shared_ptr<MultiRealizations> R) 
+::ComputeOrthonormalBasis(const std::shared_ptr<Realizations> R) 
 {
     /// Initialization
     std::shared_ptr<ExponentialCurveManifold> CastedManifold = std::static_pointer_cast<ExponentialCurveManifold>(m_Manifold);
@@ -784,7 +784,7 @@ NetworkPropagationModel2
 
 void 
 NetworkPropagationModel2
-::ComputeAMatrix(const std::shared_ptr<MultiRealizations> R) 
+::ComputeAMatrix(const std::shared_ptr<Realizations> R) 
 {
     MatrixType AMatrix(m_Manifold->GetDimension(), m_NbIndependentComponents);
     
@@ -810,7 +810,7 @@ NetworkPropagationModel2
 
 void 
 NetworkPropagationModel2
-::ComputeSpaceShifts(const std::shared_ptr<MultiRealizations> R) 
+::ComputeSpaceShifts(const std::shared_ptr<Realizations> R) 
 {
     std::map< std::string, VectorType> SpaceShifts;
     int NumberOfSubjects = (int)R->at("Tau").size();

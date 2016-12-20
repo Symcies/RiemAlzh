@@ -85,7 +85,7 @@ LongitudinalModel
 
 void 
 LongitudinalModel
-::UpdateParameters(const std::shared_ptr<MultiRealizations> R, const std::vector<std::string> Names) 
+::UpdateParameters(const std::shared_ptr<Realizations> R, const std::vector<std::string> Names) 
 {
     /// This first part inspects the parameters names to update
     int UpdateCase = 1;
@@ -145,7 +145,7 @@ LongitudinalModel
 
 LongitudinalModel::SufficientStatisticsVector
 LongitudinalModel
-::GetSufficientStatistics(const std::shared_ptr<MultiRealizations> R, 
+::GetSufficientStatistics(const std::shared_ptr<Realizations> R, 
                           const std::shared_ptr<const Data> D)
 {
     /////////////////////////
@@ -375,7 +375,7 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> R, const std::shared_ptr<const Data> D) 
+::ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const std::shared_ptr<const Data> D) 
 {
     /// Get the data
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
@@ -411,7 +411,7 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> R,
+::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R,
                                  const std::shared_ptr<const Data> D, const int SubjectNumber) 
 {
     // TODO : send only D(i) to the function?!
@@ -452,7 +452,7 @@ LongitudinalModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs)
 {
     /// Simulate realizations
-    auto R = std::make_shared<MultiRealizations>( SimulateRealizations(NumberOfSubjects) );
+    auto R = std::make_shared<Realizations>( SimulateRealizations(NumberOfSubjects) );
     
     /// Initialize model attributes
     ComputeOrthonormalBasis(R);
@@ -621,7 +621,7 @@ LongitudinalModel
 
 LongitudinalModel::VectorType
 LongitudinalModel
-::GetInitialPosition(const std::shared_ptr<MultiRealizations> R)
+::GetInitialPosition(const std::shared_ptr<Realizations> R)
 {
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
 
@@ -642,7 +642,7 @@ LongitudinalModel
 
 LongitudinalModel::VectorType
 LongitudinalModel
-::GetInitialVelocity(const std::shared_ptr<MultiRealizations> R)
+::GetInitialVelocity(const std::shared_ptr<Realizations> R)
 {
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
 
@@ -664,7 +664,7 @@ LongitudinalModel
 
 LongitudinalModel::VectorType
 LongitudinalModel
-::GetPropagationCoefficients(const std::shared_ptr<MultiRealizations> R)
+::GetPropagationCoefficients(const std::shared_ptr<Realizations> R)
 {
     VectorType Delta(m_Manifold->GetDimension(), 0.0);
 
@@ -679,7 +679,7 @@ LongitudinalModel
 
 std::function<double(double)>  
 LongitudinalModel
-::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations> R)
+::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations> R)
 {
     double AccFactor = exp(R->at("Ksi")(SubjectNumber));
     double TimeShift = R->at("Tau")(SubjectNumber);
@@ -690,7 +690,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeOrthonormalBasis(const std::shared_ptr<MultiRealizations> R)
+::ComputeOrthonormalBasis(const std::shared_ptr<Realizations> R)
 {
     /////////////////////////
     /// Get the vectors P0 and V0
@@ -784,7 +784,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeAMatrix(const std::shared_ptr<MultiRealizations> R)
+::ComputeAMatrix(const std::shared_ptr<Realizations> R)
 {
     MatrixType AMatrix(m_Manifold->GetDimension(), m_NbIndependentComponents);
     
@@ -836,7 +836,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeSpaceShifts(const std::shared_ptr<MultiRealizations> R)
+::ComputeSpaceShifts(const std::shared_ptr<Realizations> R)
 {
     std::map< std::string, VectorType> SpaceShifts;
     int NumberOfSubjects = (int)R->at("Tau").size();

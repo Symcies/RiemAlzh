@@ -19,9 +19,8 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     
     /// Key : Name of the parameter. Value : Value of the parameter
-    typedef std::map<std::string, ScalarType > RandomVariableParameters;              // TODO : Maybe changed?
     typedef std::map< std::string, std::vector< GaussianRandomVariable >> PropositionDistribution;
-    typedef std::map<std::string, VectorType> MultiRealizations; 
+    typedef std::map<std::string, VectorType> Realizations; 
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +43,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the candidate random variables
-    void InitializeCandidateRandomVariables(const std::shared_ptr<MultiRealizations>& R);
+    void InitializeCandidateRandomVariables(const std::shared_ptr<Realizations>& R);
 
 
 
@@ -56,8 +55,7 @@ protected:
     /// Return the initial proposition distribution corresponding to the variable
     GaussianRandomVariable ReadInitialPropositionDistribution(std::string NameRandomVariable, ScalarType CurrentState);
     
-
-
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -39,10 +39,10 @@ public:
     
     
     /// Initialize parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
-    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations> R, const std::vector<std::string> Names = {"All"});
+    virtual void UpdateParameters(const std::shared_ptr<Realizations> R, const std::vector<std::string> Names = {"All"});
     
      /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations> R, 
+    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations> R, 
                                                                const std::shared_ptr<const Data> D);
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
@@ -51,11 +51,11 @@ public:
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> R, 
+    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations> R, 
                                         const std::shared_ptr<const Data> D);
     
     /// Compute the log likelihood of the model for a particular individual
-    double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> R, 
+    double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R, 
                                           const std::shared_ptr<const Data> D, 
                                           const int SubjectNumber);
     
@@ -90,25 +90,25 @@ protected:
     double GetInitialTime();
     
     /// Get the initial position = gamma(t0)
-    VectorType GetInitialPosition(const std::shared_ptr<MultiRealizations> R);
+    VectorType GetInitialPosition(const std::shared_ptr<Realizations> R);
 
     /// Get the initial velocity = diff(gamma(t0))
-    VectorType GetInitialVelocity(const std::shared_ptr<MultiRealizations> R);
+    VectorType GetInitialVelocity(const std::shared_ptr<Realizations> R);
 
     /// Get the propagation coefficients = (delta(k))
-    VectorType GetPropagationCoefficients(const std::shared_ptr<MultiRealizations> R);
+    VectorType GetPropagationCoefficients(const std::shared_ptr<Realizations> R);
     
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
-    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations> R);
+    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations> R);
 
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
-    void ComputeOrthonormalBasis( const std::shared_ptr<MultiRealizations> R);
+    void ComputeOrthonormalBasis( const std::shared_ptr<Realizations> R);
 
     /// Compute the A Matrix used to get the space shifts
-    void ComputeAMatrix( const std::shared_ptr<MultiRealizations> R);
+    void ComputeAMatrix( const std::shared_ptr<Realizations> R);
 
     // Compute the space shifts
-    void ComputeSpaceShifts(const std::shared_ptr<MultiRealizations> R);
+    void ComputeSpaceShifts(const std::shared_ptr<Realizations> R);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
@@ -116,7 +116,7 @@ protected:
 
     /// Last calculated Likelihood - and the corresponding realizations
     /// Bool : if last calculation was generic. Double : last likelihood value. Realizations : last realizations
-    std::tuple<bool, double, MultiRealizations> m_LastLogLikelihood;
+    std::tuple<bool, double, Realizations> m_LastLogLikelihood;
 
     /// Number of independent components
     unsigned int m_NbIndependentComponents;

@@ -33,11 +33,11 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(const std::shared_ptr<MultiRealizations>& R);
+    virtual void InitializeSampler(const std::shared_ptr<Realizations>& R);
     
     // Sample a new variable thanks to the sampler
     // The model cannot be constant because we modify some of its parameters (m_Orthonormal Basis for instance)
-    virtual MultiRealizations Sample(const std::shared_ptr<MultiRealizations>& R, std::shared_ptr<AbstractModel>& M,
+    virtual Realizations Sample(const std::shared_ptr<Realizations>& R, std::shared_ptr<AbstractModel>& M,
                                      const std::shared_ptr<Data>& D, int IterationNumber);
 
 
@@ -47,7 +47,7 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Sample one block
-    MultiRealizations OneBlockSample(int BlockNumber, const std::shared_ptr<MultiRealizations>& R, 
+    Realizations OneBlockSample(int BlockNumber, const std::shared_ptr<Realizations>& R, 
                                      std::shared_ptr<AbstractModel>& M,
                                      const std::shared_ptr<Data>& D, int IterationNumber);
     
@@ -56,12 +56,12 @@ protected:
     int TypeRandomVariables(Block B);
     
     /// Compute likelihood based on the block type
-    VectorType ComputeLogLikelihood(int Type, const std::shared_ptr<MultiRealizations> R, 
+    VectorType ComputeLogLikelihood(int Type, const std::shared_ptr<Realizations> R, 
                                     const std::shared_ptr<AbstractModel> M, const std::shared_ptr<Data> D);
     
     /// Get previously computed log likelihood
     double GetPreviousLogLikelihood(int Type, const std::shared_ptr<AbstractModel> M, 
-                                    const std::shared_ptr<MultiRealizations> R, const std::shared_ptr<Data> D);
+                                    const std::shared_ptr<Realizations> R, const std::shared_ptr<Data> D);
     
     /// Update the last log likelihood computed
     void UpdateLastLogLikelihood(int Type, VectorType& ComputedLogLikelihood);

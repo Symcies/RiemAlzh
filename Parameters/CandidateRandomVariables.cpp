@@ -41,7 +41,7 @@ CandidateRandomVariables
 
 void
 CandidateRandomVariables
-::InitializeCandidateRandomVariables(const std::shared_ptr<MultiRealizations> &R)
+::InitializeCandidateRandomVariables(const std::shared_ptr<Realizations> &R)
 {
     /// Initialization
     PropositionDistribution PD;

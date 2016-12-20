@@ -18,7 +18,7 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
-    typedef std::map<std::string, VectorType> MultiRealizations;
+    typedef std::map<std::string, VectorType> Realizations;
     typedef std::vector<VectorType> SufficientStatisticsVector;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ protected:
     std::shared_ptr<AbstractModel> m_Model;
 
     /// Realisation of the random variables of the model
-    std::shared_ptr<MultiRealizations> m_Realizations;
+    std::shared_ptr<Realizations> m_Realizations;
 
     /// Abstract Sampler - for the MCMC SAEM 
     std::shared_ptr<AbstractSampler> m_Sampler;
@@ -92,7 +92,7 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the acceptance ratio for each random variable
-    void ComputeAcceptanceRatio(MultiRealizations& R, int Iteration);
+    void ComputeAcceptanceRatio(Realizations& R, int Iteration);
     
     /// Compute Outputs
     void ComputeOutputs();

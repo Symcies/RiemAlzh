@@ -33,7 +33,7 @@ public:
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
     typedef std::vector< std::pair< VectorType, double> > IndividualData;
-    typedef std::map<std::string, VectorType> MultiRealizations;
+    typedef std::map<std::string, VectorType> Realizations;
     typedef std::vector<VectorType> SufficientStatisticsVector;
 
 
@@ -57,11 +57,11 @@ public:
         
     /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
     /// This update can depend on the parameter that has changed, provided by the Name argument
-    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations> R, 
+    virtual void UpdateParameters(const std::shared_ptr<Realizations> R, 
                                   const std::vector<std::string> Names = {"All"}) = 0;
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations> R, 
+    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations> R, 
                                                                const std::shared_ptr<const Data> D) = 0;
 
 
@@ -72,11 +72,11 @@ public:
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> R, 
+    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations> R, 
                                         const std::shared_ptr<const Data> D)= 0;
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> R, 
+    virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R, 
                                                   const std::shared_ptr<const Data> D, 
                                                   const int SubjectNumber) = 0;
     
@@ -85,7 +85,7 @@ public:
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) = 0;
 
     /// Simulate some random variable realizations
-    MultiRealizations SimulateRealizations(int NumberOfSubjects);
+    Realizations SimulateRealizations(int NumberOfSubjects);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Outputs

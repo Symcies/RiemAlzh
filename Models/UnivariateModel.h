@@ -38,10 +38,10 @@ public:
     
     /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
     /// This update can depend on the parameter that has changed, provided by the Name argument
-    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations>& R, const std::vector<std::string> Name = {"All"});
+    virtual void UpdateParameters(const std::shared_ptr<Realizations>& R, const std::vector<std::string> Name = {"All"});
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations>& R, 
+    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, 
                                                                const std::shared_ptr<Data>& D);
 
     // TODO : TO BE CHANGED ABSOLUTELLY : this is not how the random variables are updated GENERALLY
@@ -52,10 +52,10 @@ public:
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason, e.g. when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations>& R, const std::shared_ptr<Data>& D);
+    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
 
     /// Compute the log likelihood of the model for a particular individual
-    double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations>& R, 
+    double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations>& R, 
                                           const std::shared_ptr<Data>& D, const int SubjectNumber);
 
     
@@ -85,7 +85,7 @@ private :
     ////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
-    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R);
+    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations>& R);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Attribute(s)
@@ -93,7 +93,7 @@ private :
     
     /// Last calculated Likelihood - and the corresponding realizations
     /// Bool : if last calculation was generic. Double : last likelihood value. Realizations : last realizations
-    std::tuple<bool, double, MultiRealizations> m_LastLogLikelihood;
+    std::tuple<bool, double, Realizations> m_LastLogLikelihood;
     
     /// Noise associated to the model
     std::shared_ptr<GaussianRandomVariable> m_Noise;

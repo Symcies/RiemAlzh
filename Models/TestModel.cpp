@@ -46,14 +46,14 @@ TestModel
 
 void 
 TestModel
-::UpdateParameters(const std::shared_ptr <MultiRealizations> &R, const std::vector<std::string> Names) 
+::UpdateParameters(const std::shared_ptr <Realizations> &R, const std::vector<std::string> Names) 
 {
     // TODO : Check if something has to be added
 }
 
 TestModel::SufficientStatisticsVector
 TestModel
-::GetSufficientStatistics(const std::shared_ptr<MultiRealizations> &R,
+::GetSufficientStatistics(const std::shared_ptr<Realizations> &R,
                           const std::shared_ptr<Data> &D) 
 {
     unsigned int NumberOfSubjects = (int)D->size();
@@ -227,7 +227,7 @@ TestModel
 
 double
 TestModel
-::ComputeLogLikelihood(const std::shared_ptr <MultiRealizations> &R,
+::ComputeLogLikelihood(const std::shared_ptr <Realizations> &R,
                        const std::shared_ptr <Data> &D) 
 {
     double LogLikelihood = 0.0, K = 0.0;
@@ -254,7 +254,7 @@ TestModel
 
 double 
 TestModel
-::ComputeIndividualLogLikelihood(const std::shared_ptr <MultiRealizations> &R,
+::ComputeIndividualLogLikelihood(const std::shared_ptr <Realizations> &R,
                                  const std::shared_ptr <Data> &D, const int SubjectNumber) 
 {
     double LogLikelihood = 0.0;
@@ -277,7 +277,7 @@ TestModel::Data
 TestModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
-    auto R = std::make_shared<MultiRealizations>( SimulateRealizations(NumberOfSubjects));
+    auto R = std::make_shared<Realizations>( SimulateRealizations(NumberOfSubjects));
     std::random_device RD;
     std::mt19937 RNG(RD());
     std::uniform_int_distribution<int> Uni(MinObs, MaxObs);
@@ -373,14 +373,14 @@ TestModel
 
 double 
 TestModel
-::GetA(int i, const std::shared_ptr<MultiRealizations>& R) 
+::GetA(int i, const std::shared_ptr<Realizations>& R) 
 {
     return R->at("A")(i);
 }
 
 double 
 TestModel
-::GetB(int i, const std::shared_ptr<MultiRealizations>& R) 
+::GetB(int i, const std::shared_ptr<Realizations>& R) 
 {
     return R->at("B")(i);
 }
@@ -388,7 +388,7 @@ TestModel
 
 double 
 TestModel
-::GetC(const std::shared_ptr<MultiRealizations> R)
+::GetC(const std::shared_ptr<Realizations> R)
 {
     return R->at("C")(0);
 }

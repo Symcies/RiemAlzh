@@ -42,10 +42,3 @@ ConstantRandomVariable
 {
     return 1.0;
 }
-
-void
-ConstantRandomVariable
-::PrintParameters() 
-{
-    std::cout << "Mean : " << m_Mean << std::endl;
-}

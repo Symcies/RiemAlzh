@@ -48,7 +48,7 @@ UnivariateModel
 
 void 
 UnivariateModel
-::UpdateParameters(const std::shared_ptr<MultiRealizations> &R, const std::vector<std::string> Names) 
+::UpdateParameters(const std::shared_ptr<Realizations> &R, const std::vector<std::string> Names) 
 {
     // TODO : Check if something has to be added
 }
@@ -56,7 +56,7 @@ UnivariateModel
 
 UnivariateModel::SufficientStatisticsVector
 UnivariateModel
-::GetSufficientStatistics(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D) 
+::GetSufficientStatistics(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D) 
 {
     /// Get the data to compute the geometric operation on the manifold
     double T0 = 0.0;
@@ -237,7 +237,7 @@ UnivariateModel
 
 double 
 UnivariateModel
-::ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> &R, const std::shared_ptr<Data> &D) 
+::ComputeLogLikelihood(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D) 
 {
     /// Get the data
     double T0 = 0.0;
@@ -269,7 +269,7 @@ UnivariateModel
 
 double 
 UnivariateModel
-::ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> &R,
+::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> &R,
                                  const std::shared_ptr<Data> &D, const int SubjectNumber) 
 {
     /// Initialize the individual parameters
@@ -301,7 +301,7 @@ UnivariateModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
     /// Simulate Realizations
-    auto R = std::make_shared<MultiRealizations>( SimulateRealizations(NumberOfSubjects) );
+    auto R = std::make_shared<Realizations>( SimulateRealizations(NumberOfSubjects) );
     
     /// Initialize
     std::ofstream IOTimePoints, IOSimulatedData;
@@ -440,7 +440,7 @@ UnivariateModel
 
 std::function<double(double)>  
 UnivariateModel
-::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations>& R)
+::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations>& R)
 {
     double AccFactor = exp(R->at("Ksi")(SubjectNumber));
     double TimeShift = R->at("Tau")(SubjectNumber);

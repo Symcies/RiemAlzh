@@ -45,11 +45,11 @@ AbstractModel
 
 
 
-AbstractModel::MultiRealizations
+AbstractModel::Realizations
 AbstractModel
 ::SimulateRealizations(int NumberOfSubjects)
 {
-    MultiRealizations R;
+    Realizations R;
 
     // Initialize the realization of the population-wide random variables.
     // They are shared among the individual thus sampled only once

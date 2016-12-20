@@ -36,21 +36,21 @@ public:
     virtual void Initialize(const std::shared_ptr<const Data> D);
     
     /// Update the model parameters != random variables parameters
-    virtual void UpdateParameters(const std::shared_ptr<MultiRealizations> R, 
+    virtual void UpdateParameters(const std::shared_ptr<Realizations> R, 
                                   const std::vector<std::string> Names = {"All"});
     
     /// Simulate data according to the model and the parameters
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int  MaxObs);
     
     /// Compute the log likelihood of the model
-    virtual double ComputeLogLikelihood(const std::shared_ptr<MultiRealizations> R, const std::shared_ptr<Data> D);
+    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const std::shared_ptr<Data> D);
     
     /// Compute the log likelihood of the model for a given subject
-    virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<MultiRealizations> R, 
+    virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R, 
                                           const std::shared_ptr<Data> D, const int SubjectNumber);
 
     /// Get the sufficient statistics of the model
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<MultiRealizations> R, const std::shared_ptr<Data> D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations> R, const std::shared_ptr<Data> D);
     
     /// Update the random variables <=> the parameters of the model
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, const std::shared_ptr<Data> D);
@@ -78,22 +78,22 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Get the propagation coefficients delta_tilde
-    VectorType GetPropagationCoefficients(const std::shared_ptr<MultiRealizations> R);
+    VectorType GetPropagationCoefficients(const std::shared_ptr<Realizations> R);
     
     /// Get the timepoint reparametrization for a given subject
-    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<MultiRealizations> R);
+    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations> R);
     
     /// Compute the Interpolation coefficients
-    void ComputeInterpolationCoefficients(const std::shared_ptr<MultiRealizations> R);
+    void ComputeInterpolationCoefficients(const std::shared_ptr<Realizations> R);
     
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
-    void ComputeOrthonormalBasis( const std::shared_ptr<MultiRealizations> R); // TODO : Use a library to do it faster
+    void ComputeOrthonormalBasis( const std::shared_ptr<Realizations> R); // TODO : Use a library to do it faster
 
     /// Compute the A Matrix used to get the space shifts
-    void ComputeAMatrix( const std::shared_ptr<MultiRealizations> R); // TODO : Use a library to do it faster
+    void ComputeAMatrix( const std::shared_ptr<Realizations> R); // TODO : Use a library to do it faster
 
     /// Compute the space shifts
-    void ComputeSpaceShifts(const std::shared_ptr<MultiRealizations> R); // TODO : Use a library to do it faster
+    void ComputeSpaceShifts(const std::shared_ptr<Realizations> R); // TODO : Use a library to do it faster
  
 
     

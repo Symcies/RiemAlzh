@@ -19,7 +19,7 @@ BlockedGibbsSampler
 
 void 
 BlockedGibbsSampler
-::InitializeSampler(const std::shared_ptr<MultiRealizations> &R) 
+::InitializeSampler(const std::shared_ptr<Realizations> &R) 
 {
     m_CandidateRandomVariables.InitializeCandidateRandomVariables(R);
     
@@ -155,9 +155,9 @@ BlockedGibbsSampler
 }
 
 
-BlockedGibbsSampler::MultiRealizations
+BlockedGibbsSampler::Realizations
 BlockedGibbsSampler
-::Sample(const std::shared_ptr<MultiRealizations> &R, std::shared_ptr<AbstractModel> &M,
+::Sample(const std::shared_ptr<Realizations> &R, std::shared_ptr<AbstractModel> &M,
          const std::shared_ptr<Data> &D, int IterationNumber) 
 {
     ////////////////////////////////////////
@@ -168,12 +168,12 @@ BlockedGibbsSampler
     ////////////////////////////////////////
     
     
-    auto NewRealizations = std::make_shared<MultiRealizations>(*R);
+    auto NewRealizations = std::make_shared<Realizations>(*R);
     
     for(int j = 0; j < 1; ++j) 
     {
         for (int i = 0; i < m_Blocks.size(); ++i) {
-            NewRealizations = std::make_shared<MultiRealizations>(
+            NewRealizations = std::make_shared<Realizations>(
                     OneBlockSample(i, NewRealizations, M, D, IterationNumber));
         }
     }
@@ -188,14 +188,14 @@ BlockedGibbsSampler
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-BlockedGibbsSampler::MultiRealizations
+BlockedGibbsSampler::Realizations
 BlockedGibbsSampler
-::OneBlockSample(int BlockNumber, const std::shared_ptr<MultiRealizations>& R,
+::OneBlockSample(int BlockNumber, const std::shared_ptr<Realizations>& R,
                  std::shared_ptr<AbstractModel> &M, const std::shared_ptr<Data> &D,
                  int IterationNumber) 
 {
     /// Initialization
-    auto NewRealizations = std::make_shared<MultiRealizations>(*R);
+    auto NewRealizations = std::make_shared<Realizations>(*R);
     Block CurrentBlock = m_Blocks[BlockNumber];
     double AcceptationRatio = 0;
     std::vector<std::string> CurrentParameters; 
@@ -307,7 +307,7 @@ BlockedGibbsSampler
 
 BlockedGibbsSampler::VectorType
 BlockedGibbsSampler
-::ComputeLogLikelihood(int Type, const std::shared_ptr<MultiRealizations> R,
+::ComputeLogLikelihood(int Type, const std::shared_ptr<Realizations> R,
                        const std::shared_ptr<AbstractModel> M, const std::shared_ptr<Data> D) 
 {
     if(Type == -1) 
@@ -329,7 +329,7 @@ BlockedGibbsSampler
 double
 BlockedGibbsSampler
 ::GetPreviousLogLikelihood(int Type, const std::shared_ptr<AbstractModel> M, 
-                           const std::shared_ptr<MultiRealizations> R, const std::shared_ptr<Data> D) 
+                           const std::shared_ptr<Realizations> R, const std::shared_ptr<Data> D) 
 {
     if(Type == -1)
         return m_LastLikelihoodComputed.sum();
