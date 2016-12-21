@@ -6,6 +6,7 @@
 #include "../Parameters/CandidateRandomVariables.h"
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 class Algorithm {
 public:
@@ -26,12 +27,15 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Algorithm();
+    
+    Algorithm(unsigned int MaxNumberOfIterations, unsigned int BurnIn);
+    
     ~Algorithm();
 
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Encapsulation method(s) :
+    /// Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     inline void SetModel(const std::shared_ptr<AbstractModel>& M ) { m_Model = M; }
@@ -39,37 +43,54 @@ public:
     inline void SetSampler(std::shared_ptr<AbstractSampler> S) { m_Sampler = S; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Other method(s) :
+    /// Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the MCMC SAEM algorithm
-    void ComputeMCMCSAEM(const std::shared_ptr<Data>& D);
+    void ComputeMCMCSAEM(const Data& D);
 
 
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Method(s) of the MCMC SAEM:
+    /// Method(s) of the MCMC SAEM:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Initialize the stochastic approximation
-    void InitializeStochasticSufficientStatistics(const SufficientStatisticsVector& S);
+    /// Initialize the stochastic approximation
+    void InitializeStochasticSufficientStatistics(const Data& D);
         
     /// Initialize sampler
     void InitializeSampler();
     
     /// Initialize Manifold
-    void InitializeModel(const std::shared_ptr<Data> D);
+    void InitializeModel(const Data& D);
 
-    // Compute the simulation step : Gibbs Sampling
-    void ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration);
+    /// Compute the simulation step : Gibbs Sampling
+    void ComputeSimulationStep(const Data& D);
 
-    // Compute the stochastic coefficient 
-    void ComputeStochasticApproximation(double iteration, SufficientStatisticsVector& SufficientStatistics);
+    /// Compute the stochastic coefficient 
+    void ComputeStochasticApproximation(SufficientStatisticsVector& S);
 
-    // Compute the decreasing step size of the approximation step
-    double DecreasingStepSize(double Iteration, double NoMemoryTime);
+    /// Compute the decreasing step size of the approximation step
+    double DecreasingStepSize();
 
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Output(s)
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Compute the acceptance ratio for each random variable
+    void ComputeAcceptanceRatio(Realizations& R);
+    
+    /// Compute Outputs
+    void ComputeOutputs();
+    
+    /// Acceptance Ratios
+    std::map<std::string, VectorType> m_AcceptanceRatios;
+
+    /// Output file
+    std::ofstream m_OutputRealizations;
+
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,31 +106,15 @@ protected:
 
     /// Stochastic Sufficient Statistics used in the stochastic approximation step
     SufficientStatisticsVector m_StochasticSufficientStatistics;
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Output(s)
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /// Compute the acceptance ratio for each random variable
-    void ComputeAcceptanceRatio(Realizations& R, int Iteration);
     
-    /// Compute Outputs
-    void ComputeOutputs();
+    /// Total number of iterations
+    unsigned int m_MaxNumberOfIterations = 20001;
     
-    /// Acceptance Ratios
-    std::map<std::string, VectorType> m_AcceptanceRatios;
-
-    /// Output file
-    std::ofstream m_OutputRealizations;
-
-
-protected:
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Method(s) of eventual other algorithm:
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+    /// Number of burn-in iterations
+    unsigned int m_BurnIn = 9999;
+    
+    /// Number of iterations done by the MCMC-SAEM
+    unsigned int m_IterationCounter = 0;
 };
 
 

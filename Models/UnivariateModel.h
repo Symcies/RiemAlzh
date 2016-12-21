@@ -33,7 +33,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Initialize the model
-    virtual void Initialize(const std::shared_ptr<const Data> D);
+    virtual void Initialize(const Data& D);
     
     
     /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
@@ -42,21 +42,21 @@ public:
 
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, 
-                                                               const std::shared_ptr<Data>& D);
+                                                               const Data& D);
 
     // TODO : TO BE CHANGED ABSOLUTELLY : this is not how the random variables are updated GENERALLY
     // TODO : In fact, this was made because it is not generic by now as for the algorithm maximization step
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, 
-                                       const std::shared_ptr<Data>& D);
+                                       const Data& D);
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason, e.g. when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations>& R, const std::shared_ptr<Data>& D);
+    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations>& R, const Data& D);
 
     /// Compute the log likelihood of the model for a particular individual
     double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations>& R, 
-                                          const std::shared_ptr<Data>& D, const int SubjectNumber);
+                                          const Data& D, const int SubjectNumber);
 
     
     /// Simulate data according to the model

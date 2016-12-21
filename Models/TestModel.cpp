@@ -26,7 +26,7 @@ TestModel
 
 void
 TestModel
-::Initialize(const std::shared_ptr<const Data> D) 
+::Initialize(const Data& D) 
 {
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     
@@ -54,14 +54,14 @@ TestModel
 TestModel::SufficientStatisticsVector
 TestModel
 ::GetSufficientStatistics(const std::shared_ptr<Realizations> &R,
-                          const std::shared_ptr<Data> &D) 
+                          const Data& D) 
 {
-    unsigned int NumberOfSubjects = (int)D->size();
+    unsigned int NumberOfSubjects = (int)D.size();
     
     /// Compute S0 <-- Sum(y_ijk)
     double SumData = 0.0;
     unsigned int K = 0;
-    for(auto it = D->begin(); it != D->end(); ++it)
+    for(auto it = D.begin(); it != D.end(); ++it)
     {
         K += it->size();
         for(auto it2 = it->begin(); it2 != it->end(); ++it2)
@@ -77,7 +77,7 @@ TestModel
     auto IterS1 = S1.begin();
     auto IterS2 = S2.begin();
     int i = 0;
-    for(auto IterData = D->begin(); IterData != D->end() &&  IterS1 != S1.end() && IterS2 != S2.end(); ++i, ++IterData) 
+    for(auto IterData = D.begin(); IterData != D.end() &&  IterS1 != S1.end() && IterS2 != S2.end(); ++i, ++IterData) 
     {
         for(auto IterIndivData = IterData->begin(); IterIndivData != IterData->end(); ++IterIndivData)
         {
@@ -149,9 +149,9 @@ TestModel
 void 
 TestModel
 ::UpdateRandomVariables(const SufficientStatisticsVector &StochSufficientStatistics,
-                        const std::shared_ptr <Data> &D) 
+                        const Data& D) 
 {
-    double NumberOfSubjects = D->size();
+    double NumberOfSubjects = D.size();
     
     /// Update a mean and variance
     double AMean = 0, AVariance = 0;
@@ -206,9 +206,9 @@ TestModel
     
     /// Update noise
     double K = 0.0;
-    for(const auto& it : *D)
+    for(auto it = D.begin(); it != D.end(); ++it)
     {
-        K += it.size();
+        K += it->size();
     }
     
     double NoiseVariance = StochSufficientStatistics[0](0);
@@ -228,11 +228,11 @@ TestModel
 double
 TestModel
 ::ComputeLogLikelihood(const std::shared_ptr <Realizations> &R,
-                       const std::shared_ptr <Data> &D) 
+                       const Data& D) 
 {
     double LogLikelihood = 0.0, K = 0.0;
     int i = 0;
-    for(auto IterData = D->begin(); IterData != D->end(); ++IterData, ++i)
+    for(auto IterData = D.begin(); IterData != D.end(); ++IterData, ++i)
     {
         K += IterData->size();
         for(auto IterIndivData = IterData->begin(); IterIndivData != IterData->end(); ++IterIndivData)
@@ -255,10 +255,10 @@ TestModel
 double 
 TestModel
 ::ComputeIndividualLogLikelihood(const std::shared_ptr <Realizations> &R,
-                                 const std::shared_ptr <Data> &D, const int SubjectNumber) 
+                                 const Data& D, const int SubjectNumber) 
 {
     double LogLikelihood = 0.0;
-    for(auto IterData = D->at(SubjectNumber).begin(); IterData != D->at(SubjectNumber).end(); ++IterData)
+    for(auto IterData = D.at(SubjectNumber).begin(); IterData != D.at(SubjectNumber).end(); ++IterData)
     {
         double y = IterData->first(0);
         double t = IterData->second;
@@ -266,7 +266,7 @@ TestModel
         double Norm = y - at;
         LogLikelihood += Norm * Norm;
     }
-    double K = D->at(SubjectNumber).size();
+    double K = D.at(SubjectNumber).size();
     LogLikelihood /= -2 * m_Noise->GetVariance();
     LogLikelihood -= K *log( sqrt( 2 * M_PI * m_Noise->GetVariance() ));
     
@@ -310,7 +310,7 @@ TestModel
     }
    
     
-    double P = ComputeLogLikelihood(R, std::make_shared<Data>(D)) ; 
+    double P = ComputeLogLikelihood(R, D) ; 
     std::cout << "Real Noise : " << SumNoise/q << std::endl;
     std::cout << "Likelihood : " << P << std::endl;
     

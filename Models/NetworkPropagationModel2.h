@@ -33,7 +33,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
   
     /// Initialize the model : random variables, interpolation matrix, parameters
-    virtual void Initialize(const std::shared_ptr<const Data> D);
+    virtual void Initialize(const Data& D);
     
     /// Update the model parameters != random variables parameters
     virtual void UpdateParameters(const Realizations& R, 
@@ -43,17 +43,17 @@ public:
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int  MaxObs);
     
     /// Compute the log likelihood of the model
-    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const std::shared_ptr<Data> D);
+    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const Data& D);
     
     /// Compute the log likelihood of the model for a given subject
     virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R, 
-                                          const std::shared_ptr<Data> D, const int SubjectNumber);
+                                          const Data& D, const int SubjectNumber);
 
     /// Get the sufficient statistics of the model
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations> R, const std::shared_ptr<Data> D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations> R, const Data& D);
     
     /// Update the random variables <=> the parameters of the model
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, const std::shared_ptr<Data> D);
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, const Data& D);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Outputs

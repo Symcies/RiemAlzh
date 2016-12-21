@@ -11,6 +11,15 @@ Algorithm
     m_OutputRealizations.open("Realizations.txt",  std::ofstream::out | std::ofstream::trunc );
 }
 
+
+Algorithm
+::Algorithm(unsigned int MaxNumberOfIterations, unsigned int BurnIn) 
+{
+    m_OutputRealizations.open("Realizations.txt",  std::ofstream::out | std::ofstream::trunc );
+    m_MaxNumberOfIterations = MaxNumberOfIterations;
+    m_BurnIn = BurnIn;
+}
+
 Algorithm
 ::~Algorithm()
 { }
@@ -22,29 +31,26 @@ Algorithm
 
 void
 Algorithm
-::ComputeMCMCSAEM(const std::shared_ptr<Data>& D)
+::ComputeMCMCSAEM(const Data& D)
 {
 
-    int NbMaxIterations = 20002;
+    auto DD = std::make_shared<Data>(D);
     InitializeModel(D);
     InitializeSampler();
-    InitializeStochasticSufficientStatistics(m_Model->GetSufficientStatistics(m_Realizations, D));
+    InitializeStochasticSufficientStatistics(D);
 
-    for(int k = 0; k<NbMaxIterations; ++k)
+    for(m_IterationCounter = 0; m_IterationCounter < m_MaxNumberOfIterations; m_IterationCounter += 1)
     {
-        if( k%10 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << k << " -------------------------------" << std::endl; }
-        ComputeSimulationStep(D, k);
+        if( m_IterationCounter%10 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
+        
+        ComputeSimulationStep(D);
         SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
-        ComputeStochasticApproximation(k, SufficientStatistics);
+        ComputeStochasticApproximation(SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
-        if( k%10 == 0 ) 
-        { 
-            ComputeOutputs();
-            //std::cout << "LogLikelihood : " << m_Model->ComputeLogLikelihood(m_Realizations, D) << std::endl; 
-        }
-        if( k%100 == 0) { 
-            m_Model->SaveData(k); 
-        };
+        
+        if( m_IterationCounter%10 == 0 ) { ComputeOutputs(); }
+        if( m_IterationCounter%100 == 0) { m_Model->SaveData(m_IterationCounter); }
+        
     }
 }
 
@@ -55,9 +61,10 @@ Algorithm
 
 void
 Algorithm
-::InitializeStochasticSufficientStatistics(const SufficientStatisticsVector& S)
+::InitializeStochasticSufficientStatistics(const Data& D)
 {
-    m_StochasticSufficientStatistics = S;
+    auto DD = std::make_shared<Data>(D);
+    m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
     for(auto&& it : m_StochasticSufficientStatistics)
     {
         std::fill(it.begin(), it.end(), 0.0);
@@ -67,10 +74,12 @@ Algorithm
 
 void
 Algorithm
-::InitializeModel(const std::shared_ptr<Data> D) 
+::InitializeModel(const Data& D) 
 {
+    auto DD = std::make_shared<Data>(D);
+    
     m_Model->Initialize(D);
-    Realizations R = m_Model->SimulateRealizations((int)D->size());
+    Realizations R = m_Model->SimulateRealizations((int)D.size());
     m_Realizations = std::make_shared<Realizations>(R);
     m_Model->UpdateParameters(R);
     
@@ -93,11 +102,11 @@ Algorithm
 
 void
 Algorithm
-::ComputeSimulationStep(const std::shared_ptr<Data>& D, int Iteration)
+::ComputeSimulationStep(const Data& D)
 {
     Realizations RRR = *m_Realizations;
-    Realizations&& R = m_Sampler->Sample(RRR, *m_Model, *D, Iteration);
-    ComputeAcceptanceRatio(R, Iteration);
+    Realizations&& R = m_Sampler->Sample(RRR, *m_Model, D, m_IterationCounter);
+    ComputeAcceptanceRatio(R);
     m_Realizations = std::make_shared<Realizations>(R);
     
 }
@@ -105,48 +114,31 @@ Algorithm
 
 void 
 Algorithm
-::ComputeStochasticApproximation(double iteration, SufficientStatisticsVector& SufficientStatistics)
-{
-    typedef std::vector< VectorType > SufficientStatisticsVector;
-    SufficientStatisticsVector NewStochasticSufficientStatistics;
-
-    double NoMemoryTime = 12000;  // TODO : Initialize, maybe out of the Compute function? Maybe in the decreasing step size function 
-    double StepSize = DecreasingStepSize(iteration, NoMemoryTime);
-
-    auto IterStat = SufficientStatistics.begin();
-    auto IterStochStat = m_StochasticSufficientStatistics.begin();
-
-    for(    ; IterStat != SufficientStatistics.end() && IterStochStat != m_StochasticSufficientStatistics.end()
-            ; ++IterStat, ++IterStochStat)
-    {
-        VectorType S(IterStat->size());
-
-        auto IterCoordStat = IterStat->begin();
-        auto IterCoordStochStat = IterStochStat->begin();
-        auto IterS = S.begin();
-        for(    ; IterCoordStat != IterStat->end() && IterCoordStochStat != IterStochStat->end() && IterS != S.end()
-                ; ++IterCoordStat, ++IterCoordStochStat, ++IterS)
-        {
-            *IterS = *IterCoordStochStat + StepSize * (*IterCoordStat - *IterCoordStochStat);
-        }
-
-        NewStochasticSufficientStatistics.push_back(S);
-
-    }
+::ComputeStochasticApproximation(SufficientStatisticsVector& S)
+{   
     
-    m_StochasticSufficientStatistics = NewStochasticSufficientStatistics;
-
+    assert(S.size() == m_StochasticSufficientStatistics.size()); 
+    
+    double StepSize = DecreasingStepSize();
+    auto itStochS = m_StochasticSufficientStatistics.begin();
+    
+    for(auto itS = S.begin(); itS != S.end(); ++itS, ++itStochS)
+    {
+        *itStochS += StepSize * (*itS - *itStochS);
+    }
 }
 
 
 double
 Algorithm
-::DecreasingStepSize(double Iteration, double NoMemoryTime)
+::DecreasingStepSize()
 {
-    double Epsilon = std::max(1.0, Iteration - NoMemoryTime);
-
+    double Q = (double)m_IterationCounter - (double)m_BurnIn;
+    double Epsilon = std::max(1.0, Q);
     return 1.0 / pow(Epsilon, 0.6); // TODO : TO CHECK
 }
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Output(s)
@@ -163,7 +155,7 @@ Algorithm
 
 void
 Algorithm
-::ComputeAcceptanceRatio(Realizations& R, int Iteration)
+::ComputeAcceptanceRatio(Realizations& R)
 { 
     
 
@@ -182,12 +174,12 @@ Algorithm
               ; ++IterPrevReal, ++IterNewReal, ++IterAcceptRatio)
       {
           bool Change = (*IterNewReal != *IterPrevReal);
-          *IterAcceptRatio = (*IterAcceptRatio * Iteration + Change ) / (Iteration + 1);
+          *IterAcceptRatio = (*IterAcceptRatio * m_IterationCounter + Change ) / (m_IterationCounter + 1);
       }
       
   }
     
-    if(Iteration%10 == 0)
+    if(m_IterationCounter%10 == 0)
     {
         std::cout << "AcceptRatio: ";
         for(const auto& it : *m_Realizations)

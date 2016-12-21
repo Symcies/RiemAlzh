@@ -26,7 +26,7 @@ UnivariateModel
 
 void
 UnivariateModel
-::Initialize(const std::shared_ptr<const Data> D)
+::Initialize(const Data& D)
 {
     
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
@@ -56,18 +56,18 @@ UnivariateModel
 
 UnivariateModel::SufficientStatisticsVector
 UnivariateModel
-::GetSufficientStatistics(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D) 
+::GetSufficientStatistics(const std::shared_ptr<Realizations> &R, const Data& D) 
 {
     /// Get the data to compute the geometric operation on the manifold
     double T0 = 0.0;
     double V0 = 1.0;
     double P0 = R->at("P0")(0);
-    unsigned int NumberOfSubjects = (int)D->size();
+    unsigned int NumberOfSubjects = (int)D.size();
     
     /// Compute S0 <-- Sum(y_ijk)
     double SumData = 0.0;
     unsigned int K = 0;
-    for(auto it = D->begin(); it != D->end(); ++it)
+    for(auto it = D.begin(); it != D.end(); ++it)
     {
         K += it->size();
         for(auto it2 = it->begin(); it2 != it->end(); ++it2)
@@ -83,7 +83,7 @@ UnivariateModel
     
     int i = 0;
     auto IterS1 = S1.begin(), IterS2 = S2.begin();
-    for(auto IterData = D->begin(); IterData != D->end() && IterS1 != S1.end() && IterS2 != S2.end(); ++i, ++IterData)
+    for(auto IterData = D.begin(); IterData != D.end() && IterS1 != S1.end() && IterS2 != S2.end(); ++i, ++IterData)
     {
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
         for(auto IterIndivData = IterData->begin(); IterIndivData != IterData->end(); ++IterIndivData)
@@ -153,9 +153,9 @@ UnivariateModel
 void
 UnivariateModel
 ::UpdateRandomVariables(const SufficientStatisticsVector &StochSufficientStatistics,
-                        const std::shared_ptr<Data> &D) 
+                        const Data& D) 
 {
-    double NumberOfSubjects = D->size();
+    double NumberOfSubjects = D.size();
     
     /// Update P0
     auto AbstractP0 = m_PopulationRandomVariables.at("P0");
@@ -211,9 +211,9 @@ UnivariateModel
     
     /// Update Uncertainty variance
     double K = 0.0;
-    for(const auto& it : *D)
+    for(auto it = D.begin(); it != D.end(); ++it)
     {
-        K += it.size();
+        K += it->size();
     }
     
     /// Sum Yijk²
@@ -237,7 +237,7 @@ UnivariateModel
 
 double 
 UnivariateModel
-::ComputeLogLikelihood(const std::shared_ptr<Realizations> &R, const std::shared_ptr<Data> &D) 
+::ComputeLogLikelihood(const std::shared_ptr<Realizations> &R, const Data& D) 
 {
     /// Get the data
     double T0 = 0.0;
@@ -247,7 +247,7 @@ UnivariateModel
     /// Compute the loglikelihood
     double LogLikelihood = 0, K = 0;
     int i = 0;
-    for(auto IterData = D->begin(); IterData != D->end(); ++i, ++IterData)
+    for(auto IterData = D.begin(); IterData != D.end(); ++i, ++IterData)
     {
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
         K += IterData->size();
@@ -270,7 +270,7 @@ UnivariateModel
 double 
 UnivariateModel
 ::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> &R,
-                                 const std::shared_ptr<Data> &D, const int SubjectNumber) 
+                                 const Data& D, const int SubjectNumber) 
 {
     /// Initialize the individual parameters
     double T0 = 0.0;
@@ -280,9 +280,9 @@ UnivariateModel
     
     /// Compute the loglikelihood
     double LogLikelihood = 0;
-    double k = D->at(SubjectNumber).size();
+    double k = D.at(SubjectNumber).size();
     int i = 0;
-    for(auto IterData = D->at(SubjectNumber).begin(); IterData != D->at(SubjectNumber).end(); ++IterData, ++i)
+    for(auto IterData = D.at(SubjectNumber).begin(); IterData != D.at(SubjectNumber).end(); ++IterData, ++i)
     {
         double TimePoint = SubjectTimePoint(IterData->second);
         auto ParallelCurve = m_BaseManifold->ComputeParallelCurve(P0, T0, V0, 0.0, TimePoint);
@@ -362,7 +362,7 @@ UnivariateModel
         
         D.push_back(InDa);
     }
-    double A = ComputeLogLikelihood(R, std::make_shared<Data>(D)) ; 
+    double A = ComputeLogLikelihood(R, D) ; 
     std::cout << "Likelihood : " << A << std::endl;
     
     /*

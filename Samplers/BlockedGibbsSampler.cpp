@@ -297,13 +297,13 @@ BlockedGibbsSampler
         int i = 0;
         for (auto it = LogLikelihood.begin(); it != LogLikelihood.end(); ++it, ++i) 
         {
-            *it = M.ComputeIndividualLogLikelihood(R1, D1, i);
+            *it = M.ComputeIndividualLogLikelihood(R1, D, i);
         }
         return LogLikelihood;
     }
     else 
     {
-        return VectorType(1, M.ComputeIndividualLogLikelihood(R1, D1, Type));
+        return VectorType(1, M.ComputeIndividualLogLikelihood(R1, D, Type));
     }
 }
 

@@ -75,7 +75,7 @@ int main() {
     auto KernelMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
     std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/Kxd_16.csv");
     auto InterpolationMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
-    shared_ptr<Data> D = std::make_shared<Data>(ReadData::OpenFilesMultivariate());
+    Data D = ReadData::OpenFilesMultivariate();
     //TODO : Check the data 
     // Read the initializations
     

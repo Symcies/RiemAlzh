@@ -38,7 +38,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::Initialize(const std::shared_ptr<const Data> D)
+::Initialize(const Data& D)
 {
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     
@@ -148,7 +148,7 @@ LongitudinalModel
 LongitudinalModel::SufficientStatisticsVector
 LongitudinalModel
 ::GetSufficientStatistics(const std::shared_ptr<Realizations> R, 
-                          const std::shared_ptr<const Data> D)
+                          const Data& D)
 {
     /////////////////////////
     /// Initialization
@@ -167,12 +167,12 @@ LongitudinalModel
     
     int K = 0;
     double SumOfObservation = 0.0;
-    for(const auto& it : *D)
+    for(auto it = D.begin(); it != D.end(); ++it)
     {
-        K += it.size();
-        for(auto it2 : it)
+        K += it->size();
+        for(auto it2 = it->begin(); it2 != it->end(); ++it2)
         {
-            SumOfObservation += it2.first.squared_magnitude();
+            SumOfObservation += it2->first.squared_magnitude();
         }
     }
     VectorType S0(1, SumOfObservation);
@@ -185,7 +185,7 @@ LongitudinalModel
     int i = 0;
     auto IterS1 = S1.begin();
     auto IterS2 = S2.begin();
-    for(auto Iter = D->begin(); Iter != D->end() && IterS1 != S1.end() && IterS2 != S2.end(); ++Iter, ++i)
+    for(auto Iter = D.begin(); Iter != D.end() && IterS1 != S1.end() && IterS2 != S2.end(); ++Iter, ++i)
     {
         /// Given a particular subject, get its attributes, then, loop over its observation
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
@@ -277,9 +277,9 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::UpdateRandomVariables(const SufficientStatisticsVector StochSufficientStatistics, const std::shared_ptr<const Data> D)
+::UpdateRandomVariables(const SufficientStatisticsVector StochSufficientStatistics, const Data& D)
 {
-    double NumberOfSubjects = D->size();
+    double NumberOfSubjects = D.size();
     
     /// Update P0(mean), T0(mean) and VO(mean)
     auto AbstractP0 = m_PopulationRandomVariables.at("P0");
@@ -350,9 +350,9 @@ LongitudinalModel
 
     /// Sum Yijk²
     double NoiseVariance = StochSufficientStatistics[0](0);
-    for(auto it : *D)
+    for(auto it = D.begin(); it != D.end(); ++it)
     {
-        K += it.size();
+        K += it->size();
     }
 
     /// Sum -2 S1 + S2
@@ -377,7 +377,7 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const std::shared_ptr<const Data> D) 
+::ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const Data& D) 
 {
     /// Get the data
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
@@ -389,7 +389,7 @@ LongitudinalModel
     /// Compute the likelihood
     double LogLikelihood = 0, K = 0;
     int i = 0;
-    for(auto IterData = D->begin(); IterData != D->end(); ++IterData, ++i)
+    for(auto IterData = D.begin(); IterData != D.end(); ++IterData, ++i)
     {
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
         VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
@@ -414,7 +414,7 @@ LongitudinalModel
 double
 LongitudinalModel
 ::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R,
-                                 const std::shared_ptr<const Data> D, const int SubjectNumber) 
+                                 const Data& D, const int SubjectNumber) 
 {
     // TODO : send only D(i) to the function?!
     
@@ -431,9 +431,9 @@ LongitudinalModel
     
     /// Compute the likelihood
     double LogLikelihood = 0;
-    double k = D->at(SubjectNumber).size();
+    double k = D.at(SubjectNumber).size();
     int i = 0;
-    for(auto IterData = D->at(SubjectNumber).begin(); IterData != D->at(SubjectNumber).end(); ++IterData, ++i)
+    for(auto IterData = D.at(SubjectNumber).begin(); IterData != D.at(SubjectNumber).end(); ++IterData, ++i)
     {
         double TimePoint = SubjectTimePoint(IterData->second);
         VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, Delta);

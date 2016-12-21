@@ -30,7 +30,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
   
     /// Initialize the model : random variables, interpolation matrix, parameters
-    virtual void Initialize(const std::shared_ptr<const Data> D);
+    virtual void Initialize(const Data& D);
     
     /// Update the model parameters != random variables parameters
     virtual void UpdateParameters(const Realizations& R, 
@@ -41,20 +41,20 @@ public:
     
     /// Compute the log likelihood of the model
     virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations> R, 
-                                        const std::shared_ptr<const Data> D);
+                                        const Data& D);
     
     /// Compute the log likelihood of the model for a given subject
     virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R, 
-                                                  const std::shared_ptr<const Data> D, 
+                                                  const Data& D, 
                                                   const int SubjectNumber);
 
     /// Get the sufficient statistics of the model
     virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations> R, 
-                                                               const std::shared_ptr<const Data> D);
+                                                               const Data& D);
     
     /// Update the random variables <=> the parameters of the model
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, 
-                                       const std::shared_ptr<const Data> D);
+                                       const Data& D);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Outputs
@@ -79,29 +79,29 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Get the delta for all nodes
-    VectorType GetDelta(const std::shared_ptr<Realizations> R);
+    VectorType GetDelta(const Realizations& R);
     
     /// Get the beta - v0 related - for all nodes
-    VectorType GetNu(const std::shared_ptr<Realizations> R);
+    VectorType GetNu(const Realizations& R);
     
      /// Get the timepoint reparametrization for a given subject
     std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, 
-                                                      const std::shared_ptr<Realizations> R);
+                                                      const Realizations& R);
     
     /// Compute the interpolation coefficients delta
-    void ComputeInterpoCoeffDelta(const std::shared_ptr<Realizations> R);
+    void ComputeInterpoCoeffDelta(const Realizations& R);
     
     /// Compute the interpolation coefficients beta
-    void ComputeInterpoCoeffNu(const std::shared_ptr<Realizations> R);
+    void ComputeInterpoCoeffNu(const Realizations& R);
         
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
-    void ComputeOrthonormalBasis( const std::shared_ptr<Realizations> R); 
+    void ComputeOrthonormalBasis(const Realizations& R); 
 
     /// Compute the A Matrix used to get the space shifts
-    void ComputeAMatrix( const std::shared_ptr<Realizations> R);
+    void ComputeAMatrix(const Realizations& R);
 
     /// Compute the space shifts
-    void ComputeSpaceShifts(const std::shared_ptr<Realizations> R); 
+    void ComputeSpaceShifts(const Realizations& R); 
     
     
     /// Compute the parallel curve

@@ -27,7 +27,7 @@ NetworkPropagationModel
 
 void
 NetworkPropagationModel
-::Initialize(const std::shared_ptr<const Data> D) 
+::Initialize(const Data& D) 
 {
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     
@@ -73,7 +73,7 @@ NetworkPropagationModel
     
     /// Other
     double SumObservations = 0.0, K = 0.0;
-    for(auto it = D->begin(); it != D->end(); ++it)
+    for(auto it = D.begin(); it != D.end(); ++it)
     {
         K += it->size();
         for(auto it2 = it->begin(); it2 != it->end(); ++it2)
@@ -125,23 +125,23 @@ NetworkPropagationModel
         case 1:
             break;
         case 2:
-            ComputeSpaceShifts(R1);
+            ComputeSpaceShifts(R);
             break;
         case 3:
-            ComputeAMatrix(R1);
-            ComputeSpaceShifts(R1);
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
             break;
         case 4:
-            ComputeOrthonormalBasis(R1);
-            ComputeAMatrix(R1);
-            ComputeSpaceShifts(R1);
+            ComputeOrthonormalBasis(R);
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
             break;
         case 5:
-            ComputeInterpoCoeffDelta(R1);
-            ComputeInterpoCoeffNu(R1);
-            ComputeOrthonormalBasis(R1);
-            ComputeAMatrix(R1);
-            ComputeSpaceShifts(R1);
+            ComputeInterpoCoeffDelta(R);
+            ComputeInterpoCoeffNu(R);
+            ComputeOrthonormalBasis(R);
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
             break;
         default:
             std::cout << "Error? NetworkPropagationModel > UpdateParameters";
@@ -162,7 +162,7 @@ NetworkPropagationModel
 double 
 NetworkPropagationModel
 ::ComputeLogLikelihood(const std::shared_ptr<Realizations> R, 
-                       const std::shared_ptr<const Data> D) 
+                       const Data& D) 
 {
     /// Get the data
     return 0;
@@ -171,24 +171,24 @@ NetworkPropagationModel
 double
 NetworkPropagationModel
 ::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R,
-                                 const std::shared_ptr<const Data> D, 
+                                 const Data& D, 
                                  const int SubjectNumber) 
 {
     /// Get the data
     VectorType Rho(1, exp(R->at("P0")(0)));
-    VectorType Delta = GetDelta(R);
-    VectorType Nu = GetNu(R);
+    VectorType Delta = GetDelta(*R);
+    VectorType Nu = GetNu(*R);
     
-    std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
+    std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, *R);
     VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
 
     double LogLikelihood = 0;
-    double N = D->at(SubjectNumber).size();
+    double N = D.at(SubjectNumber).size();
     
 #pragma omp parallel for reduction(+:LogLikelihood)   
     for(size_t i = 0; i < N; ++i)
     {
-        auto& it = D->at(SubjectNumber).at(i);
+        auto& it = D.at(SubjectNumber).at(i);
         double TimePoint = SubjectTimePoint(it.second);
         VectorType ParallelCurve = ComputeParallelCurve(Rho, Delta, Nu, SpaceShift, TimePoint);
         LogLikelihood += (it.first - ParallelCurve).squared_magnitude();
@@ -203,21 +203,21 @@ NetworkPropagationModel
 NetworkPropagationModel::SufficientStatisticsVector
 NetworkPropagationModel
 ::GetSufficientStatistics(const std::shared_ptr<Realizations> R,
-                          const std::shared_ptr<const Data> D) 
+                          const Data& D) 
 {
     /// 
     VectorType P0(1, exp(R->at("P0")(0)));
-    auto Delta = GetDelta(R);
-    auto Nu = GetNu(R);
+    auto Delta = GetDelta(*R);
+    auto Nu = GetNu(*R);
     double NumberOfSubjects = R->at("Ksi").size();
     
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
     VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
     auto itS1 = S1.begin(), itS2 = S2.begin();
     int i = 0;
-    for(auto itD = D->begin(); itD != D->end(); ++itD, ++i)
+    for(auto itD = D.begin(); itD != D.end(); ++itD, ++i)
     {
-        auto TimePoint = GetSubjectTimePoint(i, R);
+        auto TimePoint = GetSubjectTimePoint(i, *R);
         auto SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
         for(auto itD2 = itD->begin(); itD2 != itD->end(); ++itD2)
         {
@@ -274,9 +274,9 @@ NetworkPropagationModel
 
 void
 NetworkPropagationModel
-::UpdateRandomVariables(const SufficientStatisticsVector &SS, const std::shared_ptr<const Data> D) 
+::UpdateRandomVariables(const SufficientStatisticsVector &SS, const Data& D) 
 {
-    double NumberOfSubjects = D->size();
+    double NumberOfSubjects = D.size();
     
     /// Update sigma
     double NoiseVariance = m_SumObservations;
@@ -428,7 +428,7 @@ NetworkPropagationModel
 
 NetworkPropagationModel::VectorType
 NetworkPropagationModel
-::GetDelta(const std::shared_ptr<Realizations> R) 
+::GetDelta(const Realizations& R) 
 {
     return m_InterpolationMatrix * m_InterpolationCoeffDelta;
 }
@@ -436,7 +436,7 @@ NetworkPropagationModel
 
 NetworkPropagationModel::VectorType
 NetworkPropagationModel
-::GetNu(const std::shared_ptr<Realizations> R) 
+::GetNu(const Realizations& R) 
 {
     return m_InterpolationMatrix * m_InterpolationCoeffNu;
 }
@@ -444,10 +444,10 @@ NetworkPropagationModel
 
 std::function<double(double)> 
 NetworkPropagationModel
-::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations> R) 
+::GetSubjectTimePoint(const int SubjectNumber, const Realizations& R) 
 {
-    double AccFactor = exp(R->at("Ksi")(SubjectNumber));
-    double TimeShift = R->at("Tau")(SubjectNumber);
+    double AccFactor = exp(R.at("Ksi")(SubjectNumber));
+    double TimeShift = R.at("Tau")(SubjectNumber);
     
     return [AccFactor, TimeShift](double t) { return AccFactor * (t - TimeShift); };
 }
@@ -456,26 +456,26 @@ NetworkPropagationModel
 
 void
 NetworkPropagationModel
-::ComputeInterpoCoeffDelta(const std::shared_ptr<Realizations> R) 
+::ComputeInterpoCoeffDelta(const Realizations& R) 
 {
     VectorType Delta(m_NbControlPoints, 0.0);
     int i = 1;
     for(auto it = Delta.begin() + 1; it != Delta.end(); ++it)
     {
-        *it = R->at("Delta#" + std::to_string(i))(0);
+        *it = R.at("Delta#" + std::to_string(i))(0);
     }
     m_InterpolationCoeffDelta = m_InvertKernelMatrix * Delta;
 }
 
 void
 NetworkPropagationModel
-::ComputeInterpoCoeffNu(const std::shared_ptr<Realizations> R) 
+::ComputeInterpoCoeffNu(const Realizations& R) 
 {
     VectorType Nu(m_NbControlPoints, 1.0);
     int i = 1;
     for(auto it = Nu.begin() + 1; it != Nu.end(); ++it)
     {
-        *it = R->at("Nu#" + std::to_string(i))(0);
+        *it = R.at("Nu#" + std::to_string(i))(0);
     }
     m_InterpolationCoeffNu = m_InvertKernelMatrix * Nu;
 }
@@ -483,10 +483,10 @@ NetworkPropagationModel
 
 void
 NetworkPropagationModel
-::ComputeOrthonormalBasis(const std::shared_ptr<Realizations> R) 
+::ComputeOrthonormalBasis(const Realizations& R) 
 {
     /// Get the data
-    auto P0 = exp(R->at("P0")(0));
+    auto P0 = exp(R.at("P0")(0));
     auto Nu = GetNu(R);
     auto Delta = GetDelta(R);
     auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));
@@ -535,7 +535,7 @@ NetworkPropagationModel
 
 void 
 NetworkPropagationModel
-::ComputeAMatrix(const std::shared_ptr<Realizations> R) 
+::ComputeAMatrix(const Realizations& R) 
 {
     MatrixType AMatrix(m_ManifoldDimension, m_NbIndependentComponents);
     
@@ -545,7 +545,7 @@ NetworkPropagationModel
         for(int j = 0; j < m_ManifoldDimension - 1 ; ++j)
         {
             std::string Number = std::to_string(int(j + i*(m_ManifoldDimension - 1)));
-            Beta(j) = R->at( "Beta#" + Number)(0);
+            Beta(j) = R.at( "Beta#" + Number)(0);
         }
         
         VectorType V = LinearCombination(Beta, m_OrthogonalBasis)   ;     
@@ -561,18 +561,18 @@ NetworkPropagationModel
 
 void 
 NetworkPropagationModel
-::ComputeSpaceShifts(const std::shared_ptr<Realizations> R) 
+::ComputeSpaceShifts(const Realizations& R) 
 {
     std::map< std::string, VectorType> SpaceShifts;
-    int NumberOfSubjects = (int)R->at("Tau").size();
-    TestAssert::WarningEquality_Object(NumberOfSubjects, (int)R->at("Ksi").size(), "NetworkPropagation > ComputeSpaceShifts");
+    int NumberOfSubjects = (int)R.at("Tau").size();
+    TestAssert::WarningEquality_Object(NumberOfSubjects, (int)R.at("Ksi").size(), "NetworkPropagation > ComputeSpaceShifts");
 
     for(int i = 0; i < NumberOfSubjects; ++i)
     {
         VectorType Si(m_NbIndependentComponents);
         for(int j = 0; j < m_NbIndependentComponents; ++j)
         {
-            Si(j) = R->at("S#" + std::to_string(j))(i);
+            Si(j) = R.at("S#" + std::to_string(j))(i);
         }
 
         VectorType V = m_AMatrix * Si;

@@ -37,7 +37,7 @@ NetworkPropagationModel2
 
 void
 NetworkPropagationModel2
-::Initialize(const std::shared_ptr<const Data> D) 
+::Initialize(const Data& D) 
 {
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     
@@ -116,7 +116,7 @@ NetworkPropagationModel2
     ///////////////////////////////////
     
     double SumObservations = 0.0, K = 0.0;
-    for(auto it = D->begin(); it != D->end(); ++it)
+    for(auto it = D.begin(); it != D.end(); ++it)
     {
         K += it->size();
         for(auto it2 = it->begin(); it2 != it->end(); ++it2)
@@ -312,7 +312,7 @@ NetworkPropagationModel2
     }
     
     std::cout << "Real Noise = " << RealNoise / Q << std::endl;
-    std::cout << "Real Likelihood = " << ComputeLogLikelihood(R, std::make_shared<Data>(D)) << std::endl;
+    std::cout << "Real Likelihood = " << ComputeLogLikelihood(R, D) << std::endl;
     
     double SumObservations = 0.0, K = 0.0;
     for(auto it = D.begin(); it != D.end(); ++it)
@@ -333,7 +333,7 @@ NetworkPropagationModel2
 
 double
 NetworkPropagationModel2
-::ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const std::shared_ptr<Data> D) 
+::ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const Data& D) 
 {
     /// Get the data
     std::shared_ptr<ExponentialCurveManifold> CastedManifold = std::static_pointer_cast<ExponentialCurveManifold>(m_Manifold);
@@ -346,7 +346,7 @@ NetworkPropagationModel2
     /// Compute the likelihood
     double LogLikelihood = 0.0;
     unsigned int i = 0;
-    for(auto IterData = D->begin(); IterData != D->end(); ++IterData, ++i)
+    for(auto IterData = D.begin(); IterData != D.end(); ++IterData, ++i)
     {
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
         VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
@@ -371,7 +371,7 @@ NetworkPropagationModel2
 double
 NetworkPropagationModel2
 ::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R,
-                                 const std::shared_ptr<Data> D, const int SubjectNumber) 
+                                 const Data& D, const int SubjectNumber) 
 {
     /// Get the data
     std::shared_ptr<ExponentialCurveManifold> CastedManifold = std::static_pointer_cast<ExponentialCurveManifold>(m_Manifold);
@@ -386,12 +386,12 @@ NetworkPropagationModel2
     
     /// Compute the likelihood
     double LogLikelihood = 0.0;
-    auto N = D->at(SubjectNumber).size(); 
+    auto N = D.at(SubjectNumber).size(); 
     
 #pragma omp parallel for reduction(+:LogLikelihood)    
     for(size_t i = 0; i < N; ++i)
     {
-        auto& it = D->at(SubjectNumber).at(i);
+        auto& it = D.at(SubjectNumber).at(i);
         double TimePoint = SubjectTimePoint(it.second);
         VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, PropagationCoefficients);
         LogLikelihood += (it.first - ParallelCurve).squared_magnitude();
@@ -408,7 +408,7 @@ NetworkPropagationModel2
 NetworkPropagationModel2::SufficientStatisticsVector
 NetworkPropagationModel2
 ::GetSufficientStatistics(const std::shared_ptr<Realizations> R,
-                          const std::shared_ptr<Data> D) 
+                          const Data& D) 
 {
     //// Initialization
     std::shared_ptr<ExponentialCurveManifold> CastedManifold = std::static_pointer_cast<ExponentialCurveManifold>(m_Manifold);
@@ -425,7 +425,7 @@ NetworkPropagationModel2
     VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
     int i = 0;
     auto IterS1 = S1.begin(), IterS2 = S2.begin();
-    for(auto IterD = D->begin(); IterD != D->end() && IterS1 != S1.end() && IterS2 != S2.end(); ++IterD, ++i)
+    for(auto IterD = D.begin(); IterD != D.end() && IterS1 != S1.end() && IterS2 != S2.end(); ++IterD, ++i)
     {
         std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
         VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
@@ -515,9 +515,9 @@ NetworkPropagationModel2
 
 void
 NetworkPropagationModel2
-::UpdateRandomVariables(const SufficientStatisticsVector &SS, const std::shared_ptr<Data> D) 
+::UpdateRandomVariables(const SufficientStatisticsVector &SS, const Data& D) 
 {
-    double NumberOfSubjects = D->size();
+    double NumberOfSubjects = D.size();
     
     /// Update P0
     auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
