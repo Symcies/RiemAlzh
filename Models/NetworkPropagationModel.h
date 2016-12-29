@@ -40,16 +40,16 @@ public:
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int  MaxObs);
     
     /// Compute the log likelihood of the model
-    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations> R, 
+    virtual double ComputeLogLikelihood(const Realizations& R, 
                                         const Data& D);
     
     /// Compute the log likelihood of the model for a given subject
-    virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R, 
+    virtual double ComputeIndividualLogLikelihood(const Realizations& R, 
                                                   const Data& D, 
                                                   const int SubjectNumber);
 
     /// Get the sufficient statistics of the model
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations> R, 
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, 
                                                                const Data& D);
     
     /// Update the random variables <=> the parameters of the model

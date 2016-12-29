@@ -56,12 +56,12 @@ UnivariateModel
 
 UnivariateModel::SufficientStatisticsVector
 UnivariateModel
-::GetSufficientStatistics(const std::shared_ptr<Realizations> &R, const Data& D) 
+::GetSufficientStatistics(const Realizations& R, const Data& D) 
 {
     /// Get the data to compute the geometric operation on the manifold
     double T0 = 0.0;
     double V0 = 1.0;
-    double P0 = R->at("P0")(0);
+    double P0 = R.at("P0")(0);
     unsigned int NumberOfSubjects = (int)D.size();
     
     /// Compute S0 <-- Sum(y_ijk)
@@ -100,14 +100,14 @@ UnivariateModel
     }
     
     /// Compute S3 <- P0(k)
-    VectorType S3(1, R->at("P0")(0));
+    VectorType S3(1, R.at("P0")(0));
     
     /// Compute S4 <- tau_i  and  S5 <- tau_i * tau_i
     VectorType S4(NumberOfSubjects), S5(NumberOfSubjects);
-    auto IterTau = R->at("Tau").begin();
+    auto IterTau = R.at("Tau").begin();
     auto IterS4 = S4.begin();
     auto IterS5 = S5.begin();
-    for(    ; IterS4 != S4.end() && IterS5 != S5.end() && IterTau != R->at("Tau").end(); ++IterS4, ++IterS5, ++IterTau)
+    for(    ; IterS4 != S4.end() && IterS5 != S5.end() && IterTau != R.at("Tau").end(); ++IterS4, ++IterS5, ++IterTau)
     {
         *IterS4 = *IterTau;
         *IterS5 = *IterTau * *IterTau;
@@ -115,10 +115,10 @@ UnivariateModel
     
     /// Compute S5 <- ksi_i and 6 <- [ksi_i * ksi_i]
     VectorType S6(NumberOfSubjects, 0), S7(NumberOfSubjects, 0);
-    auto IterKsi = R->at("Ksi").begin();
+    auto IterKsi = R.at("Ksi").begin();
     auto IterS6 = S6.begin();
     auto IterS7 = S7.begin();
-    for(    ; IterS6 != S6.end() && IterS7 != S7.end() && IterKsi != R->at("Ksi").end(); ++IterS6, ++IterS7, ++IterKsi)
+    for(    ; IterS6 != S6.end() && IterS7 != S7.end() && IterKsi != R.at("Ksi").end(); ++IterS6, ++IterS7, ++IterKsi)
     {
         *IterS6 = *IterKsi;
         *IterS7 = *IterKsi * *IterKsi;
@@ -237,11 +237,11 @@ UnivariateModel
 
 double 
 UnivariateModel
-::ComputeLogLikelihood(const std::shared_ptr<Realizations> &R, const Data& D) 
+::ComputeLogLikelihood(const Realizations& R, const Data& D) 
 {
     /// Get the data
     double T0 = 0.0;
-    double P0 = R->at("P0")(0);
+    double P0 = R.at("P0")(0);
     double V0 = 1.0; 
     
     /// Compute the loglikelihood
@@ -269,12 +269,12 @@ UnivariateModel
 
 double 
 UnivariateModel
-::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> &R,
+::ComputeIndividualLogLikelihood(const Realizations& R,
                                  const Data& D, const int SubjectNumber) 
 {
     /// Initialize the individual parameters
     double T0 = 0.0;
-    double P0 = R->at("P0")(0);
+    double P0 = R.at("P0")(0);
     double V0 = 1.0;
     std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
     
@@ -301,7 +301,7 @@ UnivariateModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
     /// Simulate Realizations
-    auto R = std::make_shared<Realizations>( SimulateRealizations(NumberOfSubjects) );
+    auto R = SimulateRealizations(NumberOfSubjects);
     
     /// Initialize
     std::ofstream IOTimePoints, IOSimulatedData;
@@ -316,7 +316,7 @@ UnivariateModel
     
     Data D;
     double T0 = 0.0;
-    double P0 = R->at("P0")(0);
+    double P0 = R.at("P0")(0);
     double V0 = 1.0;
     
     
@@ -440,10 +440,10 @@ UnivariateModel
 
 std::function<double(double)>  
 UnivariateModel
-::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations>& R)
+::GetSubjectTimePoint(const int SubjectNumber, const Realizations& R)
 {
-    double AccFactor = exp(R->at("Ksi")(SubjectNumber));
-    double TimeShift = R->at("Tau")(SubjectNumber);
+    double AccFactor = exp(R.at("Ksi")(SubjectNumber));
+    double TimeShift = R.at("Tau")(SubjectNumber);
     
     return [AccFactor, TimeShift](double t) { return AccFactor * (t - TimeShift); };
 }

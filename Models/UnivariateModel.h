@@ -41,7 +41,7 @@ public:
     virtual void UpdateParameters(const Realizations& R, const std::vector<std::string> Name = {"All"});
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, 
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, 
                                                                const Data& D);
 
     // TODO : TO BE CHANGED ABSOLUTELLY : this is not how the random variables are updated GENERALLY
@@ -52,10 +52,10 @@ public:
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason, e.g. when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations>& R, const Data& D);
+    virtual double ComputeLogLikelihood(const Realizations& R, const Data& D);
 
     /// Compute the log likelihood of the model for a particular individual
-    double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations>& R, 
+    double ComputeIndividualLogLikelihood(const Realizations& R, 
                                           const Data& D, const int SubjectNumber);
 
     
@@ -85,7 +85,7 @@ private :
     ////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
-    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations>& R);
+    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const Realizations& R);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Attribute(s)

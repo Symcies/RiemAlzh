@@ -53,7 +53,7 @@ TestModel
 
 TestModel::SufficientStatisticsVector
 TestModel
-::GetSufficientStatistics(const std::shared_ptr<Realizations> &R,
+::GetSufficientStatistics(const Realizations& R,
                           const Data& D) 
 {
     unsigned int NumberOfSubjects = (int)D.size();
@@ -117,7 +117,7 @@ TestModel
     
     
     /// Compute S7 
-    VectorType S7(1, R->at("C")(0));
+    VectorType S7(1, R.at("C")(0));
     
     
     SufficientStatisticsVector S = {S0, S1, S2, S3, S4, S5, S6, S7};
@@ -227,7 +227,7 @@ TestModel
 
 double
 TestModel
-::ComputeLogLikelihood(const std::shared_ptr <Realizations> &R,
+::ComputeLogLikelihood(const Realizations& R,
                        const Data& D) 
 {
     double LogLikelihood = 0.0, K = 0.0;
@@ -254,7 +254,7 @@ TestModel
 
 double 
 TestModel
-::ComputeIndividualLogLikelihood(const std::shared_ptr <Realizations> &R,
+::ComputeIndividualLogLikelihood(const Realizations& R,
                                  const Data& D, const int SubjectNumber) 
 {
     double LogLikelihood = 0.0;
@@ -277,7 +277,7 @@ TestModel::Data
 TestModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
-    auto R = std::make_shared<Realizations>( SimulateRealizations(NumberOfSubjects));
+    auto R = SimulateRealizations(NumberOfSubjects);
     std::random_device RD;
     std::mt19937 RNG(RD());
     std::uniform_int_distribution<int> Uni(MinObs, MaxObs);
@@ -373,22 +373,22 @@ TestModel
 
 double 
 TestModel
-::GetA(int i, const std::shared_ptr<Realizations>& R) 
+::GetA(int i, const Realizations& R) 
 {
-    return R->at("A")(i);
+    return R.at("A")(i);
 }
 
 double 
 TestModel
-::GetB(int i, const std::shared_ptr<Realizations>& R) 
+::GetB(int i, const Realizations& R) 
 {
-    return R->at("B")(i);
+    return R.at("B")(i);
 }
 
 
 double 
 TestModel
-::GetC(const std::shared_ptr<Realizations> R)
+::GetC(const Realizations& R)
 {
-    return R->at("C")(0);
+    return R.at("C")(0);
 }

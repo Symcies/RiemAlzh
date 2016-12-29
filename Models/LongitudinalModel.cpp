@@ -119,24 +119,22 @@ LongitudinalModel
         }
     }
     
-    auto R1 = std::make_shared<Realizations>(R);
-    
     /// Update Case in fonction of the the vector of names
     switch(UpdateCase)
     {
         case 1:
             break;
         case 2:
-            ComputeSpaceShifts(R1);
+            ComputeSpaceShifts(R);
             break;
         case 3:
-            ComputeAMatrix(R1);
-            ComputeSpaceShifts(R1);
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
             break;
         case 4:
-            ComputeOrthonormalBasis(R1);
-            ComputeAMatrix(R1);
-            ComputeSpaceShifts(R1);
+            ComputeOrthonormalBasis(R);
+            ComputeAMatrix(R);
+            ComputeSpaceShifts(R);
             break;
         default:
             std::cout << "Error? LongitudinalModel > UpdateParameters";
@@ -147,7 +145,7 @@ LongitudinalModel
 
 LongitudinalModel::SufficientStatisticsVector
 LongitudinalModel
-::GetSufficientStatistics(const std::shared_ptr<Realizations> R, 
+::GetSufficientStatistics(const Realizations& R, 
                           const Data& D)
 {
     /////////////////////////
@@ -155,8 +153,8 @@ LongitudinalModel
     /////////////////////////
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
     double T0 = GetInitialTime();
-    VectorType P0(1, R->at("P0")(0) );
-    VectorType V0(1, R->at("V0")(0) );
+    VectorType P0(1, R.at("P0")(0) );
+    VectorType V0(1, R.at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
     
     
@@ -207,13 +205,13 @@ LongitudinalModel
     /////////////////////////
     /// Compute S3, S4 and S5
     /////////////////////////
-    VectorType S3(R->at("Ksi").size()), S4(R->at("Tau").size()), S5(R->at("Tau").size());
-    auto IterKsi = R->at("Ksi").begin();
-    auto IterTau = R->at("Tau").begin();
+    VectorType S3(R.at("Ksi").size()), S4(R.at("Tau").size()), S5(R.at("Tau").size());
+    auto IterKsi = R.at("Ksi").begin();
+    auto IterTau = R.at("Tau").begin();
     auto IterS3 = S3.begin();
     auto IterS4 = S4.begin();
     auto IterS5 = S5.begin();
-    for( ; IterKsi != R->at("Ksi").end() && IterTau != R->at("Tau").end() && IterS3 != S3.end() && IterS4 != S4.end() && IterS5 != S5.end()
+    for( ; IterKsi != R.at("Ksi").end() && IterTau != R.at("Tau").end() && IterS3 != S3.end() && IterS4 != S4.end() && IterS5 != S5.end()
             ; ++IterKsi, ++IterTau, ++IterS3, ++IterS4, ++IterS5 )
     {
         *IterS3 = *IterKsi * *IterKsi;
@@ -238,7 +236,7 @@ LongitudinalModel
     int k = 0;
     for(auto it = S9.begin(); it != S9.end(); ++it, ++k)
     {
-        *it = R->at("Beta#" + std::to_string(k))[0];
+        *it = R.at("Beta#" + std::to_string(k))[0];
     }
     
     SufficientStatisticsVector S = {S0, S1, S2, S3, S4, S5, P0, V0, S8, S9};
@@ -377,13 +375,13 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const Data& D) 
+::ComputeLogLikelihood(const Realizations& R, const Data& D) 
 {
     /// Get the data
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
     double T0 = GetInitialTime();
-    VectorType P0(1, R->at("P0")(0) );
-    VectorType V0(1, R->at("V0")(0) );
+    VectorType P0(1, R.at("P0")(0) );
+    VectorType V0(1, R.at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
     
     /// Compute the likelihood
@@ -413,7 +411,7 @@ LongitudinalModel
 
 double
 LongitudinalModel
-::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R,
+::ComputeIndividualLogLikelihood(const Realizations& R,
                                  const Data& D, const int SubjectNumber) 
 {
     // TODO : send only D(i) to the function?!
@@ -425,8 +423,8 @@ LongitudinalModel
     /// Get the global parameters
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
     double T0 = GetInitialTime();
-    VectorType P0(1, R->at("P0")(0) );
-    VectorType V0(1, R->at("V0")(0) );
+    VectorType P0(1, R.at("P0")(0) );
+    VectorType V0(1, R.at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
     
     /// Compute the likelihood
@@ -457,9 +455,9 @@ LongitudinalModel
     auto R = std::make_shared<Realizations>( SimulateRealizations(NumberOfSubjects) );
     
     /// Initialize model attributes
-    ComputeOrthonormalBasis(R);
-    ComputeAMatrix(R);
-    ComputeSpaceShifts(R);
+    ComputeOrthonormalBasis(*R);
+    ComputeAMatrix(*R);
+    ComputeSpaceShifts(*R);
 
     /// Initialize
     std::random_device RD;
@@ -472,7 +470,7 @@ LongitudinalModel
     double T0 = GetInitialTime();
     VectorType P0(1, R->at("P0")(0) );
     VectorType V0(1, R->at("V0")(0) );
-    VectorType Delta = GetPropagationCoefficients(R);
+    VectorType Delta = GetPropagationCoefficients(*R);
     
     Data D;
     
@@ -488,7 +486,7 @@ LongitudinalModel
             TimePoints.push_back(ObsDistrib(RNG));
         }
         std::sort(TimePoints.begin(), TimePoints.end());
-        std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
+        std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, *R);
         auto SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
         
         /// Generate observations corresponding to the time points
@@ -623,19 +621,19 @@ LongitudinalModel
 
 LongitudinalModel::VectorType
 LongitudinalModel
-::GetInitialPosition(const std::shared_ptr<Realizations> R)
+::GetInitialPosition(const Realizations& R)
 {
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
 
     double T0 = GetInitialTime();
-    VectorType P0(1, R->at("P0")(0) );
-    VectorType V0(1, R->at("V0")(0) );
+    VectorType P0(1, R.at("P0")(0) );
+    VectorType V0(1, R.at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
 
     auto InitialPosition = CastedManifold->ComputeGeodesic(P0, T0, V0, T0, Delta);
     
     /// Tests
-    std::function<double()> f1 = [&R]() { return R->at("P0")(0); };
+    std::function<double()> f1 = [&R]() { return R.at("P0")(0); };
     std::function<double()> f2 = [&InitialPosition]() { return InitialPosition[0]; };
     TestAssert::WarningEquality_Function(f1, f2, "P0 != InitialPosition[0]. LongitudinalModel > GetInitialPosition");
     
@@ -644,19 +642,19 @@ LongitudinalModel
 
 LongitudinalModel::VectorType
 LongitudinalModel
-::GetInitialVelocity(const std::shared_ptr<Realizations> R)
+::GetInitialVelocity(const Realizations& R)
 {
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
 
     double T0 = GetInitialTime();
     VectorType Delta = GetPropagationCoefficients(R);
-    VectorType P0(1, R->at("P0")(0) );
-    VectorType V0(1, R->at("V0")(0) );
+    VectorType P0(1, R.at("P0")(0) );
+    VectorType V0(1, R.at("V0")(0) );
 
     VectorType InitialVelocity = CastedManifold->ComputeGeodesicDerivative(P0, T0, V0, T0, Delta);
     
     /// Tests 
-    std::function<double()> f1 = [&R]() { return R->at("V0")(0); };
+    std::function<double()> f1 = [&R]() { return R.at("V0")(0); };
     std::function<double()> f2 = [&InitialVelocity]() { return InitialVelocity[0]; };
     TestAssert::WarningEquality_Function(f1, f2, "P0 != InitialVelocity[0]. LongitudinalModel > GetInitialVelocity");
     
@@ -666,14 +664,14 @@ LongitudinalModel
 
 LongitudinalModel::VectorType
 LongitudinalModel
-::GetPropagationCoefficients(const std::shared_ptr<Realizations> R)
+::GetPropagationCoefficients(const Realizations& R)
 {
     VectorType Delta(m_Manifold->GetDimension(), 0.0);
 
     int i = 0;
     for(auto it = Delta.begin() + 1; it != Delta.end(); ++it, ++i)
     {
-        *it = R->at("Delta#" + std::to_string(i))(0);
+        *it = R.at("Delta#" + std::to_string(i))(0);
     }
 
     return Delta;
@@ -681,10 +679,10 @@ LongitudinalModel
 
 std::function<double(double)>  
 LongitudinalModel
-::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations> R)
+::GetSubjectTimePoint(const int SubjectNumber, const Realizations& R)
 {
-    double AccFactor = exp(R->at("Ksi")(SubjectNumber));
-    double TimeShift = R->at("Tau")(SubjectNumber);
+    double AccFactor = exp(R.at("Ksi")(SubjectNumber));
+    double TimeShift = R.at("Tau")(SubjectNumber);
     double T0 = GetInitialTime();
     
     return [AccFactor, TimeShift, T0](double t) { return AccFactor * (t - TimeShift) + T0; };
@@ -692,34 +690,17 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeOrthonormalBasis(const std::shared_ptr<Realizations> R)
+::ComputeOrthonormalBasis(const Realizations& R)
 {
     /////////////////////////
     /// Get the vectors P0 and V0
     /////////////////////////
     std::shared_ptr<PropagationManifold> CastedManifold = std::dynamic_pointer_cast<PropagationManifold>(m_Manifold);
     double T0 = GetInitialTime();
-    VectorType P0(1, R->at("P0")(0) );
-    VectorType V0(1, R->at("V0")(0) );
+    VectorType P0(1, R.at("P0")(0) );
+    VectorType V0(1, R.at("V0")(0) );
     VectorType Delta = GetPropagationCoefficients(R);
-    
-    /*
-    /// MANON ET MAXIME CODE
-    double T0 = 71.9920;
-    VectorType P0(1, 0.3096);
-    VectorType V0(1, 0.0403);
-    VectorType Delta(4, 0);
-     
-    
-    std::vector<double> PPPP = {0, -15.4249, -13.2227, -5.3881};
-    int i = 0;
-    for(auto it = Delta.begin(); it != Delta.end(); ++it)
-    {
-        *it = PPPP[i];
-    }
-    
-    /// LOL ///
-     */
+  
 
     /// Compute the transformation to do the Householder reflection in a Euclidean space
     VectorType U = CastedManifold->GetVelocityTransformToEuclideanSpace(P0, T0, V0, Delta);
@@ -786,7 +767,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeAMatrix(const std::shared_ptr<Realizations> R)
+::ComputeAMatrix(const Realizations& R)
 {
     MatrixType AMatrix(m_Manifold->GetDimension(), m_NbIndependentComponents);
     
@@ -796,7 +777,7 @@ LongitudinalModel
         for(int j = 0; j < m_Manifold->GetDimension() - 1 ; ++j)
         {
             std::string Number = std::to_string(int(j + i*(m_Manifold->GetDimension() - 1)));
-            Beta(j) = R->at( "Beta#" + Number)(0);
+            Beta(j) = R.at( "Beta#" + Number)(0);
         }
         
         VectorType V = LinearCombination(Beta, m_OrthogonalBasis)   ;     
@@ -838,11 +819,11 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeSpaceShifts(const std::shared_ptr<Realizations> R)
+::ComputeSpaceShifts(const Realizations& R)
 {
     std::map< std::string, VectorType> SpaceShifts;
-    int NumberOfSubjects = (int)R->at("Tau").size();
-    if(NumberOfSubjects != R->at("Ksi").size())
+    int NumberOfSubjects = (int)R.at("Tau").size();
+    if(NumberOfSubjects != R.at("Ksi").size())
     {
         throw std::invalid_argument("Not the same number of realization in Tau and in Ksi. Whereas its equal to the number of subjects");
     }
@@ -852,7 +833,7 @@ LongitudinalModel
         VectorType Si(m_NbIndependentComponents);
         for(int j = 0; j < m_NbIndependentComponents; ++j)
         {
-            Si(j) = R->at("S#" + std::to_string(j))(i);
+            Si(j) = R.at("S#" + std::to_string(j))(i);
         }
 
         VectorType V = m_AMatrix * Si;

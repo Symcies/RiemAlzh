@@ -232,21 +232,21 @@ NetworkPropagationModel2
         case 1:
             break;
         case 2:
-            ComputeSpaceShifts(R1);
+            ComputeSpaceShifts(*R1);
             break;
         case 3:
-            ComputeAMatrix(R1);
-            ComputeSpaceShifts(R1);
+            ComputeAMatrix(*R1);
+            ComputeSpaceShifts(*R1);
         case 4:
-            ComputeOrthonormalBasis(R1);
-            ComputeAMatrix(R1);
-            ComputeSpaceShifts(R1);
+            ComputeOrthonormalBasis(*R1);
+            ComputeAMatrix(*R1);
+            ComputeSpaceShifts(*R1);
             break;
         case 5:
-            ComputeInterpolationCoefficients(R1);
-            ComputeOrthonormalBasis(R1);
-            ComputeAMatrix(R1);
-            ComputeSpaceShifts(R1);
+            ComputeInterpolationCoefficients(*R1);
+            ComputeOrthonormalBasis(*R1);
+            ComputeAMatrix(*R1);
+            ComputeSpaceShifts(*R1);
             break;
         default:
             std::cout << "Error? NetworkPropagationModel > UpdateParameters";
@@ -259,7 +259,7 @@ NetworkPropagationModel2::Data
 NetworkPropagationModel2
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
-    auto R = std::make_shared<Realizations>(SimulateRealizations(NumberOfSubjects));
+    auto R = SimulateRealizations(NumberOfSubjects);
     ComputeInterpolationCoefficients(R);
     ComputeOrthonormalBasis(R);
     ComputeAMatrix(R);
@@ -275,7 +275,7 @@ NetworkPropagationModel2
     double T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double KsiMean = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
     VectorType V0(1, exp(KsiMean));
-    VectorType P0(1, exp(R->at("P0")(0)));
+    VectorType P0(1, exp(R.at("P0")(0)));
     VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     
     Data D;
@@ -333,14 +333,14 @@ NetworkPropagationModel2
 
 double
 NetworkPropagationModel2
-::ComputeLogLikelihood(const std::shared_ptr<Realizations> R, const Data& D) 
+::ComputeLogLikelihood(const Realizations& R, const Data& D) 
 {
     /// Get the data
     std::shared_ptr<ExponentialCurveManifold> CastedManifold = std::static_pointer_cast<ExponentialCurveManifold>(m_Manifold);
     double T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double KsiMean = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
     VectorType V0(1, exp(KsiMean));
-    VectorType P0(1, exp(R->at("P0")(0)));
+    VectorType P0(1, exp(R.at("P0")(0)));
     VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     
     /// Compute the likelihood
@@ -370,7 +370,7 @@ NetworkPropagationModel2
 
 double
 NetworkPropagationModel2
-::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R,
+::ComputeIndividualLogLikelihood(const Realizations& R,
                                  const Data& D, const int SubjectNumber) 
 {
     /// Get the data
@@ -378,7 +378,7 @@ NetworkPropagationModel2
     double T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double KsiMean = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
     VectorType V0(1, exp(KsiMean));
-    VectorType P0(1, exp(R->at("P0")(0)));
+    VectorType P0(1, exp(R.at("P0")(0)));
     VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     
     std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
@@ -407,7 +407,7 @@ NetworkPropagationModel2
 
 NetworkPropagationModel2::SufficientStatisticsVector
 NetworkPropagationModel2
-::GetSufficientStatistics(const std::shared_ptr<Realizations> R,
+::GetSufficientStatistics(const Realizations& R,
                           const Data& D) 
 {
     //// Initialization
@@ -415,9 +415,9 @@ NetworkPropagationModel2
     double T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double KsiMean = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
     VectorType V0(1, exp(KsiMean));
-    VectorType P0(1, exp(R->at("P0")(0)));
+    VectorType P0(1, exp(R.at("P0")(0)));
     VectorType PropagationCoefficients = GetPropagationCoefficients(R);
-    double NumberOfSubjects = R->at("Ksi").size();
+    double NumberOfSubjects = R.at("Ksi").size();
     
     
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
@@ -466,8 +466,9 @@ NetworkPropagationModel2
     
     /// S3 <- Ksi_i   &    S4 <- Ksi_i * Ksi_i
     VectorType S3(NumberOfSubjects), S4(NumberOfSubjects);
-    auto IterKsi = R->at("Ksi").begin(), IterS3 = S3.begin(), IterS4 = S4.begin();
-    for(    ; IterKsi != R->at("Ksi").end() && IterS3 != S3.end() && IterS4 != S4.end(); ++IterKsi, ++IterS3, ++IterS4)
+    auto IterKsi = R.at("Ksi").begin();
+    auto IterS3 = S3.begin(), IterS4 = S4.begin();
+    for(    ; IterKsi != R.at("Ksi").end() && IterS3 != S3.end() && IterS4 != S4.end(); ++IterKsi, ++IterS3, ++IterS4)
     {
         *IterS3 = *IterKsi;
         *IterS4 = *IterKsi * *IterKsi;
@@ -476,22 +477,23 @@ NetworkPropagationModel2
     
     /// S5 <- Tau_i   &    S6 <- Tau_i * Tau_i
     VectorType S5(NumberOfSubjects), S6(NumberOfSubjects);
-    auto IterTau = R->at("Tau").begin(), IterS5 = S5.begin(), IterS6 = S6.begin();
-    for(    ; IterTau != R->at("Tau").end() && IterS5 != S5.end() && IterS6 != S6.end(); ++IterTau, ++IterS5, ++IterS6)
+    auto IterTau = R.at("Tau").begin();
+    auto IterS5 = S5.begin(), IterS6 = S6.begin();
+    for(    ; IterTau != R.at("Tau").end() && IterS5 != S5.end() && IterS6 != S6.end(); ++IterTau, ++IterS5, ++IterS6)
     {
         *IterS5 = *IterTau;
         *IterS6 = *IterTau * *IterTau;
     }
     
     /// S6 <- P0(k)
-    VectorType S7(1, R->at("P0")(0));
+    VectorType S7(1, R.at("P0")(0));
     
     /// S8 <- beta_k
     VectorType S8((m_Manifold->GetDimension() - 1)*m_NbIndependentComponents);
     i = 0;
     for(auto it = S8.begin(); it != S8.end(); ++it, ++i)
     {
-        *it = R->at("Beta#" + std::to_string(i))(0);
+        *it = R.at("Beta#" + std::to_string(i))(0);
     }
     
     /// S9 <- delta_k
@@ -499,7 +501,7 @@ NetworkPropagationModel2
     i = 1;
     for(auto it = S9.begin();  it != S9.end(); ++it, ++i)
     {
-        *it = R->at("Delta#" + std::to_string(i))(0);
+        *it = R.at("Delta#" + std::to_string(i))(0);
     }
     
     SufficientStatisticsVector S = {S1, S2, S3, S4, S5, S6, S7, S8, S9};
@@ -709,7 +711,7 @@ NetworkPropagationModel2
 
 NetworkPropagationModel2::VectorType
 NetworkPropagationModel2
-::GetPropagationCoefficients(const std::shared_ptr<Realizations> R) 
+::GetPropagationCoefficients(const Realizations& R) 
 {
     VectorType PropagationCoefficients = m_InterpolationMatrix * m_InterpolationCoefficients;
     return PropagationCoefficients;    
@@ -717,24 +719,24 @@ NetworkPropagationModel2
 
 std::function<double(double)>
 NetworkPropagationModel2
-::GetSubjectTimePoint(const int SubjectNumber, const std::shared_ptr<Realizations> R) 
+::GetSubjectTimePoint(const int SubjectNumber, const Realizations& R) 
 {
-    double AccFactor = exp(R->at("Ksi")(SubjectNumber));
-    double TimeShift = R->at("Tau")(SubjectNumber);
+    double AccFactor = exp(R.at("Ksi")(SubjectNumber));
+    double TimeShift = R.at("Tau")(SubjectNumber);
     
     return [AccFactor, TimeShift](double t) { return AccFactor * (t - TimeShift); };
 }
 
 void
 NetworkPropagationModel2
-::ComputeInterpolationCoefficients(const std::shared_ptr<Realizations> R) 
+::ComputeInterpolationCoefficients(const Realizations& R) 
 {
     VectorType Delta(m_NbControlPoints, 0.0);
     
     int i = 1;
     for(auto it = Delta.begin() + 1; it != Delta.end(); ++it, ++i)
     {
-        *it = R->at("Delta#" + std::to_string(i))(0);
+        *it = R.at("Delta#" + std::to_string(i))(0);
     }
     
     m_InterpolationCoefficients = m_InvertKernelMatrix * Delta;
@@ -742,14 +744,14 @@ NetworkPropagationModel2
 
 void
 NetworkPropagationModel2
-::ComputeOrthonormalBasis(const std::shared_ptr<Realizations> R) 
+::ComputeOrthonormalBasis(const Realizations& R) 
 {
     /// Initialization
     std::shared_ptr<ExponentialCurveManifold> CastedManifold = std::static_pointer_cast<ExponentialCurveManifold>(m_Manifold);
     double T0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();
     double KsiMean = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
     VectorType V0(1, exp(KsiMean));
-    VectorType P0(1, exp(R->at("P0")(0)));
+    VectorType P0(1, exp(R.at("P0")(0)));
     VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     
     /// Compute the transformation to do the Householder reflection in a Euclidean space
@@ -786,7 +788,7 @@ NetworkPropagationModel2
 
 void 
 NetworkPropagationModel2
-::ComputeAMatrix(const std::shared_ptr<Realizations> R) 
+::ComputeAMatrix(const Realizations& R) 
 {
     MatrixType AMatrix(m_Manifold->GetDimension(), m_NbIndependentComponents);
     
@@ -796,7 +798,7 @@ NetworkPropagationModel2
         for(int j = 0; j < m_Manifold->GetDimension() - 1 ; ++j)
         {
             std::string Number = std::to_string(int(j + i*(m_Manifold->GetDimension() - 1)));
-            Beta(j) = R->at( "Beta#" + Number)(0);
+            Beta(j) = R.at( "Beta#" + Number)(0);
         }
         
         VectorType V = LinearCombination(Beta, m_OrthogonalBasis)   ;     
@@ -812,18 +814,18 @@ NetworkPropagationModel2
 
 void 
 NetworkPropagationModel2
-::ComputeSpaceShifts(const std::shared_ptr<Realizations> R) 
+::ComputeSpaceShifts(const Realizations& R) 
 {
     std::map< std::string, VectorType> SpaceShifts;
-    int NumberOfSubjects = (int)R->at("Tau").size();
-    TestAssert::WarningEquality_Object(NumberOfSubjects, (int)R->at("Ksi").size(), "NetworkPropagation > ComputeSpaceShifts");
+    int NumberOfSubjects = (int)R.at("Tau").size();
+    TestAssert::WarningEquality_Object(NumberOfSubjects, (int)R.at("Ksi").size(), "NetworkPropagation > ComputeSpaceShifts");
 
     for(int i = 0; i < NumberOfSubjects; ++i)
     {
         VectorType Si(m_NbIndependentComponents);
         for(int j = 0; j < m_NbIndependentComponents; ++j)
         {
-            Si(j) = R->at("S#" + std::to_string(j))(i);
+            Si(j) = R.at("S#" + std::to_string(j))(i);
         }
 
         VectorType V = m_AMatrix * Si;

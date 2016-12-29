@@ -33,17 +33,17 @@ public:
     
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations>& R, const Data& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Data& D);
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const Data& D);
     
     
     /// Compute the log likelihood of the model
-    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations>& R, const Data& D);
+    virtual double ComputeLogLikelihood(const Realizations& R, const Data& D);
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations>& R, 
+    virtual double ComputeIndividualLogLikelihood(const Realizations& R, 
                                                   const Data& D, const int SubjectNumber);
     
     /// Simulate data according to the model
@@ -72,13 +72,13 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Get a coefficient of subject i
-    double GetA(int i, const std::shared_ptr<Realizations>& R);
+    double GetA(int i, const Realizations& R);
     
     /// Get b coefficient of subject i
-    double GetB(int i, const std::shared_ptr<Realizations>& R);
+    double GetB(int i, const Realizations& R);
     
     /// get c coefficient (population ranom variable)
-    double GetC(const std::shared_ptr<Realizations> R);
+    double GetC(const Realizations& R);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)

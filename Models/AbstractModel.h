@@ -61,7 +61,7 @@ public:
                                   const std::vector<std::string> Names = {"All"}) = 0;
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const std::shared_ptr<Realizations> R, 
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, 
                                                                const Data& D) = 0;
 
 
@@ -72,11 +72,11 @@ public:
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const std::shared_ptr<Realizations> R, 
+    virtual double ComputeLogLikelihood(const Realizations& R, 
                                         const Data& D)= 0;
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R, 
+    virtual double ComputeIndividualLogLikelihood(const Realizations& R, 
                                                   const Data& D, 
                                                   const int SubjectNumber) = 0;
     

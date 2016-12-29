@@ -288,22 +288,20 @@ BlockedGibbsSampler::VectorType
 BlockedGibbsSampler
 ::ComputeLogLikelihood(int Type, const Realizations& R, AbstractModel& M, const Data& D) 
 {
-    auto R1 = std::make_shared<Realizations>(R);
-    auto D1 = std::make_shared<Data>(D);
-    
+      
     if(Type == -1) 
     {
         VectorType LogLikelihood(D.size(), 0);
         int i = 0;
         for (auto it = LogLikelihood.begin(); it != LogLikelihood.end(); ++it, ++i) 
         {
-            *it = M.ComputeIndividualLogLikelihood(R1, D, i);
+            *it = M.ComputeIndividualLogLikelihood(R, D, i);
         }
         return LogLikelihood;
     }
     else 
     {
-        return VectorType(1, M.ComputeIndividualLogLikelihood(R1, D, Type));
+        return VectorType(1, M.ComputeIndividualLogLikelihood(R, D, Type));
     }
 }
 

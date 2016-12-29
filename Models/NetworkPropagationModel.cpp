@@ -161,7 +161,7 @@ NetworkPropagationModel
 
 double 
 NetworkPropagationModel
-::ComputeLogLikelihood(const std::shared_ptr<Realizations> R, 
+::ComputeLogLikelihood(const Realizations& R, 
                        const Data& D) 
 {
     /// Get the data
@@ -170,16 +170,16 @@ NetworkPropagationModel
 
 double
 NetworkPropagationModel
-::ComputeIndividualLogLikelihood(const std::shared_ptr<Realizations> R,
+::ComputeIndividualLogLikelihood(const Realizations& R,
                                  const Data& D, 
                                  const int SubjectNumber) 
 {
     /// Get the data
-    VectorType Rho(1, exp(R->at("P0")(0)));
-    VectorType Delta = GetDelta(*R);
-    VectorType Nu = GetNu(*R);
+    VectorType Rho(1, exp(R.at("P0")(0)));
+    VectorType Delta = GetDelta(R);
+    VectorType Nu = GetNu(R);
     
-    std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, *R);
+    std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
     VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
 
     double LogLikelihood = 0;
@@ -202,14 +202,14 @@ NetworkPropagationModel
 
 NetworkPropagationModel::SufficientStatisticsVector
 NetworkPropagationModel
-::GetSufficientStatistics(const std::shared_ptr<Realizations> R,
+::GetSufficientStatistics(const Realizations& R,
                           const Data& D) 
 {
     /// 
-    VectorType P0(1, exp(R->at("P0")(0)));
-    auto Delta = GetDelta(*R);
-    auto Nu = GetNu(*R);
-    double NumberOfSubjects = R->at("Ksi").size();
+    VectorType P0(1, exp(R.at("P0")(0)));
+    auto Delta = GetDelta(R);
+    auto Nu = GetNu(R);
+    double NumberOfSubjects = R.at("Ksi").size();
     
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
     VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
@@ -217,7 +217,7 @@ NetworkPropagationModel
     int i = 0;
     for(auto itD = D.begin(); itD != D.end(); ++itD, ++i)
     {
-        auto TimePoint = GetSubjectTimePoint(i, *R);
+        auto TimePoint = GetSubjectTimePoint(i, R);
         auto SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
         for(auto itD2 = itD->begin(); itD2 != itD->end(); ++itD2)
         {
@@ -231,8 +231,9 @@ NetworkPropagationModel
     
     /// S3 <- Ksi_i   &    S4 <- Ksi_i * Ksi_i
     VectorType S3(NumberOfSubjects), S4(NumberOfSubjects);
-    auto itKsi = R->at("Ksi").begin(), itS3 = S3.begin(), itS4 = S4.begin();
-    for(    ; itKsi != R->at("Ksi").end() ; ++itKsi, ++itS3, ++itS4)
+    auto itKsi = R.at("Ksi").begin();
+    auto itS3 = S3.begin(), itS4 = S4.begin();
+    for(    ; itKsi != R.at("Ksi").end() ; ++itKsi, ++itS3, ++itS4)
     {
         *itS3 = *itKsi;
         *itS4 = *itKsi * *itKsi;
@@ -240,22 +241,23 @@ NetworkPropagationModel
     
     /// S5 <- Tau_i   &    S6 <- Tau_i * Tau_i
     VectorType S5(NumberOfSubjects), S6(NumberOfSubjects);
-    auto itTau = R->at("Tau").begin(), itS5 = S5.begin(), itS6 = S6.begin();
-    for(    ; itTau != R->at("Tau").end(); ++itTau, ++itS5, ++itS6)
+    auto itTau = R.at("Tau").begin();
+    auto itS5 = S5.begin(), itS6 = S6.begin();
+    for(    ; itTau != R.at("Tau").end(); ++itTau, ++itS5, ++itS6)
     {
         *itS5 = *itTau;
         *itS6 = *itTau * *itTau;
     }
     
     /// S7 <- P0 
-    VectorType S7(1, R->at("P0")(0));
+    VectorType S7(1, R.at("P0")(0));
     
     /// S8 <- beta_k
     VectorType S8((m_ManifoldDimension-1) * m_NbIndependentComponents);
     i = 0;
     for(auto it = S8.begin(); it != S8.end(); ++it, ++i)
     {
-        *it = R->at("Beta#" + std::to_string(i))(0);
+        *it = R.at("Beta#" + std::to_string(i))(0);
     }
     
     /// S8 <- delta_k, S9 <- rho_k, S10 <- nu_k
@@ -264,8 +266,8 @@ NetworkPropagationModel
     auto itS9 = S9.begin(), itS10 = S10.begin();
     for(    ; itS9 != S9.end(); ++itS9, ++itS10, ++i)
     {
-        *itS9 = R->at("Delta#" + std::to_string(i))(0);
-        *itS10 = R->at("Nu#" + std::to_string(i))(0);
+        *itS9 = R.at("Delta#" + std::to_string(i))(0);
+        *itS10 = R.at("Nu#" + std::to_string(i))(0);
     }
     
     SufficientStatisticsVector S = {S1, S2, S3, S4, S5, S6, S7, S8, S9, S10};

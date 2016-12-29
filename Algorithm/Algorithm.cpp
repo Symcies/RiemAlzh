@@ -44,7 +44,7 @@ Algorithm
         if( m_IterationCounter%10 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
         
         ComputeSimulationStep(D);
-        SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
+        SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, D);
         ComputeStochasticApproximation(SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
         
@@ -64,7 +64,7 @@ Algorithm
 ::InitializeStochasticSufficientStatistics(const Data& D)
 {
     auto DD = std::make_shared<Data>(D);
-    m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(m_Realizations, D);
+    m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, D);
     for(auto&& it : m_StochasticSufficientStatistics)
     {
         std::fill(it.begin(), it.end(), 0.0);
