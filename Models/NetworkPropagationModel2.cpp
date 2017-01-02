@@ -16,7 +16,6 @@ NetworkPropagationModel2
     m_Manifold = M;
     m_InvertKernelMatrix = *KernelMatrix;
     m_InterpolationMatrix = *InterpolationMatrix;
-    m_OutputParameters.open("ParametersMciConverters_Linear.txt", std::ofstream::out | std::ofstream::trunc);
     m_NbControlPoints = m_InvertKernelMatrix.columns();
     m_InterpolationCoefficients.set_size(m_NbControlPoints);
     
@@ -76,8 +75,6 @@ NetworkPropagationModel2
     else { std::cout << "Unable to open the initial delta"; }
     */
     
-
-     
     
     /////////////////////////////
     /// Individual Parameters ///
@@ -185,8 +182,8 @@ NetworkPropagationModel2
 
 void 
 NetworkPropagationModel2
-::UpdateParameters(const Realizations& R,
-                   const std::vector<std::string> Names) 
+::UpdateModel(const Realizations &R,
+              const std::vector<std::string> Names) 
 {
     /// This first part inspects the parameters names to update
     int UpdateCase = 1;
@@ -249,7 +246,7 @@ NetworkPropagationModel2
             ComputeSpaceShifts(*R1);
             break;
         default:
-            std::cout << "Error? NetworkPropagationModel > UpdateParameters";
+            std::cout << "Error? NetworkPropagationModel > UpdateModel";
             break;
     }
     
@@ -438,31 +435,7 @@ NetworkPropagationModel2
             ++IterS1, ++IterS2;
         }
     }
-     
- /*   
-    VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
-    ScalarType * it1 = S1.memptr();
-    ScalarType * it2 = S2.memptr();
-    
-
-#pragma omp simd
-    for(size_t i = 0; i < m_NbTotalOfObservations, ++i)
-    {
-        std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(i, R);
-        VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
-        auto NbObs = D->at(i).size();
-        
-#pragma omp simd        
-        for(size_t j = 0; j < NbObs; ++j)
-        {
-            auto& it = D->at(i).at(j);
-            double TimePoint = SubjectTimePoint(it.second);
-            VectorType ParallelCurve = CastedManifold->ComputeParallelCurve(P0, T0, V0, SpaceShift, TimePoint, PropagationCoefficients);
-            it1[i*+j]
-        }
-    }
-    */
-    
+   
     
     /// S3 <- Ksi_i   &    S4 <- Ksi_i * Ksi_i
     VectorType S3(NumberOfSubjects), S4(NumberOfSubjects);
@@ -598,7 +571,7 @@ NetworkPropagationModel2
 
 void
 NetworkPropagationModel2
-::ComputeOutputs() 
+::DisplayOutputs() 
  {
     auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));   
     auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));   
@@ -621,37 +594,19 @@ void
 NetworkPropagationModel2
 ::SaveData(unsigned int IterationNumber) 
 {
-    /// Save the data in case it crashes and a re-init is needed
-    std::ofstream ModelParameters;    
-    ModelParameters.open("ModelParametersMciConverters_Linear.txt", std::ofstream::out | std::ofstream::trunc);
-    ModelParameters << "Iteration : " << IterationNumber << std::endl;
-    for(auto it = m_PopulationRandomVariables.begin(); it != m_PopulationRandomVariables.end(); ++it)
-    {
-        auto RV = std::static_pointer_cast<GaussianRandomVariable>(it->second);
-        ModelParameters << "0, " << it->first << ", " << RV->GetMean() << ", " << RV->GetVariance() << std::endl;
-    }
-    for(auto it = m_IndividualRandomVariables.begin(); it != m_IndividualRandomVariables.end(); ++it)
-    {
-        auto RV = std::static_pointer_cast<GaussianRandomVariable>(it->second);
-        ModelParameters << "1, " << it->first << ", " << RV->GetMean() << ", " << RV->GetVariance() << std::endl;
-    }
-    
-    
-    
     /// Save the delta_k for visualization
-    std::ofstream DeltaViz;    
-    DeltaViz.open("DeltaVisualizationMciConverters_Linear.txt", std::ofstream::out | std::ofstream::trunc);    
+    std::ofstream DeltaOutputs;    
+    DeltaOutputs.open("DeltaSignalNetwork_Parameters.txt", std::ofstream::out | std::ofstream::trunc);    
         
-    for(auto it = m_PopulationRandomVariables.begin(); it != m_PopulationRandomVariables.end(); ++it)
+    DeltaOutputs << 0 << std::endl;
+    
+    for(size_t i = 1; i < m_NbControlPoints; ++i)
     {
-        std::string Name = it->first;
-        if(Name.substr(0, Name.find_first_of("#")) == "Delta")
-        {
-            std::string Number = Name.substr(Name.find_first_of("#") + 1);
-            auto RV = std::static_pointer_cast<GaussianRandomVariable>(it->second);
-            DeltaViz << Number << ", " << RV->GetMean() << std::endl;
-        }
+        auto AbstractDelta = m_PopulationRandomVariables.at("Delta#" + std::to_string(i));
+        auto Delta = std::static_pointer_cast<GaussianRandomVariable>(AbstractDelta);
+        DeltaOutputs << Delta->GetMean() << std::endl;
     }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

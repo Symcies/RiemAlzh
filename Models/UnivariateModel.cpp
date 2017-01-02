@@ -48,7 +48,7 @@ UnivariateModel
 
 void 
 UnivariateModel
-::UpdateParameters(const Realizations& R, const std::vector<std::string> Names) 
+::UpdateModel(const Realizations &R, const std::vector<std::string> Names) 
 {
     // TODO : Check if something has to be added
 }
@@ -386,7 +386,7 @@ UnivariateModel
 
 void
 UnivariateModel
-::ComputeOutputs() 
+::DisplayOutputs() 
 {
     auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
     auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));

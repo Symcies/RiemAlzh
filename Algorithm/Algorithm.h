@@ -78,18 +78,27 @@ protected:
     /// Output(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Compute the acceptance ratio for each random variable
-    void ComputeAcceptanceRatio(Realizations& R);
+    /// Number of iterations to wait till next output display
+    unsigned int m_CounterToDisplayOutputs = 20;
     
-    /// Compute Outputs
-    void ComputeOutputs();
+    /// Number of iterations to wait till next data saving
+    unsigned int m_CounterToSaveData = 100;
     
     /// Acceptance Ratios
     std::map<std::string, VectorType> m_AcceptanceRatios;
+    
+    /// Compute the acceptance ratio for each random variable
+    void ComputeAcceptanceRatio(Realizations& R);
+    
+    /// Display acceptance ratio
+    void DisplayAcceptanceRatio(Realizations& R);
 
     /// Output file
     std::ofstream m_OutputRealizations;
-
+    
+    /// Display Outputs
+    void DisplayOutputs();
+    
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)

@@ -4,10 +4,10 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/Tests/TestAssert.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Tests/TestAssert.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Utilities/MatrixFunctions.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Utilities/MatrixFunctions.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Parameters/CandidateRandomVariables.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Parameters/CandidateRandomVariables.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/TestModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Models/LongitudinalModel.h" isTestSource="false" />
@@ -54,12 +54,12 @@
       <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/AbstractSampler.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Samplers/AbstractSampler.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Inputs/ReadData.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Inputs/ReadData.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/LinearAlgebra.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Utilities/MatrixFunctions.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Utilities/MatrixFunctions.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloLinearAlgebra.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper_friend.h" isTestSource="false" />

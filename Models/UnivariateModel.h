@@ -3,7 +3,6 @@
 
 
 #include "AbstractModel.h"
-#include "../Utilities/MatrixFunctions.h"
 #include <tuple>
 
 class UnivariateModel : public AbstractModel {
@@ -38,7 +37,7 @@ public:
     
     /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
     /// This update can depend on the parameter that has changed, provided by the Name argument
-    virtual void UpdateParameters(const Realizations& R, const std::vector<std::string> Name = {"All"});
+    virtual void UpdateModel(const Realizations &R, const std::vector<std::string> Name = {"All"});
 
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, 
@@ -70,7 +69,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Compute Outputs
-    virtual void ComputeOutputs();
+    virtual void DisplayOutputs();
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:

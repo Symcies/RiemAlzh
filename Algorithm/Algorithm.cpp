@@ -33,23 +33,21 @@ void
 Algorithm
 ::ComputeMCMCSAEM(const Data& D)
 {
-
-    auto DD = std::make_shared<Data>(D);
     InitializeModel(D);
     InitializeSampler();
     InitializeStochasticSufficientStatistics(D);
 
     for(m_IterationCounter = 0; m_IterationCounter < m_MaxNumberOfIterations; m_IterationCounter += 1)
     {
-        if( m_IterationCounter%10 == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
+        if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
         
         ComputeSimulationStep(D);
         SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, D);
         ComputeStochasticApproximation(SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
         
-        if( m_IterationCounter%10 == 0 ) { ComputeOutputs(); }
-        if( m_IterationCounter%100 == 0) { m_Model->SaveData(m_IterationCounter); }
+        if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { DisplayOutputs(); }
+        if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter); }
         
     }
 }
@@ -81,7 +79,7 @@ Algorithm
     m_Model->Initialize(D);
     Realizations R = m_Model->SimulateRealizations((int)D.size());
     m_Realizations = std::make_shared<Realizations>(R);
-    m_Model->UpdateParameters(R);
+    m_Model->UpdateModel(R);
     
     for(auto&& it : *m_Realizations)
     {
@@ -147,9 +145,9 @@ Algorithm
 
 void
 Algorithm
-::ComputeOutputs()
+::DisplayOutputs()
 {
-    m_Model->ComputeOutputs();
+    m_Model->DisplayOutputs();
 }
 
 
@@ -179,33 +177,31 @@ Algorithm
       
   }
     
-    if(m_IterationCounter%10 == 0)
-    {
-        std::cout << "AcceptRatio: ";
-        for(const auto& it : *m_Realizations)
-        {
-            std::cout << it.first << ": ";
-            double Ave = 0;
-            double Max = 0;
-            double Min = 1;
-            for(auto it2 : m_AcceptanceRatios.at(it.first))
-            {
-                Ave += it2;
-                if(m_AcceptanceRatios.at(it.first).size() > 1)
-                {
-                    Max = std::max(it2, Max);
-                    Min = std::min(it2, Min);
-                }
-            }
-            std::cout << Ave/it.second.size() ;
-            if(Min != 1) std::cout << " & " << Min;
-            if(Max != 0) std::cout << " & " << Max;
-            std::cout << ". ";
-                                   
-        }
-        std::cout << std::endl;
-    }
+    if(m_IterationCounter%m_CounterToDisplayOutputs == 0) { DisplayAcceptanceRatio(R); }
 }
 
+void
+Algorithm
+::DisplayAcceptanceRatio(Realizations &R) {
+    std::cout << "AcceptRatio: ";
+    for (const auto &it : *m_Realizations) {
+        std::cout << it.first << ": ";
+        double Ave = 0;
+        double Max = 0;
+        double Min = 1;
+        for (auto it2 : m_AcceptanceRatios.at(it.first)) {
+            Ave += it2;
+            if (m_AcceptanceRatios.at(it.first).size() > 1) {
+                Max = std::max(it2, Max);
+                Min = std::min(it2, Min);
+            }
+        }
+        std::cout << Ave / it.second.size();
+        if (Min != 1) std::cout << " & " << Min;
+        if (Max != 0) std::cout << " & " << Max;
+        std::cout << ". ";
 
+    }
+    std::cout << std::endl;
+}
 

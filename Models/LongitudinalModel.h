@@ -3,7 +3,6 @@
 
 
 #include "AbstractModel.h"
-#include "../Utilities/MatrixFunctions.h"
 #include <functional>
 #include <vector>
 
@@ -39,14 +38,14 @@ public:
     
     
     /// Initialize parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
-    virtual void UpdateParameters(const Realizations& R, const std::vector<std::string> Names = {"All"});
+    virtual void UpdateModel(const Realizations &R, const std::vector<std::string> Names = {"All"});
     
      /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, 
                                                                const Data& D);
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector StochSufficientStatistics, 
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, 
                                        const Data& D);
     
     /// Compute the log likelihood of the model
@@ -75,7 +74,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Compute Outputs
-    virtual void ComputeOutputs();
+    virtual void DisplayOutputs();
     
     /// Save the data into a file
     virtual void SaveData(unsigned int IterationNumber);

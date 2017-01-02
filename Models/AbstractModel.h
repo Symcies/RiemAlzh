@@ -3,7 +3,7 @@
 
 
 
-#include "../Utilities/MatrixFunctions.h"
+#include "../LinearAlgebra/Utilities/MatrixFunctions.h"
 #include "../Tests/TestAssert.h"
 #include "../RandomVariables/AbstractRandomVariable.h"
 #include "../RandomVariables/LaplaceRandomVariable.h"
@@ -57,8 +57,8 @@ public:
         
     /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
     /// This update can depend on the parameter that has changed, provided by the Name argument
-    virtual void UpdateParameters(const Realizations& R, 
-                                  const std::vector<std::string> Names = {"All"}) = 0;
+    virtual void UpdateModel(const Realizations &R,
+                             const std::vector<std::string> Names = {"All"}) = 0;
 
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, 
@@ -92,7 +92,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Compute Outputs
-    virtual void ComputeOutputs() = 0;
+    virtual void DisplayOutputs() = 0;
     
     /// Save the data into a file
     virtual void SaveData(unsigned int IterationNumber) = 0;

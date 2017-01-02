@@ -22,8 +22,6 @@ typedef double ScalarType;
 
 #include "omp.h"
 
-//#include "itkXMLFile.h"
-
 
 using namespace std;
 
@@ -33,123 +31,79 @@ typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
 
 
 int main() {
-    // TODO : Remplacer les const 'std::shared<T>&' par 'std::shared<const T>'
-    // TODO : Change Model->UpdateParameters because it ain't parameters
-   
-    ///////////////////
-    /// Python call ///
-    ///////////////////
-    std::string filename = "/Users/igor.koval/PycharmProjects/RiemAlzh/plotGraph.py";
-    std::string command = "python ";
-    command += filename;
-    //system(command.c_str());
-    
+    // TODO : Change Model->UpdateModel because it ain't parameters
     
     ///////////////////////
     //// Initialization ///
     ///////////////////////
-    //unsigned int NumberDimension = 10;
-    unsigned int NumberIndependentComponents = 5;
     
-    /////////////
-    /// Tests ///
-    /////////////
-    bool Active = false;
-    TestAssert::Init(Active);
+    TestAssert::Init(true);
+    std::string ModelType = "Network2";
+    bool RealData = true;
+    Data D;
+    std::shared_ptr<AbstractModel> Model;
+    std::shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
     
-    /////////////////////////////////
-    /// Network Propagation Model ///
-    /////////////////////////////////
-        
-    /// Open the files - toy model
-    /*
-    std::string KernelMatrixToyPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kd_toyexample.csv");
-    std::string InterpolationMatrixToyPath ("/Users/igor.koval/Documents/Git/RiemAlzh/datatest/Kxd_toyexample.csv");
-    shared_ptr<NetworkPropagationModel::MatrixType> KernelMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(KernelMatrixToyPath));
-    shared_ptr<NetworkPropagationModel::MatrixType> InterpolationMatrix = std::make_shared<NetworkPropagationModel::MatrixType>(ReadData::OpenKernel(InterpolationMatrixToyPath));
-    */
-     
-    /// Open the files - real example
+    /////////////////////////////
+    //// Initialize the model ///
+    /////////////////////////////
     
-    std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/invKd_16.csv");
-    auto KernelMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
-    std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/Kxd_16.csv");
-    auto InterpolationMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
-    Data D = ReadData::OpenFilesMultivariate();
-    //TODO : Check the data 
-    // Read the initializations
-    
-    /// Initiate the Manifolds and the model
-    //shared_ptr<AbstractManifold> Manifold = make_shared<ExponentialCurveManifold>(InterpolationMatrix->rows());
-    //shared_ptr<AbstractManifold> Manifold = make_shared<LinearManifold>(InterpolationMatrix->rows());
-    //shared_ptr<AbstractModel> Model = make_shared<NetworkPropagationModel2>(NumberIndependentComponents, Manifold, KernelMatrix, InterpolationMatrix);
-    shared_ptr<AbstractModel> Model = make_shared<NetworkPropagationModel>(NumberIndependentComponents, KernelMatrix, InterpolationMatrix);
-    shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-    //Model->InitializeFakeRandomVariables();
-    //shared_ptr<Data> D = make_shared<Data>( Model->SimulateData(300, 4, 6) );
-    
-    
-    ///////////////////////////////////////
-    /// STUPID TEST ... ///
-    ///////////////////////////////////////
-    /*
-    std::ifstream DeltaFile ("/Users/igor.koval/Documents/Work/RiemAlzh/delta_TEST.csv");
-    VectorType Deltas(236, 0.0);
-    if(DeltaFile.is_open()) {
-        unsigned int i = 0;
-        std::string line;
-        while (getline(DeltaFile, line)) 
-        {
-            double DeltaMean = std::stod(line);
-            Deltas(i) = DeltaMean;
-            ++i;
-        }
-    }
-    else { std::cout << "Unable to open the initial delta"; }
-    
-    VectorType m_InterpolationCoefficients = *KernelMatrix * Deltas;
-    VectorType PropagationCoefficients = *InterpolationMatrix * m_InterpolationCoefficients;
-    int i = 1;
-    for(auto it = PropagationCoefficients.begin(); it != PropagationCoefficients.end(); ++it, ++i)
+    if(ModelType == "Test")
     {
-        std::cout << i << " : " << *it << std::endl;
+       Model = make_shared<TestModel>();
     }
-    */
+    else if(ModelType == "Univariate")
+    {
+        shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
+        Model = make_shared<UnivariateModel>(BaseManifold);
+    }
+    else if(ModelType == "Multivariate")
+    {
+        unsigned int NumberDimensions = 10, NbIndependentComponents = 2;
+        shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
+        shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimensions, BaseManifold);
+        Model = make_shared<LongitudinalModel>(NbIndependentComponents, Manifold);
+    }
+    else if (ModelType == "Network")
+    {
+        unsigned int NbIndependentComponents = 5;
+        
+        std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/invKd_16.csv");
+        auto KernelMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
+        std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/Kxd_16.csv");
+        auto InterpolationMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
+        
+        Model = make_shared<NetworkPropagationModel>(NbIndependentComponents, KernelMatrix, InterpolationMatrix);
+    }
+    else if(ModelType == "Network2")
+    {
+        unsigned int NbIndependentComponents = 5;
+                
+        std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/invKd_16.csv");
+        auto KernelMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
+        std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/Kxd_16.csv");
+        auto InterpolationMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
+        
+        shared_ptr<AbstractManifold> Manifold = make_shared<ExponentialCurveManifold>(InterpolationMatrix->rows());
+        //shared_ptr<AbstractManifold> Manifold = make_shared<LinearManifold>(InterpolationMatrix->rows());
+        
+        Model = make_shared<NetworkPropagationModel2>(NbIndependentComponents, Manifold, KernelMatrix, InterpolationMatrix);
+    }
     
-    //////////////////////////
-    /// Multivariate Model ///
-    //////////////////////////
-    /// Read the data 
-    /*
-    //shared_ptr<Data> D = std::make_shared<Data>(ReadData::OpenFilesMultivariate());
     
-    /// Initialize the manifolds, model and sampler 
-    shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
-    shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimension, BaseManifold);
-    shared_ptr<AbstractModel> Model = make_shared<LongitudinalModel>(NumberIndependentComponents, Manifold);
-    shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-    */
-     
-    ////////////////////////
-    /// Univariate Model ///
-    ////////////////////////
-    /*
-    shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
-    shared_ptr<AbstractModel> Model = make_shared<UnivariateModel>(BaseManifold);
-    shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-    */
+    /////////////////////////////
+    /// Read or Simulate Data ///
+    /////////////////////////////
     
-    //////////////////
-    /// Test Model ///
-    //////////////////
-    /*
-    shared_ptr<AbstractModel> Model = make_shared<TestModel>();
-    shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
-    */
-    
-    ////////////////////////////////////////
-    /// Data Generation & Initialization ///
-    ////////////////////////////////////////
+    if(RealData)
+    {
+       D = ReadData::OpenFilesMultivariate();
+    }
+    else
+    {
+        Model->InitializeFakeRandomVariables();
+        D = Model->SimulateData(300, 4, 6);
+    }
     
     
     //////////////////////////
@@ -159,6 +113,19 @@ int main() {
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
     Algo->ComputeMCMCSAEM(D);
+    
+    
+    
+       
+    ///////////////////
+    /// Python call ///
+    ///////////////////
+    std::string filename = "/Users/igor.koval/PycharmProjects/RiemAlzh/plotGraph.py";
+    std::string command = "python ";
+    command += filename;
+    //system(command.c_str());
+    
+    
     
     return 0;
 

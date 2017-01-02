@@ -46,7 +46,7 @@ TestModel
 
 void 
 TestModel
-::UpdateParameters(const Realizations& R, const std::vector<std::string> Names) 
+::UpdateModel(const Realizations &R, const std::vector<std::string> Names) 
 {
     // TODO : Check if something has to be added
 }
@@ -323,7 +323,7 @@ TestModel
 
 void 
 TestModel
-::ComputeOutputs()
+::DisplayOutputs()
 {
     auto A = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("A"));
     auto B = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("B"));

@@ -6,9 +6,9 @@ ReadData
 ::OpenFilesMultivariate()
 {
     Data D;
-    std::ifstream IndivID ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/MCIconvertAD_group.csv");
-    std::ifstream DataX ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/MCIconvertAD_X.csv");
-    std::ifstream DataY ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/MCIconvertAD_Y.csv");
+    std::ifstream IndivID ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/Test_group.csv");
+    std::ifstream DataX ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/Test_X.csv");
+    std::ifstream DataY ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/Test_Y.csv");
     
     /// Open the Group file;
     if(IndivID.is_open())
@@ -37,7 +37,6 @@ ReadData
                 break;
             }
         }
-        //D.push_back(IndivData);
     }
     else { std::cout << "Unable to open indiv id's"; }
     

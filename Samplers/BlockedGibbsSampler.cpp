@@ -155,7 +155,7 @@ BlockedGibbsSampler
 {
     ////////////////////////////////////////
     // TODO : Check if the update is needed
-    M.UpdateParameters(R);
+    M.UpdateModel(R);
     VectorType LL = ComputeLogLikelihood(-1, R, M, D);
     UpdateLastLogLikelihood(-1, LL);
     ////////////////////////////////////////
@@ -219,8 +219,8 @@ BlockedGibbsSampler
 
     double PreviousLikelihood = GetPreviousLogLikelihood(Type, M, R, D);
     AcceptationRatio -= PreviousLikelihood;
-    
-    M.UpdateParameters(NewRealizations, CurrentParameters);
+
+    M.UpdateModel(NewRealizations, CurrentParameters);
     VectorType ComputedLogLikelihood = ComputeLogLikelihood(Type, NewRealizations, M, D);
     double NewLikelihood = ComputedLogLikelihood.sum();
     AcceptationRatio += NewLikelihood;
@@ -253,7 +253,7 @@ BlockedGibbsSampler
     ///  Rejection : Candidate not accepted
     if(UnifSample > AcceptationRatio)
     {
-        M.UpdateParameters(R, CurrentParameters);
+        M.UpdateModel(R, CurrentParameters);
         return std::move(R);
     }
         /// Acceptation : Candidate is accepted

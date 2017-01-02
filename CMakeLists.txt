@@ -17,7 +17,7 @@ file( GLOB_RECURSE PARAMETERS Parameters/*)
 
 file( GLOB_RECURSE INPUTS inputs/* )
 
-file( GLOB_RECURSE UTILITIES Utilities/* )
+file( GLOB_RECURSE LinearAlgebra/Utilities LinearAlgebra/Utilities/*)
 
 file( GLOB_RECURSE LINEARALGEBRA LinearAlgebra/*)
 

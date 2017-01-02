@@ -85,7 +85,7 @@ LongitudinalModel
 
 void 
 LongitudinalModel
-::UpdateParameters(const Realizations& R, const std::vector<std::string> Names) 
+::UpdateModel(const Realizations &R, const std::vector<std::string> Names) 
 {
     /// This first part inspects the parameters names to update
     int UpdateCase = 1;
@@ -137,7 +137,7 @@ LongitudinalModel
             ComputeSpaceShifts(R);
             break;
         default:
-            std::cout << "Error? LongitudinalModel > UpdateParameters";
+            std::cout << "Error? LongitudinalModel > UpdateModel";
             break;
     }
 }
@@ -275,7 +275,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::UpdateRandomVariables(const SufficientStatisticsVector StochSufficientStatistics, const Data& D)
+::UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const Data& D)
 {
     double NumberOfSubjects = D.size();
     
@@ -517,7 +517,7 @@ LongitudinalModel
 
 void
 LongitudinalModel
-::ComputeOutputs()
+::DisplayOutputs()
 {
     double MeanP0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"))->GetMean();
     double MeanT0 = std::dynamic_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"))->GetMean();

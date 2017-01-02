@@ -6,10 +6,8 @@ NetworkPropagationModel
                           std::shared_ptr<MatrixType> InterpolationMatrix) 
 {
     m_NbIndependentComponents = NbIndependentComponents;
-    //m_Manifold = M;
     m_InvertKernelMatrix = *KernelMatrix;
     m_InterpolationMatrix = *InterpolationMatrix;
-    //m_OutputParameters.open("ParametersMciConverters_Linear.txt", std::ofstream::out | std::ofstream::trunc);
     m_NbControlPoints = m_InvertKernelMatrix.columns();
     
     m_InterpolationCoeffNu.set_size(m_NbControlPoints);
@@ -88,8 +86,8 @@ NetworkPropagationModel
 
 void 
 NetworkPropagationModel
-::UpdateParameters(const Realizations& R,
-                   const std::vector<std::string> Names) 
+::UpdateModel(const Realizations &R,
+              const std::vector<std::string> Names) 
 {
     // TODO : it is not the best case : separate rho, nu and delta
     int UpdateCase = 1;
@@ -144,7 +142,7 @@ NetworkPropagationModel
             ComputeSpaceShifts(R);
             break;
         default:
-            std::cout << "Error? NetworkPropagationModel > UpdateParameters";
+            std::cout << "Error? NetworkPropagationModel > UpdateModel";
             break;
     }
 }
@@ -359,7 +357,7 @@ NetworkPropagationModel
 
 void 
 NetworkPropagationModel
-::ComputeOutputs() 
+::DisplayOutputs() 
 {
     double Sigma = m_Noise->GetVariance();
     auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
@@ -387,7 +385,7 @@ NetworkPropagationModel
 ::SaveData(unsigned int IterationNumber) 
 {
     std::ofstream Outputs;
-    Outputs.open("Outputs.txt", std::ofstream::out | std::ofstream::trunc);
+    Outputs.open("MultiSignalNetwork_Parameters.txt", std::ofstream::out | std::ofstream::trunc);
     
     Outputs << m_NbControlPoints << std::endl;
     
