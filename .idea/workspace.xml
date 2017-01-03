@@ -14,27 +14,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="03e71383-5091-4290-9195-e722e3a9d4e8" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Utilities/MatrixFunctions.cpp" afterPath="$PROJECT_DIR$/LinearAlgebra/Utilities/MatrixFunctions.cpp" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Utilities/MatrixFunctions.h" afterPath="$PROJECT_DIR$/LinearAlgebra/Utilities/MatrixFunctions.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/RiemAlzh.iml" afterPath="$PROJECT_DIR$/.idea/RiemAlzh.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Algorithm/Algorithm.cpp" afterPath="$PROJECT_DIR$/Algorithm/Algorithm.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Algorithm/Algorithm.h" afterPath="$PROJECT_DIR$/Algorithm/Algorithm.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CMakeLists.txt" afterPath="$PROJECT_DIR$/CMakeLists.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Inputs/ReadData.cpp" afterPath="$PROJECT_DIR$/Inputs/ReadData.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/AbstractModel.h" afterPath="$PROJECT_DIR$/Models/AbstractModel.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/LongitudinalModel.cpp" afterPath="$PROJECT_DIR$/Models/LongitudinalModel.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/LongitudinalModel.h" afterPath="$PROJECT_DIR$/Models/LongitudinalModel.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" afterPath="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel.h" afterPath="$PROJECT_DIR$/Models/NetworkPropagationModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel2.cpp" afterPath="$PROJECT_DIR$/Models/NetworkPropagationModel2.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/NetworkPropagationModel2.h" afterPath="$PROJECT_DIR$/Models/NetworkPropagationModel2.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/TestModel.cpp" afterPath="$PROJECT_DIR$/Models/TestModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/TestModel.h" afterPath="$PROJECT_DIR$/Models/TestModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/UnivariateModel.cpp" afterPath="$PROJECT_DIR$/Models/UnivariateModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Models/UnivariateModel.h" afterPath="$PROJECT_DIR$/Models/UnivariateModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" afterPath="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.cpp" afterPath="$PROJECT_DIR$/main.cpp" />
     </list>
     <ignored path="RiemAlzh.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -53,12 +36,14 @@
       <content type="file-editors">
         <state>
           <leaf>
-            <file leaf-file-name="NetworkPropagationModel2.cpp" pinned="false" current-in-tab="true">
+            <file leaf-file-name="NetworkPropagationModel2.cpp" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel2.cpp">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="222">
-                    <caret line="600" column="35" selection-start-line="600" selection-start-column="35" selection-end-line="600" selection-end-column="35" />
+                  <state relative-caret-position="269">
+                    <caret line="426" column="83" selection-start-line="426" selection-start-column="83" selection-end-line="426" selection-end-column="83" />
                     <folding>
+                      <element signature="e#1572#6786#0" expanded="false" />
+                      <element signature="e#6788#8669#0" expanded="false" />
                       <element signature="e#8671#11614#0" expanded="false" />
                       <element signature="e#20935#22393#0" expanded="false" />
                     </folding>
@@ -69,9 +54,32 @@
             <file leaf-file-name="NetworkPropagationModel2.h" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel2.h">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="-280">
-                    <caret line="45" column="59" selection-start-line="45" selection-start-column="59" selection-end-line="45" selection-end-column="59" />
+                  <state relative-caret-position="154">
+                    <caret line="47" column="73" selection-start-line="47" selection-start-column="73" selection-end-line="47" selection-end-column="73" />
                     <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="NetworkPropagationModel.h" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.h">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="406">
+                    <caret line="127" column="0" selection-start-line="127" selection-start-column="0" selection-end-line="128" selection-end-column="35" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="NetworkPropagationModel.cpp" pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="-518">
+                    <caret line="343" column="5" selection-start-line="343" selection-start-column="5" selection-end-line="343" selection-end-column="5" />
+                    <folding>
+                      <element signature="e#38#604#0" expanded="false" />
+                      <element signature="e#607#678#0" expanded="false" />
+                    </folding>
                   </state>
                 </provider>
               </entry>
@@ -87,7 +95,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="616">
@@ -97,38 +105,41 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NetworkPropagationModel.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp">
+      <file leaf-file-name="LongitudinalModel.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="376">
-              <caret line="399" column="27" selection-start-line="399" selection-start-column="27" selection-end-line="399" selection-end-column="27" />
+            <state relative-caret-position="164">
+              <caret line="577" column="0" selection-start-line="577" selection-start-column="0" selection-end-line="577" selection-end-column="0" />
               <folding>
-                <element signature="e#38#604#0" expanded="false" />
-                <element signature="e#607#678#0" expanded="false" />
+                <element signature="e#1248#3366#0" expanded="false" />
+                <element signature="e#3368#4885#0" expanded="false" />
+                <element signature="e#4888#8467#0" expanded="false" />
+                <element signature="e#10914#12351#0" expanded="false" />
+                <element signature="e#12353#13555#0" expanded="false" />
+                <element signature="e#13558#15754#0" expanded="false" />
+                <element signature="e#15974#16593#0" expanded="false" />
+                <element signature="e#16977#18820#0" expanded="false" />
+                <element signature="e#19222#19529#0" expanded="false" />
+                <element signature="e#19531#19851#0" expanded="false" />
+                <element signature="e#19853#21979#0" expanded="false" />
+                <element signature="e#21981#23864#0" expanded="false" />
+                <element signature="e#23866#29790#0" expanded="false" />
+                <element signature="e#29794#30430#0" expanded="false" />
+                <marker date="1483442581000" expanded="false" signature="490:735" ph="{...}" />
+                <marker date="1483442581000" expanded="false" signature="778:787" ph="{...}" />
+                <marker date="1483442581000" expanded="false" signature="8570:10911" ph="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AbstractModel.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Models/AbstractModel.h">
+      <file leaf-file-name="LongitudinalModel.h" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="59" column="28" selection-start-line="59" selection-start-column="28" selection-end-line="59" selection-end-column="28" />
+            <state relative-caret-position="464">
+              <caret line="123" column="23" selection-start-line="123" selection-start-column="23" selection-end-line="123" selection-end-column="23" />
               <folding>
-                <element signature="e#53#108#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Algorithm.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Algorithm/Algorithm.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="294">
-              <caret line="81" column="46" selection-start-line="81" selection-start-column="46" selection-end-line="81" selection-end-column="46" />
-              <folding>
-                <element signature="e#43#79#0" expanded="true" />
+                <element signature="e#60#86#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -176,7 +187,6 @@
         <option value="$PROJECT_DIR$/Samplers/AbstractSampler.h" />
         <option value="$PROJECT_DIR$/Samplers/AbstractSampler.cpp" />
         <option value="$PROJECT_DIR$/Models/NetworkPropagationModel.h" />
-        <option value="$PROJECT_DIR$/Models/NetworkPropagationModel2.h" />
         <option value="$PROJECT_DIR$/Models/TestModel.h" />
         <option value="$PROJECT_DIR$/Models/TestModel.cpp" />
         <option value="$PROJECT_DIR$/Models/UnivariateModel.cpp" />
@@ -184,15 +194,16 @@
         <option value="$PROJECT_DIR$/Utilities/MatrixFunctions.h" />
         <option value="$PROJECT_DIR$/Utilities/MatrixFunctions.cpp" />
         <option value="$PROJECT_DIR$/Models/UnivariateModel.h" />
-        <option value="$PROJECT_DIR$/Models/LongitudinalModel.h" />
-        <option value="$PROJECT_DIR$/Models/LongitudinalModel.cpp" />
         <option value="$PROJECT_DIR$/Models/AbstractModel.h" />
         <option value="$PROJECT_DIR$/Samplers/BlockedGibbsSampler.cpp" />
         <option value="$PROJECT_DIR$/Algorithm/Algorithm.cpp" />
-        <option value="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" />
         <option value="$PROJECT_DIR$/Algorithm/Algorithm.h" />
         <option value="$PROJECT_DIR$/Models/NetworkPropagationModel2.cpp" />
         <option value="$PROJECT_DIR$/main.cpp" />
+        <option value="$PROJECT_DIR$/Models/NetworkPropagationModel2.h" />
+        <option value="$PROJECT_DIR$/Models/NetworkPropagationModel.cpp" />
+        <option value="$PROJECT_DIR$/Models/LongitudinalModel.cpp" />
+        <option value="$PROJECT_DIR$/Models/LongitudinalModel.h" />
       </list>
     </option>
   </component>
@@ -635,25 +646,25 @@
       <workItem from="1482311624006" duration="9168000" />
       <workItem from="1482943367798" duration="294000" />
       <workItem from="1483005931467" duration="6125000" />
-      <workItem from="1483346483618" duration="8186000" />
+      <workItem from="1483346483618" duration="15188000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="740402000" />
+    <option name="totallyTimeSpent" value="747404000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21904762" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31152344" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41075516" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2529297" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2529297" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32910156" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3359375" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3359375" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32837528" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -699,10 +710,32 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp</url>
+          <line>165</line>
+          <option name="timeStamp" value="623" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Models/LongitudinalModel.cpp</url>
+          <line>382</line>
+          <option name="timeStamp" value="624" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Models/LongitudinalModel.cpp</url>
+          <line>381</line>
+          <option name="timeStamp" value="625" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Models/LongitudinalModel.cpp</url>
+          <line>480</line>
+          <option name="timeStamp" value="626" />
+        </line-breakpoint>
+      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="623" />
+      <option name="time" value="629" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -965,39 +998,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
-          <caret line="4" column="26" selection-start-line="4" selection-start-column="26" selection-end-line="4" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="277" column="56" selection-start-line="277" selection-start-column="56" selection-end-line="277" selection-end-column="56" />
-          <folding>
-            <element signature="e#370#771#0" expanded="false" />
-            <element signature="e#773#823#0" expanded="false" />
-            <element signature="e#1284#3358#0" expanded="false" />
-            <element signature="e#15686#17861#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Outputs/RandomVariableRealizations.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="70">
           <caret line="9" column="26" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="42" column="59" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
           <folding />
         </state>
       </provider>
@@ -1076,25 +1080,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="376">
-          <caret line="399" column="27" selection-start-line="399" selection-start-column="27" selection-end-line="399" selection-end-column="27" />
-          <folding>
-            <element signature="e#38#604#0" expanded="false" />
-            <element signature="e#607#678#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel2.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-280">
-          <caret line="45" column="59" selection-start-line="45" selection-start-column="59" selection-end-line="45" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="616">
@@ -1103,13 +1088,78 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel2.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="47" column="73" selection-start-line="47" selection-start-column="73" selection-end-line="47" selection-end-column="73" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel2.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="600" column="35" selection-start-line="600" selection-start-column="35" selection-end-line="600" selection-end-column="35" />
+        <state relative-caret-position="269">
+          <caret line="426" column="83" selection-start-line="426" selection-start-column="83" selection-end-line="426" selection-end-column="83" />
           <folding>
+            <element signature="e#1572#6786#0" expanded="false" />
+            <element signature="e#6788#8669#0" expanded="false" />
             <element signature="e#8671#11614#0" expanded="false" />
             <element signature="e#20935#22393#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="406">
+          <caret line="127" column="0" selection-start-line="127" selection-start-column="0" selection-end-line="128" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="577" column="0" selection-start-line="577" selection-start-column="0" selection-end-line="577" selection-end-column="0" />
+          <folding>
+            <element signature="e#1248#3366#0" expanded="false" />
+            <element signature="e#3368#4885#0" expanded="false" />
+            <element signature="e#4888#8467#0" expanded="false" />
+            <element signature="e#10914#12351#0" expanded="false" />
+            <element signature="e#12353#13555#0" expanded="false" />
+            <element signature="e#13558#15754#0" expanded="false" />
+            <element signature="e#15974#16593#0" expanded="false" />
+            <element signature="e#16977#18820#0" expanded="false" />
+            <element signature="e#19222#19529#0" expanded="false" />
+            <element signature="e#19531#19851#0" expanded="false" />
+            <element signature="e#19853#21979#0" expanded="false" />
+            <element signature="e#21981#23864#0" expanded="false" />
+            <element signature="e#23866#29790#0" expanded="false" />
+            <element signature="e#29794#30430#0" expanded="false" />
+            <marker date="1483442581000" expanded="false" signature="490:735" ph="{...}" />
+            <marker date="1483442581000" expanded="false" signature="778:787" ph="{...}" />
+            <marker date="1483442581000" expanded="false" signature="8570:10911" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/LongitudinalModel.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="123" column="23" selection-start-line="123" selection-start-column="23" selection-end-line="123" selection-end-column="23" />
+          <folding>
+            <element signature="e#60#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/NetworkPropagationModel.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-518">
+          <caret line="343" column="5" selection-start-line="343" selection-start-column="5" selection-end-line="343" selection-end-column="5" />
+          <folding>
+            <element signature="e#38#604#0" expanded="false" />
+            <element signature="e#607#678#0" expanded="false" />
           </folding>
         </state>
       </provider>

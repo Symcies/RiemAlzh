@@ -41,22 +41,18 @@ public:
     virtual void UpdateModel(const Realizations &R, const std::vector<std::string> Names = {"All"});
     
      /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, 
-                                                               const Data& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Data& D);
 
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, 
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, 
                                        const Data& D);
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const Realizations& R, 
-                                        const Data& D);
+    virtual double ComputeLogLikelihood(const Realizations& R, const Data& D);
     
     /// Compute the log likelihood of the model for a particular individual
-    double ComputeIndividualLogLikelihood(const Realizations& R, 
-                                          const Data& D, 
-                                          const int SubjectNumber);
+    double ComputeIndividualLogLikelihood(const Realizations& R, const Data& D, const int SubjectNumber);
     
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
@@ -88,14 +84,8 @@ protected:
     /// Get the initial time 
     double GetInitialTime();
     
-    /// Get the initial position = gamma(t0)
-    VectorType GetInitialPosition(const Realizations& R);
-
-    /// Get the initial velocity = diff(gamma(t0))
-    VectorType GetInitialVelocity(const Realizations& R);
-
     /// Get the propagation coefficients = (delta(k))
-    VectorType GetPropagationCoefficients(const Realizations& R);
+    VectorType GetDelta(const Realizations& R);
     
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
     std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const Realizations& R);
@@ -106,20 +96,30 @@ protected:
     /// Compute the A Matrix used to get the space shifts
     void ComputeAMatrix( const Realizations& R);
 
-    // Compute the space shifts
+    /// Compute the space shifts
     void ComputeSpaceShifts(const Realizations& R);
+    
+    // TODO : To delete and add to a manifold function, if possible
+    /// Compute the geodesic
+    VectorType ComputeGeodesic(double P0, double TimePoint, VectorType Delta, VectorType SpaceShift);
+    
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /// Last calculated Likelihood - and the corresponding realizations
-    /// Bool : if last calculation was generic. Double : last likelihood value. Realizations : last realizations
-    std::tuple<bool, double, Realizations> m_LastLogLikelihood;
-
+    
+    /// Manifold dimension
+    unsigned int m_ManifoldDimension;
+    
     /// Number of independent components
     unsigned int m_NbIndependentComponents;
-
+    
+    /// Sum of the observations - corresponds to the first sufficient statistic
+    double m_SumObservations;
+    
+    /// Total number of observations throughout all the individuals
+    double m_NbTotalOfObservations;
+    
     /// Noise model
     std::shared_ptr< GaussianRandomVariable > m_Noise;
 

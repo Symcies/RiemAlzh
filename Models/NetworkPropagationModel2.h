@@ -36,8 +36,7 @@ public:
     virtual void Initialize(const Data& D);
     
     /// Update the model parameters != random variables parameters
-    virtual void UpdateModel(const Realizations &R,
-                             const std::vector<std::string> Names = {"All"});
+    virtual void UpdateModel(const Realizations &R, const std::vector<std::string> Names = {"All"});
     
     /// Simulate data according to the model and the parameters
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int  MaxObs);
@@ -46,8 +45,7 @@ public:
     virtual double ComputeLogLikelihood(const Realizations& R, const Data& D);
     
     /// Compute the log likelihood of the model for a given subject
-    virtual double ComputeIndividualLogLikelihood(const Realizations& R, 
-                                          const Data& D, const int SubjectNumber);
+    virtual double ComputeIndividualLogLikelihood(const Realizations& R, const Data& D, const int SubjectNumber);
 
     /// Get the sufficient statistics of the model
     virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Data& D);

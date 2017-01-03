@@ -168,9 +168,7 @@ NetworkPropagationModel
 
 double
 NetworkPropagationModel
-::ComputeIndividualLogLikelihood(const Realizations& R,
-                                 const Data& D, 
-                                 const int SubjectNumber) 
+::ComputeIndividualLogLikelihood(const Realizations& R, const Data& D, const int SubjectNumber) 
 {
     /// Get the data
     VectorType Rho(1, exp(R.at("P0")(0)));
@@ -258,7 +256,7 @@ NetworkPropagationModel
         *it = R.at("Beta#" + std::to_string(i))(0);
     }
     
-    /// S8 <- delta_k, S9 <- rho_k, S10 <- nu_k
+    /// S9 <- rho_k, S10 <- nu_k
     VectorType S9(m_NbControlPoints - 1), S10(m_NbControlPoints - 1);
     i = 1;
     auto itS9 = S9.begin(), itS10 = S10.begin();
