@@ -341,7 +341,7 @@ TestModel
 
 void 
 TestModel
-::SaveData(unsigned int IterationNumber) 
+::SaveData(unsigned int IterationNumber, const Realizations& R) 
 {
     
 }

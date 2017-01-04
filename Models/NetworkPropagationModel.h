@@ -64,7 +64,7 @@ public:
     virtual void DisplayOutputs();
     
     /// Save the data into a file
-    virtual void SaveData(unsigned int IterationNumber);
+    virtual void SaveData(unsigned int IterationNumber, const Realizations& R);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
@@ -85,8 +85,7 @@ protected:
     VectorType GetNu(const Realizations& R);
     
      /// Get the timepoint reparametrization for a given subject
-    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, 
-                                                      const Realizations& R);
+    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const Realizations& R);
     
     /// Compute the interpolation coefficients delta
     void ComputeInterpoCoeffDelta(const Realizations& R);

@@ -57,10 +57,6 @@ AbstractModel
     {
         VectorType Realization(1, it.second->Sample());
         R.insert(std::pair< std::string, VectorType> (it.first, Realization));
-        if(it.first.substr(0, it.first.find_first_of("#")) != "Beta")
-        {
-            double a = 0;
-        }
     }
 
     // Initialize the realization of the individual random variables.

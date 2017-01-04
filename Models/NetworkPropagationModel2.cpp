@@ -592,7 +592,7 @@ NetworkPropagationModel2
 
 void 
 NetworkPropagationModel2
-::SaveData(unsigned int IterationNumber) 
+::SaveData(unsigned int IterationNumber, const Realizations& R) 
 {
     /// Save the delta_k for visualization
     std::ofstream DeltaOutputs;    

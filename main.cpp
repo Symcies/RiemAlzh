@@ -38,7 +38,7 @@ int main() {
     ///////////////////////
     
     TestAssert::Init(true);
-    std::string ModelType = "Network2";
+    std::string ModelType = "Multivariate";
     bool RealData = true;
     Data D;
     std::shared_ptr<AbstractModel> Model;
@@ -59,7 +59,7 @@ int main() {
     }
     else if(ModelType == "Multivariate")
     {
-        unsigned int NumberDimensions = 10, NbIndependentComponents = 2;
+        unsigned int NumberDimensions = 4, NbIndependentComponents = 2;
         shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
         shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimensions, BaseManifold);
         Model = make_shared<LongitudinalModel>(NbIndependentComponents, Manifold);

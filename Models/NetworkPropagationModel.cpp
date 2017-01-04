@@ -380,7 +380,7 @@ NetworkPropagationModel
 
 void 
 NetworkPropagationModel
-::SaveData(unsigned int IterationNumber) 
+::SaveData(unsigned int IterationNumber, const Realizations& R) 
 {
     std::ofstream Outputs;
     Outputs.open("MultiSignalNetwork_Parameters.txt", std::ofstream::out | std::ofstream::trunc);

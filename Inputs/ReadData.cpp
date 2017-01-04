@@ -6,9 +6,9 @@ ReadData
 ::OpenFilesMultivariate()
 {
     Data D;
-    std::ifstream IndivID ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/Test_group.csv");
-    std::ifstream DataX ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/Test_X.csv");
-    std::ifstream DataY ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/MCIConverters/Test_Y.csv");
+    std::ifstream IndivID ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CognitiveScores/MCIConverters_JB/MCI_group.csv");
+    std::ifstream DataX ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CognitiveScores/MCIConverters_JB/MCI_X.csv");
+    std::ifstream DataY ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CognitiveScores/MCIConverters_JB/MCI_Y.csv");
     
     /// Open the Group file;
     if(IndivID.is_open())
@@ -32,10 +32,6 @@ ReadData
                 IndivData.push_back(Observations);
                 i = j;
             }
-            if(i >= 120)
-            {   
-                break;
-            }
         }
     }
     else { std::cout << "Unable to open indiv id's"; }
@@ -53,7 +49,6 @@ ReadData
                 getline(DataX, line);
             }
         }
-        //std::cout << line << std::endl;
     }
     else { std::cout << "Unable to open timepoints"; }
     
@@ -66,7 +61,7 @@ ReadData
         {
             for(auto it2 = it->begin(); it2 != it->end(); ++it2)
             {
-                LinearAlgebra<ScalarType>::VectorType X(1827);
+                LinearAlgebra<ScalarType>::VectorType X(4);
                 // TODO : check if everything was parsed
                 int i = 0;
                 std::stringstream LineStream(line);
@@ -80,7 +75,6 @@ ReadData
                 getline(DataY, line);
             }
         }
-        //std::cout << line << std::endl;
     }
     else { std::cout << "Unable to open the observation values"; }
     

@@ -62,7 +62,7 @@ public:
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
 
     /// Save the data into a file
-    virtual void SaveData(unsigned int IterationNumber);
+    virtual void SaveData(unsigned int IterationNumber, const Realizations& R);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Outputs

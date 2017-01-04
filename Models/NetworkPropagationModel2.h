@@ -61,7 +61,7 @@ public:
     virtual void DisplayOutputs();
     
     /// Save the data into a file
-    virtual void SaveData(unsigned int IterationNumber);
+    virtual void SaveData(unsigned int IterationNumber, const Realizations& R);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:

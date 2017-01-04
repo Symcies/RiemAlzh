@@ -47,7 +47,7 @@ Algorithm
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
         
         if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { DisplayOutputs(); }
-        if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter); }
+        if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter, *m_Realizations); }
         
     }
 }
@@ -61,7 +61,6 @@ void
 Algorithm
 ::InitializeStochasticSufficientStatistics(const Data& D)
 {
-    auto DD = std::make_shared<Data>(D);
     m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, D);
     for(auto&& it : m_StochasticSufficientStatistics)
     {

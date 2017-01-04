@@ -43,8 +43,7 @@ public:
     virtual double ComputeLogLikelihood(const Realizations& R, const Data& D);
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const Realizations& R, 
-                                                  const Data& D, const int SubjectNumber);
+    virtual double ComputeIndividualLogLikelihood(const Realizations& R, const Data& D, const int SubjectNumber);
     
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs);
@@ -57,7 +56,7 @@ public:
     virtual void DisplayOutputs();
     
     /// Save the data into a file
-    virtual void SaveData(unsigned int IterationNumber);
+    virtual void SaveData(unsigned int IterationNumber, const Realizations& R);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:

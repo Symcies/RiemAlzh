@@ -403,7 +403,7 @@ UnivariateModel
 
 void 
 UnivariateModel
-::SaveData(unsigned int IterationNumber) 
+::SaveData(unsigned int IterationNumber, const Realizations& R) 
 {
     
 }

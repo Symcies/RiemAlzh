@@ -73,7 +73,7 @@ public:
     virtual void DisplayOutputs();
     
     /// Save the data into a file
-    virtual void SaveData(unsigned int IterationNumber);
+    virtual void SaveData(unsigned int IterationNumber, const Realizations &R);
 
 
 protected:
@@ -103,6 +103,8 @@ protected:
     /// Compute the geodesic
     VectorType ComputeGeodesic(double P0, double TimePoint, VectorType Delta, VectorType SpaceShift);
     
+    /// Compute the geodesic transformation to get a euclidean scalar product
+    VectorType ComputeGeodesicTransformation(double P0, double T0, double V0, VectorType Delta);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
