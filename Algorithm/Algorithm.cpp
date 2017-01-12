@@ -8,14 +8,12 @@
 Algorithm
 ::Algorithm()
 {
-    m_OutputRealizations.open("Realizations.txt",  std::ofstream::out | std::ofstream::trunc );
 }
 
 
 Algorithm
 ::Algorithm(unsigned int MaxNumberOfIterations, unsigned int BurnIn) 
 {
-    m_OutputRealizations.open("Realizations.txt",  std::ofstream::out | std::ofstream::trunc );
     m_MaxNumberOfIterations = MaxNumberOfIterations;
     m_BurnIn = BurnIn;
 }
@@ -73,7 +71,6 @@ void
 Algorithm
 ::InitializeModel(const Data& D) 
 {
-    auto DD = std::make_shared<Data>(D);
     
     m_Model->Initialize(D);
     Realizations R = m_Model->SimulateRealizations((int)D.size());
@@ -82,12 +79,9 @@ Algorithm
     
     for(auto&& it : *m_Realizations)
     {
-        m_OutputRealizations << it.first << ", ";
-
         VectorType v(it.second.size(), 0);
         m_AcceptanceRatios[it.first] = v;
     }
-    m_OutputRealizations << std::endl;
 }
 
 void 

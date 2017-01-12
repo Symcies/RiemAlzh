@@ -6,9 +6,26 @@ ReadData
 ::OpenFilesMultivariate()
 {
     Data D;
-    std::ifstream IndivID ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CognitiveScores/MCIConverters_JB/MCI_group.csv");
-    std::ifstream DataX ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CognitiveScores/MCIConverters_JB/MCI_X.csv");
-    std::ifstream DataY ("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CognitiveScores/MCIConverters_JB/MCI_Y.csv");
+    std::string path = "/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CorticalThickness/MCIconvertAD/";
+    //std::string path = "/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CognitiveScores/SimulatedData/";
+    //std::string path = "/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CorticalThickness/NormalNoConvert/";
+    //std::string path = "/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CognitiveScores/MCIconvertAD/";
+    
+    //std::ifstream IndivID (path + "Normalnoconvert_group.csv");
+    //std::ifstream DataX (path + "Normalnoconvert_X.csv");
+    //std::ifstream DataY (path + "Normalnoconvert_Y.csv");
+    
+    std::ifstream IndivID(path + "MCIconvertAD_group.csv");
+    std::ifstream DataX (path + "MCIconvertAD_X.csv");
+    std::ifstream DataY(path + "MCIconvertAD_Y.csv");
+    
+    //std::ifstream IndivID(path + "group.csv");
+    //std::ifstream DataX(path + "X.csv");
+    //std::ifstream DataY(path + "Y.csv");
+    
+    //std::ifstream IndivID(path + "MCIc_group.csv");
+    //std::ifstream DataX(path + "MCIc_X.csv");
+    //std::ifstream DataY(path + "MCIc_Y.csv");
     
     /// Open the Group file;
     if(IndivID.is_open())
@@ -25,7 +42,8 @@ ReadData
             {
                 IndivData.push_back(Observations);
             }
-            if(j != i)
+            //if(j != i)
+            else
             {
                 D.push_back(IndivData);
                 IndivData.clear();
@@ -33,6 +51,7 @@ ReadData
                 i = j;
             }
         }
+        D.push_back(IndivData);
     }
     else { std::cout << "Unable to open indiv id's"; }
     
@@ -61,7 +80,7 @@ ReadData
         {
             for(auto it2 = it->begin(); it2 != it->end(); ++it2)
             {
-                LinearAlgebra<ScalarType>::VectorType X(4);
+                LinearAlgebra<ScalarType>::VectorType X(1827);
                 // TODO : check if everything was parsed
                 int i = 0;
                 std::stringstream LineStream(line);
@@ -102,7 +121,7 @@ ReadData
     file.seekg(00, std::ios::beg);
     
     
-    MatrixType Kernel(NbLines, 258, 0);
+    MatrixType Kernel(NbLines, 1827, 0);
 
    
     if(file.is_open())
@@ -117,7 +136,7 @@ ReadData
             while(std::getline(LineStream, cell, ','))
             {
                 auto a = std::stold(cell);
-                if(fabs(a) < 10e-20)
+                if(fabs(a) < 10e-13)
                 { 
                     Kernel(i, j) = 0; 
                 } 

@@ -85,7 +85,7 @@ protected:
     double GetInitialTime();
     
     /// Get the propagation coefficients = (delta(k))
-    VectorType GetDelta(const Realizations& R);
+    VectorType GetPropagationCoefficients(const Realizations& R);
     
     /// Get the subject time point psi_i(t) = exp(ksi_i) * (t - T0 - tau_i) - T0
     std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const Realizations& R);

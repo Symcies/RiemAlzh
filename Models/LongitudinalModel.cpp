@@ -44,10 +44,10 @@ LongitudinalModel
     m_PopulationRandomVariables.clear();
     m_IndividualRandomVariables.clear();
     
-    auto P0 = std::make_shared<GaussianRandomVariable>(0.3, 0.0001 * 0.0001);
-    auto Ksi = std::make_shared<GaussianRandomVariable>(-3, 0.4);
-    auto Tau = std::make_shared<GaussianRandomVariable>(72, 16.0);
-    m_Noise = std::make_shared<GaussianRandomVariable>(0.0, 0.0005);
+    auto P0 = std::make_shared<GaussianRandomVariable>(0.3, 0.001 * 0.001);
+    auto Ksi = std::make_shared<GaussianRandomVariable>(-4.6, 0.4);
+    auto Tau = std::make_shared<GaussianRandomVariable>(65, 1.0);
+    m_Noise = std::make_shared<GaussianRandomVariable>(0.0, 0.0000001);
     
     m_PopulationRandomVariables.insert( RandomVariable("P0", P0) );
     m_IndividualRandomVariables.insert( RandomVariable("Ksi", Ksi));
@@ -55,7 +55,7 @@ LongitudinalModel
     
     for(int i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension-1) ; ++i)
     {
-        auto Beta = std::make_shared<GaussianRandomVariable>(0 , 0.001 * 0.001);
+        auto Beta = std::make_shared<GaussianRandomVariable>(1 , 0.001 * 0.001);
         m_PopulationRandomVariables.insert(RandomVariable("Beta#" + std::to_string(i), Beta));
     }
     
@@ -67,7 +67,7 @@ LongitudinalModel
 
     for(int i = 0; i<m_NbIndependentComponents ; ++i)
     { 
-        auto S = std::make_shared<GaussianRandomVariable>(0.0, 1.0/2.0);
+        auto S = std::make_shared<GaussianRandomVariable>(0.0, 1.0);
         m_IndividualRandomVariables.insert(RandomVariable("S#" + std::to_string(i), S));
     }
     
@@ -157,7 +157,7 @@ LongitudinalModel
     /////////////////////////
     /// Initialization
     /////////////////////////
-    VectorType Delta = GetDelta(R);
+    VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     double NumberOfSubjects = R.at("Ksi").size();
     
     
@@ -176,7 +176,7 @@ LongitudinalModel
         for(auto it : *Iter)
         {
             double Time = TimePoint(it.second);
-            VectorType ParallelCurve = ComputeGeodesic(R.at("P0")(0), Time, Delta, SpaceShift);
+            VectorType ParallelCurve = ComputeGeodesic(R.at("P0")(0), Time, PropagationCoefficients, SpaceShift);
 
             *IterS1 = dot_product(ParallelCurve, it.first);
             *IterS2 = ParallelCurve.squared_magnitude();
@@ -232,7 +232,7 @@ LongitudinalModel
     i = 1;
     for(auto it = S9.begin(); it != S9.end(); ++it, ++i)
     {
-        *it = R.at("Beta#" + std::to_string(i))(0);
+        *it = R.at("Delta#" + std::to_string(i))(0);
     }
     
     SufficientStatisticsVector S = {S1, S2, S3, S4, S5, S6, S7, S8, S9};
@@ -393,7 +393,7 @@ LongitudinalModel
     double P0 = R.at("P0")(0);
     std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
     VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
-    VectorType Delta = GetDelta(R);
+    VectorType PropagationCoefficients = GetPropagationCoefficients(R);
     
     /// Compute the likelihood
     double LogLikelihood = 0;
@@ -404,7 +404,7 @@ LongitudinalModel
     {
         auto& it = D.at(SubjectNumber).at(i);
         double TimePoint = SubjectTimePoint(it.second);
-        VectorType ParallelCurve = ComputeGeodesic(P0, TimePoint, Delta, SpaceShift);
+        VectorType ParallelCurve = ComputeGeodesic(P0, TimePoint, PropagationCoefficients, SpaceShift);
         LogLikelihood += (it.first - ParallelCurve).squared_magnitude();
     }
     
@@ -508,7 +508,8 @@ LongitudinalModel
 {
     unsigned int NumberOfSubjects = R.at("Tau").size();
     std::ofstream Outputs;
-    Outputs.open("MultivariateModel_Outputs.txt", std::ofstream::out | std::ofstream::trunc);
+    std::string FileName = "Results/MultivariateModel_Parameters_Iteration" + std::to_string(IterationNumber) + ".txt";
+    Outputs.open(FileName, std::ofstream::out | std::ofstream::trunc);
     
     /// Save Number of subject, Dimension and Number of Sources
     Outputs << NumberOfSubjects << ", " << m_ManifoldDimension << ", " << m_NbIndependentComponents << std::endl;
@@ -542,6 +543,7 @@ LongitudinalModel
     Outputs << Tau->GetMean() << ", " << Tau->GetVariance() << std::endl;
     
     /// Save (Delta_tilde_k)
+    Outputs << 0 << ", ";
     for(size_t i = 1; i < m_ManifoldDimension; ++i)
     {
         Outputs << R.at("Delta#" + std::to_string(i))(0);
@@ -550,6 +552,7 @@ LongitudinalModel
     Outputs << std::endl;
     
     /// Save (Delta_k)
+    Outputs << 0 << ", ";
     for(size_t i = 1; i < m_ManifoldDimension; ++i)
     {
         std::string Name = "Delta#" + std::to_string(i);
@@ -654,7 +657,7 @@ LongitudinalModel
 
 LongitudinalModel::VectorType
 LongitudinalModel
-::GetDelta(const Realizations& R)
+::GetPropagationCoefficients(const Realizations& R)
 {
     VectorType Delta(m_ManifoldDimension, 0.0);
 
@@ -688,7 +691,7 @@ LongitudinalModel
     double V0 = exp(Ksi->GetMean());
     double T0 = GetInitialTime();
     double P0 = R.at("P0")(0);
-    VectorType Delta = GetDelta(R);
+    VectorType Delta = GetPropagationCoefficients(R);
     
     /// Compute the transformation to do the Householder reflection in a Euclidean space
     VectorType U = ComputeGeodesicTransformation(P0, T0, V0, Delta);

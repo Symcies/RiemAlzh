@@ -6,10 +6,10 @@ NetworkPropagationModel
                           std::shared_ptr<MatrixType> InterpolationMatrix) 
 {
     m_NbIndependentComponents = NbIndependentComponents;
-    m_InvertKernelMatrix = *KernelMatrix;
+    m_InvertKernelMatrix = KernelMatrix->transpose();
     m_InterpolationMatrix = *InterpolationMatrix;
-    m_NbControlPoints = m_InvertKernelMatrix.columns();
     
+    m_NbControlPoints = m_InvertKernelMatrix.columns();
     m_InterpolationCoeffNu.set_size(m_NbControlPoints);
     m_InterpolationCoeffDelta.set_size(m_NbControlPoints);
 }

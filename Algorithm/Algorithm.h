@@ -82,7 +82,7 @@ protected:
     unsigned int m_CounterToDisplayOutputs = 20;
     
     /// Number of iterations to wait till next data saving
-    unsigned int m_CounterToSaveData = 100;
+    unsigned int m_CounterToSaveData = 10;
     
     /// Acceptance Ratios
     std::map<std::string, VectorType> m_AcceptanceRatios;
@@ -92,9 +92,6 @@ protected:
     
     /// Display acceptance ratio
     void DisplayAcceptanceRatio(Realizations& R);
-
-    /// Output file
-    std::ofstream m_OutputRealizations;
     
     /// Display Outputs
     void DisplayOutputs();
@@ -117,10 +114,10 @@ protected:
     SufficientStatisticsVector m_StochasticSufficientStatistics;
     
     /// Total number of iterations
-    unsigned int m_MaxNumberOfIterations = 20001;
+    unsigned int m_MaxNumberOfIterations = 5001;
     
     /// Number of burn-in iterations
-    unsigned int m_BurnIn = 9999;
+    unsigned int m_BurnIn = 10002;
     
     /// Number of iterations done by the MCMC-SAEM
     unsigned int m_IterationCounter = 0;

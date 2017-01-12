@@ -14,8 +14,9 @@ NetworkPropagationModel2
 {
     m_NbIndependentComponents = NbIndependentComponents;
     m_Manifold = M;
-    m_InvertKernelMatrix = *KernelMatrix;
+    m_InvertKernelMatrix = KernelMatrix->transpose();
     m_InterpolationMatrix = *InterpolationMatrix;
+    
     m_NbControlPoints = m_InvertKernelMatrix.columns();
     m_InterpolationCoefficients.set_size(m_NbControlPoints);
     
@@ -594,17 +595,82 @@ void
 NetworkPropagationModel2
 ::SaveData(unsigned int IterationNumber, const Realizations& R) 
 {
-    /// Save the delta_k for visualization
-    std::ofstream DeltaOutputs;    
-    DeltaOutputs.open("DeltaSignalNetwork_Parameters.txt", std::ofstream::out | std::ofstream::trunc);    
-        
-    DeltaOutputs << 0 << std::endl;
+    unsigned int NumberOfSubjects = R.at("Tau").size();
+    std::ofstream Outputs;    
+    Outputs.open("Network2_Normalnoconvert_Parameters.txt", std::ofstream::out | std::ofstream::trunc);    
     
+   /// Save Number of subject, Dimensions, Number of Sources, Number of control points
+    Outputs << NumberOfSubjects << ", " << m_Manifold->GetDimension() << ", " << m_NbIndependentComponents  << ", " << m_NbControlPoints << std::endl;
+    
+    /// Save P0, P0_mean and P0_var
+    auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
+    Outputs << R.at("P0")(0) << ", " << P0->GetMean() << ", " << P0->GetVariance() << std::endl;
+    
+    /// Save (Ksi_i)
+    for(size_t i = 0; i < NumberOfSubjects; ++i)
+    {
+        Outputs << R.at("Ksi")(i);
+        if(i != NumberOfSubjects - 1) { Outputs << ", "; }
+    }
+    Outputs << std::endl;
+    
+    /// Save Ksi_mean and Ksi_Var
+    auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));
+    Outputs << Ksi->GetMean() << ", " << Ksi->GetVariance() << std::endl;
+    
+    /// Save (Tau_i)
+    for(size_t i = 0; i < NumberOfSubjects; ++i)
+    {
+        Outputs << R.at("Tau")(i);
+        if(i != NumberOfSubjects - 1) { Outputs << ", "; }
+    }
+    Outputs << std::endl;
+    
+    /// Save Tau_Mean and Tau_Var
+    auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));
+    Outputs << Tau->GetMean() << ", " << Tau->GetVariance() << std::endl;
+    
+    /// Save (Delta_tilde_k)
+    Outputs << 0 << ", ";
     for(size_t i = 1; i < m_NbControlPoints; ++i)
     {
-        auto AbstractDelta = m_PopulationRandomVariables.at("Delta#" + std::to_string(i));
-        auto Delta = std::static_pointer_cast<GaussianRandomVariable>(AbstractDelta);
-        DeltaOutputs << Delta->GetMean() << std::endl;
+        Outputs << R.at("Delta#" + std::to_string(i))(0);
+        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
+    }
+    Outputs << std::endl;
+    
+    /// Save (Delta_k)
+    Outputs << 0 << ", ";
+    for(size_t i = 1; i < m_NbControlPoints; ++i)
+    {
+        std::string Name = "Delta#" + std::to_string(i);
+        auto Delta = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at(Name));
+        Outputs << Delta->GetMean();
+        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
+    }
+    Outputs << std::endl;
+    
+    /// Save (S_i)
+    for(size_t i = 0; i < NumberOfSubjects; ++i)
+    {
+        for(size_t j = 0; j < m_NbIndependentComponents; ++j)
+        {
+            Outputs << R.at("S#" + std::to_string(j))(i);
+            if(i != m_NbIndependentComponents - 1) { Outputs << ", "; }
+        }
+        Outputs << std::endl;
+    }
+    
+    /// Save (W_i)
+    for(size_t i = 0; i < NumberOfSubjects; ++i)
+    {
+        VectorType W = m_SpaceShifts.at("W" + std::to_string(i));
+        for(auto it = W.begin(); it != W.end(); ++it)
+        {
+            Outputs << *it;
+            if(i != W.size() - 1) { Outputs << ", "; }
+        }
+        Outputs << std::endl;
     }
 
 }
@@ -634,7 +700,7 @@ NetworkPropagationModel2
         std::string Name = "Beta#" + std::to_string(i);
         m_PopulationRandomVariables.insert(RandomVariable(Name, Beta));
     }
-    
+    // TODO : Next is false because starting at 1
     for(int i = 0; i < m_NbControlPoints - 1; ++i)
     {
         auto Delta = std::make_shared<GaussianRandomVariable>(-0.5 - (double)i/20, 0.0001);

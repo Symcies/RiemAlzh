@@ -32,13 +32,14 @@ typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
 
 int main() {
     // TODO : Change Model->UpdateModel because it ain't parameters
+
     
     ///////////////////////
     //// Initialization ///
     ///////////////////////
     
-    TestAssert::Init(true);
-    std::string ModelType = "Multivariate";
+    TestAssert::Init(false);
+    std::string ModelType = "Network";
     bool RealData = true;
     Data D;
     std::shared_ptr<AbstractModel> Model;
@@ -84,8 +85,7 @@ int main() {
         std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/Kxd_16.csv");
         auto InterpolationMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
         
-        shared_ptr<AbstractManifold> Manifold = make_shared<ExponentialCurveManifold>(InterpolationMatrix->rows());
-        //shared_ptr<AbstractManifold> Manifold = make_shared<LinearManifold>(InterpolationMatrix->rows());
+        shared_ptr<AbstractManifold> Manifold = make_shared<ExponentialCurveManifold>(InterpolationMatrix->columns());
         
         Model = make_shared<NetworkPropagationModel2>(NbIndependentComponents, Manifold, KernelMatrix, InterpolationMatrix);
     }
@@ -109,7 +109,9 @@ int main() {
     //////////////////////////
     /// Algorithm pipeline ///
     //////////////////////////
-    auto Algo = make_shared<Algorithm>();
+    unsigned int BurnIn = 10001;
+    unsigned int NbMaxOfIterations = 20002;
+    auto Algo = make_shared<Algorithm>(NbMaxOfIterations, BurnIn);
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
     Algo->ComputeMCMCSAEM(D);
