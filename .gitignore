@@ -1,4 +1,5 @@
 # Ignore the datasets
+Outputs/
 datatest/
 
 # Ignore the results

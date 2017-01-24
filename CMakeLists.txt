@@ -1,53 +1,16 @@
-cmake_minimum_required(VERSION 3.5)
+### PROJECT
 
+cmake_minimum_required(VERSION 3.2)
+project(Longitudina)
+Set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
-####################################
-### Project Declaration 
-####################################
+if (APPLE)
+    set(CMAKE_MACOSX_RPATH 1)
+endif()
 
-project(Longitudina2)
-
-
-
-####################################
-### Set new project folders / files
-####################################
-
-file( GLOB_RECURSE PARAMETERS Parameters/*)
-
-file( GLOB_RECURSE INPUTS inputs/* )
-
-file( GLOB_RECURSE LinearAlgebra/Utilities LinearAlgebra/Utilities/*)
-
-file( GLOB_RECURSE LINEARALGEBRA LinearAlgebra/*)
-
-file( GLOB_RECURSE SAMPLERS Samplers/*)
-
-file( GLOB_RECURSE RANDOMVARIABLES RandomVariables/*)
-
-file( GLOB_RECURSE OUTPUTS Outputs/*)
-
-file( GLOB_RECURSE MANIFOLDS Manifolds/*)
-
-file( GLOB_RECURSE MODELS Models/*)
-
-file( GLOB_RECURSE ALGORITHM Algorithm/*)
-
-file( GLOB_RECURSE TESTS Tests/* )
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
-
-set(SOURCE_FILES main.cpp)
-
-
-####################################
-### Set Armadillo
-####################################
+### ARMADILLO
 
 find_Package(Armadillo 4.32 QUIET)
-
 if (ARMADILLO_FOUND)
     Include_Directories(${ARMADILLO_INCLUDE_DIRS})
     Message("Armadillo has been found")
@@ -56,55 +19,68 @@ else()
 endif()
 
 
+### OPENMP
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
-   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    Message("OpenMP has been found")
+    Set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    Set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    Message("OPENMP has been found")
 else()
-    Message("NOOOOO")    
+    Set(CMAKE_CXX_FLAGS -L/usr/local/Cellar/llvm/3.9.0/lib/)
+    Set(CMAKE_CXX_COMPILER /usr/local/Cellar/llvm/3.9.0/bin/clang++)
+    Message("OPENMP has not been found. It has been set manually - to be changed") 
 endif()
 
 
+### Set new project folders / files
 
-####################################
-### Set ITK
-####################################
+Set(SOURCE_FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}
+                
+        ${CMAKE_CURRENT_SOURCE_DIR}/io
+        ${CMAKE_CURRENT_SOURCE_DIR}/io/ReadData.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/io/ReadData.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/io/outputs
+        
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/models
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds/base_manifold
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/parameters
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/random_variables
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/samplers
+        
+        ${CMAKE_CURRENT_SOURCE_DIR}/utilities
+        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/linear_algebra
+        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/linear_algebra/armadillo
+        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/matrix
+        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/tests
+        )
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+file( GLOB_RECURSE IO io/* )
+file( GLOB_RECURSE SRC src/* )
+file( GLOB_RECURSE UTILITIES utilities/* )
 
-set(ITK_DIR /aramis/dartagnan2/Software/ITK/ITKb-4.5.1)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/tinyxml2)
 
-#find_Package(ITK REQUIRED)
-
-#if(ITK_FOUND)
-#    INCLUDE(${ITK_USE_FILE})
-#    MESSAGE("ITK has been found")
-#else()
-#    MESSAGE(FATAL ERROR "ITK not found. Please set ITK_DIR.")
-#endif(ITK_FOUND)
-
-
-
-####################################
 ### Executable Declaration
-####################################
 
-add_executable(Longitudina2
-        ${SOURCE_FILES}
-        ${SOURCES}
-        ${INPUTS}
-        ${UTILITIES}
-        ${SAMPLERS}
-        ${RANDOMVARIABLES}
-        ${MODELS}
-        ${LINEARALGEBRA}
-        ${ALGORITHM}
-        ${MANIFOLDS}
-        ${PARAMETERS}
-        ${OUTPUTS}
-        ${TESTS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
+add_executable(Longitudina 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+        ${IO}
+        ${SRC}
+        ${UTILITIES})
 
-Target_Link_Libraries(Longitudina2
-            ${ARMADILLO_LIBRARIES})
+include_directories(${SOURCE_FILES})
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/io)
+
+add_dependencies(Longitudina tinyxml2)
+
+Target_Link_Libraries(Longitudina ${ARMADILLO_LIBRARIES})
+Target_Link_Libraries(Longitudina tinyxml2)
+

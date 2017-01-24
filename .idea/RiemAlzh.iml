@@ -2,69 +2,196 @@
 <module type="CPP_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/Tests/TestAssert.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Tests/TestAssert.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Parameters/CandidateRandomVariables.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Parameters/CandidateRandomVariables.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Outputs/RandomVariableRealizations.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/TestModel.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/LongitudinalModel.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/LongitudinalModel.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/TestModel.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/.DS_Store" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/UnivariateModel.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel2.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/AbstractModel.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel2.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Models/NetworkPropagationModel.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LogNormalRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/AbstractRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LogitNormalRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/ConstantRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LaplaceRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/ConstantRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LogNormalRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/AbstractRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/GaussianRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LogitNormalRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/LaplaceRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/RandomVariables/GaussianRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Algorithm/Algorithm.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Algorithm/Algorithm.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/PropagationManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/ExponentialCurveManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/AbstractManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/ExponentialBaseManifold.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/AbstractBaseManifold.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/ExponentialBaseManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/AbstractBaseManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/LogisticBaseManifold.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/BaseManifold/LogisticBaseManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/LinearManifold.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/AbstractManifold.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/LinearManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/ExponentialCurveManifold.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Manifolds/PropagationManifold.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Samplers/BlockedGibbsSampler.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Samplers/AbstractSampler.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Samplers/AbstractSampler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/tinyxml2/tinyxml2.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/tinyxml2/tinyxml2.pc.in" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/tinyxml2/cmake_uninstall.cmake.in" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/tinyxml2/xmltest.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/tinyxml2/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/tinyxml2/tinyxml2.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/tests/TestAssert.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/tests/TestAssert.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/linear_algebra/LinearAlgebra.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/linear_algebra/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/linear_algebra/armadillo/ArmadilloLinearAlgebra.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/linear_algebra/armadillo/ArmadilloMatrixWrapper.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/linear_algebra/armadillo/ArmadilloMatrixWrapper_friend.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/linear_algebra/armadillo/ArmadilloVectorWrapper_friend.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/linear_algebra/armadillo/ArmadilloVectorWrapper.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/matrix/MatrixFunctions.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utilities/matrix/MatrixFunctions.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration3000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration19800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration12200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration12400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration5000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration4600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration18600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration11800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration7400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration9600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration17400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration12000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration16400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration7800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration19400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration4000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration13800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration14000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration2600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration10400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration12600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration16200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/Network2/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration9200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration3600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration10200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration15600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration17800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration6200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration15200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration6600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration14400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration16600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration5600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration0.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration8600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration3200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration11000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration13200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration13600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration20000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration19600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration1800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration2000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration7200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters1000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters2500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters1250.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters0.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters2750.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters1500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters750.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters2250.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters1750.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters2000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters250.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration8400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration2800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration18400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration15400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration11400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration14800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration9400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration1400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration15000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration4400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration10800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration5800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration6000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration15800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration9000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration12800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration2400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration18000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration8800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration1200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration18800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration19000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/Network/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration7600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration9800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration17600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/Multivariate/Parameters.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration4200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration6400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration14200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration5400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration2200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration18200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration10600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration5200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration14600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration1600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration3800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration11600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration8000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration19200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration8200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration16000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration17200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration17000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration10000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration6800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration7000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration16800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration4800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration1000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration3400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration11200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration13400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration13000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/ReadData.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/ReadData.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/samplers/BlockedGibbsSampler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/samplers/BlockedGibbsSampler.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/samplers/AbstractSampler.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/samplers/AbstractSampler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/LongitudinalModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/FastNetworkModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/LongitudinalModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/NetworkPropagationModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/UnivariateModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/UnivariateModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/NetworkPropagationModel2.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/NetworkPropagationModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/NetworkPropagationModel2.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/FastNetworkModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/AbstractModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/AbstractModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/TestModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/TestModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/parameters/CandidateRandomVariables.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/parameters/CandidateRandomVariables.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/algorithm/Algorithm.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/algorithm/Algorithm.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/PropagationManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/ExponentialCurveManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/AbstractManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/PropagationManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/AbstractManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/base_manifold/ExponentialBaseManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/base_manifold/AbstractBaseManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/base_manifold/ExponentialBaseManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/base_manifold/AbstractBaseManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/base_manifold/LogisticBaseManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/base_manifold/LogisticBaseManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/LinearManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/LinearManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/manifolds/ExponentialCurveManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogNormalRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/AbstractRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogitNormalRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/ConstantRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LaplaceRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/ConstantRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogNormalRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/AbstractRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/GaussianRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogitNormalRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LaplaceRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/GaussianRandomVariable.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Inputs/ReadData.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Inputs/ReadData.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/LinearAlgebra.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Utilities/MatrixFunctions.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Utilities/MatrixFunctions.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloLinearAlgebra.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloMatrixWrapper_friend.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper_friend.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/LinearAlgebra/Armadillo/ArmadilloVectorWrapper.h" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
@@ -73,23 +200,21 @@
           <root url="file:///System/Library/Frameworks/AudioToolbox.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/Help.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/Print.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/SpeechRecognition.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/NavigationServices.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/CommonPanels.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/Help.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/SecurityHI.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/OpenScripting.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/CarbonSound.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/Ink.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/ImageCapture.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/CoreImage.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/Print.framework/Headers" />
           <root url="file:///System/Library/Frameworks/InstantMessage.framework/Headers" />
           <root url="file:///System/Library/Frameworks/MapKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/DirectoryService.framework/Headers" />
           <root url="file:///System/Library/Frameworks/InstallerPlugins.framework/Headers" />
           <root url="file:///System/Library/Frameworks/ForceFeedback.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/CoreMediaIO.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreWLAN.framework/Headers" />
           <root url="file:///System/Library/Frameworks/JavaVM.framework/Headers" />
           <root url="file:///System/Library/Frameworks/JavaVM.framework/Frameworks/JavaRuntimeSupport.framework/Headers" />
@@ -126,25 +251,29 @@
           <root url="file:///System/Library/Frameworks/Cocoa.framework/Headers" />
           <root url="file:///System/Library/Frameworks/OpenCL.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Python.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Contacts.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/PubSub.framework/Headers" />
           <root url="file:///System/Library/Frameworks/GLUT.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreVideo.framework/Headers" />
           <root url="file:///System/Library/Frameworks/GameKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/OpenGL.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/StoreKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/OpenAL.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CalendarStore.framework/Headers" />
           <root url="file:///System/Library/Frameworks/AVKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/FinderSync.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Contacts.framework/Headers" />
           <root url="file:///System/Library/Frameworks/WebKit.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/CoreData.framework/Headers" />
           <root url="file:///System/Library/Frameworks/QuickTime.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/StoreKit.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/VideoToolbox.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Accounts.framework/Headers" />
           <root url="file:///System/Library/Frameworks/SyncServices.framework/Headers" />
           <root url="file:///System/Library/Frameworks/AVFoundation.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Kernel.framework/Headers" />
           <root url="file:///System/Library/Frameworks/AppKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/InputMethodKit.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/SecurityInterface.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/CoreMediaIO.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/CoreImage.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreServices.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreServices.framework/Frameworks/DictionaryServices.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreServices.framework/Frameworks/SearchKit.framework/Headers" />
@@ -175,6 +304,7 @@
           <root url="file:///System/Library/Frameworks/OSAKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/ExceptionHandling.framework/Headers" />
           <root url="file:///System/Library/Frameworks/IOBluetoothUI.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Ruby.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreMIDI.framework/Headers" />
           <root url="file:///System/Library/Frameworks/LocalAuthentication.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Foundation.framework/Headers" />
@@ -184,12 +314,11 @@
           <root url="file:///System/Library/Frameworks/ImageCaptureCore.framework/Headers" />
           <root url="file:///System/Library/Frameworks/SpriteKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Automator.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/CoreData.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/SecurityInterface.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Social.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreText.framework/Headers" />
           <root url="file:///System/Library/Frameworks/NetworkExtension.framework/Headers" />
           <root url="file:///System/Library/Frameworks/SceneKit.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/SecurityFoundation.framework/Headers" />
           <root url="file:///System/Library/Frameworks/PhotosUI.framework/Headers" />
           <root url="file:///System/Library/Frameworks/QuickLook.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Tk.framework/Headers" />
@@ -203,27 +332,25 @@
           <root url="file:///System/Library/Frameworks/Hypervisor.framework/Headers" />
           <root url="file:///System/Library/Frameworks/GLKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Quartz.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/QuartzFilters.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/QuickLookUI.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/ImageKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/QuartzComposer.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/QuartzFilters.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/ImageKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/PDFKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/GameplayKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/ImageIO.framework/Headers" />
           <root url="file:///System/Library/Frameworks/AppleScriptObjC.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CFNetwork.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CryptoTokenKit.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Ruby.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/SecurityFoundation.framework/Headers" />
           <root url="file:///System/Library/Frameworks/DiscRecordingUI.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Collaboration.framework/Headers" />
           <root url="file:///System/Library/Frameworks/MediaToolbox.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/PubSub.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreGraphics.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreTelephony.framework/Headers" />
           <root url="file:///System/Library/Frameworks/AGL.framework/Headers" />
           <root url="file:///System/Library/Frameworks/VideoDecodeAcceleration.framework/Headers" />
           <root url="file:///System/Library/Frameworks/ContactsUI.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/VideoToolbox.framework/Headers" />
           <root url="file:///System/Library/Frameworks/NotificationCenter.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreLocation.framework/Headers" />
           <root url="file:///System/Library/Frameworks/DiscRecording.framework/Headers" />
@@ -250,23 +377,21 @@
           <root url="file:///System/Library/Frameworks/AudioToolbox.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/Help.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/Print.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/SpeechRecognition.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/NavigationServices.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/CommonPanels.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/Help.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/SecurityHI.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/OpenScripting.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/CarbonSound.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/Ink.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/ImageCapture.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/CoreImage.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Carbon.framework/Frameworks/Print.framework/Headers" />
           <root url="file:///System/Library/Frameworks/InstantMessage.framework/Headers" />
           <root url="file:///System/Library/Frameworks/MapKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/DirectoryService.framework/Headers" />
           <root url="file:///System/Library/Frameworks/InstallerPlugins.framework/Headers" />
           <root url="file:///System/Library/Frameworks/ForceFeedback.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/CoreMediaIO.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreWLAN.framework/Headers" />
           <root url="file:///System/Library/Frameworks/JavaVM.framework/Headers" />
           <root url="file:///System/Library/Frameworks/JavaVM.framework/Frameworks/JavaRuntimeSupport.framework/Headers" />
@@ -303,25 +428,29 @@
           <root url="file:///System/Library/Frameworks/Cocoa.framework/Headers" />
           <root url="file:///System/Library/Frameworks/OpenCL.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Python.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Contacts.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/PubSub.framework/Headers" />
           <root url="file:///System/Library/Frameworks/GLUT.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreVideo.framework/Headers" />
           <root url="file:///System/Library/Frameworks/GameKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/OpenGL.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/StoreKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/OpenAL.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CalendarStore.framework/Headers" />
           <root url="file:///System/Library/Frameworks/AVKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/FinderSync.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Contacts.framework/Headers" />
           <root url="file:///System/Library/Frameworks/WebKit.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/CoreData.framework/Headers" />
           <root url="file:///System/Library/Frameworks/QuickTime.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/StoreKit.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/VideoToolbox.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Accounts.framework/Headers" />
           <root url="file:///System/Library/Frameworks/SyncServices.framework/Headers" />
           <root url="file:///System/Library/Frameworks/AVFoundation.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Kernel.framework/Headers" />
           <root url="file:///System/Library/Frameworks/AppKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/InputMethodKit.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/SecurityInterface.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/CoreMediaIO.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/CoreImage.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreServices.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreServices.framework/Frameworks/DictionaryServices.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreServices.framework/Frameworks/SearchKit.framework/Headers" />
@@ -352,6 +481,7 @@
           <root url="file:///System/Library/Frameworks/OSAKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/ExceptionHandling.framework/Headers" />
           <root url="file:///System/Library/Frameworks/IOBluetoothUI.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Ruby.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreMIDI.framework/Headers" />
           <root url="file:///System/Library/Frameworks/LocalAuthentication.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Foundation.framework/Headers" />
@@ -361,12 +491,11 @@
           <root url="file:///System/Library/Frameworks/ImageCaptureCore.framework/Headers" />
           <root url="file:///System/Library/Frameworks/SpriteKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Automator.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/CoreData.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/SecurityInterface.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Social.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreText.framework/Headers" />
           <root url="file:///System/Library/Frameworks/NetworkExtension.framework/Headers" />
           <root url="file:///System/Library/Frameworks/SceneKit.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/SecurityFoundation.framework/Headers" />
           <root url="file:///System/Library/Frameworks/PhotosUI.framework/Headers" />
           <root url="file:///System/Library/Frameworks/QuickLook.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Tk.framework/Headers" />
@@ -380,27 +509,25 @@
           <root url="file:///System/Library/Frameworks/Hypervisor.framework/Headers" />
           <root url="file:///System/Library/Frameworks/GLKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Quartz.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/QuartzFilters.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/QuickLookUI.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/ImageKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/QuartzComposer.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/QuartzFilters.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/ImageKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Quartz.framework/Frameworks/PDFKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/GameplayKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/ImageIO.framework/Headers" />
           <root url="file:///System/Library/Frameworks/AppleScriptObjC.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CFNetwork.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CryptoTokenKit.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/Ruby.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/SecurityFoundation.framework/Headers" />
           <root url="file:///System/Library/Frameworks/DiscRecordingUI.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Collaboration.framework/Headers" />
           <root url="file:///System/Library/Frameworks/MediaToolbox.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/PubSub.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreGraphics.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreTelephony.framework/Headers" />
           <root url="file:///System/Library/Frameworks/AGL.framework/Headers" />
           <root url="file:///System/Library/Frameworks/VideoDecodeAcceleration.framework/Headers" />
           <root url="file:///System/Library/Frameworks/ContactsUI.framework/Headers" />
-          <root url="file:///System/Library/Frameworks/VideoToolbox.framework/Headers" />
           <root url="file:///System/Library/Frameworks/NotificationCenter.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreLocation.framework/Headers" />
           <root url="file:///System/Library/Frameworks/DiscRecording.framework/Headers" />
