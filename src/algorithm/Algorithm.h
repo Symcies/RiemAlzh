@@ -81,7 +81,7 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Number of iterations to wait till next output display
-    unsigned int m_CounterToDisplayOutputs = 100;
+    unsigned int m_CounterToDisplayOutputs = 20;
     
     /// Number of iterations to wait till next data saving
     unsigned int m_CounterToSaveData = 200;

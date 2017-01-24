@@ -25,6 +25,7 @@ typedef double ScalarType;
 #include "ReadData.h"
 
 #include "omp.h"
+#include "tinyxml2.h"
 
 
 using namespace std;
@@ -50,6 +51,20 @@ int main(int argc, char* argv[]) {
     }
     */
     
+    std::cout << argc << std::endl;
+    
+    std::cout << argv[1] << std::endl;
+    tinyxml2::XMLDocument doc;
+    stringstream AlgoSettings;
+    AlgoSettings << "/Users/igor.koval/Documents/Work/RiemAlzh/" << argv[1];
+    string AAA = AlgoSettings.str();
+    const char * q = AAA.c_str();
+    doc.LoadFile(q);
+    const char* title = doc.FirstChildElement( "document" )->FirstChildElement("element")->GetText();
+    printf( "Name of play (1): %s\n", title );
+    
+    
+    return 0;
     
     
     ///////////////////////
@@ -57,7 +72,7 @@ int main(int argc, char* argv[]) {
     ///////////////////////
     
     //TestAssert::Init(false);
-    std::string ModelType = "Multivariate";
+    std::string ModelType = "FastNetwork";
     
     std::string FilePath;
     std::shared_ptr<AbstractModel> Model;
@@ -136,6 +151,20 @@ int main(int argc, char* argv[]) {
     /////////////////////////////
     
     Data D;
+    bool ReadData = true;
+    if(ReadData)
+    {
+        int NbMaxOfSubjects = 100;
+        D = ReadData::OpenFilesMultivariate(FilePath, NbMaxOfSubjects);
+    }
+    else
+    {
+        Model->InitializeFakeRandomVariables();
+        D = Model->SimulateData(300, 4, 6);
+    }
+    
+    
+    /*
     if(argc == 3)
     {
         Model->InitializeFakeRandomVariables();
@@ -146,6 +175,7 @@ int main(int argc, char* argv[]) {
         int NbMaxOfSubjects = 100;
         D = ReadData::OpenFilesMultivariate(FilePath, NbMaxOfSubjects);
     }
+     */
     
     
     //////////////////////////

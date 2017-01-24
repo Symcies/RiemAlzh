@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include "LongitudinalModel.h"
-#include "../Manifolds/PropagationManifold.h"
-#include "../Tests/TestAssert.h"
+#include "PropagationManifold.h"
+#include "TestAssert.h"
 
 
 

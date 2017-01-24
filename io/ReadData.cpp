@@ -67,7 +67,7 @@ ReadData
         {
             for(auto it2 = it->begin(); it2 != it->end(); ++it2)
             {
-                LinearAlgebra<ScalarType>::VectorType X(4);
+                LinearAlgebra<ScalarType>::VectorType X(1827);
                 // TODO : check if everything was parsed
                 int i = 0;
                 std::stringstream LineStream(line);
