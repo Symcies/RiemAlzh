@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     ///////////////////////
     
     //TestAssert::Init(false);
-    std::string ModelType = "Network";
+    std::string ModelType = "Multivariate";
     
     std::string FilePath;
     std::shared_ptr<AbstractModel> Model;
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
     }
     else if(ModelType == "Multivariate")
     {
-        FilePath = "/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CognitiveScores/SimulatedData/";
+        FilePath = "/Users/igor.koval/Documents/Work/RiemAlzh/data/CognitiveScores/SimulatedData/";
         
         unsigned int NumberDimensions = 4, NbIndependentComponents = 2;
         
@@ -90,26 +90,26 @@ int main(int argc, char* argv[]) {
     }
     else if(ModelType == "FastNetwork")
     {
-        FilePath = "/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CorticalThickness/MCIconvertAD/MCIconvertAD_";
+        FilePath = "/Users/igor.koval/Documents/Work/RiemAlzh/data/CorticalThickness/MCIconvertAD/MCIconvertAD_";
         
         unsigned int NbIndependentComponents = 5;
         
-        std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/invKd_16.csv");
+        std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/data/invKd_16.csv");
         auto KernelMatrix = std::make_shared<FastNetworkModel::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
-        std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/Kxd_16.csv");
+        std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/data/Kxd_16.csv");
         auto InterpolationMatrix = std::make_shared<FastNetworkModel::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
         
         Model = make_shared<FastNetworkModel>(NbIndependentComponents, KernelMatrix, InterpolationMatrix);
     }
     else if (ModelType == "Network")
     {
-        FilePath = "/Users/igor.koval/Documents/Work/RiemAlzh/datatest/CorticalThickness/MCIconvertAD/MCIconvertAD_";
+        FilePath = "/Users/igor.koval/Documents/Work/RiemAlzh/data/CorticalThickness/MCIconvertAD/MCIconvertAD_";
         
         unsigned int NbIndependentComponents = 5;
         
-        std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/invKd_16.csv");
+        std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/data/invKd_16.csv");
         auto KernelMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
-        std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/Kxd_16.csv");
+        std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/data/Kxd_16.csv");
         auto InterpolationMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
         
         Model = make_shared<NetworkPropagationModel>(NbIndependentComponents, KernelMatrix, InterpolationMatrix);
@@ -120,9 +120,9 @@ int main(int argc, char* argv[]) {
         
         unsigned int NbIndependentComponents = 10;
                 
-        std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/invKd_16.csv");
+        std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/data/invKd_16.csv");
         auto KernelMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
-        std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/datatest/Kxd_16.csv");
+        std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/data/Kxd_16.csv");
         auto InterpolationMatrix = std::make_shared<NetworkPropagationModel2::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
         
         shared_ptr<AbstractManifold> Manifold = make_shared<ExponentialCurveManifold>(InterpolationMatrix->columns());

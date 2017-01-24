@@ -1,6 +1,6 @@
 # Ignore the datasets
-Outputs/
-datatest/
+io/outputs/
+data/
 
 # Ignore the results
 *.txt
