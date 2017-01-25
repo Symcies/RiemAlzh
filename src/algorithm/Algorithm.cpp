@@ -10,6 +10,16 @@ Algorithm
 {
 }
 
+Algorithm
+::Algorithm(AlgorithmSettings& Settings) 
+{
+    m_MaxNumberOfIterations = Settings.GetMaximumNumberOfIterations();
+    m_BurnIn = Settings.GetNumberOfBurnInIterations();
+    m_CounterToDisplayOutputs = Settings.GetCounterToDisplayOutputs();
+    m_CounterToSaveData = Settings.GetCounterToSaveData();
+    
+}
+
 
 Algorithm
 ::Algorithm(unsigned int MaxNumberOfIterations, unsigned int BurnIn) 

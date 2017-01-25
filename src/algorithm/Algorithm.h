@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include "AlgorithmSettings.h"
 
 
 #include "AbstractModel.h"
@@ -29,6 +30,8 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Algorithm();
+    
+    Algorithm(AlgorithmSettings& Settings);
     
     Algorithm(unsigned int MaxNumberOfIterations, unsigned int BurnIn);
     
@@ -81,10 +84,10 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Number of iterations to wait till next output display
-    unsigned int m_CounterToDisplayOutputs = 20;
+    unsigned int m_CounterToDisplayOutputs;
     
     /// Number of iterations to wait till next data saving
-    unsigned int m_CounterToSaveData = 200;
+    unsigned int m_CounterToSaveData;
     
     /// Acceptance Ratios
     std::map<std::string, VectorType> m_AcceptanceRatios;
@@ -116,10 +119,10 @@ protected:
     SufficientStatisticsVector m_StochasticSufficientStatistics;
     
     /// Total number of iterations
-    unsigned int m_MaxNumberOfIterations = 5001;
+    unsigned int m_MaxNumberOfIterations;
     
     /// Number of burn-in iterations
-    unsigned int m_BurnIn = 10002;
+    unsigned int m_BurnIn;
     
     /// Number of iterations done by the MCMC-SAEM
     unsigned int m_IterationCounter = 0;

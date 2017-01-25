@@ -37,11 +37,6 @@ endif()
 
 Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}
-                
-        ${CMAKE_CURRENT_SOURCE_DIR}/io
-        ${CMAKE_CURRENT_SOURCE_DIR}/io/ReadData.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/io/ReadData.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/io/outputs
         
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm
@@ -51,6 +46,8 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/parameters
         ${CMAKE_CURRENT_SOURCE_DIR}/src/random_variables
         ${CMAKE_CURRENT_SOURCE_DIR}/src/samplers
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/io
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/io/outputs
         
         ${CMAKE_CURRENT_SOURCE_DIR}/utilities
         ${CMAKE_CURRENT_SOURCE_DIR}/utilities/linear_algebra
@@ -59,7 +56,6 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/utilities/tests
         )
 
-file( GLOB_RECURSE IO io/* )
 file( GLOB_RECURSE SRC src/* )
 file( GLOB_RECURSE UTILITIES utilities/* )
 
@@ -77,7 +73,6 @@ add_executable(Longitudina
 
 include_directories(${SOURCE_FILES})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/io)
 
 add_dependencies(Longitudina tinyxml2)
 

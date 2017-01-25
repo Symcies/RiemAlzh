@@ -19,151 +19,43 @@
       <sourceFolder url="file://$MODULE_DIR$/utilities/linear_algebra/armadillo/ArmadilloVectorWrapper.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utilities/matrix/MatrixFunctions.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utilities/matrix/MatrixFunctions.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration3000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration19800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration12200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration12400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration5000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration4600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration18600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration11800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration7400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration9600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration17400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration12000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration16400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration7800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration19400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration4000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration13800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration14000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration2600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration10400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration12600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration16200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/Network2/.DS_Store" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration9200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration3600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration10200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration15600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration17800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration6200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration15200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration6600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration14400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration16600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration5600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration0.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration8600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration3200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration11000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration13200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration13600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration20000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration19600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration1800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration2000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration7200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters1000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters2500.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters1250.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters0.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters500.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters2750.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/.DS_Store" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters1500.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters750.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters2250.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters1750.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters2000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/FastNetwork/Parameters250.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration8400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration2800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration18400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration15400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration11400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration14800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration9400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration1400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration15000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration4400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration10800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration5800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration6000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration15800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/.DS_Store" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration9000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration12800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration2400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration18000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration8800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration1200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration18800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration19000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/Network/.DS_Store" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration7600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration9800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration17600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/Multivariate/Parameters.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration4200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration6400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration14200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration5400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration2200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration18200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration10600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration5200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration14600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration1600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration3800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration11600.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration8000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration19200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration8200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration16000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration17200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration17000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration10000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration6800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration7000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration16800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration4800.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration1000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration3400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration11200.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration13400.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/outputs/MultivariateModel_Parameters_Iteration13000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/ReadData.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/ReadData.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/samplers/BlockedGibbsSampler.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/samplers/BlockedGibbsSampler.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/samplers/AbstractSampler.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/samplers/AbstractSampler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/algorithm/Algorithm.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/algorithm/Algorithm.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/LongitudinalModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/.DS_Store" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/FastNetworkModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/AbstractModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/LongitudinalModel.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/models/NetworkPropagationModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/NetworkPropagationModel2.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/UnivariateModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/UnivariateModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/NetworkPropagationModel2.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/NetworkPropagationModel.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/models/NetworkPropagationModel2.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/FastNetworkModel.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/models/AbstractModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/models/NetworkPropagationModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/AbstractModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/TestModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/models/TestModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/parameters/CandidateRandomVariables.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/parameters/CandidateRandomVariables.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/algorithm/Algorithm.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/algorithm/Algorithm.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogNormalRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/AbstractRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogitNormalRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/ConstantRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LaplaceRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/ConstantRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogNormalRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/AbstractRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/GaussianRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogitNormalRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LaplaceRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/GaussianRandomVariable.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/PropagationManifold.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/ExponentialCurveManifold.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/AbstractManifold.cpp" isTestSource="false" />
@@ -179,19 +71,131 @@
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/LinearManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/ExponentialCurveManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/.DS_Store" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogNormalRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/AbstractRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogitNormalRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/ConstantRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LaplaceRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/ConstantRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogNormalRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/AbstractRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/GaussianRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LogitNormalRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/LaplaceRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/GaussianRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/ModelSettings.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration2200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration4400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration4800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration12400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration10800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration14800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration16400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration18600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration1800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration7400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration15200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration17400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration7800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration19400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration4000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration13800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration14000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration9800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration2600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration12600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration8800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network2/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration9200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration17000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration19200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration2800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration8000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration12000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration3600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration6600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration14400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration16600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration5600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration0.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration19000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration3200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration5400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration13200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration19800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration20000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration19600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration17200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration2000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration11800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters1000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters2500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters1250.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters0.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters2750.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters1500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters750.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters2250.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters1750.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters2000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters250.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration12200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration8400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration6200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration18400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration6000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration11000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration5000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration7200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration15000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration1400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration10400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration7000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration16000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration5800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration13600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration15800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration9000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration12800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration2400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration18000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration9400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration1200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration18800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration17800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration7600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration15400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration17600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Multivariate/Parameters.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration11600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration4200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration6400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration8600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration11400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration18200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration3000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration5200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration13000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration1600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration10600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration4600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration16200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration14200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration3800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration8200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration15600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration9600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration10200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration10000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration6800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration14600.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration16800.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration1000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration3400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration11200.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/MultivariateModel_Parameters_Iteration13400.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/ModelSettings.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/AlgorithmSettings.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/.DS_Store" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/AlgorithmSettings.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.cpp" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">

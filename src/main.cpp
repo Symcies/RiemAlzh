@@ -23,6 +23,7 @@ typedef double ScalarType;
 #include "LinearAlgebra.h"
 
 #include "ReadData.h"
+#include "AlgorithmSettings.h"
 
 #include "omp.h"
 #include "tinyxml2.h"
@@ -33,7 +34,7 @@ using namespace std;
 typedef vector< vector< pair< LinearAlgebra<ScalarType>::VectorType, double> > > Data;
 
 // TODO : Change Model->UpdateModel because it ain't parameters
-// TODO : Read a xml file for the input parameters
+// TODO : Finish the input classes : Model, Algo and data
 // TODO : Create an output file if it does not exist
 // TO ADD : Name of the output file
 // TO ADD : If writing a file 1 out of n iteration - or only at the end 
@@ -41,31 +42,12 @@ typedef vector< vector< pair< LinearAlgebra<ScalarType>::VectorType, double> > >
 
 int main(int argc, char* argv[]) {
     
-    /*
-    if(argc != 3 && argc != 5) {
-        std::cout << "Usage: " << " /path/to/executable " << " ModelSettings.xml " << " AlgorithmSettings " << " -data /path/to/data/folder" << std::endl;
+    if(argc != 4) {
+        std::cout << "Usage: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings " << "data_settings.xml" << std::endl;
         // return 1;
     }
-    else if(string(argv[3]) != "-data") {
-        std::cout << "Usage: " << " /path/to/executable " << " ModelSettings.xml " << " AlgorithmSettings " << " -data /path/to/data/folder" << std::endl;
-    }
-    */
     
-    std::cout << argc << std::endl;
-    
-    std::cout << argv[1] << std::endl;
-    tinyxml2::XMLDocument doc;
-    stringstream AlgoSettings;
-    AlgoSettings << "/Users/igor.koval/Documents/Work/RiemAlzh/" << argv[1];
-    string AAA = AlgoSettings.str();
-    const char * q = AAA.c_str();
-    doc.LoadFile(q);
-    const char* title = doc.FirstChildElement( "document" )->FirstChildElement("element")->GetText();
-    printf( "Name of play (1): %s\n", title );
-    
-    
-    return 0;
-    
+        
     
     ///////////////////////
     //// Initialization ///
@@ -164,7 +146,7 @@ int main(int argc, char* argv[]) {
     }
     
     
-    /*
+    
     if(argc == 3)
     {
         Model->InitializeFakeRandomVariables();
@@ -175,15 +157,14 @@ int main(int argc, char* argv[]) {
         int NbMaxOfSubjects = 100;
         D = ReadData::OpenFilesMultivariate(FilePath, NbMaxOfSubjects);
     }
-     */
+     
     
     
     //////////////////////////
     /// Algorithm pipeline ///
     //////////////////////////
-    unsigned int BurnIn = 10001;
-    unsigned int NbMaxOfIterations = 20002;
-    auto Algo = make_shared<Algorithm>(NbMaxOfIterations, BurnIn);
+    AlgorithmSettings AS(argv[2]);
+    auto Algo = make_shared<Algorithm>(AS);
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
     Algo->ComputeMCMCSAEM(D);
