@@ -1,8 +1,11 @@
 ### PROJECT
 
 cmake_minimum_required(VERSION 3.2)
-project(Longitudina)
+project(Longitudina CXX)
 Set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
 if (APPLE)
     set(CMAKE_MACOSX_RPATH 1)
@@ -23,14 +26,19 @@ endif()
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
-    Set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    Set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    Message("OPENMP has been found")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    Message(FATAL_ERROR "OpenMP has been found")
 else()
-    Set(CMAKE_CXX_FLAGS -L/usr/local/Cellar/llvm/3.9.0/lib/)
-    Set(CMAKE_CXX_COMPILER /usr/local/Cellar/llvm/3.9.0/bin/clang++)
-    Message("OPENMP has not been found. It has been set manually - to be changed") 
+    Message(WARNING "NOOOOO")
+    MESSAGE(Warning OpenMP)    
+    Set(CMAKE_C_COMPILER "/usr/local/Cellar/llvm/3.9.0/bin/clang")
+    Set(CMAKE_CXX_COMPILER "/usr/local/Cellar/llvm/3.9.0/bin/clang++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /usr/local/Cellar/llvm/3.9.0/lib/libomp.dylib")     
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+
 endif()
+
 
 
 ### Set new project folders / files

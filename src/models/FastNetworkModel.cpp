@@ -11,8 +11,11 @@ FastNetworkModel
     m_InterpolationMatrix = *InterpolationMatrix;
     
     m_NbControlPoints = m_InvertKernelMatrix.columns();
-    m_InterpolationCoeffNu.set_size(m_NbControlPoints);
-    m_InterpolationCoeffDelta.set_size(m_NbControlPoints);
+    m_Nus.set_size(m_ManifoldDimension);
+    m_Deltas.set_size(m_ManifoldDimension);
+    m_Block1.set_size(m_ManifoldDimension);
+    m_Block2.set_size(m_ManifoldDimension);
+
 }
 
 
@@ -75,17 +78,25 @@ FastNetworkModel
     }
     
     /// Other
+    m_NumberOfSubjects = D.size();
+    m_IndividualObservationDate.reserve(m_NumberOfSubjects);
     double SumObservations = 0.0, K = 0.0;
-    for(auto it = D.begin(); it != D.end(); ++it)
+    unsigned int Indiv = 0;
+    for(auto it = D.begin(); it != D.end(); ++it, ++Indiv)
     {
+        VectorType IndividualObs(it->size());
         K += it->size();
-        for(auto it2 = it->begin(); it2 != it->end(); ++it2)
+        int i = 0;
+        for(auto it2 = it->begin(); it2 != it->end(); ++it2, ++i)
         {
             SumObservations += it2->first.squared_magnitude();
+            IndividualObs(i) = it2->second;
         }
+        m_IndividualObservationDate[Indiv] = IndividualObs;
     }
     m_SumObservations = SumObservations;
     m_NbTotalOfObservations = K;
+    
 }
 
 
@@ -94,59 +105,95 @@ FastNetworkModel
 ::UpdateModel(const Realizations &R,
               const std::vector<std::string> Names) 
 {
-    // TODO : it is not the best case : separate nu and delta
-    int UpdateCase = 1;
     
-    for(auto it = Names.begin(); it != Names.end(); ++it) 
+    bool ComputePosition = false;
+    bool ComputeDelta = false;
+    bool ComputeNu = false;
+    bool ComputeBasis = false;
+    bool ComputeA = false;
+    bool ComputeSpaceShift = false;
+    bool ComputeBlock_1 = false;
+    bool ComputeBlock_2 = false;
+        
+    for(auto it = Names.begin(); it != Names.end(); ++it)
     {
         std::string Name = it->substr(0, it->find_first_of("#"));
-
-        if (Name == "None" or Name == "Ksi" or Name == "Tau") {
+        if(Name == "None")
+        {
             continue;
-        } else if (Name == "S") {
-            UpdateCase = std::max(UpdateCase, 2);
-        } else if (Name == "Beta") {
-            UpdateCase = std::max(UpdateCase, 3);
-        } else if(Name == "P0") {
-            UpdateCase = std::max(UpdateCase, 4);
         }
-        else if (Name == "Nu" or Name == "Delta" or Name == "All") {
-            UpdateCase = 5;
-            break;
-        } else {
-            UpdateCase = 5;
-            std::cout << "Should be" << Name << "be in FastNetworkModel > Update Parameters?" << std::endl;
+        else if(Name == "Ksi" or Name == "Tau") 
+        {
+            continue;
+        }
+        else if(Name == "Nu")
+        {
+            ComputeNu = true;
+            ComputeBasis = true;
+            ComputeA = true;
+            ComputeSpaceShift = true;
+            ComputeBlock_2 = true;
+            continue;
+        }
+        else if(Name == "Delta")
+        {
+            ComputeDelta = true;
+            ComputeBasis = true;
+            ComputeA = true;
+            ComputeSpaceShift = true;
+            ComputeBlock_1 = true;
+            continue;
+        }
+        else if(Name == "P0")
+        {
+            ComputePosition = true;
+            ComputeBasis = true;
+            ComputeA = true;
+            ComputeSpaceShift = true;
+            ComputeBlock_1 = true;
+            ComputeBlock_2 = true;
+            continue;
+        }
+        else if(Name == "Beta")
+        {
+            ComputeA = true;
+            ComputeSpaceShift = true;
+            continue;
+        }
+        else if(Name == "S")
+        {
+            ComputeSpaceShift = true;
+            continue;
+        }
+        else if(Name == "All")
+        {
+            ComputePosition = true;
+            ComputeDelta = true;
+            ComputeNu = true;
+            ComputeBasis = true;
+            ComputeA = true;
+            ComputeSpaceShift = true;
+            ComputeBlock_1 = true;
+            ComputeBlock_2 = true;
             break;
         }
-    }        
-    
-    switch(UpdateCase)
-    {
-        case 1:
-            break;
-        case 2:
-            ComputeSpaceShifts(R);
-            break;
-        case 3:
-            ComputeAMatrix(R);
-            ComputeSpaceShifts(R);
-            break;
-        case 4:
-            ComputeOrthonormalBasis(R);
-            ComputeAMatrix(R);
-            ComputeSpaceShifts(R);
-            break;
-        case 5:
-            ComputeInterpoCoeffDelta(R);
-            ComputeInterpoCoeffNu(R);
-            ComputeOrthonormalBasis(R);
-            ComputeAMatrix(R);
-            ComputeSpaceShifts(R);
-            break;
-        default:
-            std::cout << "Error? FastNetworkModel > UpdateModel";
-            break;
+        else
+        {
+            std::cerr << "PROBLEM WITH FAST NETWORK MODEL" << std::endl;
+        }
     }
+    
+    // TODO : To parse it even faster, update just the coordinates within the names
+    
+    if(ComputePosition) { m_P0 = exp(R.at("P0")(0)); }
+    if(ComputeDelta) ComputeDeltas(R);
+    if(ComputeNu) ComputeNus(R);
+    if(ComputeBasis) ComputeOrthonormalBasis(R);
+    if(ComputeA) ComputeAMatrix(R);
+    if(ComputeSpaceShift) ComputeSpaceShifts(R);
+    if(ComputeBlock_1) ComputeBlock1(R);
+    if(ComputeBlock_2) ComputeBlock2(R);
+    
 }
 
 FastNetworkModel::Data
@@ -171,31 +218,23 @@ double
 FastNetworkModel
 ::ComputeIndividualLogLikelihood(const Realizations& R, const Data& D, const int SubjectNumber) 
 {
-    /// Get the data
-    double  P0 = exp(R.at("P0")(0));
-    VectorType Delta = GetDelta(R);
-    VectorType Nu = GetNu(R);
-    
+    /// Get the data 
     std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
-    VectorType SpaceShift = m_SpaceShifts.at("W" + std::to_string(SubjectNumber));
-
-    auto Block1 = ComputeBlock1(P0, SpaceShift, Delta);
-    auto Block2 = ComputeBlock2(P0, Nu);
-    
     double LogLikelihood = 0;
-    double N = D.at(SubjectNumber).size();
+    auto N = D.at(SubjectNumber).size();
+    auto Did = D.at(SubjectNumber);
     
 #pragma omp parallel for reduction(+:LogLikelihood)   
     for(size_t i = 0; i < N; ++i)
     {
-        auto& it = D.at(SubjectNumber).at(i);
+        auto& it = Did.at(i);
         double TimePoint = SubjectTimePoint(it.second);
-        VectorType ParallelCurve = ComputeParallelCurve(P0, Block1, Block2, TimePoint);
-        LogLikelihood += (it.first - ParallelCurve).squared_magnitude();
+        VectorType P2 = ComputeParallelCurve(TimePoint, SubjectNumber);
+        LogLikelihood += (it.first - P2).squared_magnitude();
     }
     
     LogLikelihood /= -2*m_Noise->GetVariance();
-    LogLikelihood -= N * log(2 * m_Noise->GetVariance() * M_PI) / 2.0;
+    LogLikelihood -= m_NumberOfSubjects * log(2 * m_Noise->GetVariance() * M_PI) / 2.0;
     
     return LogLikelihood;
 }
@@ -205,35 +244,26 @@ FastNetworkModel
 ::GetSufficientStatistics(const Realizations& R, const Data& D) 
 {
     
-    auto Delta = GetDelta(R);
-    auto Nu = GetNu(R);
-    double NumberOfSubjects = R.at("Ksi").size();
-    
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
     VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
     auto itS1 = S1.begin(), itS2 = S2.begin();
     int i = 0;
     for(auto itD = D.begin(); itD != D.end(); ++itD, ++i)
     {
-        
         auto TimePoint = GetSubjectTimePoint(i, R);
-        auto SpaceShift = m_SpaceShifts.at("W" + std::to_string(i));
-        
-        auto Block1 = ComputeBlock1(exp(R.at("P0")(0)), SpaceShift, Delta);
-        auto Block2 = ComputeBlock2(exp(R.at("P0")(0)), Nu);
         
         for(auto itD2 = itD->begin(); itD2 != itD->end(); ++itD2)
         {
             double Time = TimePoint(itD2->second);
-            VectorType ParallelVCurve = ComputeParallelCurve(exp(R.at("P0")(0)), Block1, Block2, Time);
-            *itS1 = dot_product(ParallelVCurve, itD2->first);
-            *itS2 = ParallelVCurve.squared_magnitude();
+            VectorType P2 = ComputeParallelCurve(Time, i);
+            *itS1 = dot_product(P2, itD2->first);
+            *itS2 = P2.squared_magnitude();
             ++itS1, ++itS2;
         }
     }
     
     /// S3 <- Ksi_i * Ksi_i
-    VectorType S3(NumberOfSubjects);
+    VectorType S3(m_NumberOfSubjects);
     auto itKsi = R.at("Ksi").begin();
     for(auto itS3 = S3.begin(); itKsi != R.at("Ksi").end() ; ++itKsi, ++itS3)
     {
@@ -241,7 +271,7 @@ FastNetworkModel
     }
     
     /// S4 <- Tau_i   &    S5 <- Tau_i * Tau_i
-    VectorType S4(NumberOfSubjects), S5(NumberOfSubjects);
+    VectorType S4(m_NumberOfSubjects), S5(m_NumberOfSubjects);
     auto itTau = R.at("Tau").begin();
     auto itS4 = S4.begin(), itS5 = S5.begin();
     for(    ; itTau != R.at("Tau").end(); ++itTau, ++itS4, ++itS5)
@@ -291,8 +321,6 @@ void
 FastNetworkModel
 ::UpdateRandomVariables(const SufficientStatisticsVector &SS, const Data& D) 
 {
-    double NumberOfSubjects = D.size();
-    
     /// Update sigma
     double NoiseVariance = m_SumObservations;
     for(auto itS1 = SS[0].begin(), itS2 = SS[1].begin(); itS1 != SS[0].end() && itS2!= SS[1].end(); ++itS1, ++itS2)
@@ -308,7 +336,7 @@ FastNetworkModel
     {
         KsiVariance += *it;
     }
-    KsiVariance /= NumberOfSubjects;
+    KsiVariance /= m_NumberOfSubjects;
     
     auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));
     Ksi->SetVariance(KsiVariance);
@@ -319,13 +347,13 @@ FastNetworkModel
     {
         TauMean += *it;
     }
-    TauMean /= NumberOfSubjects;
+    TauMean /= m_NumberOfSubjects;
     for(auto it = SS[4].begin(); it != SS[4].end(); ++it)
     {
         TauVariance += *it;
     }
-    TauVariance -= NumberOfSubjects * TauMean * TauMean;
-    TauVariance /= NumberOfSubjects;
+    TauVariance -= m_NumberOfSubjects * TauMean * TauMean;
+    TauVariance /= m_NumberOfSubjects;
     
     auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));
     Tau->SetMean(TauMean);
@@ -411,15 +439,13 @@ FastNetworkModel
 }
 
 
-
-
 void 
 FastNetworkModel
 ::SaveData(unsigned int IterationNumber, const Realizations& R) 
 {
     unsigned int NumberOfSubjects = R.at("Tau").size();
     std::ofstream Outputs;    
-    std::string FileName = "Outputs/FastNetwork/Parameters" + std::to_string(IterationNumber) + ".txt";
+    std::string FileName = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/FastNetwork2/Parameters" + std::to_string(IterationNumber) + ".txt";
     //std::string FileName = "Outputs/FastNetwork/Parameters.txt";
     Outputs.open(FileName, std::ofstream::out | std::ofstream::trunc);
     
@@ -512,10 +538,10 @@ FastNetworkModel
     }
     
     /// Save (W_i)
-    auto SizeW = m_SpaceShifts.at("W0").size();
+    auto SizeW = m_SpaceShifts.size();
     for(size_t i = 0; i < NumberOfSubjects; ++i)
     {
-        VectorType W = m_SpaceShifts.at("W" + std::to_string(i));
+        VectorType W = m_SpaceShifts[i];
         for(auto it = W.begin(); it != W.end(); ++it)
         {
             Outputs << *it;
@@ -539,23 +565,6 @@ FastNetworkModel
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-FastNetworkModel::VectorType
-FastNetworkModel
-::GetDelta(const Realizations& R) 
-{
-    return m_InterpolationMatrix * m_InterpolationCoeffDelta;
-}
-
-
-FastNetworkModel::VectorType
-FastNetworkModel
-::GetNu(const Realizations& R) 
-{
-    return m_InterpolationMatrix * m_InterpolationCoeffNu;
-}
-
-
 std::function<double(double)> 
 FastNetworkModel
 ::GetSubjectTimePoint(const int SubjectNumber, const Realizations& R) 
@@ -566,22 +575,18 @@ FastNetworkModel
     return [AccFactor, TimeShift](double t) { return AccFactor * (t - TimeShift); };
 }
 
+void
+FastNetworkModel
+::ComputeSubjectTimePoint(const Realizations &R, const int SubjectNumber) 
+{
+    int i = 0;
+}
 
 
 void
 FastNetworkModel
-::ComputeInterpoCoeffDelta(const Realizations& R) 
-{
-    /*
-    VectorType Delta(m_NbControlPoints, 0.0);
-    int i = 1;
-    for(auto it = Delta.begin() + 1; it != Delta.end(); ++it, ++i)
-    {
-        *it = R.at("Delta#" + std::to_string(i))(0);
-    }
-    m_InterpolationCoeffDelta = m_InvertKernelMatrix * Delta;
-    */
-    
+::ComputeDeltas(const Realizations& R) 
+{    
     VectorType Delta(m_NbControlPoints);
     Delta(0) = 0.0;
     ScalarType * d = Delta.memptr();
@@ -592,23 +597,14 @@ FastNetworkModel
         d[i] = R.at("Delta#" + std::to_string(i))(0);
     }
     
-    m_InterpolationCoeffDelta = m_InvertKernelMatrix * Delta;
+    auto InterpolationCoeff = m_InvertKernelMatrix * Delta;
+    m_Deltas = m_InterpolationMatrix * InterpolationCoeff;
 }
 
 void
 FastNetworkModel
-::ComputeInterpoCoeffNu(const Realizations& R) 
+::ComputeNus(const Realizations& R) 
 {
-    /*
-    VectorType Nu(m_NbControlPoints, 1.0);
-    int i = 1;
-    for(auto it = Nu.begin() + 1; it != Nu.end(); ++it, ++i)
-    {
-        *it = R.at("Nu#" + std::to_string(i))(0);
-    }
-    m_InterpolationCoeffNu = m_InvertKernelMatrix * Nu;
-    */
-    
     VectorType Nu(m_NbControlPoints);
     ScalarType * n = Nu.memptr();
 
@@ -618,18 +614,17 @@ FastNetworkModel
         n[i] = R.at("Nu#" + std::to_string(i))(0);
     }
     
-    m_InterpolationCoeffNu = m_InvertKernelMatrix * Nu;
+    auto InterpolationCoeff = m_InvertKernelMatrix * Nu;
+    m_Nus = m_InterpolationMatrix * InterpolationCoeff;
 }
-
 
 void
 FastNetworkModel
 ::ComputeOrthonormalBasis(const Realizations& R) 
 {
     /// Get the data
-    auto P0 = exp(R.at("P0")(0));
-    auto Nu = GetNu(R);
-    auto Delta = GetDelta(R);
+    auto Nu = m_Nus;
+    auto Delta = m_Deltas;
     auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));
     auto V0 = exp(Ksi->GetMean());
     
@@ -642,7 +637,7 @@ FastNetworkModel
 #pragma omp simd
     for(int i = 0; i < m_ManifoldDimension; ++i)
     {
-        u[i] = n[i] * V0 / (P0 * P0)* exp(-d[i]); 
+        u[i] = n[i] * V0 / (m_P0 * m_P0)* exp(-d[i]); 
     }
     
     /// Compute the initial pivot vector U
@@ -705,23 +700,20 @@ void
 FastNetworkModel
 ::ComputeSpaceShifts(const Realizations& R) 
 {
-    std::map< std::string, VectorType> SpaceShifts;
-    int NumberOfSubjects = (int)R.at("Tau").size();
-    TestAssert::WarningEquality_Object(NumberOfSubjects, (int)R.at("Ksi").size(), "FastNetwork > ComputeSpaceShifts");
+    
+    std::vector<VectorType> SpaceShifts(m_NumberOfSubjects);
 
-    for(int i = 0; i < NumberOfSubjects; ++i)
+    for(int i = 0; i < m_NumberOfSubjects; ++i)
     {
         VectorType Si(m_NbIndependentComponents);
         for(int j = 0; j < m_NbIndependentComponents; ++j)
         {
             Si(j) = R.at("S#" + std::to_string(j))(i);
         }
-
-        VectorType V = m_AMatrix * Si;
-        std::pair< std::string, VectorType > SpaceShift("W"+std::to_string(i),  V);
-        SpaceShifts.insert( SpaceShift);
+        
+        SpaceShifts[i] = m_AMatrix * Si;
     }
-
+    
     m_SpaceShifts = std::move(SpaceShifts);
     
     /// TESTS NEEDED
@@ -730,56 +722,46 @@ FastNetworkModel
 }
 
 
+void
+FastNetworkModel
+::ComputeBlock1(const Realizations &R) 
+{
+    ScalarType * d = m_Deltas.memptr();
+    ScalarType *b = m_Block1.memptr();
+
+#pragma omp simd
+    for(size_t i = 0; i < m_ManifoldDimension; ++i)
+        b[i] = m_P0 * exp(d[i]);
+}
+
+
+void 
+FastNetworkModel
+::ComputeBlock2(const Realizations &R) 
+{
+    ScalarType * n = m_Nus.memptr();
+    ScalarType * b = m_Block2.memptr();
+
+#pragma omp simd
+    for(size_t i = 0; i < m_ManifoldDimension; ++i)
+        b[i] = n[i] / m_P0;
+}
+
 FastNetworkModel::VectorType
 FastNetworkModel
-::ComputeParallelCurve(double P0, VectorType &Block1, VectorType &Block2, double Timepoint) 
+::ComputeParallelCurve(double TimePoint, int SubjectNumber) 
 {
-    auto N = Block1.size();
-    VectorType ParallelCurve(N);
+    VectorType ParallelCurve(m_ManifoldDimension);
     
-    ScalarType * curve = ParallelCurve.memptr();
-    ScalarType * b1 = Block1.memptr();
-    ScalarType * b2 = Block2.memptr();
-    
+    ScalarType * d = m_Deltas.memptr();
+    ScalarType * b1 = m_Block1.memptr();
+    ScalarType * b2 = m_Block2.memptr();
+    ScalarType * w = m_SpaceShifts[SubjectNumber].memptr();
+    ScalarType * p = ParallelCurve.memptr();
+
 #pragma omp simd
-    for(size_t i = 0; i < N; ++i)
-        curve[i] = P0 * exp(b1[i] - b2[i] * Timepoint);
+    for(size_t i = 0; i < m_ManifoldDimension; ++i)
+        p[i] = m_P0 * exp(d[i] + w[i] / b1[i]  - b2[i] * TimePoint);
     
     return ParallelCurve;
-}
-
-
-FastNetworkModel::VectorType
-FastNetworkModel
-::ComputeBlock1(double P0, VectorType& SpaceShift, VectorType& Delta)
-{
-    auto N = SpaceShift.size();
-    VectorType Block1(N);
-    
-    ScalarType * s = SpaceShift.memptr();
-    ScalarType * d = Delta.memptr();
-    ScalarType * b = Block1.memptr();
-
-#pragma omp simd
-    for(size_t i = 0; i < N; ++i)
-        b[i] = s[i] / (P0 * exp(d[i])) + d[i];
-    
-    return Block1;
-}
-
-FastNetworkModel::VectorType
-FastNetworkModel
-::ComputeBlock2(double P0, VectorType& Nu)
-{
-    auto N = Nu.size();
-    VectorType Block2(N);
-    
-    ScalarType * n = Nu.memptr();
-    ScalarType * b = Block2.memptr();
-
-#pragma omp simd
-    for(size_t i = 0; i < N; ++i) 
-        b[i] = n[i] / P0;
-
-    return Block2;
 }

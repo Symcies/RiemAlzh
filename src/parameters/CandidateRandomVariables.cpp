@@ -84,6 +84,7 @@ CandidateRandomVariables
 
     /// QUICK CHANGES IN THE INITIALIZATION
     // Multivariate Model
+    /*
     double P0Variance = 0.000012;
     double DeltaVariance = 0.0000001;
     double NuVariance = 0.00000000000008;
@@ -91,9 +92,9 @@ CandidateRandomVariables
     double TauVariance = 0.35*0.35;
     double KsiVariance = 0.0003;
     double SVariance = 0.02;
+    */
     
     
-    /*
     // Network model 
     double P0Variance = 0.0000005;
     double DeltaVariance = 0.000000006;
@@ -102,7 +103,7 @@ CandidateRandomVariables
     double TauVariance = 0.1*0.1;
     double KsiVariance = 0.0001;
     double SVariance = 0.02;
-    */
+    
 
 
     if(NameRandomVariable == "P0")

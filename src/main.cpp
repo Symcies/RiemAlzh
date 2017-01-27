@@ -36,18 +36,28 @@ typedef vector< vector< pair< LinearAlgebra<ScalarType>::VectorType, double> > >
 // TODO : Change Model->UpdateModel because it ain't parameters
 // TODO : Finish the input classes : Model, Algo and data
 // TODO : Create an output file if it does not exist
+// TODO : add a class member to encode the number of samplings to do per MCMC-sampling method
 // TO ADD : Name of the output file
 // TO ADD : If writing a file 1 out of n iteration - or only at the end 
 
 
+//
+
 int main(int argc, char* argv[]) {
     
-    if(argc != 4) {
-        std::cout << "Usage: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings " << "data_settings.xml" << std::endl;
-        // return 1;
+    if(argc != 4) 
+    {
+        std::cout << "Usage with real data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings " << "data_settings.xml" << std::endl;
+        //std::cout << "Usage with simulated data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings " << std::endl;
+        return 1;
     }
-    
-        
+
+#pragma omp parallel for
+    for(int i = 0; i < 10; ++i)
+    {
+        printf("%d", i);
+    }
+
     
     ///////////////////////
     //// Initialization ///

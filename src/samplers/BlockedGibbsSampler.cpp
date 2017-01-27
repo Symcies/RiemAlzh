@@ -185,7 +185,6 @@ BlockedGibbsSampler
     
     auto NewRealizations = Realizations(R);
     
-    // TODO : add a class member to encode the number of samplings to do per MCMC-sampling method
     for(int j = 0; j < 1; ++j) 
     {
         for (int i = 0; i < m_Blocks.size(); ++i) {
@@ -294,7 +293,7 @@ BlockedGibbsSampler
 {
     int SubjectNumber = std::get<1>(B[0]);
     
-    for(auto it = B.begin(); it != B.end(); ++it)
+    for(auto it = B.begin() + 1; it != B.end(); ++it)
     {
         if(std::get<1>(*it) != SubjectNumber)
         {

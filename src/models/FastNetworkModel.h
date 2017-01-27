@@ -78,20 +78,17 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    /// Get the delta for all nodes
-    VectorType GetDelta(const Realizations& R);
-    
-    /// Get the beta - v0 related - for all nodes
-    VectorType GetNu(const Realizations& R);
-    
      /// Get the timepoint reparametrization for a given subject
     std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const Realizations& R);
     
+    /// Compute the subjects time points
+    void ComputeSubjectTimePoint(const Realizations& R, const int SubjectNumber = -1);
+    
     /// Compute the interpolation coefficients delta
-    void ComputeInterpoCoeffDelta(const Realizations& R);
+    void ComputeDeltas(const Realizations& R);
     
     /// Compute the interpolation coefficients beta
-    void ComputeInterpoCoeffNu(const Realizations& R);
+    void ComputeNus(const Realizations& R);
         
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
     void ComputeOrthonormalBasis(const Realizations& R); 
@@ -102,16 +99,17 @@ protected:
     /// Compute the space shifts
     void ComputeSpaceShifts(const Realizations& R); 
     
+    /// Compute the time reparametrizations
+    
+    /// Compute the block p0 * exp(delta_k)
+    void ComputeBlock1(const Realizations& R);
+    
+    /// Compute the block nu_k / p0
+    void ComputeBlock2(const Realizations& R);
     
     /// Compute the parallel curve
-    VectorType ComputeParallelCurve(double P0, VectorType& Block1, VectorType& Block2, double Timepoint);
-    
-    /// Compute the block 1
-    inline VectorType ComputeBlock1(double P0, VectorType& SpaceShift, VectorType& Delta);
-    
-    /// Compute the block 2
-    inline VectorType ComputeBlock2(double P0, VectorType& Nu);
-    
+    VectorType ComputeParallelCurve(double TimePoint, int SubjectNumber);
+   
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
@@ -133,30 +131,49 @@ protected:
     /// Total number of observations throughout all the individuals
     double m_NbTotalOfObservations;
     
+    /// Total number of subjects
+    unsigned int m_NumberOfSubjects;
+    
+    /// Dimension of the manifold
+    double m_ManifoldDimension = 1827;
+    
     /// Kernel Matrix K
     MatrixType m_InvertKernelMatrix;
     
     /// Interpolation Matrix to calculate any interpolation
     MatrixType m_InterpolationMatrix;
     
+    /// Initial position of the model P0 = exp(R.at("P0")(0))
+    double m_P0;
+    
     /// Interpolation coefficients of delta
-    VectorType m_InterpolationCoeffDelta;
+    VectorType m_Deltas;
     
     /// Interpolation coefficients of beta
-    VectorType m_InterpolationCoeffNu;
-    
+    VectorType m_Nus;
     
     /// Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns> (Basis orthogonal to gamma0_deriv(T0)
-    std::vector< VectorType > m_OrthogonalBasis;
+    std::vector<VectorType> m_OrthogonalBasis;
 
     /// A Matrix vec<A1, ..., A(N)> where Ai is vec<Ns> (Ai is a column)
     MatrixType m_AMatrix;
 
     /// Space shifts w(i) of the model
-    std::map< std::string, VectorType> m_SpaceShifts;
+    std::vector<VectorType> m_SpaceShifts;
+    
+    /// Real time of observation of each individual
+    std::vector<VectorType> m_IndividualObservationDate;
+    
+    /// Time reparametrization of each individual
+    std::vector<VectorType> m_SubjectTimePoints;
+        
+    /// Block1 corresponds to p0 * exp(Delta)
+    VectorType m_Block1;
+    
+    /// Block2 corresponds to vu_k / p0
+    VectorType m_Block2;
     
     
-    double m_ManifoldDimension = 1827;
 
 };
 
