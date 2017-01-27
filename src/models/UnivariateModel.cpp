@@ -48,7 +48,8 @@ UnivariateModel
 
 void 
 UnivariateModel
-::UpdateModel(const Realizations &R, const std::vector<std::string> Names) 
+::UpdateModel(const Realizations &R, int Type,
+              const std::vector<std::string> Names) 
 {
     // TODO : Check if something has to be added
 }

@@ -36,7 +36,8 @@ public:
     virtual void Initialize(const Data& D);
     
     /// Update the model parameters != random variables parameters
-    virtual void UpdateModel(const Realizations &R, const std::vector<std::string> Names = {"All"});
+    virtual void UpdateModel(const Realizations &R, int Type,
+                             const std::vector<std::string> Names = {"All"});
     
     /// Simulate data according to the model and the parameters
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int  MaxObs);

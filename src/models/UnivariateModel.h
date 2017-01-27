@@ -37,7 +37,7 @@ public:
     
     /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
     /// This update can depend on the parameter that has changed, provided by the Name argument
-    virtual void UpdateModel(const Realizations &R, const std::vector<std::string> Name = {"All"});
+    virtual void UpdateModel(const Realizations &R, int Type, const std::vector<std::string> Names = {"All"});
 
     /// Update the sufficient statistics according to the model variables / parameters 
     virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, 

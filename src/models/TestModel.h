@@ -29,7 +29,8 @@ public:
     virtual void Initialize(const Data& D);
     
     /// Update the parameters
-    virtual void UpdateModel(const Realizations &R, const std::vector<std::string> Names = {"All"});
+    virtual void UpdateModel(const Realizations &R, int Type,
+                             const std::vector<std::string> Names = {"All"});
     
 
     /// Update the sufficient statistics according to the model variables / parameters 

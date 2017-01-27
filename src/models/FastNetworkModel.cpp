@@ -79,7 +79,8 @@ FastNetworkModel
     
     /// Other
     m_NumberOfSubjects = D.size();
-    m_IndividualObservationDate.reserve(m_NumberOfSubjects);
+    std::vector<VectorType> IndividualObservationDate;
+    
     double SumObservations = 0.0, K = 0.0;
     unsigned int Indiv = 0;
     for(auto it = D.begin(); it != D.end(); ++it, ++Indiv)
@@ -92,8 +93,10 @@ FastNetworkModel
             SumObservations += it2->first.squared_magnitude();
             IndividualObs(i) = it2->second;
         }
-        m_IndividualObservationDate[Indiv] = IndividualObs;
+        IndividualObservationDate.push_back(IndividualObs);
     }
+    m_IndividualObservationDate = IndividualObservationDate;
+    m_SubjectTimePoints = IndividualObservationDate;
     m_SumObservations = SumObservations;
     m_NbTotalOfObservations = K;
     
@@ -102,7 +105,7 @@ FastNetworkModel
 
 void 
 FastNetworkModel
-::UpdateModel(const Realizations &R,
+::UpdateModel(const Realizations &R, int Type,
               const std::vector<std::string> Names) 
 {
     
@@ -114,6 +117,9 @@ FastNetworkModel
     bool ComputeSpaceShift = false;
     bool ComputeBlock_1 = false;
     bool ComputeBlock_2 = false;
+    
+    bool IndividualOnly = true;
+    if(Type == -1) IndividualOnly = false;
         
     for(auto it = Names.begin(); it != Names.end(); ++it)
     {
@@ -128,6 +134,7 @@ FastNetworkModel
         }
         else if(Name == "Nu")
         {
+            IndividualOnly = false;
             ComputeNu = true;
             ComputeBasis = true;
             ComputeA = true;
@@ -137,6 +144,7 @@ FastNetworkModel
         }
         else if(Name == "Delta")
         {
+            IndividualOnly = false;
             ComputeDelta = true;
             ComputeBasis = true;
             ComputeA = true;
@@ -146,6 +154,7 @@ FastNetworkModel
         }
         else if(Name == "P0")
         {
+            IndividualOnly = false;
             ComputePosition = true;
             ComputeBasis = true;
             ComputeA = true;
@@ -156,6 +165,7 @@ FastNetworkModel
         }
         else if(Name == "Beta")
         {
+            IndividualOnly = false;
             ComputeA = true;
             ComputeSpaceShift = true;
             continue;
@@ -167,6 +177,8 @@ FastNetworkModel
         }
         else if(Name == "All")
         {
+            ComputeSubjectTimePoint(R, -1);
+            IndividualOnly = false;
             ComputePosition = true;
             ComputeDelta = true;
             ComputeNu = true;
@@ -184,6 +196,7 @@ FastNetworkModel
     }
     
     // TODO : To parse it even faster, update just the coordinates within the names
+    if(IndividualOnly) ComputeSubjectTimePoint(R, Type);
     
     if(ComputePosition) { m_P0 = exp(R.at("P0")(0)); }
     if(ComputeDelta) ComputeDeltas(R);
@@ -218,8 +231,7 @@ double
 FastNetworkModel
 ::ComputeIndividualLogLikelihood(const Realizations& R, const Data& D, const int SubjectNumber) 
 {
-    /// Get the data 
-    std::function<double(double)> SubjectTimePoint = GetSubjectTimePoint(SubjectNumber, R);
+    /// Get the data
     double LogLikelihood = 0;
     auto N = D.at(SubjectNumber).size();
     auto Did = D.at(SubjectNumber);
@@ -228,8 +240,7 @@ FastNetworkModel
     for(size_t i = 0; i < N; ++i)
     {
         auto& it = Did.at(i);
-        double TimePoint = SubjectTimePoint(it.second);
-        VectorType P2 = ComputeParallelCurve(TimePoint, SubjectNumber);
+        VectorType P2 = ComputeParallelCurve(SubjectNumber, i);
         LogLikelihood += (it.first - P2).squared_magnitude();
     }
     
@@ -249,13 +260,11 @@ FastNetworkModel
     auto itS1 = S1.begin(), itS2 = S2.begin();
     int i = 0;
     for(auto itD = D.begin(); itD != D.end(); ++itD, ++i)
-    {
-        auto TimePoint = GetSubjectTimePoint(i, R);
-        
-        for(auto itD2 = itD->begin(); itD2 != itD->end(); ++itD2)
+    {        
+        int j = 0;
+        for(auto itD2 = itD->begin(); itD2 != itD->end(); ++itD2, ++j)
         {
-            double Time = TimePoint(itD2->second);
-            VectorType P2 = ComputeParallelCurve(Time, i);
+            VectorType P2 = ComputeParallelCurve(i, j);
             *itS1 = dot_product(P2, itD2->first);
             *itS2 = P2.squared_magnitude();
             ++itS1, ++itS2;
@@ -564,22 +573,42 @@ FastNetworkModel
 // Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-std::function<double(double)> 
-FastNetworkModel
-::GetSubjectTimePoint(const int SubjectNumber, const Realizations& R) 
-{
-    double AccFactor = exp(R.at("Ksi")(SubjectNumber));
-    double TimeShift = R.at("Tau")(SubjectNumber);
-    
-    return [AccFactor, TimeShift](double t) { return AccFactor * (t - TimeShift); };
-}
-
 void
 FastNetworkModel
 ::ComputeSubjectTimePoint(const Realizations &R, const int SubjectNumber) 
 {
-    int i = 0;
+    if(SubjectNumber != -1) {
+        double AccFactor = exp(R.at("Ksi")(SubjectNumber));
+        double TimeShift = R.at("Tau")(SubjectNumber);
+        
+        auto N = m_IndividualObservationDate[SubjectNumber].size();
+        
+        ScalarType * real = m_IndividualObservationDate[SubjectNumber].memptr();
+        ScalarType * reparam = m_SubjectTimePoints[SubjectNumber].memptr();
+    
+#pragma omp simd
+        for(size_t i = 0; i < N; ++i)
+            reparam[i] = AccFactor * (real[i] - TimeShift);
+        
+    }
+    else
+    {
+#pragma parallel for
+        for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+        {
+            double AccFactor = exp(R.at("Ksi")(i));
+            double TimeShift = R.at("Tau")(i);
+            
+            auto N = m_IndividualObservationDate[i].size();
+            
+            ScalarType * real = m_IndividualObservationDate[i].memptr();
+            ScalarType * reparam = m_SubjectTimePoints[i].memptr();
+            
+            for(size_t j = 0; j < N; ++j)
+                reparam[j] = AccFactor * (real[j] - TimeShift);
+            
+            }
+    }
 }
 
 
@@ -749,8 +778,10 @@ FastNetworkModel
 
 FastNetworkModel::VectorType
 FastNetworkModel
-::ComputeParallelCurve(double TimePoint, int SubjectNumber) 
+::ComputeParallelCurve(int SubjectNumber, int ObservationNumber) 
 {
+    double TimePoint = m_SubjectTimePoints[SubjectNumber](ObservationNumber);
+    
     VectorType ParallelCurve(m_ManifoldDimension);
     
     ScalarType * d = m_Deltas.memptr();

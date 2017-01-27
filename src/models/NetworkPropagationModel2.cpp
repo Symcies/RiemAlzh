@@ -182,7 +182,7 @@ NetworkPropagationModel2
 
 void 
 NetworkPropagationModel2
-::UpdateModel(const Realizations &R,
+::UpdateModel(const Realizations &R, int Type,
               const std::vector<std::string> Names) 
 {
     /// This first part inspects the parameters names to update

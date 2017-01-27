@@ -91,7 +91,8 @@ LongitudinalModel
 
 void 
 LongitudinalModel
-::UpdateModel(const Realizations &R, const std::vector<std::string> Names) 
+::UpdateModel(const Realizations &R, int Type,
+              const std::vector<std::string> Names) 
 {
     /// This first part inspects the parameters names to update
     int UpdateCase = 1;
@@ -924,7 +925,7 @@ LongitudinalModel
     
     
     /// DEBUG 6 : <ParallelTransport, ParallelTransport>g(t) = Constant
-    /*
+    
     for(double t = 62; t < 75; t += 0.5)
     {
         std::vector<double> Geodesic = CastedManifold->ComputeGeodesic(InitialPosition, T0, InitialVelocity, t, Delta);

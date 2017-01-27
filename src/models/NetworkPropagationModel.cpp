@@ -85,7 +85,7 @@ NetworkPropagationModel
 
 void 
 NetworkPropagationModel
-::UpdateModel(const Realizations &R,
+::UpdateModel(const Realizations &R, int Type,
               const std::vector<std::string> Names) 
 {
     // TODO : it is not the best case : separate nu and delta

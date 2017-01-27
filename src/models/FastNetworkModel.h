@@ -33,7 +33,7 @@ public:
     virtual void Initialize(const Data& D);
     
     /// Update the model parameters != random variables parameters
-    virtual void UpdateModel(const Realizations &R,
+    virtual void UpdateModel(const Realizations &R, int Type,
                              const std::vector<std::string> Names = {"All"});
     
     /// Simulate data according to the model and the parameters
@@ -78,9 +78,6 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
-     /// Get the timepoint reparametrization for a given subject
-    std::function<double(double)> GetSubjectTimePoint(const int SubjectNumber, const Realizations& R);
-    
     /// Compute the subjects time points
     void ComputeSubjectTimePoint(const Realizations& R, const int SubjectNumber = -1);
     
@@ -108,7 +105,7 @@ protected:
     void ComputeBlock2(const Realizations& R);
     
     /// Compute the parallel curve
-    VectorType ComputeParallelCurve(double TimePoint, int SubjectNumber);
+    VectorType ComputeParallelCurve(int SubjectNumber, int ObservationNumber);
    
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
