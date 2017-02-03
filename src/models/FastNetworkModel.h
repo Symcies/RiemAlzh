@@ -88,7 +88,7 @@ protected:
     void ComputeNus(const Realizations& R);
         
     /// Compute Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns>
-    void ComputeOrthonormalBasis(const Realizations& R); 
+    void ComputeOrthonormalBasis(); 
 
     /// Compute the A Matrix used to get the space shifts
     void ComputeAMatrix(const Realizations& R);
@@ -99,14 +99,13 @@ protected:
     /// Compute the time reparametrizations
     
     /// Compute the block p0 * exp(delta_k)
-    void ComputeBlock1(const Realizations& R);
+    void ComputeBlock1();
     
     /// Compute the block nu_k / p0
-    void ComputeBlock2(const Realizations& R);
+    void ComputeBlock2();
     
     /// Compute the parallel curve
     VectorType ComputeParallelCurve(int SubjectNumber, int ObservationNumber);
-   
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
@@ -150,13 +149,15 @@ protected:
     VectorType m_Nus;
     
     /// Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns> (Basis orthogonal to gamma0_deriv(T0)
-    std::vector<VectorType> m_OrthogonalBasis;
-
+    //std::vector<VectorType> m_OrthogonalBasis;
+    MatrixType m_OrthogonalBasis;
+    
     /// A Matrix vec<A1, ..., A(N)> where Ai is vec<Ns> (Ai is a column)
     MatrixType m_AMatrix;
 
     /// Space shifts w(i) of the model
-    std::vector<VectorType> m_SpaceShifts;
+    MatrixType m_SpaceShifts;
+    //std::vector<VectorType> m_SpaceShifts;
     
     /// Real time of observation of each individual
     std::vector<VectorType> m_IndividualObservationDate;

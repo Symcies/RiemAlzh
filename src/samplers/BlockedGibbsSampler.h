@@ -38,10 +38,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(const Realizations& R);
+    virtual void InitializeSampler(const Realizations &R, AbstractModel &M, const Data& D);
     
     /// Sample new realizations
-    virtual Realizations Sample(const Realizations& R, AbstractModel& M, const Data& D, int IterationNumber);
+    virtual Realizations Sample(Realizations& R, AbstractModel& M, const Data& D, int IterationNumber);
 
 
 protected:

@@ -1,4 +1,5 @@
 #include "FastNetworkModel.h"
+#include <armadillo>
 
 
 FastNetworkModel
@@ -34,30 +35,30 @@ FastNetworkModel
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     
      /// Population variables
-    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.0000001 );
-    auto P0 = std::make_shared<GaussianRandomVariable>(0.932, 0.0001 * 0.0001);
+    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.000001 );
+    auto P0 = std::make_shared<GaussianRandomVariable>(0.1, 0.0001 * 0.0001);
     m_PopulationRandomVariables.insert(RandomVariable("P0", P0));
         
     for(int i = 1; i < m_NbControlPoints; ++i)
     {
-        auto Delta = std::make_shared<GaussianRandomVariable>(0, 0.0008*0.0008);
+        auto Delta = std::make_shared<GaussianRandomVariable>(0, 0.003*0.003);
         std::string Name1 = "Delta#" + std::to_string(i);
         m_PopulationRandomVariables.insert(RandomVariable(Name1, Delta));
     }
     
     // TODO : VERY IMPORTANT : This can be refactored such that there is only one random variable
     //                         with Multiple Realizations. It would be m_NbControlPoints realizations here
-    double V0 = 0.04688;
+    double V0 = 0.04088;
     for(size_t i = 0; i < m_NbControlPoints; ++i)
     {
-        auto Nu = std::make_shared<GaussianRandomVariable>(V0, 0.0003*0.0003);
+        auto Nu = std::make_shared<GaussianRandomVariable>(V0, 0.0004*0.0004);
         std::string Name2 = "Nu#" + std::to_string(i);
         m_PopulationRandomVariables.insert(RandomVariable(Name2, Nu));
     }
     
     for(int i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension - 1); ++i)
     {
-        auto Beta = std::make_shared<GaussianRandomVariable>(0, 0.0005);
+        auto Beta = std::make_shared<GaussianRandomVariable>(0, 0.001);
         std::string Name = "Beta#" + std::to_string(i);
         m_PopulationRandomVariables.insert(RandomVariable(Name, Beta));
     }
@@ -65,7 +66,7 @@ FastNetworkModel
     
     /// Individual variables
     auto Ksi = std::make_shared<GaussianRandomVariable>(0, 0.000000004);
-    auto Tau = std::make_shared<GaussianRandomVariable>(65, 1.0);
+    auto Tau = std::make_shared<GaussianRandomVariable>(62, 0.25);
     
     m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
     m_IndividualRandomVariables.insert(RandomVariable("Tau", Tau));
@@ -201,11 +202,11 @@ FastNetworkModel
     if(ComputePosition) { m_P0 = exp(R.at("P0")(0)); }
     if(ComputeDelta) ComputeDeltas(R);
     if(ComputeNu) ComputeNus(R);
-    if(ComputeBasis) ComputeOrthonormalBasis(R);
+    if(ComputeBasis) ComputeOrthonormalBasis();
     if(ComputeA) ComputeAMatrix(R);
     if(ComputeSpaceShift) ComputeSpaceShifts(R);
-    if(ComputeBlock_1) ComputeBlock1(R);
-    if(ComputeBlock_2) ComputeBlock2(R);
+    if(ComputeBlock_1) ComputeBlock1();
+    if(ComputeBlock_2) ComputeBlock2();
     
 }
 
@@ -213,18 +214,111 @@ FastNetworkModel::Data
 FastNetworkModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
+    m_NumberOfSubjects = NumberOfSubjects;
+    auto R = SimulateRealizations(NumberOfSubjects);
+    m_P0 = exp(R.at("P0")(0));
+    ComputeDeltas(R);
+    ComputeNus(R);
+    ComputeOrthonormalBasis();
+    ComputeAMatrix(R);
+    ComputeSpaceShifts(R);
+    ComputeBlock1();
+    ComputeBlock2();
+    
+    std::random_device RD;
+    std::mt19937 RNG(RD());
+    std::uniform_int_distribution<int> Uni(MinObs, MaxObs);
+    std::uniform_real_distribution<double> ObsDistrib(60, 95);
+    std::normal_distribution<double> NoiseDistrib(0.0, sqrt(m_Noise->GetVariance()));
+    
     Data D;
+    double RealNoise = 0.0;
+    
+    for(int i = 0; i < NumberOfSubjects; ++i)
+    {
+        IndividualData ID;
+        std::vector<double> TimePoints;
+        for(int j = 0; j < Uni(RNG); ++j)
+        {
+            TimePoints.push_back(ObsDistrib(RNG));
+        }
+        std::sort(TimePoints.begin(), TimePoints.end());
+                
+        VectorType T(TimePoints.size());
+        int y = 0;
+        for(auto it = TimePoints.begin(); it != TimePoints.end(); ++it, ++y) 
+        {
+            T(y) = *it;
+        }
+        
+        m_SubjectTimePoints.push_back(T);
+        
+        int ObsNb = 0;
+        for(auto it = TimePoints.begin(); it != TimePoints.end(); ++it, ++ObsNb)
+        {
+            VectorType Scores(m_ManifoldDimension);
+            VectorType ParallelCurve = ComputeParallelCurve(i, ObsNb);
+            for(    auto IterCurve = ParallelCurve.begin(), IterScore = Scores.begin() 
+                    ; IterCurve != ParallelCurve.end() && IterScore!= Scores.end()
+                    ; ++IterCurve, ++IterScore)
+            {
+                double Noise = NoiseDistrib(RNG);
+                RealNoise += Noise;
+                *IterScore = *IterCurve + Noise;
+            }
+            ID.push_back(std::pair<VectorType, double>(Scores, *it));
+        }
+        D.push_back(ID);
+    }
+    
+    std::vector<VectorType> IndividualObservationDate;
+    double SumObservations = 0.0, K = 0.0;
+    unsigned int Indiv = 0;
+    for(auto it = D.begin(); it != D.end(); ++it, ++Indiv)
+    {
+        VectorType IndividualObs(it->size());
+        K += it->size();
+        int i = 0;
+        for(auto it2 = it->begin(); it2 != it->end(); ++it2, ++i)
+        {
+            SumObservations += it2->first.squared_magnitude();
+            IndividualObs(i) = it2->second;
+        }
+        IndividualObservationDate.push_back(IndividualObs);
+    }
+    m_IndividualObservationDate = IndividualObservationDate;
+    m_SumObservations = SumObservations;
+    m_NbTotalOfObservations = K;
+    
+    std::cout << "Real Likelihood = " << ComputeLogLikelihood(R, D) << std::endl;
+    
     return D;
 }
 
 
 double 
 FastNetworkModel
-::ComputeLogLikelihood(const Realizations& R, 
-                       const Data& D) 
+::ComputeLogLikelihood(const Realizations& R, const Data& D) 
 {
-    /// Get the data
-    return 0;
+    double LogLikelihood = 0;
+#pragma omp parallel for reduction(+:LogLikelihood)   
+    for(size_t j = 0; j < m_NumberOfSubjects; ++j) 
+    {
+       double N = D.at(j).size();
+
+        for(size_t i = 0; i < N; ++i)
+        {
+            auto& it = D.at(j).at(i);
+            VectorType ParallelCurve = ComputeParallelCurve(j, i);
+            LogLikelihood += (it.first - ParallelCurve).squared_magnitude();
+        }
+        
+    }
+    
+    LogLikelihood  /= -2*m_Noise->GetVariance();
+    LogLikelihood -= m_NbTotalOfObservations*log(sqrt(2 * m_Noise->GetVariance() * M_PI ));
+    
+    return LogLikelihood;
 }
 
 double
@@ -245,7 +339,7 @@ FastNetworkModel
     }
     
     LogLikelihood /= -2*m_Noise->GetVariance();
-    LogLikelihood -= m_NumberOfSubjects * log(2 * m_Noise->GetVariance() * M_PI) / 2.0;
+    LogLikelihood -= N * log(2 * m_Noise->GetVariance() * M_PI) / 2.0;
     
     return LogLikelihood;
 }
@@ -454,7 +548,7 @@ FastNetworkModel
 {
     unsigned int NumberOfSubjects = R.at("Tau").size();
     std::ofstream Outputs;    
-    std::string FileName = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/FastNetwork2/Parameters" + std::to_string(IterationNumber) + ".txt";
+    std::string FileName = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/Normalized/Parameters" + std::to_string(IterationNumber) + ".txt";
     //std::string FileName = "Outputs/FastNetwork/Parameters.txt";
     Outputs.open(FileName, std::ofstream::out | std::ofstream::trunc);
     
@@ -547,10 +641,11 @@ FastNetworkModel
     }
     
     /// Save (W_i)
-    auto SizeW = m_SpaceShifts.size();
+    auto SizeW = m_NumberOfSubjects;
     for(size_t i = 0; i < NumberOfSubjects; ++i)
     {
-        VectorType W = m_SpaceShifts[i];
+        //VectorType W = m_SpaceShifts[i];
+        VectorType W = m_SpaceShifts.get_column(i);
         for(auto it = W.begin(); it != W.end(); ++it)
         {
             Outputs << *it;
@@ -566,7 +661,53 @@ void
 FastNetworkModel
 ::InitializeFakeRandomVariables() 
 {
-    // Todo 
+    typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
+    
+     /// Population variables
+    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.0000000001 );
+    auto P0 = std::make_shared<GaussianRandomVariable>(0.932, 0.0001 * 0.0001);
+    m_PopulationRandomVariables.insert(RandomVariable("P0", P0));
+        
+    for(int i = 1; i < m_NbControlPoints; ++i)
+    {
+        auto Delta = std::make_shared<GaussianRandomVariable>(0, 0.0008*0.0008);
+        std::string Name1 = "Delta#" + std::to_string(i);
+        m_PopulationRandomVariables.insert(RandomVariable(Name1, Delta));
+    }
+    
+    // TODO : VERY IMPORTANT : This can be refactored such that there is only one random variable
+    //                         with Multiple Realizations. It would be m_NbControlPoints realizations here
+    double V0 = 0.04688;
+    for(size_t i = 0; i < m_NbControlPoints; ++i)
+    {
+        auto Nu = std::make_shared<GaussianRandomVariable>(V0, 0.0006*0.0006);
+        std::string Name2 = "Nu#" + std::to_string(i);
+        m_PopulationRandomVariables.insert(RandomVariable(Name2, Nu));
+    }
+    
+    for(int i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension - 1); ++i)
+    {
+        auto Beta = std::make_shared<GaussianRandomVariable>(0, 0.0005);
+        std::string Name = "Beta#" + std::to_string(i);
+        m_PopulationRandomVariables.insert(RandomVariable(Name, Beta));
+    }
+    
+    
+    /// Individual variables
+    auto Ksi = std::make_shared<GaussianRandomVariable>(0, 0.000000004);
+    auto Tau = std::make_shared<GaussianRandomVariable>(65, 0.25);
+    
+    m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
+    m_IndividualRandomVariables.insert(RandomVariable("Tau", Tau));
+    
+    for(int i = 0; i < m_NbIndependentComponents; ++i)
+    {
+        auto S = std::make_shared<GaussianRandomVariable>(0.0, 0.5);
+        std::string Name = "S#" + std::to_string(i);
+        m_IndividualRandomVariables.insert(RandomVariable(Name, S));
+    }
+    
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -649,18 +790,15 @@ FastNetworkModel
 
 void
 FastNetworkModel
-::ComputeOrthonormalBasis(const Realizations& R) 
+::ComputeOrthonormalBasis() 
 {
     /// Get the data
-    auto Nu = m_Nus;
-    auto Delta = m_Deltas;
-    auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));
-    auto V0 = exp(Ksi->GetMean());
+    auto V0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
+    V0 = exp(V0);
     
     VectorType U(m_ManifoldDimension);
-    
-    ScalarType * n = Nu.memptr();
-    ScalarType * d = Delta.memptr();
+    ScalarType * n = m_Nus.memptr();
+    ScalarType * d = m_Deltas.memptr();
     ScalarType * u = U.memptr();
     
 #pragma omp simd
@@ -672,37 +810,44 @@ FastNetworkModel
     /// Compute the initial pivot vector U
     double Norm = U.magnitude();
     U(0) += copysign(1, -U(0)) * Norm;
-    double NormU = U.squared_magnitude();
+        
+    // Check the vectorise_row_wise function of the ArmadilloMatrixWrapper
+    //MatrixType Id = diagonal_matrix(m_ManifoldDimension, 1.0);
+    //MatrixType Id = identity_matrix(m_ManifoldDimension);
+    MatrixType U2(U);
+    double NormU2 = U.squared_magnitude();
+    //MatrixType FinalMatrix2 = Id - 2.0/NormU2 * U2*U2.transpose();
+    MatrixType FinalMatrix2 = (-2.0/NormU2) * U2*U2.transpose();
+    for(size_t i = 0; i < m_ManifoldDimension; ++i)
+        FinalMatrix2(i, i ) += 1;
     
-        /// Compute Q = I(N) - 2U . Ut / (Ut . U)
-    std::vector<VectorType> Q;
-    for (auto it = U.begin(); it != U.end(); ++it) {
-        VectorType Coordinate(U.size());
-        int i = 0;
-        for (auto it2 = U.begin(); it2 != U.end(); ++it2, ++i) 
-        {
-            Coordinate(i) = -2 * *it * *it2 / NormU;
-        }
-        Q.push_back(Coordinate);
-    }
 
-    for (int i = 0; i < Q.size(); ++i) {
-        Q[i](i) += 1;
-    }
-    
-    /// TESTS NEEDED
-    // TODO : Mettre des tests
-    /// END OF TESTS
-    
-    Q.erase(Q.begin());
-    m_OrthogonalBasis = std::move(Q);
+    m_OrthogonalBasis = FinalMatrix2;
     
 }
 
 void 
 FastNetworkModel
 ::ComputeAMatrix(const Realizations& R) 
-{
+{   
+    
+    MatrixType NewA(m_ManifoldDimension, m_NbIndependentComponents);
+    
+    for(int i = 0; i < m_NbIndependentComponents; ++i)
+    {
+        VectorType Beta(m_ManifoldDimension, 0.0);
+        for(size_t j = 0; j < m_ManifoldDimension - 1; ++j)
+        {
+            std::string Number = std::to_string(int(j + i*(m_ManifoldDimension - 1)));
+            Beta(j) = R.at( "Beta#" + Number)(0);
+        }
+        
+        NewA.set_column(i, m_OrthogonalBasis * Beta);
+    }
+    
+    m_AMatrix = NewA;
+     
+    /*
     MatrixType AMatrix(m_ManifoldDimension, m_NbIndependentComponents);
     
     for(int i = 0; i < m_NbIndependentComponents ; ++i)
@@ -719,10 +864,7 @@ FastNetworkModel
     }
     
     m_AMatrix = std::move(AMatrix);
-    
-    /// TESTS NEEDED
-    // TODO : Mettre des tests
-    /// END TESTS
+    */
 }
 
 void 
@@ -730,8 +872,19 @@ FastNetworkModel
 ::ComputeSpaceShifts(const Realizations& R) 
 {
     
+    
+    MatrixType SS(m_NbIndependentComponents, m_NumberOfSubjects);
+    for(int i = 0; i < m_NumberOfSubjects; ++i) 
+    {
+        for (int j = 0; j < m_NbIndependentComponents; ++j) 
+        {
+            SS(j, i) = R.at("S#" + std::to_string(j))(i);
+        }
+    }
+    m_SpaceShifts = m_AMatrix * SS;
+    
+    /*
     std::vector<VectorType> SpaceShifts(m_NumberOfSubjects);
-
     for(int i = 0; i < m_NumberOfSubjects; ++i)
     {
         VectorType Si(m_NbIndependentComponents);
@@ -744,16 +897,13 @@ FastNetworkModel
     }
     
     m_SpaceShifts = std::move(SpaceShifts);
-    
-    /// TESTS NEEDED
-    // TODO : Mettre des tests
-    /// END TESTS
+    */
 }
 
 
 void
 FastNetworkModel
-::ComputeBlock1(const Realizations &R) 
+::ComputeBlock1() 
 {
     ScalarType * d = m_Deltas.memptr();
     ScalarType *b = m_Block1.memptr();
@@ -766,7 +916,7 @@ FastNetworkModel
 
 void 
 FastNetworkModel
-::ComputeBlock2(const Realizations &R) 
+::ComputeBlock2() 
 {
     ScalarType * n = m_Nus.memptr();
     ScalarType * b = m_Block2.memptr();
@@ -787,10 +937,11 @@ FastNetworkModel
     ScalarType * d = m_Deltas.memptr();
     ScalarType * b1 = m_Block1.memptr();
     ScalarType * b2 = m_Block2.memptr();
-    ScalarType * w = m_SpaceShifts[SubjectNumber].memptr();
+    ScalarType * w = m_SpaceShifts.get_column(SubjectNumber).memptr();
+    //ScalarType * w = m_SpaceShifts[SubjectNumber].memptr();
     ScalarType * p = ParallelCurve.memptr();
 
-#pragma omp simd
+//#pragma omp simd
     for(size_t i = 0; i < m_ManifoldDimension; ++i)
         p[i] = m_P0 * exp(d[i] + w[i] / b1[i]  - b2[i] * TimePoint);
     

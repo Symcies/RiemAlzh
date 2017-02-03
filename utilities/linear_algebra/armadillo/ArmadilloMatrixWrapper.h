@@ -46,6 +46,10 @@ ArmadilloVectorWrapper<TScalar> operator*(ArmadilloMatrixWrapper<TScalar> const 
 
 template<class TScalar>
 ArmadilloMatrixWrapper<TScalar> diagonal_matrix(unsigned N, TScalar const & value);
+
+template<class TScalar>
+ArmadilloMatrixWrapper<TScalar> identity_matrix(unsigned N);
+
 template<class TScalar>
 TScalar trace(ArmadilloMatrixWrapper<TScalar> const& M);
 template<class TScalar>
@@ -91,8 +95,11 @@ class ArmadilloMatrixWrapper {
 	friend ArmadilloVectorWrapper<TScalar> operator*<>(ArmadilloMatrixWrapper<TScalar> const &leftMatrix, ArmadilloVectorWrapper<TScalar> const &rightVector);
 
 	/// Creates a diagonal matrix size \e N x \e N with with all diagonal elements set to \e value.
-	friend ArmadilloMatrixWrapper diagonal_matrix<>(unsigned N, TScalar const & value);
-
+	friend ArmadilloMatrixWrapper<TScalar> diagonal_matrix<>(unsigned N, TScalar const & value);
+    
+    /// Creates a identity matrix size \e N x \e N with with all diagonal elements set to 1.
+	friend ArmadilloMatrixWrapper<TScalar> identity_matrix<>(unsigned N);
+    
 	/// Sum of the diagonal elements of square matrix \e M.
 	friend TScalar trace<>(ArmadilloMatrixWrapper<TScalar> const& M);
 

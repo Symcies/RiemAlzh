@@ -20,7 +20,8 @@ public:
     
     /// Key : Name of the parameter. Value : Value of the parameter
     typedef std::map< std::string, std::vector< GaussianRandomVariable >> PropositionDistribution;
-    typedef std::map<std::string, VectorType> Realizations; 
+        //typedef std::map<std::string, VectorType> Realizations;
+    typedef std::unordered_map<std::string, VectorType> Realizations; 
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

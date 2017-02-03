@@ -131,7 +131,7 @@ public :
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Methods :
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	
 	/// Returns the length, number of elements, dimension of this vector.
 	inline unsigned size() const { return m_Vector.n_rows; }
 	/// Resizes to \e n elements.
@@ -171,7 +171,7 @@ public :
     /// Returns an iterator on the end of the raw Armadillo vector.
     inline       iterator end()       { return m_Vector.end(); }
     inline const_iterator end() const { return m_Vector.end(); }
-
+    
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Arithmetic operations :
@@ -249,12 +249,13 @@ public :
 	inline ArmadilloVectorWrapper<ScalarType> operator*(ScalarType scalar) const { return ArmadilloVectorWrapper<ScalarType>(m_Vector*scalar); }
 	/// Scalar division of lhs vector by \e scalar.
 	inline ArmadilloVectorWrapper<ScalarType> operator/(ScalarType scalar) const { return ArmadilloVectorWrapper<ScalarType>(m_Vector/scalar); }
-    
 
+    // ADDED BY IGOR
+    inline ArmadilloMatrixWrapper<ScalarType> operator*(ArmadilloVectorWrapper<ScalarType> A) const { return ArmadilloMatrixWrapper<ScalarType>(m_Vector*A.m_Vector); }
+    
 private :
 
 	ArmadilloVectorType m_Vector;
-
 };
 
 

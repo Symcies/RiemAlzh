@@ -89,6 +89,12 @@ ArmadilloMatrixWrapper<ScalarType> diagonal_matrix(unsigned N, ScalarType const 
 }
 
 template <class ScalarType>
+ArmadilloMatrixWrapper<ScalarType> identity_matrix(ScalarType N) {
+	typename ArmadilloMatrixWrapper<ScalarType>::ArmadilloMatrixType result;
+	return ArmadilloMatrixWrapper<ScalarType>( result.eye(N, N) );
+}
+
+template <class ScalarType>
 ScalarType trace(ArmadilloMatrixWrapper<ScalarType> const& M) {
 	return arma::trace(M.m_Matrix);
 }

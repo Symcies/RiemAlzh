@@ -2,6 +2,7 @@
 #define _AlgorithmSettings_h
 
 #include <string>
+#include <iostream>
 
 #include "tinyxml2.h"
 

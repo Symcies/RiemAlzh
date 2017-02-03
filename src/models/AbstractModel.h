@@ -7,7 +7,9 @@
 #include <functional>
 #include <math.h>
 #include <memory>
+#include <unordered_map>
 
+#include "ReadData.h"
 #include "LinearAlgebra.h"
 #include "MatrixFunctions.h"
 #include "TestAssert.h"
@@ -30,7 +32,8 @@ public:
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
     typedef std::vector< std::pair< VectorType, double> > IndividualData;
-    typedef std::map<std::string, VectorType> Realizations;
+    //typedef std::map<std::string, VectorType> Realizations;
+    typedef std::unordered_map<std::string, VectorType> Realizations;
     typedef std::vector<VectorType> SufficientStatisticsVector;
 
 

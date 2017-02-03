@@ -97,9 +97,9 @@ CandidateRandomVariables
     
     // Network model 
     double P0Variance = 0.0000005;
-    double DeltaVariance = 0.000000006;
-    double NuVariance = 0.00000000000008;
-    double BetaVariance = 0.000005*0.00005;
+    double DeltaVariance = 0.000000003;
+    double NuVariance = 0.0000000000000002;
+    double BetaVariance = 0.000006*0.00006;
     double TauVariance = 0.1*0.1;
     double KsiVariance = 0.0001;
     double SVariance = 0.02;

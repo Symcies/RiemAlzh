@@ -41,6 +41,8 @@ typedef vector< vector< pair< LinearAlgebra<ScalarType>::VectorType, double> > >
 // TO ADD : If writing a file 1 out of n iteration - or only at the end 
 
 
+
+
 //
 
 int main(int argc, char* argv[]) {
@@ -55,8 +57,11 @@ int main(int argc, char* argv[]) {
 #pragma omp parallel for
     for(int i = 0; i < 10; ++i)
     {
-        printf("%d", i);
+        
+        //printf("(%d - %d)", i,omp_get_num_threads());
     }
+    
+    //return 0;
 
     
     ///////////////////////
@@ -96,10 +101,11 @@ int main(int argc, char* argv[]) {
       
     }
     else if(ModelType == "FastNetwork")
-    {
-        FilePath = "/Users/igor.koval/Documents/Work/RiemAlzh/data/CorticalThickness/MCIconvertAD/MCIconvertAD_";
+    {   
+        //FilePath = "/Users/igor.koval/Documents/Work/RiemAlzh/data/UnnormalizedThickness/MCIconvertAD/MCIconvertAD_";
+        FilePath = "/Users/igor.koval/Documents/Work/RiemAlzh/data/NormalizedThickness/MCIconvertAD/";
         
-        unsigned int NbIndependentComponents = 5;
+        unsigned int NbIndependentComponents = 15;
         
         std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/RiemAlzh/data/invKd_16.csv");
         auto KernelMatrix = std::make_shared<FastNetworkModel::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
@@ -146,28 +152,16 @@ int main(int argc, char* argv[]) {
     bool ReadData = true;
     if(ReadData)
     {
-        int NbMaxOfSubjects = 100;
+        int NbMaxOfSubjects = 250;
         D = ReadData::OpenFilesMultivariate(FilePath, NbMaxOfSubjects);
     }
     else
     {
         Model->InitializeFakeRandomVariables();
-        D = Model->SimulateData(300, 4, 6);
+        D = Model->SimulateData(150, 3, 5);
     }
     
     
-    
-    if(argc == 3)
-    {
-        Model->InitializeFakeRandomVariables();
-        D = Model->SimulateData(300, 4, 6);
-    }
-    if(argc == 5)
-    {
-        int NbMaxOfSubjects = 100;
-        D = ReadData::OpenFilesMultivariate(FilePath, NbMaxOfSubjects);
-    }
-     
     
     
     //////////////////////////

@@ -15,6 +15,7 @@ ReadData
     if(IndivID.is_open())
     {
         int i = 0;
+        int Count = 0;
         std::string line;
         std::vector< std::pair< LinearAlgebra<ScalarType>::VectorType, double> > IndivData;
         std::pair< LinearAlgebra<ScalarType>::VectorType, double> Observations;
@@ -33,12 +34,14 @@ ReadData
                 IndivData.push_back(Observations);
                 i = j;
             }
-            if(i >= NbMaxOfSubjects && NbMaxOfSubjects != -1)
+            if(Count >= NbMaxOfSubjects && NbMaxOfSubjects != -1)
             {
                 break;
             }
+            
         }
         D.push_back(IndivData);
+        ++Count;
     }
     else { std::cout << "Unable to open indiv id's"; }
     

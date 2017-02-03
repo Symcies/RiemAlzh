@@ -27,8 +27,6 @@ double
 LogitNormalRandomVariable
 ::Sample()
 {
-    std::random_device RD;
-    std::mt19937_64 Generator(RD());
     std::normal_distribution<double> Distribution(m_Mean, sqrt(m_Variance));
     double Sample = Distribution(Generator);
 

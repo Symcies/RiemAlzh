@@ -22,7 +22,8 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
-    typedef std::map<std::string, VectorType> Realizations;
+    //typedef std::map<std::string, VectorType> Realizations;
+    typedef std::unordered_map<std::string, VectorType> Realizations;
     typedef std::vector<VectorType> SufficientStatisticsVector;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +65,7 @@ protected:
     void InitializeStochasticSufficientStatistics(const Data& D);
         
     /// Initialize sampler
-    void InitializeSampler();
+    void InitializeSampler(const Data& D);
     
     /// Initialize Manifold
     void InitializeModel(const Data& D);

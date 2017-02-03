@@ -42,7 +42,7 @@ Algorithm
 ::ComputeMCMCSAEM(const Data& D)
 {
     InitializeModel(D);
-    InitializeSampler();
+    InitializeSampler(D);
     InitializeStochasticSufficientStatistics(D);
 
     for(m_IterationCounter = 0; m_IterationCounter < m_MaxNumberOfIterations; m_IterationCounter += 1)
@@ -96,9 +96,9 @@ Algorithm
 
 void 
 Algorithm
-::InitializeSampler()
+::InitializeSampler(const Data& D)
 {
-    m_Sampler->InitializeSampler(*m_Realizations);
+    m_Sampler->InitializeSampler(*m_Realizations, *m_Model, D);
 }
 
 void

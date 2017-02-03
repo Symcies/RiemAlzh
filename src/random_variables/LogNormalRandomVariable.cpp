@@ -25,8 +25,6 @@ double
 LogNormalRandomVariable
 ::Sample() 
 {
-    std::random_device RD;
-    std::mt19937_64 Generator(RD());
     std::lognormal_distribution<double> Distribution(m_Mean, sqrt(m_Variance));
     
     return Distribution(Generator);

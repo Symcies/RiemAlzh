@@ -5,6 +5,9 @@
 #include <random>
 #include <iostream>     // For cout : only for debugging part
 
+static std::random_device RD;
+static std::mt19937 Generator(RD());
+
 class AbstractRandomVariable {
 public:
     ////////////////////////////////////////////////////////////////////////////////////////////////

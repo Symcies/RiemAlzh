@@ -1,8 +1,12 @@
 #ifndef m_ModelSettings_h
 #define m_ModelSettings_h
 
+typedef double ScalarType;
 
 #include <string>
+#include <iostream>
+
+#include "tinyxml2.h"
 
 class ModelSettings {
   
@@ -24,8 +28,13 @@ public:
     /// Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
     
-
+    unsigned int GetManifoldDimension() const { return m_ManifoldDimension; }
     
+    unsigned int GetNumberOfIndependentSources() const { return m_NbIndependentSources; } 
+    
+    std::string GetInvertKernelPath() const { return m_InvertKernelMatrixPath; }
+    
+    std::string GetInterpolationKernelPath() const { return m_InterpolationMatrixPath; }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Other method(s) :
@@ -43,13 +52,36 @@ private:
     /// Name of the output file
     std::string m_OutputFileName;
     
+    /// Dimension of the manifold
+    unsigned int m_ManifoldDimension;
     
+    /// Number of sources
+    unsigned int m_NbIndependentSources;
+    
+    /// Path to the kernel matrix
+    std::string m_InvertKernelMatrixPath;
+    
+    /// Path to the interpolation matrix
+    std::string m_InterpolationMatrixPath;
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Model specific methods(s) :
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /// Path to kernel Kxd
+    
+    /// Path to kernel invKd
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Methods(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
     
-    /// Convert the max number of iteration from the xml file
+    /// Load the fast network model
+    void LoadFastNetwork(const char* XMLFile);
+    
+    /// Load the meshwork model
+    void LoadMeshworkModel(const char* XMLFile);
 };
 
 

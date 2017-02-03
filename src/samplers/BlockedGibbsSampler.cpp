@@ -33,7 +33,7 @@ BlockedGibbsSampler
 
 void 
 BlockedGibbsSampler
-::InitializeSampler(const Realizations& R) 
+::InitializeSampler(const Realizations &R, AbstractModel &M, const Data& D) 
 {
     m_CandidateRandomVariables.InitializeCandidateRandomVariables(R);
    
@@ -152,7 +152,9 @@ BlockedGibbsSampler
         m_Blocks.push_back(IndividualBlock);
     }
     
-    
+    M.UpdateModel(R, -1);
+    VectorType LL = ComputeLogLikelihood(-1, R, M, D);
+    UpdateLastLogLikelihood(-1, LL);
     
     ////////////////////////////////////////
     /// Corresponds to a HM within Gibbs ///
@@ -172,9 +174,11 @@ BlockedGibbsSampler
 
 BlockedGibbsSampler::Realizations
 BlockedGibbsSampler
-::Sample(const Realizations& R, AbstractModel& M,
+::Sample(Realizations& R, AbstractModel& M,
          const Data &D, int IterationNumber) 
 {
+    
+    
     ////////////////////////////////////////
     // TODO : Check if the update is needed
     M.UpdateModel(R, -1);
@@ -183,16 +187,16 @@ BlockedGibbsSampler
     ////////////////////////////////////////
     
     
-    auto NewRealizations = Realizations(R);
+    
     
     for(int j = 0; j < 1; ++j) 
     {
         for (int i = 0; i < m_Blocks.size(); ++i) {
-            NewRealizations = OneBlockSample(i, NewRealizations, M, D, IterationNumber);
+            R = OneBlockSample(i, R, M, D, IterationNumber);
         }
     }
         
-    return NewRealizations;
+    return R;
 }
 
 
@@ -266,8 +270,6 @@ BlockedGibbsSampler
     
     
     /// Return the new realizations
-    std::random_device RD;
-    std::mt19937 Generator(RD());
     std::uniform_real_distribution<double> Distribution(0.0, 1.0);
     double UnifSample = Distribution(Generator);
     
