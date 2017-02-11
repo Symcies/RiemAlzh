@@ -7,6 +7,7 @@
 #include "GaussianRandomVariable.h"
 #include "AbstractRandomVariable.h"
 #include "AbstractModel.h"
+#include "Realizations.h"
 
 class CandidateRandomVariables {
 
@@ -42,7 +43,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the candidate random variables
-    void InitializeCandidateRandomVariables(const Reals& R);
+    void InitializeCandidateRandomVariables(const Realizations& R);
 
 
 

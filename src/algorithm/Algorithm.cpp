@@ -50,12 +50,12 @@ Algorithm
         if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
         
         ComputeSimulationStep(D);
-        SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, *m_AwesomeRealizations, D);
+        SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_AwesomeRealizations, D);
         ComputeStochasticApproximation(SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
         
         if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { DisplayOutputs(); }
-        if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter, *m_Realizations, *m_AwesomeRealizations); }
+        if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter, *m_AwesomeRealizations); }
         
     }
 }
@@ -69,7 +69,7 @@ void
 Algorithm
 ::InitializeStochasticSufficientStatistics(const Data& D)
 {
-    m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, *m_AwesomeRealizations, D);
+    m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_AwesomeRealizations, D);
     for(auto&& it : m_StochasticSufficientStatistics)
     {
         std::fill(it.begin(), it.end(), 0.0);
@@ -108,7 +108,7 @@ void
 Algorithm
 ::InitializeSampler(const Data& D)
 {
-    m_Sampler->InitializeSampler(*m_Realizations, *m_AwesomeRealizations, *m_Model, D);
+    m_Sampler->InitializeSampler(*m_AwesomeRealizations, *m_Model, D);
 }
 
 void
@@ -116,7 +116,7 @@ Algorithm
 ::ComputeSimulationStep(const Data& D)
 {
     Reals PreviousRealizations = *m_Realizations;
-    m_Sampler->Sample(*m_Realizations, *m_AwesomeRealizations, *m_Model, D);
+    m_Sampler->Sample(*m_AwesomeRealizations, *m_Model, D);
     ComputeAcceptanceRatio(PreviousRealizations);
 }
 
@@ -158,7 +158,7 @@ void
 Algorithm
 ::DisplayOutputs()
 {
-    m_Model->DisplayOutputs(*m_Realizations, *m_AwesomeRealizations);
+    m_Model->DisplayOutputs(*m_AwesomeRealizations);
 }
 
 

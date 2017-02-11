@@ -38,10 +38,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(const Reals &R, Realizations& AR, AbstractModel &M, const Data& D);
+    virtual void InitializeSampler(Realizations& R, AbstractModel &M, const Data& D);
     
     /// Sample new realizations
-    virtual void Sample(Reals& R, Realizations& AR, AbstractModel& M, const Data& D);
+    virtual void Sample(Realizations& R, AbstractModel& M, const Data& D);
 
 
 protected:
@@ -50,10 +50,10 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Sample one block
-    void OneBlockSample(int BlockNumber, Reals& R, Realizations& AR, AbstractModel& M, const Data& D);
+    void OneBlockSample(int BlockNumber, Realizations& R, AbstractModel& M, const Data& D);
     
     /// Compute Prior part of the ratio while updating the realization
-    ScalarType ComputePriorRatioAndUpdateRealizations(Reals& R, Realizations& AR, const AbstractModel& M, const Block& Variables);
+    ScalarType ComputePriorRatioAndUpdateRealizations(Realizations& R, const AbstractModel& M, const Block& Variables);
     
     /// Check if all the random variables are from one individual
     int TypeRandomVariables(Block& B);

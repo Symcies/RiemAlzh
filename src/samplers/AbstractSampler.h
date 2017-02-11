@@ -24,7 +24,6 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
-    typedef std::unordered_map<std::string, VectorType> Reals;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
@@ -44,10 +43,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(const Reals &R, Realizations& AR, AbstractModel &M, const Data& D) = 0;
+    virtual void InitializeSampler(Realizations& R, AbstractModel &M, const Data& D) = 0;
     
     /// Sample new realizations of the model random variables
-    virtual void Sample(Reals& R, Realizations& AR, AbstractModel& M, const Data& D) = 0;
+    virtual void Sample(Realizations& R, AbstractModel& M, const Data& D) = 0;
 
 
 protected:

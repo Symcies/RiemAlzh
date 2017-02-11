@@ -75,7 +75,27 @@ public:
         
     void AddRealizations(std::string Name, int Key, VectorType& Values);
     
+    inline int ReverseNameToKey(std::string Name) const { return m_StringToIntKey.at(Name); }
     
+    inline std::string ReverseKeyToName(int Key) const { return m_IntToStringKey.at(Key); }
+    
+    inline IntVectorHash::iterator begin() { return m_Realizations.begin(); }
+    inline IntVectorHash::iterator   end() { return m_Realizations.end(); }
+    
+    inline IntVectorHash::const_iterator begin() const { return m_Realizations.begin(); }
+    inline IntVectorHash::const_iterator   end() const { return m_Realizations.end(); }
+    
+    inline VectorType::iterator begin(int Key) { return m_Realizations.at(Key).begin(); }
+    inline VectorType::iterator   end(int Key) { return m_Realizations.at(Key).end(); }
+    
+    inline VectorType::const_iterator begin(int Key) const { return m_Realizations.at(Key).begin(); }
+    inline VectorType::const_iterator   end(int Key) const { return m_Realizations.at(Key).end(); }
+    
+    inline VectorType::iterator begin(std::string Name)  { return m_Realizations.at(m_StringToIntKey.at(Name)).begin(); }
+    inline VectorType::iterator   end(std::string Name) { return m_Realizations.at(m_StringToIntKey.at(Name)).end(); }
+    
+    inline VectorType::const_iterator begin(std::string Name) const { return m_Realizations.at(m_StringToIntKey.at(Name)).begin(); }
+    inline VectorType::const_iterator   end(std::string Name) const { return m_Realizations.at(m_StringToIntKey.at(Name)).end(); }
 
 
 

@@ -348,7 +348,7 @@ FastNetworkModel
 
 FastNetworkModel::SufficientStatisticsVector
 FastNetworkModel
-::GetSufficientStatistics(const Reals& R, const Realizations& AR, const Data& D) 
+::GetSufficientStatistics(const Realizations& AR, const Data& D) 
 {
     
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
@@ -369,31 +369,31 @@ FastNetworkModel
     
     /// S3 <- Ksi_i * Ksi_i
     VectorType S3(m_NumberOfSubjects);
-    auto itKsi = R.at("Ksi").begin();
-    for(auto itS3 = S3.begin(); itKsi != R.at("Ksi").end() ; ++itKsi, ++itS3)
+    auto itKsi = AR.begin("Ksi");
+    for(auto itS3 = S3.begin(); itKsi != AR.end("Ksi") ; ++itKsi, ++itS3)
     {
         *itS3 = *itKsi * *itKsi;
     }
     
     /// S4 <- Tau_i   &    S5 <- Tau_i * Tau_i
     VectorType S4(m_NumberOfSubjects), S5(m_NumberOfSubjects);
-    auto itTau = R.at("Tau").begin();
+    auto itTau = AR.begin("Tau");
     auto itS4 = S4.begin(), itS5 = S5.begin();
-    for(    ; itTau != R.at("Tau").end(); ++itTau, ++itS4, ++itS5)
+    for(    ; itTau != AR.end("Tau"); ++itTau, ++itS4, ++itS5)
     {
         *itS4 = *itTau;
         *itS5 = *itTau * *itTau;
     }
     
     /// S6 <- P0 
-    VectorType S6(1, R.at("P0")(0));
+    VectorType S6(1, AR.at("P0", 0));
     
     /// S7 <- beta_k
     VectorType S7((m_ManifoldDimension-1) * m_NbIndependentComponents);
     i = 0;
     for(auto it = S7.begin(); it != S7.end(); ++it, ++i)
     {
-        *it = R.at("Beta#" + std::to_string(i))(0);
+        *it = AR.at("Beta#" + std::to_string(i), 0);
     }
     
     /// S8 <- delta_k
@@ -402,7 +402,7 @@ FastNetworkModel
     
     for( auto itS8 = S8.begin(); itS8 != S8.end(); ++itS8, ++i)
     {
-        *itS8 = R.at("Delta#" + std::to_string(i))(0);
+        *itS8 = AR.at("Delta#" + std::to_string(i), 0);
         
     }
     
@@ -412,7 +412,7 @@ FastNetworkModel
     auto itS9 = S9.begin(), itS10 = S10.begin();
     for( ; itS9 != S9.end(); ++itS9, ++itS10, ++i)
     {
-        double Nu_ = R.at("Nu#" + std::to_string(i))(0);
+        double Nu_ = AR.at("Nu#" + std::to_string(i), 0);
         *itS9 = Nu_;
         *itS10 = Nu_*Nu_;   
     }
@@ -511,30 +511,30 @@ FastNetworkModel
 
 void 
 FastNetworkModel
-::DisplayOutputs(const Reals& R, const Realizations& AR) 
+::DisplayOutputs(const Realizations& R) 
 {
     auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
     auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));   
     
     auto Nu = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Nu#0"));
-    double NuMax = R.at("Nu#0")(0);
-    double NuMin = NuMax;
+
+    double NuMax = R.at("Nu#0", 0);
+    double NuMin = R.at("Nu#0", 0);
     for(size_t i = 1; i < 258; ++i)
     {
-        double NuK = R.at("Nu#" + std::to_string(i))(0);
+        double NuK = R.at("Nu#" + std::to_string(i), 0);
         NuMax = std::max(NuMax, NuK);
         NuMin = std::min(NuMin, NuK);
     }
     
-    double DeltaMin = R.at("Delta#1")(0);
+    double DeltaMin = R.at("Delta#1", 0);
     double DeltaMax = DeltaMin;
     for(size_t i = 1; i < 258; ++i)
     {
-        double DeltaK = R.at("Delta#" + std::to_string(i))(0);
+        double DeltaK = R.at("Delta#" + std::to_string(i), 0);
         DeltaMax = std::max(DeltaMax, DeltaK);
         DeltaMin = std::min(DeltaMin, DeltaK);
     }
-    
     
     std::cout << "Noise: " << m_Noise->GetVariance();
     std::cout << " - p0: " << exp(P0->GetMean()) << " - t0: " << Tau->GetMean() << " - S_tau:" << Tau->GetVariance();
@@ -543,37 +543,12 @@ FastNetworkModel
     std::cout << " - MaxDelta: " << DeltaMax << " - MinDelta: " << DeltaMin << std::endl;
     
     
-    
-    double Nu2Max = AR.at("Nu#0", 0);
-    double Nu2Min = AR.at("Nu#0", 0);
-    for(size_t i = 1; i < 258; ++i)
-    {
-        double NuK = AR.at("Nu#" + std::to_string(i), 0);
-        Nu2Max = std::max(Nu2Max, NuK);
-        Nu2Min = std::min(Nu2Min, NuK);
-    }
-    
-    double Delta2Min = AR.at("Delta#1", 0);
-    double Delta2Max = DeltaMin;
-    for(size_t i = 1; i < 258; ++i)
-    {
-        double DeltaK = AR.at("Delta#" + std::to_string(i), 0);
-        Delta2Max = std::max(Delta2Max, DeltaK);
-        Delta2Min = std::min(Delta2Min, DeltaK);
-    }
-    
-    
-    std::cout << "Delta min is same if 0 : " << (DeltaMin - Delta2Min) << std::endl;
-    std::cout << "Delta max is same if 0 : " << (DeltaMax - Delta2Max) << std::endl;
-    std::cout << "Nu min is same if 0 : " << (NuMin - Nu2Min) << std::endl;
-    std::cout << "Nu max is same if 0 : " << (NuMax - Nu2Max) << std::endl;
-    
 }
 
 
 void 
 FastNetworkModel
-::SaveData(unsigned int IterationNumber, const Reals& R, const Realizations& AR) 
+::SaveData(unsigned int IterationNumber, const Realizations& AR) 
 {
     
     /*

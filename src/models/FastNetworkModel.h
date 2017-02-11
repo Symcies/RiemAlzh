@@ -49,7 +49,7 @@ public:
                                                   const int SubjectNumber);
 
     /// Get the sufficient statistics of the model
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Reals& R, const Realizations& AR, const Data& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& AR, const Data& D);
     
     /// Update the random variables <=> the parameters of the model
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, 
@@ -60,10 +60,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Compute outputs
-    virtual void DisplayOutputs(const Reals& R, const Realizations& AR);
+    virtual void DisplayOutputs(const Realizations& AR);
     
     /// Save the data into a file
-    virtual void SaveData(unsigned int IterationNumber, const Reals& R, const Realizations& AR);
+    virtual void SaveData(unsigned int IterationNumber, const Realizations& R);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:

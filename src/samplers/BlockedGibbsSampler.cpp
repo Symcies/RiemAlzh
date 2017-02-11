@@ -38,7 +38,7 @@ BlockedGibbsSampler
 
 void 
 BlockedGibbsSampler
-::InitializeSampler(const Reals &R, Realizations& AR, AbstractModel &M, const Data& D) 
+::InitializeSampler(Realizations& R, AbstractModel &M, const Data& D) 
 {
     m_CandidateRandomVariables.InitializeCandidateRandomVariables(R);
    
@@ -46,7 +46,7 @@ BlockedGibbsSampler
     unsigned int NbDelta = 0, NbBeta = 0, NbS = 0, NbNu = 0;
     for(auto it = R.begin(); it != R.end(); ++it)
     {
-        std::string Name = it->first;
+        std::string Name = R.ReverseKeyToName(it->first);
         Name = Name.substr(0, Name.find_first_of("#"));
         if(Name == "Beta")
             NbBeta += 1;
@@ -134,7 +134,7 @@ BlockedGibbsSampler
         m_Blocks.push_back(IndividualBlock);
     }
     
-    M.UpdateModel(AR, -1);
+    M.UpdateModel(R, -1);
     VectorType LL = ComputeLogLikelihood(M, D);
     UpdateLastLogLikelihood(LL);
 
@@ -143,12 +143,12 @@ BlockedGibbsSampler
 
 void
 BlockedGibbsSampler
-::Sample(Reals& R, Realizations& AR, AbstractModel& M, const Data &D) 
+::Sample(Realizations& R, AbstractModel& M, const Data &D) 
 {
     m_CurrentBlockType = -1;
     ////////////////////////////////////////
     // TODO : Check if the update is needed
-    M.UpdateModel(AR, -1);
+    M.UpdateModel(R, -1);
     VectorType LL = ComputeLogLikelihood(M, D);
     UpdateLastLogLikelihood(LL);
     ////////////////////////////////////////
@@ -156,7 +156,7 @@ BlockedGibbsSampler
     
     for (int i = 0; i < m_Blocks.size(); ++i) 
     {
-        OneBlockSample(i, R, AR, M, D);
+        OneBlockSample(i, R, M, D);
     }
         
     ++m_CurrentIteration;
@@ -171,7 +171,7 @@ BlockedGibbsSampler
 
 void
 BlockedGibbsSampler
-::OneBlockSample(int BlockNumber, Reals& R, Realizations& AR, AbstractModel &M, const Data &D) 
+::OneBlockSample(int BlockNumber, Realizations& R, AbstractModel &M, const Data &D) 
 {
     /// Initialization
     Block CurrentBlock = m_Blocks[BlockNumber];
@@ -180,13 +180,13 @@ BlockedGibbsSampler
     m_RecoverParameters.clear();
     
     /// Loop over the realizations of the block to update the ratio and the realizations
-    double AcceptationRatio = ComputePriorRatioAndUpdateRealizations(R, AR, M, CurrentBlock);
+    double AcceptationRatio = ComputePriorRatioAndUpdateRealizations(R, M, CurrentBlock);
     
     /// Compute the previous log likelihood
     AcceptationRatio -= GetPreviousLogLikelihood();
 
     /// Compute the candidate log likelihood
-    M.UpdateModel(AR, m_CurrentBlockType, m_CurrentBlockParameters);
+    M.UpdateModel(R, m_CurrentBlockType, m_CurrentBlockParameters);
     VectorType ComputedLogLikelihood = ComputeLogLikelihood(M, D);
     AcceptationRatio += ComputedLogLikelihood.sum();
     
@@ -200,11 +200,10 @@ BlockedGibbsSampler
     {
         for(auto it = m_RecoverParameters.begin(); it != m_RecoverParameters.end(); ++it) 
         {
-            AR.at(it->first, it->second.first) = it->second.second;
-            R.at(it->first)(it->second.first) = it->second.second;
+            R.at(it->first, it->second.first) = it->second.second;
         }
            
-        M.UpdateModel(AR, m_CurrentBlockType, m_CurrentBlockParameters);
+        M.UpdateModel(R, m_CurrentBlockType, m_CurrentBlockParameters);
     }
         /// Acceptation : Candidate is accepted
     else
@@ -219,7 +218,7 @@ BlockedGibbsSampler
 
 ScalarType 
 BlockedGibbsSampler
-::ComputePriorRatioAndUpdateRealizations(Reals &R, Realizations& AR, const AbstractModel &M, const Block &Variables) 
+::ComputePriorRatioAndUpdateRealizations(Realizations& R, const AbstractModel &M, const Block &Variables) 
 {
     double AcceptanceRatio = 0;
     
@@ -232,8 +231,7 @@ BlockedGibbsSampler
         
         /// Get the current realization and recover it
         auto CurrentRandomVariable = M.GetRandomVariable(NameRealization);
-        ScalarType CurrentRealization = R.at(NameRealization)(RealizationNumber);
-        ScalarType AwesomeCurrentRealization = AR.at(NameRealization, RealizationNumber);
+        ScalarType CurrentRealization = R.at(NameRealization, RealizationNumber);
         m_RecoverParameters[NameRealization] = {RealizationNumber, CurrentRealization};
         
         
@@ -247,13 +245,8 @@ BlockedGibbsSampler
         AcceptanceRatio -= CurrentRandomVariable->LogLikelihood(CurrentRealization);
         
         /// Update the NewRealizations
-        R.at(NameRealization)(RealizationNumber) = CandidateRealization;
-        AR.at(NameRealization, RealizationNumber) = CandidateRealization;
+        R.at(NameRealization, RealizationNumber) = CandidateRealization;
         
-        if(R.at(NameRealization)(RealizationNumber) != AR.at(NameRealization, RealizationNumber))
-        {
-            std::cout << "MERDE : " << NameRealization << std::endl;
-        }
     }
     
     return AcceptanceRatio;

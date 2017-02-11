@@ -59,7 +59,7 @@ public:
     virtual void UpdateModel(const Realizations& AR, int Type, const std::vector<std::string> Names = {"All"}) = 0;
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Reals& R, const Realizations& AR, const Data& D) = 0;
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& AR, const Data& D) = 0;
     
     /// Update the fixed effects thanks to the approximation step of the algorithm
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const Data& D) = 0;
@@ -87,10 +87,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Compute Outputs
-    virtual void DisplayOutputs(const Reals& R, const Realizations& AR) = 0;
+    virtual void DisplayOutputs(const Realizations& AR) = 0;
     
     /// Save the data into a file
-    virtual void SaveData(unsigned int IterationNumber, const Reals& R, const Realizations& AR) = 0;
+    virtual void SaveData(unsigned int IterationNumber, const Realizations& R) = 0;
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:

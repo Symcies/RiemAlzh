@@ -39,7 +39,7 @@ const
 
 void
 CandidateRandomVariables
-::InitializeCandidateRandomVariables(const Reals& R)
+::InitializeCandidateRandomVariables(const Realizations& R)
 {
     /// Initialization
     PropositionDistribution PD;
@@ -47,12 +47,14 @@ CandidateRandomVariables
     for(auto it = R.begin(); it != R.end(); ++it)
     {
         std::vector< GaussianRandomVariable > PropDistribPerRealization;
+        std::string Name = R.ReverseKeyToName(it->first);
         for(auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
         {
-            GaussianRandomVariable&& GRV = ReadInitialPropositionDistribution(it->first, *it2);
+            
+            GaussianRandomVariable&& GRV = ReadInitialPropositionDistribution(Name, *it2);
             PropDistribPerRealization.push_back( GRV );
         }
-        PD[it->first] = PropDistribPerRealization;
+        PD[Name] = PropDistribPerRealization;
     }
     
     m_PropositionDistribution = PD;
