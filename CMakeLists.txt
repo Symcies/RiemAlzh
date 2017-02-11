@@ -56,6 +56,7 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/random_variables
         ${CMAKE_CURRENT_SOURCE_DIR}/src/samplers
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/realizations
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io/outputs
         
         ${CMAKE_CURRENT_SOURCE_DIR}/utilities

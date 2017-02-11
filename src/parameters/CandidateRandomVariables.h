@@ -19,8 +19,7 @@ public:
     
     /// Key : Name of the parameter. Value : Value of the parameter
     typedef std::map< std::string, std::vector< GaussianRandomVariable >> PropositionDistribution;
-        //typedef std::map<std::string, VectorType> Realizations;
-    typedef std::unordered_map<std::string, VectorType> Realizations; 
+    typedef std::unordered_map<std::string, VectorType> Reals; 
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,7 +42,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the candidate random variables
-    void InitializeCandidateRandomVariables(const Realizations& R);
+    void InitializeCandidateRandomVariables(const Reals& R);
 
 
 

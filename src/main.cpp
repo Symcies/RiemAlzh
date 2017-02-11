@@ -11,7 +11,6 @@ typedef double ScalarType;
 #include "LogisticBaseManifold.h"
 #include "LinearManifold.h"
 
-#include "LongitudinalModel.h"
 #include "FastNetworkModel.h"
 
 #include "BlockedGibbsSampler.h"
@@ -75,18 +74,8 @@ int main(int argc, char* argv[]) {
     /////////////////////////////
     
 
-    if(ModelType == "Multivariate")
-    {
-        FilePath = "/Users/igor.koval/Documents/Work/RiemAlzh/data/CognitiveScores/SimulatedData/";
-        
-        unsigned int NumberDimensions = 4, NbIndependentComponents = 2;
-        
-        shared_ptr<AbstractBaseManifold> BaseManifold = make_shared<LogisticBaseManifold>();
-        shared_ptr<AbstractManifold> Manifold = make_shared<PropagationManifold>(NumberDimensions, BaseManifold);
-        Model = make_shared<LongitudinalModel>(NbIndependentComponents, Manifold);
-      
-    }
-    else if(ModelType == "FastNetwork")
+
+    if(ModelType == "FastNetwork")
     {
         FilePath = "/Users/igor.koval/Documents/Work/ok3/RiemAlzh/data/NormalizedThickness/MCIconvertAD/";
         

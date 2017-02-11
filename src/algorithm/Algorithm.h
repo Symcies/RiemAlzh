@@ -22,8 +22,7 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
-    //typedef std::map<std::string, VectorType> Realizations;
-    typedef std::unordered_map<std::string, VectorType> Realizations;
+    typedef std::unordered_map<std::string, VectorType> Reals;
     typedef std::vector<VectorType> SufficientStatisticsVector;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,10 +93,10 @@ protected:
     std::map<std::string, VectorType> m_AcceptanceRatios;
     
     /// Compute the acceptance ratio for each random variable
-    void ComputeAcceptanceRatio(Realizations& R);
+    void ComputeAcceptanceRatio(Reals& PreviousReals);
     
     /// Display acceptance ratio
-    void DisplayAcceptanceRatio(Realizations& R);
+    void DisplayAcceptanceRatio();
     
     /// Display Outputs
     void DisplayOutputs();
@@ -111,7 +110,10 @@ protected:
     std::shared_ptr<AbstractModel> m_Model;
 
     /// Realisation of the random variables of the model
-    std::shared_ptr<Realizations> m_Realizations;
+    std::shared_ptr<Reals> m_Realizations;
+    
+    /// Awesome Rea
+    std::shared_ptr<Realizations> m_AwesomeRealizations;
 
     /// Abstract Sampler - for the MCMC SAEM 
     std::shared_ptr<AbstractSampler> m_Sampler;

@@ -47,7 +47,7 @@ FastNetworkModel
     }
     
     // TODO : VERY IMPORTANT : This can be refactored such that there is only one random variable
-    //                         with Multiple Realizations. It would be m_NbControlPoints realizations here
+    //                         with Multiple Reals. It would be m_NbControlPoints realizations here
     double V0 = 0.04088;
     for(size_t i = 0; i < m_NbControlPoints; ++i)
     {
@@ -106,7 +106,7 @@ FastNetworkModel
 
 void 
 FastNetworkModel
-::UpdateModel(const Realizations &R, int Type,
+::UpdateModel(const Realizations& AR, int Type,
               const std::vector<std::string> Names) 
 {
     
@@ -178,7 +178,7 @@ FastNetworkModel
         }
         else if(Name == "All")
         {
-            ComputeSubjectTimePoint(R, -1);
+            ComputeSubjectTimePoint(AR, -1);
             IndividualOnly = false;
             ComputePosition = true;
             ComputeDelta = true;
@@ -197,14 +197,14 @@ FastNetworkModel
     }
     
     // TODO : To parse it even faster, update just the coordinates within the names
-    if(IndividualOnly) ComputeSubjectTimePoint(R, Type);
+    if(IndividualOnly) ComputeSubjectTimePoint(AR, Type);
     
-    if(ComputePosition) { m_P0 = exp(R.at("P0")(0)); }
-    if(ComputeDelta) ComputeDeltas(R);
-    if(ComputeNu) ComputeNus(R);
+    if(ComputePosition) { m_P0 = exp(AR.at("P0", 0)); }
+    if(ComputeDelta) ComputeDeltas(AR);
+    if(ComputeNu) ComputeNus(AR);
     if(ComputeBasis) ComputeOrthonormalBasis();
-    if(ComputeA) ComputeAMatrix(R);
-    if(ComputeSpaceShift) ComputeSpaceShifts(R);
+    if(ComputeA) ComputeAMatrix(AR);
+    if(ComputeSpaceShift) ComputeSpaceShifts(AR);
     if(ComputeBlock_1) ComputeBlock1();
     if(ComputeBlock_2) ComputeBlock2();
     
@@ -214,6 +214,7 @@ FastNetworkModel::Data
 FastNetworkModel
 ::SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) 
 {
+    /*
     m_NumberOfSubjects = NumberOfSubjects;
     auto R = SimulateRealizations(NumberOfSubjects);
     m_P0 = exp(R.at("P0")(0));
@@ -290,15 +291,16 @@ FastNetworkModel
     m_SumObservations = SumObservations;
     m_NbTotalOfObservations = K;
     
-    std::cout << "Real Likelihood = " << ComputeLogLikelihood(R, D) << std::endl;
+    std::cout << "Real Likelihood = " << ComputeLogLikelihood(D) << std::endl;
     
     return D;
+     */
 }
 
 
 double 
 FastNetworkModel
-::ComputeLogLikelihood(const Realizations& R, const Data& D) 
+::ComputeLogLikelihood(const Data& D) 
 {
     double LogLikelihood = 0;
 #pragma omp parallel for reduction(+:LogLikelihood)   
@@ -323,7 +325,7 @@ FastNetworkModel
 
 double
 FastNetworkModel
-::ComputeIndividualLogLikelihood(const Realizations& R, const Data& D, const int SubjectNumber) 
+::ComputeIndividualLogLikelihood(const Data& D, const int SubjectNumber) 
 {
     /// Get the data
     double LogLikelihood = 0;
@@ -346,7 +348,7 @@ FastNetworkModel
 
 FastNetworkModel::SufficientStatisticsVector
 FastNetworkModel
-::GetSufficientStatistics(const Realizations& R, const Data& D) 
+::GetSufficientStatistics(const Reals& R, const Realizations& AR, const Data& D) 
 {
     
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
@@ -509,7 +511,7 @@ FastNetworkModel
 
 void 
 FastNetworkModel
-::DisplayOutputs(const Realizations& R) 
+::DisplayOutputs(const Reals& R, const Realizations& AR) 
 {
     auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
     auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));   
@@ -539,13 +541,42 @@ FastNetworkModel
     std::cout << " - v0: " << Nu->GetMean() << " - S_nu:" << Nu->GetVariance();
     std::cout << " - MaxNu: " << NuMax << " - MinNu: " << NuMin;
     std::cout << " - MaxDelta: " << DeltaMax << " - MinDelta: " << DeltaMin << std::endl;
+    
+    
+    
+    double Nu2Max = AR.at("Nu#0", 0);
+    double Nu2Min = AR.at("Nu#0", 0);
+    for(size_t i = 1; i < 258; ++i)
+    {
+        double NuK = AR.at("Nu#" + std::to_string(i), 0);
+        Nu2Max = std::max(Nu2Max, NuK);
+        Nu2Min = std::min(Nu2Min, NuK);
+    }
+    
+    double Delta2Min = AR.at("Delta#1", 0);
+    double Delta2Max = DeltaMin;
+    for(size_t i = 1; i < 258; ++i)
+    {
+        double DeltaK = AR.at("Delta#" + std::to_string(i), 0);
+        Delta2Max = std::max(Delta2Max, DeltaK);
+        Delta2Min = std::min(Delta2Min, DeltaK);
+    }
+    
+    
+    std::cout << "Delta min is same if 0 : " << (DeltaMin - Delta2Min) << std::endl;
+    std::cout << "Delta max is same if 0 : " << (DeltaMax - Delta2Max) << std::endl;
+    std::cout << "Nu min is same if 0 : " << (NuMin - Nu2Min) << std::endl;
+    std::cout << "Nu max is same if 0 : " << (NuMax - Nu2Max) << std::endl;
+    
 }
 
 
 void 
 FastNetworkModel
-::SaveData(unsigned int IterationNumber, const Realizations& R) 
+::SaveData(unsigned int IterationNumber, const Reals& R, const Realizations& AR) 
 {
+    
+    /*
     unsigned int NumberOfSubjects = R.at("Tau").size();
     std::ofstream Outputs;    
     std::string FileName = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/Normalized/Parameters" + std::to_string(IterationNumber) + ".txt";
@@ -653,6 +684,8 @@ FastNetworkModel
         }
         Outputs << std::endl;
     }
+     
+     */
 
 }
 
@@ -676,7 +709,7 @@ FastNetworkModel
     }
     
     // TODO : VERY IMPORTANT : This can be refactored such that there is only one random variable
-    //                         with Multiple Realizations. It would be m_NbControlPoints realizations here
+    //                         with Multiple Reals. It would be m_NbControlPoints realizations here
     double V0 = 0.04688;
     for(size_t i = 0; i < m_NbControlPoints; ++i)
     {
@@ -719,8 +752,8 @@ FastNetworkModel
 ::ComputeSubjectTimePoint(const Realizations &R, const int SubjectNumber) 
 {
     if(SubjectNumber != -1) {
-        double AccFactor = exp(R.at("Ksi")(SubjectNumber));
-        double TimeShift = R.at("Tau")(SubjectNumber);
+        double AccFactor = exp(R.at("Ksi", SubjectNumber));
+        double TimeShift = R.at("Tau", SubjectNumber);
         
         auto N = m_IndividualObservationDate[SubjectNumber].size();
         
@@ -764,7 +797,7 @@ FastNetworkModel
 #pragma omp parallel for
     for(size_t i = 1; i < m_NbControlPoints; ++i)
     {
-        d[i] = R.at("Delta#" + std::to_string(i))(0);
+        d[i] = R.at("Delta#" + std::to_string(i), 0);
     }
     
     auto InterpolationCoeff = m_InvertKernelMatrix * Delta;
@@ -781,7 +814,7 @@ FastNetworkModel
 #pragma omp parallel for
     for(size_t i = 0; i < m_NbControlPoints; ++i)
     {
-        n[i] = R.at("Nu#" + std::to_string(i))(0);
+        n[i] = R.at("Nu#" + std::to_string(i),0);
     }
     
     auto InterpolationCoeff = m_InvertKernelMatrix * Nu;
@@ -839,32 +872,14 @@ FastNetworkModel
         for(size_t j = 0; j < m_ManifoldDimension - 1; ++j)
         {
             std::string Number = std::to_string(int(j + i*(m_ManifoldDimension - 1)));
-            Beta(j) = R.at( "Beta#" + Number)(0);
+            Beta(j) = R.at( "Beta#" + Number, 0);
         }
         
         NewA.set_column(i, m_OrthogonalBasis * Beta);
     }
     
     m_AMatrix = NewA;
-     
-    /*
-    MatrixType AMatrix(m_ManifoldDimension, m_NbIndependentComponents);
-    
-    for(int i = 0; i < m_NbIndependentComponents ; ++i)
-    {
-        VectorType Beta(m_ManifoldDimension - 1);
-        for(int j = 0; j < m_ManifoldDimension - 1 ; ++j)
-        {
-            std::string Number = std::to_string(int(j + i*(m_ManifoldDimension - 1)));
-            Beta(j) = R.at( "Beta#" + Number)(0);
-        }
-        
-        VectorType V = LinearCombination(Beta, m_OrthogonalBasis)   ;     
-        AMatrix.set_column(i, V);
-    }
-    
-    m_AMatrix = std::move(AMatrix);
-    */
+
 }
 
 void 
@@ -878,7 +893,7 @@ FastNetworkModel
     {
         for (int j = 0; j < m_NbIndependentComponents; ++j) 
         {
-            SS(j, i) = R.at("S#" + std::to_string(j))(i);
+            SS(j, i) = R.at("S#" + std::to_string(j), i);
         }
     }
     m_SpaceShifts = m_AMatrix * SS;

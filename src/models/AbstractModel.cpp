@@ -46,11 +46,12 @@ const
 
 
 
-AbstractModel::Realizations
+AbstractModel::Reals
 AbstractModel
 ::SimulateRealizations(int NumberOfSubjects)
 {
-    Realizations R;
+    Reals R;
+    int Key = 0;
 
     // Initialize the realization of the population-wide random variables.
     // They are shared among the individual thus sampled only once
@@ -59,6 +60,8 @@ AbstractModel
         VectorType Realization(1, it.second->Sample());
         R.insert(std::pair< std::string, VectorType> (it.first, Realization));
         
+        m_AwesomeRealizations.AddRealizations(it.first, Key, Realization);
+        ++Key;
     }
 
     // Initialize the realization of the individual random variables.
@@ -72,6 +75,8 @@ AbstractModel
             *it2 = Sample;
         }
         R.insert(std::pair< std::string, VectorType> (it.first, Realization));
+        m_AwesomeRealizations.AddRealizations(it.first, Key, Realization);
+        ++Key;
     }
 
     return R;

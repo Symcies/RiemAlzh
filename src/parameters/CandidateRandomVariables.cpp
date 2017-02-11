@@ -39,7 +39,7 @@ const
 
 void
 CandidateRandomVariables
-::InitializeCandidateRandomVariables(const Realizations& R)
+::InitializeCandidateRandomVariables(const Reals& R)
 {
     /// Initialization
     PropositionDistribution PD;

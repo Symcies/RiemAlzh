@@ -9,9 +9,9 @@
 
 #include "GaussianRandomVariable.h"
 #include "AbstractRandomVariable.h"
-
 #include "AbstractModel.h"
 #include "CandidateRandomVariables.h"
+#include "Realizations.h"
 
 class AbstractSampler {
 public:
@@ -24,8 +24,7 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
-    //typedef std::map<std::string, VectorType> Realizations;
-    typedef std::unordered_map<std::string, VectorType> Realizations;
+    typedef std::unordered_map<std::string, VectorType> Reals;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
@@ -45,10 +44,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(const Realizations &R, AbstractModel &M, const Data& D) = 0;
+    virtual void InitializeSampler(const Reals &R, Realizations& AR, AbstractModel &M, const Data& D) = 0;
     
     /// Sample new realizations of the model random variables
-    virtual Realizations Sample(Realizations& R, AbstractModel& M, const Data& D, int IterationNumber) = 0;
+    virtual void Sample(Reals& R, Realizations& AR, AbstractModel& M, const Data& D) = 0;
 
 
 protected:

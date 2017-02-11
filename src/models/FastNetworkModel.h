@@ -33,24 +33,23 @@ public:
     virtual void Initialize(const Data& D);
     
     /// Update the model parameters != random variables parameters
-    virtual void UpdateModel(const Realizations &R, int Type,
+    virtual void UpdateModel(const Realizations& AR, int Type,
                              const std::vector<std::string> Names = {"All"});
     
     /// Simulate data according to the model and the parameters
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int  MaxObs);
     
     /// Compute the log likelihood of the model
-    virtual double ComputeLogLikelihood(const Realizations& R, 
+    virtual double ComputeLogLikelihood(
                                         const Data& D);
     
     /// Compute the log likelihood of the model for a given subject
-    virtual double ComputeIndividualLogLikelihood(const Realizations& R, 
+    virtual double ComputeIndividualLogLikelihood(
                                                   const Data& D, 
                                                   const int SubjectNumber);
 
     /// Get the sufficient statistics of the model
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, 
-                                                               const Data& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Reals& R, const Realizations& AR, const Data& D);
     
     /// Update the random variables <=> the parameters of the model
     virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, 
@@ -61,10 +60,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Compute outputs
-    virtual void DisplayOutputs(const Realizations& R);
+    virtual void DisplayOutputs(const Reals& R, const Realizations& AR);
     
     /// Save the data into a file
-    virtual void SaveData(unsigned int IterationNumber, const Realizations& R);
+    virtual void SaveData(unsigned int IterationNumber, const Reals& R, const Realizations& AR);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:

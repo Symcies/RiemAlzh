@@ -38,10 +38,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(const Realizations &R, AbstractModel &M, const Data& D);
+    virtual void InitializeSampler(const Reals &R, Realizations& AR, AbstractModel &M, const Data& D);
     
     /// Sample new realizations
-    virtual Realizations Sample(Realizations& R, AbstractModel& M, const Data& D, int IterationNumber);
+    virtual void Sample(Reals& R, Realizations& AR, AbstractModel& M, const Data& D);
 
 
 protected:
@@ -50,26 +50,36 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Sample one block
-    void OneBlockSample(int BlockNumber, Realizations& R, AbstractModel& M, const Data& D, int IterationNumber);
+    void OneBlockSample(int BlockNumber, Reals& R, Realizations& AR, AbstractModel& M, const Data& D);
     
-        /// Compute Prior part of the ratio while updating the realization
-    ScalarType ComputePriorRatioAndUpdateRealizations(Realizations& R, const AbstractModel& M, const Block& Variables);
+    /// Compute Prior part of the ratio while updating the realization
+    ScalarType ComputePriorRatioAndUpdateRealizations(Reals& R, Realizations& AR, const AbstractModel& M, const Block& Variables);
     
     /// Check if all the random variables are from one individual
     int TypeRandomVariables(Block& B);
     
     /// Compute likelihood based on the block type
-    VectorType ComputeLogLikelihood(int Type, const Realizations& R, AbstractModel& M, const Data& D);
+    VectorType ComputeLogLikelihood(AbstractModel& M, const Data& D);
     
     /// Get previously computed log likelihood
-    double GetPreviousLogLikelihood(int Type, AbstractModel& M, const Realizations& R, const Data& D);
+    double GetPreviousLogLikelihood();
     
     /// Update the last log likelihood computed
-    void UpdateLastLogLikelihood(int Type, VectorType& ComputedLogLikelihood);
+    void UpdateLastLogLikelihood(VectorType& ComputedLogLikelihood);
+    
+        /// Update the random variable
+    void UpdateBlockRandomVariable(double AcceptanceRatio, const Block& Variables);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    /// Current Block Type
+    int m_CurrentBlockType;
+    
+    /// Current iteration Number
+    int m_CurrentIteration;
     
     /// Candidates random variables, corresponding to those in the Model
     CandidateRandomVariables m_CandidateRandomVariables;
@@ -87,6 +97,8 @@ protected:
     /// Parameters to recover back in the realization
     std::unordered_map<std::string, std::pair<unsigned int, ScalarType >> m_RecoverParameters;
     
+    /// Uniform distrubution
+    std::uniform_real_distribution<double> m_UniformDistribution;
     
 };
 

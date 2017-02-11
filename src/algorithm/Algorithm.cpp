@@ -50,12 +50,12 @@ Algorithm
         if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
         
         ComputeSimulationStep(D);
-        SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, D);
+        SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, *m_AwesomeRealizations, D);
         ComputeStochasticApproximation(SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
         
         if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { DisplayOutputs(); }
-        if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter, *m_Realizations); }
+        if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter, *m_Realizations, *m_AwesomeRealizations); }
         
     }
 }
@@ -69,7 +69,7 @@ void
 Algorithm
 ::InitializeStochasticSufficientStatistics(const Data& D)
 {
-    m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, D);
+    m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, *m_AwesomeRealizations, D);
     for(auto&& it : m_StochasticSufficientStatistics)
     {
         std::fill(it.begin(), it.end(), 0.0);
@@ -83,9 +83,19 @@ Algorithm
 {
     
     m_Model->Initialize(D);
-    Realizations R = m_Model->SimulateRealizations((int)D.size());
-    m_Realizations = std::make_shared<Realizations>(R);
-    m_Model->UpdateModel(R, -1);
+    Reals R = m_Model->SimulateRealizations((int)D.size());
+    Realizations AwesomeRealizations = m_Model->GetAwesomeRealizations();
+    
+    for(auto it = R.begin(); it != R.end(); ++it)
+    {
+        if(R.at(it->first)(0) != AwesomeRealizations.at(it->first, 0))
+        {
+            std::cout << it->first << std::endl;
+        }
+    }
+    m_AwesomeRealizations = std::make_shared<Realizations>(AwesomeRealizations);
+    m_Realizations = std::make_shared<Reals>(R);
+    m_Model->UpdateModel(AwesomeRealizations, -1);
     
     for(auto&& it : *m_Realizations)
     {
@@ -98,18 +108,16 @@ void
 Algorithm
 ::InitializeSampler(const Data& D)
 {
-    m_Sampler->InitializeSampler(*m_Realizations, *m_Model, D);
+    m_Sampler->InitializeSampler(*m_Realizations, *m_AwesomeRealizations, *m_Model, D);
 }
 
 void
 Algorithm
 ::ComputeSimulationStep(const Data& D)
 {
-    Realizations RRR = *m_Realizations;
-    Realizations&& R = m_Sampler->Sample(RRR, *m_Model, D, m_IterationCounter);
-    ComputeAcceptanceRatio(R);
-    m_Realizations = std::make_shared<Realizations>(R);
-    
+    Reals PreviousRealizations = *m_Realizations;
+    m_Sampler->Sample(*m_Realizations, *m_AwesomeRealizations, *m_Model, D);
+    ComputeAcceptanceRatio(PreviousRealizations);
 }
 
 
@@ -150,13 +158,13 @@ void
 Algorithm
 ::DisplayOutputs()
 {
-    m_Model->DisplayOutputs(*m_Realizations);
+    m_Model->DisplayOutputs(*m_Realizations, *m_AwesomeRealizations);
 }
 
 
 void
 Algorithm
-::ComputeAcceptanceRatio(Realizations& R)
+::ComputeAcceptanceRatio(Reals& PreviousReals)
 { 
     
 
@@ -165,7 +173,7 @@ Algorithm
       std::string NameVariable = it.first;
       
       VectorType PrevReal = it.second;
-      VectorType NewReal = R.at(NameVariable);
+      VectorType NewReal = PreviousReals.at(NameVariable);
       
       auto IterPrevReal = PrevReal.begin();
       auto IterNewReal = NewReal.begin();
@@ -180,12 +188,12 @@ Algorithm
       
   }
     
-    if(m_IterationCounter%m_CounterToDisplayOutputs == 0) { DisplayAcceptanceRatio(R); }
+    if(m_IterationCounter%m_CounterToDisplayOutputs == 0) { DisplayAcceptanceRatio(); }
 }
 
 void
 Algorithm
-::DisplayAcceptanceRatio(Realizations &R) {
+::DisplayAcceptanceRatio() {
     std::cout << "AcceptRatio: ";
     for (const auto &it : *m_Realizations) {
         std::cout << it.first << ": ";
