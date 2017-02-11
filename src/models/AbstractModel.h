@@ -14,7 +14,6 @@
 #include "MatrixFunctions.h"
 #include "TestAssert.h"
 #include "AbstractRandomVariable.h"
-#include "LaplaceRandomVariable.h"
 #include "AbstractManifold.h"
 
 
@@ -46,7 +45,7 @@ public:
     /// Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::shared_ptr< AbstractRandomVariable > GetRandomVariable(std::string name);
+    std::shared_ptr< AbstractRandomVariable > GetRandomVariable(std::string name) const;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Other method(s) :

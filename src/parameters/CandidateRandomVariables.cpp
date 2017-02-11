@@ -24,14 +24,12 @@ CandidateRandomVariables
 // Encapsulation method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-GaussianRandomVariable&
+GaussianRandomVariable
 CandidateRandomVariables
-::GetRandomVariable(std::string NameRandomVariable,int SubjectNumber, double CurrentRealization)
+::GetRandomVariable(std::string NameRandomVariable,int SubjectNumber)
+const
 {
-    GaussianRandomVariable& Candidate = m_PropositionDistribution[NameRandomVariable][SubjectNumber];
-    Candidate.SetMean(CurrentRealization);
-    
-    return Candidate;
+    return m_PropositionDistribution.at(NameRandomVariable)[SubjectNumber];
 }
 
 

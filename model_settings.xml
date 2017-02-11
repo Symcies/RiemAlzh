@@ -1,0 +1,32 @@
+<model-settings>
+
+  <!-- Type of the model : {Univariate, Multivariate, Network, ...} -->
+  <type>FastNetwork</type>
+
+  <!-- Name of the outputs files -->
+  <output-name>AwesomeNetwork</output-name>
+
+
+  <manifold>Exponential</manifold>
+
+  <number-of-dimensions>1827</number-of-dimensions>
+
+  <number-of-indepenent-sources>1</number-of-indepenent-sources>
+
+  <parameters>
+    <p0>
+      <mean></mean>
+      <variance></variance>
+    </p0>
+
+    <t0>
+    </t0>
+
+  </parameters>
+  <!-- Comment -->
+
+  <path-to-kernel-Kxd>/Users/igor.koval/Documents/Work/RiemAlzh/data/Kxd_16.csv</path-to-kernel-Kxd>
+  <path-to-kernel-invKd>/Users/igor.koval/Documents/Work/RiemAlzh/data/invKd_16.csv</path-to-kernel-invKd>
+
+
+</model-settings>

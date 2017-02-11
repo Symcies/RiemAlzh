@@ -4,7 +4,6 @@
 #include <map>
 
 #include "LinearAlgebra.h"
-#include "ConstantRandomVariable.h"
 #include "GaussianRandomVariable.h"
 #include "AbstractRandomVariable.h"
 #include "AbstractModel.h"
@@ -36,7 +35,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Get a candidate random variable
-    GaussianRandomVariable& GetRandomVariable(std::string NameRandomVariable, int SubjectNumber, double CurrentRealization);
+    GaussianRandomVariable GetRandomVariable(std::string NameRandomVariable, int SubjectNumber) const;
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////

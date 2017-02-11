@@ -653,7 +653,7 @@ LongitudinalModel
     
     for(int i = 0; i<m_NbIndependentComponents ; ++i)
     {
-        auto S = std::make_shared< LaplaceRandomVariable >(0.0, 1.0/2.0);
+        auto S = std::make_shared< GaussianRandomVariable >(0.0, 1.0/2.0);
         m_IndividualRandomVariables.insert(RandomVariable("S#" + std::to_string(i), S));
     }
 

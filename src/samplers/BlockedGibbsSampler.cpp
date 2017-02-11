@@ -97,30 +97,7 @@ BlockedGibbsSampler
         }
         
     }
-    
-    /// Nu
-    /*
-    Block NuPop;
-    int SizeOfNuBlocks = (int)NbNu/5;
-    for(unsigned int i = 1; i < NbNu + 1; ++i)
-    {
-        auto Nu = std::make_tuple("Nu#" + std::to_string(i + 1), -1);
-        NuPop.push_back(Nu);
-        
-        if(i == NbNu - 1)
-        {
-            auto NuEnd = std::make_tuple("Nu#" + std::to_string(i + 1), -1);
-            NuPop.push_back(NuEnd);
-            m_Blocks.push_back(NuPop);
-            break;
-        }
-        if(i%SizeOfNuBlocks == 0)
-        {
-            m_Blocks.push_back(NuPop);
-            NuPop.clear();
-        }
-    }
-    */
+
     /// Block Nu for the FastNetwork with Nu as one random variable 
     Block NuPop;
     int SizeOfNuBlocks = (int)NbNu/5;
@@ -177,8 +154,6 @@ BlockedGibbsSampler
 ::Sample(Realizations& R, AbstractModel& M,
          const Data &D, int IterationNumber) 
 {
-    
-    
     ////////////////////////////////////////
     // TODO : Check if the update is needed
     M.UpdateModel(R, -1);
@@ -187,13 +162,9 @@ BlockedGibbsSampler
     ////////////////////////////////////////
     
     
-    
-    
-    for(int j = 0; j < 1; ++j) 
+    for (int i = 0; i < m_Blocks.size(); ++i) 
     {
-        for (int i = 0; i < m_Blocks.size(); ++i) {
-            R = OneBlockSample(i, R, M, D, IterationNumber);
-        }
+        OneBlockSample(i, R, M, D, IterationNumber);
     }
         
     return R;
@@ -206,38 +177,18 @@ BlockedGibbsSampler
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-BlockedGibbsSampler::Realizations
+void
 BlockedGibbsSampler
-::OneBlockSample(int BlockNumber, const Realizations& R, AbstractModel &M, 
+::OneBlockSample(int BlockNumber, Realizations& R, AbstractModel &M, 
                  const Data &D, int IterationNumber) 
 {
     /// Initialization
-    auto NewRealizations = Realizations(R);
     Block CurrentBlock = m_Blocks[BlockNumber];
     double AcceptationRatio = 0;
-    std::vector<std::string> CurrentParameters;
+    m_CurrentBlockParameters.clear();
+    m_RecoverParameters.clear();
     
-    /// Loop over the realizations of the block to update the ratio and the realizations
-    for(auto it = CurrentBlock.begin(); it != CurrentBlock.end(); ++it) 
-    {
-        /// Initialization
-        std::string NameRealization = std::get<0>(*it);
-        CurrentParameters.push_back(NameRealization);
-        unsigned int SubjectNumber = std::max(std::get<1>(*it), 0);
-        
-        ///Get the current (for the ratio) and candidate random variables (to sample a candidate)
-        ScalarType CurrentRealization = R.at(NameRealization)(SubjectNumber);
-        auto X = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization);
-        ScalarType CandidaRealization = X.Sample();
-        
-        /// Get the random variable
-        auto RandomVariable = M.GetRandomVariable(NameRealization);
-        AcceptationRatio += RandomVariable->LogLikelihood(CandidaRealization);
-        AcceptationRatio -= RandomVariable->LogLikelihood(CurrentRealization);
-        
-        /// Update the NewRealizations
-        NewRealizations.at(NameRealization)(SubjectNumber) = CandidaRealization;
-    }
+    AcceptationRatio = ComputePriorRatioAndUpdateRealizations(R, M, CurrentBlock);
     
     /// Compute the likelihood
     int Type = TypeRandomVariables(CurrentBlock);
@@ -245,8 +196,8 @@ BlockedGibbsSampler
     double PreviousLikelihood = GetPreviousLogLikelihood(Type, M, R, D);
     AcceptationRatio -= PreviousLikelihood;
 
-    M.UpdateModel(NewRealizations, Type, CurrentParameters);
-    VectorType ComputedLogLikelihood = ComputeLogLikelihood(Type, NewRealizations, M, D);
+    M.UpdateModel(R, Type, m_CurrentBlockParameters);
+    VectorType ComputedLogLikelihood = ComputeLogLikelihood(Type, R, M, D);
     double NewLikelihood = ComputedLogLikelihood.sum();
     AcceptationRatio += NewLikelihood;
     
@@ -263,7 +214,8 @@ BlockedGibbsSampler
         ScalarType CurrentRealization = R.at(NameRealization)(SubjectNumber);
                 
         /// Update variance
-        GaussianRandomVariable& GRV = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber, CurrentRealization);
+        GaussianRandomVariable GRV = m_CandidateRandomVariables.GetRandomVariable(NameRealization, SubjectNumber);
+        GRV.SetMean(CurrentRealization);
         UpdatePropositionDistributionVariance(GRV, AcceptationRatio, IterationNumber);
     }
     
@@ -276,15 +228,54 @@ BlockedGibbsSampler
     ///  Rejection : Candidate not accepted
     if(UnifSample > AcceptationRatio)
     {
-        M.UpdateModel(R, Type, CurrentParameters);
-        return std::move(R);
+        for(auto it = m_RecoverParameters.begin(); it != m_RecoverParameters.end(); ++it)
+        {
+            R.at(it->first)(it->second.first) = it->second.second;
+        }
+           
+        M.UpdateModel(R, Type, m_CurrentBlockParameters);
     }
         /// Acceptation : Candidate is accepted
     else
     {
         UpdateLastLogLikelihood(Type, ComputedLogLikelihood);
-        return NewRealizations;
     }
+    
+}
+
+ScalarType 
+BlockedGibbsSampler
+::ComputePriorRatioAndUpdateRealizations(Realizations &R, const AbstractModel &M, const Block &Variables) 
+{
+    double AcceptanceRatio = 0;
+    
+    for(auto it = Variables.begin(); it != Variables.end(); ++it) 
+    {
+        /// Initialization
+        std::string NameRealization = std::get<0>(*it);
+        unsigned int RealizationNumber = std::max(std::get<1>(*it), 0);
+        m_CurrentBlockParameters.push_back(NameRealization);
+        
+        /// Get the current realization and recover it
+        auto CurrentRandomVariable = M.GetRandomVariable(NameRealization);
+        ScalarType CurrentRealization = R.at(NameRealization)(RealizationNumber);
+        m_RecoverParameters[NameRealization] = {RealizationNumber, CurrentRealization};
+        
+        
+        /// Get a candidate realization
+        auto CandidateRandomVariable = m_CandidateRandomVariables.GetRandomVariable(NameRealization, RealizationNumber);
+        CandidateRandomVariable.SetMean(CurrentRealization);
+        ScalarType CandidateRealization = CandidateRandomVariable.Sample();
+        
+        /// Calculate the acceptance ratio
+        AcceptanceRatio += CurrentRandomVariable->LogLikelihood(CandidateRealization);
+        AcceptanceRatio -= CurrentRandomVariable->LogLikelihood(CurrentRealization);
+        
+        /// Update the NewRealizations
+        R.at(NameRealization)(RealizationNumber) = CandidateRealization;
+    }
+    
+    return AcceptanceRatio;
     
 }
 

@@ -50,9 +50,10 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Sample one block
-    Realizations OneBlockSample(int BlockNumber, const Realizations& R, AbstractModel& M, 
-                                const Data& D, int IterationNumber);
+    void OneBlockSample(int BlockNumber, Realizations& R, AbstractModel& M, const Data& D, int IterationNumber);
     
+        /// Compute Prior part of the ratio while updating the realization
+    ScalarType ComputePriorRatioAndUpdateRealizations(Realizations& R, const AbstractModel& M, const Block& Variables);
     
     /// Check if all the random variables are from one individual
     int TypeRandomVariables(Block& B);
@@ -78,6 +79,13 @@ protected:
     
     /// Last likelihood computed : reused 
     VectorType m_LastLikelihoodComputed;
+    
+        /// Parameters updated in the block
+    std::vector<std::string> m_CurrentBlockParameters;
+    std::vector<int> m_CurrentBlockParametersBIS;
+    
+    /// Parameters to recover back in the realization
+    std::unordered_map<std::string, std::pair<unsigned int, ScalarType >> m_RecoverParameters;
     
     
 };

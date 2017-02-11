@@ -3,5 +3,3 @@ io/outputs/
 data/
 
 # Ignore the results
-*.txt
-*.xml

@@ -21,6 +21,7 @@ AbstractManifold
 std::shared_ptr< AbstractRandomVariable > // RandomVariable
 AbstractModel
 ::GetRandomVariable(std::string name)
+const
 {
     if(m_IndividualRandomVariables.count(name))
     {
