@@ -20,6 +20,7 @@ public:
     
     typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
+    typedef typename std::unordered_map<int, VectorType> IntVectorHash;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
     typedef std::unordered_map<std::string, VectorType> Reals;
@@ -89,11 +90,11 @@ protected:
     /// Number of iterations to wait till next data saving
     unsigned int m_CounterToSaveData;
     
-    /// Acceptance Ratios
-    std::map<std::string, VectorType> m_AcceptanceRatios;
+    /// Acceptance ratios
+    IntVectorHash m_AcceptanceRatios;
     
     /// Compute the acceptance ratio for each random variable
-    void ComputeAcceptanceRatio(Reals& PreviousReals);
+    void ComputeAcceptanceRatio(Realizations& PreviousReals);
     
     /// Display acceptance ratio
     void DisplayAcceptanceRatio();
@@ -108,12 +109,9 @@ protected:
 
     /// Abstract Model
     std::shared_ptr<AbstractModel> m_Model;
-
-    /// Realisation of the random variables of the model
-    std::shared_ptr<Reals> m_Realizations;
-    
+        
     /// Awesome Rea
-    std::shared_ptr<Realizations> m_AwesomeRealizations;
+    std::shared_ptr<Realizations> m_Realizations;
 
     /// Abstract Sampler - for the MCMC SAEM 
     std::shared_ptr<AbstractSampler> m_Sampler;

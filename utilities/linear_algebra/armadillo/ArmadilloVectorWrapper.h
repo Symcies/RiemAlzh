@@ -192,7 +192,9 @@ public :
 	inline ScalarType min_value() const { return m_Vector.min(); }
 	/// Largest value.
 	inline ScalarType max_value() const { return m_Vector.max(); }
-
+	/// Mean value.
+	inline ScalarType mean_value() const { return arma::mean(m_Vector); }
+	
 	/// Smallest value index.
 //	inline unsigned int index_min() const { return m_Vector.index_min(); } // REQUIRES ARMADILLO 7.400
 	inline unsigned int index_min() const {

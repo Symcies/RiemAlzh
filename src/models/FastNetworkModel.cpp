@@ -509,6 +509,15 @@ FastNetworkModel
     }
 }
 
+
+std::vector<SamplerBlock>
+FastNetworkModel
+::GetSamplerBlocks() 
+const 
+{
+    
+}
+
 void 
 FastNetworkModel
 ::DisplayOutputs(const Realizations& R) 

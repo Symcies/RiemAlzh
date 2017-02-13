@@ -31,8 +31,10 @@ public:
 
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
-    typedef std::vector< std::pair< VectorType, double> > IndividualData;
-    typedef std::unordered_map<std::string, VectorType> Reals;
+    
+    typedef std::unordered_map<std::string, unsigned int> MiniBlock;
+    typedef std::pair<int, MiniBlock> SamplerBlock;
+    
     typedef std::vector<VectorType> SufficientStatisticsVector;
 
 
@@ -70,17 +72,16 @@ public:
     virtual double ComputeLogLikelihood(const Data& D)= 0;
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const Data& D, 
-                                                  const int SubjectNumber) = 0;
+    virtual double ComputeIndividualLogLikelihood(const Data& D, const int SubjectNumber) = 0;
     
     /// Simulate data according to the model
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) = 0;
 
     /// Simulate some random variable realizations
-    Reals SimulateRealizations(int NumberOfSubjects);
+    Realizations SimulateRealizations(int NumberOfSubjects);
     
-    /// Simulate the random variables realizations
-    Realizations GetAwesomeRealizations() { return  m_AwesomeRealizations; };
+    /// Define the sampler block used in the gibbs sampler (should it be here?)
+    virtual std::vector<SamplerBlock> GetSamplerBlocks() const = 0;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Outputs
@@ -121,9 +122,7 @@ protected:
     
     /// Output file
     std::ofstream m_OutputParameters;
-    
-    /// TO BE DELETED
-    Realizations m_AwesomeRealizations;
+
 
 
 };

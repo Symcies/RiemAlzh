@@ -33,34 +33,32 @@ public:
     virtual void Initialize(const Data& D);
     
     /// Update the model parameters != random variables parameters
-    virtual void UpdateModel(const Realizations& AR, int Type,
-                             const std::vector<std::string> Names = {"All"});
+    virtual void UpdateModel(const Realizations& R, int Type, const std::vector<std::string> Names = {"All"});
     
     /// Simulate data according to the model and the parameters
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int  MaxObs);
     
     /// Compute the log likelihood of the model
-    virtual double ComputeLogLikelihood(
-                                        const Data& D);
+    virtual double ComputeLogLikelihood(const Data& D);
     
     /// Compute the log likelihood of the model for a given subject
-    virtual double ComputeIndividualLogLikelihood(
-                                                  const Data& D, 
-                                                  const int SubjectNumber);
+    virtual double ComputeIndividualLogLikelihood(const Data& D, const int SubjectNumber);
 
     /// Get the sufficient statistics of the model
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& AR, const Data& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Data& D);
     
     /// Update the random variables <=> the parameters of the model
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, 
-                                       const Data& D);
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, const Data& D);
+    
+    /// Define the sampler block used in the gibbs sampler (should it be here?)
+    virtual std::vector<SamplerBlock> GetSamplerBlocks() const ;
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Outputs
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Compute outputs
-    virtual void DisplayOutputs(const Realizations& AR);
+    virtual void DisplayOutputs(const Realizations& R);
     
     /// Save the data into a file
     virtual void SaveData(unsigned int IterationNumber, const Realizations& R);

@@ -50,25 +50,7 @@ public:
     inline       ScalarType& at(const std::string Name, const unsigned int Number)       { return m_Realizations.at(m_StringToIntKey.at(Name))(Number); }
     inline const ScalarType& at(const std::string Name, const unsigned int Number) const { return m_Realizations.at(m_StringToIntKey.at(Name))(Number); }
     
-    /*
-        /// Efficient way to get the vector of realizations
-    inline VectorType at(int Key) const { return m_Realizations.at(Key); }
-    
-    /// Less efficient way to get the vector of realizations
-    inline VectorType at(std::string Name) const { return m_Realizations.at(m_StringToIntKey.at(Name)); };
-    
-    /// Efficient way to get a particular realization
-    inline ScalarType at(int Key, unsigned int Number) const { return m_Realizations.at(Key)(Number); }
-    
-    /// Less efficient way to get a particular realization
-    inline ScalarType at(std::string Name, unsigned int Number) const { return m_Realizations.at(m_StringToIntKey.at(Name))(Number); }
-    
-    /// Efficient way to set a particular realization
-    inline void set(int Key, unsigned int Number, ScalarType Value) { m_Realizations.at(Key)(Number) = Value; }
-    
-    /// Less efficient way to set a particular realization
-    inline void set(std::string Name, unsigned int Number, ScalarType Value) { m_Realizations.at(m_StringToIntKey.at(Name))(Number) = Value; }
-    */
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
