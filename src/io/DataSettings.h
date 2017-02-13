@@ -1,5 +1,5 @@
-#ifndef m_ModelSettings_h
-#define m_ModelSettings_h
+#ifndef _DataSettings_h
+#define _DataSettings_h
 
 typedef double ScalarType;
 
@@ -8,83 +8,74 @@ typedef double ScalarType;
 
 #include "tinyxml2.h"
 
-class ModelSettings {
-  
+
+class DataSettings {
 public:
     
+        
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////
     
-    ModelSettings(const char* XMLFile );
+    DataSettings(const char* XMLFile);
     
-    ~ModelSettings();
+    ~DataSettings();    
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
     
-    std::string GetType() { return m_Type; }
+    std::string GetPathToGroup() const { return m_PathToGroup; }
     
-    unsigned int GetManifoldDimension() const { return m_ManifoldDimension; }
+    std::string GetPathToTimepoints() const { return m_PathToTimepoints; }
     
-    unsigned int GetNumberOfIndependentSources() const { return m_NbIndependentSources; } 
-    
-    std::string GetInvertKernelPath() const { return m_InvertKernelMatrixPath; }
-    
-    std::string GetInterpolationKernelPath() const { return m_InterpolationMatrixPath; }
+    std::string GetPathToObservations() const { return m_PathToObservations; }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    bool RealData() const { return m_RealData; }
     
 private:
-        
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Attribute(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Type of the model
-    std::string m_Type;
+    /// Read real data if true
+    bool m_RealData;
     
-    /// Name of the output file
-    std::string m_OutputFileName;
+    /// Path to data
+    std::string m_PathToData;
     
-    /// Dimension of the manifold
-    unsigned int m_ManifoldDimension;
+    /// Path to group csv
+    std::string m_PathToGroup;
     
-    /// Number of sources
-    unsigned int m_NbIndependentSources;
+    /// Path to timepoint csv
+    std::string m_PathToTimepoints;
     
-    /// Path to the kernel matrix
-    std::string m_InvertKernelMatrixPath;
-    
-    /// Path to the interpolation matrix
-    std::string m_InterpolationMatrixPath;
-    
+    /// Path to observations csv
+    std::string m_PathToObservations;
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Model specific methods(s) :
+    /// Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Load real data settings
+    void LoadRealDataSettings(const char* XMLFile);
     
-    /// Path to kernel Kxd
+    /// Load simulated data settings
+    void LoadSimulatedDataSettings(const char* XMLFile);
     
-    /// Path to kernel invKd
     
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Methods(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    /// Load the fast network model
-    void LoadFastNetwork(const char* XMLFile);
-    
-    /// Load the meshwork model
-    void LoadMeshworkModel(const char* XMLFile);
 };
 
 
-#endif //m_ModelSettings_h
+#endif //_DataSettings_h

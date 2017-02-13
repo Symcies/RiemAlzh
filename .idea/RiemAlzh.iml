@@ -30,10 +30,12 @@
       <sourceFolder url="file://$MODULE_DIR$/src/models/AbstractModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/realizations/Realizations.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/realizations/Realizations.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/AbstractRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/GaussianRandomVariable.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/random_variables/AbstractRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/GaussianRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/MultiRandomVariables.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/random_variables/GaussianRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/MultiRandomVariables.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/random_variables/AbstractRandomVariable.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/PropagationManifold.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/ExponentialCurveManifold.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/AbstractManifold.cpp" isTestSource="false" />
@@ -54,9 +56,11 @@
       <sourceFolder url="file://$MODULE_DIR$/src/samplers/AbstractSampler.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/ModelSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/ModelSettings.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/DataSettings.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/AlgorithmSettings.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/DataSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/AlgorithmSettings.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.cpp" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />

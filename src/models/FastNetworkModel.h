@@ -1,6 +1,7 @@
 #ifndef _FastNetworkModel_h
 #define _FastNetworkModel_h
 
+#include "ModelSettings.h"
 #include "AbstractModel.h"
 #include "ExponentialCurveManifold.h"
 
@@ -18,6 +19,7 @@ public:
     /// Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
+    FastNetworkModel(ModelSettings& MS);
     FastNetworkModel(const unsigned int NbIndependentComponents, std::shared_ptr<MatrixType> KernelMatrix, std::shared_ptr<MatrixType> InterpolationMatrix);
     ~FastNetworkModel();
     

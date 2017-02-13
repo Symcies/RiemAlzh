@@ -83,7 +83,7 @@ Algorithm
 {
     
     m_Model->Initialize(D);
-    Realizations R = m_Model->SimulateRealizations(D.size());
+    Realizations R = m_Model->SimulateRealizations();
     
     m_Realizations = std::make_shared<Realizations>(R);
     m_Model->UpdateModel(R, -1);

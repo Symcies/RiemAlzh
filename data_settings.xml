@@ -3,12 +3,13 @@
   <!-- Defines if should read real data (true) of simulate data (false) -->
   <real-data>true</real-data>
 
-  <folder-path>/Users/igor.koval/Documents/Work/RiemAlzh/data/NormalizedThickness/MCIconvertAD/</folder-path>
 
+  <!-- Comment -->
+  <folder-path>/Users/igor.koval/Documents/Work/ok3/RiemAlzh/data/NormalizedThickness/MCIconvertAD/</folder-path>
   <group-file>group.csv</group-file>
   <timepoints-file>X.csv</timepoints-file>
   <observations-file>Y.csv</observations-file>
-  <!-- Comment -->
+
 
 
   <!-- Comment -->

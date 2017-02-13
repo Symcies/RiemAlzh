@@ -1,9 +1,13 @@
-
 #ifndef _AbstractRandomVariable_h
 #define _AbstractRandomVariable_h
 
+typedef double ScalarType;
+
 #include <random>
-#include <iostream>     // For cout : only for debugging part
+#include <iostream>     
+#include <unordered_map>
+
+#include "LinearAlgebra.h"
 
 //static std::random_device RD;
 //static std::mt19937 Generator(RD());
@@ -17,24 +21,38 @@ public:
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
+    typedef typename std::unordered_map<std::string, ScalarType > StringScalarHash;
+    typedef typename std::unordered_map<int, ScalarType > IntScalarHash;
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Getter(s) and Setter(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    virtual ScalarType GetParameter(std::string ParameterName) const = 0;
+    virtual ScalarType GetParameter(int ParameterKey) const = 0;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
+    
     /// Draw a new sample
     virtual double Sample() = 0;
+    
+    /// Draw multiple samples
+    VectorType Samples(unsigned int NumberOfSamples);
 
     /// Compute the likelihood
     virtual double Likelihood(double X) = 0;
     
     /// Compute the log likelihood
     virtual double LogLikelihood(double X) = 0;
+    
+    /// Update the random variable parameters
+    virtual void Update(StringScalarHash Parameters) = 0;
+    virtual void Update(IntScalarHash    Parameters) = 0;
+    
+    
     
 protected:
 

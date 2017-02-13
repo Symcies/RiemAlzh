@@ -16,6 +16,7 @@ ModelSettings
     auto Settings = Parameters.FirstChildElement("model-settings");
     
     std::string Type = Settings->FirstChildElement("type")->GetText();
+    m_Type = Type;
     
     if(Type == "FastNetwork")
         LoadFastNetwork(XMLFile);
@@ -45,7 +46,16 @@ void
 ModelSettings
 ::LoadFastNetwork(const char *XMLFile) 
 {
+    tinyxml2::XMLDocument Parameters;
+    Parameters.LoadFile(XMLFile);
     
+    auto Settings = Parameters.FirstChildElement("model-settings");
+    
+    m_ManifoldDimension = atoi(Settings->FirstChildElement("number-of-dimensions")->GetText());
+    m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-indepenent-sources")->GetText());
+    
+    m_InvertKernelMatrixPath  = Settings->FirstChildElement("path-to-kernel-invKd")->GetText();
+    m_InterpolationMatrixPath = Settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
 }
 
 
@@ -61,4 +71,6 @@ ModelSettings
     m_ManifoldDimension = atoi(Settings->FirstChildElement("manifold-dimension")->GetText());
     m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-indepenent-sources")->GetText());
     
+    m_InvertKernelMatrixPath  = Settings->FirstChildElement("path-to-kernel-invKd")->GetText();
+    m_InterpolationMatrixPath = Settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
 }

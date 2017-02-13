@@ -3,13 +3,13 @@
 
 ReadData::Data
 ReadData
-::OpenFilesMultivariate(std::string FilesPath, int NbMaxOfSubjects = -1)
+::OpenFilesMultivariate(DataSettings& DS, int NbMaxOfSubjects = -1)
 {
     Data D;
     
-    std::ifstream IndivID(FilesPath + "group.csv");
-    std::ifstream DataX(FilesPath + "X.csv");
-    std::ifstream DataY(FilesPath + "Y.csv");
+    std::ifstream IndivID(DS.GetPathToGroup());
+    std::ifstream DataX(DS.GetPathToTimepoints());
+    std::ifstream DataY(DS.GetPathToObservations());
     
     /// Open the Group file;
     if(IndivID.is_open())

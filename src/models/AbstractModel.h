@@ -9,6 +9,7 @@
 #include <memory>
 #include <unordered_map>
 
+#include "MultiRandomVariables.h"
 #include "Realizations.h"
 #include "ReadData.h"
 #include "LinearAlgebra.h"
@@ -28,10 +29,8 @@ public:
         
     typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
-
-    
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
-    
+    typedef typename std::unordered_map<std::string, int> StringIntHash;
     typedef std::unordered_map<std::string, unsigned int> MiniBlock;
     typedef std::pair<int, MiniBlock> SamplerBlock;
     
@@ -78,7 +77,7 @@ public:
     virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) = 0;
 
     /// Simulate some random variable realizations
-    Realizations SimulateRealizations(int NumberOfSubjects);
+    Realizations SimulateRealizations();
     
     /// Define the sampler block used in the gibbs sampler (should it be here?)
     virtual std::vector<SamplerBlock> GetSamplerBlocks() const = 0;
@@ -114,11 +113,11 @@ protected:
     /// Riemanian manifold
     std::shared_ptr< AbstractManifold > m_Manifold;
 
-    /// Random variables shared among the population
-    std::map< std::string, std::shared_ptr< AbstractRandomVariable >>  m_PopulationRandomVariables;
-
-    /// Random variables that are subject-specific
-    std::map< std::string, std::shared_ptr< AbstractRandomVariable >> m_IndividualRandomVariables;
+    /// Random variables 
+    MultiRandomVariables m_RandomVariables;
+    
+    /// Number of realizations per random variables used in the model
+    StringIntHash m_RealizationsPerRandomVariable;
     
     /// Output file
     std::ofstream m_OutputParameters;

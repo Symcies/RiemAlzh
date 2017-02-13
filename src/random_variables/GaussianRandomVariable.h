@@ -14,19 +14,25 @@ public:
     GaussianRandomVariable(double Mean, double Variance);
     ~GaussianRandomVariable();
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Method(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Getter(s) and Setter(s) :
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    inline double GetVariance() { return m_Variance; }
+    virtual ScalarType GetParameter(std::string ParameterName) const;
+    virtual ScalarType GetParameter(int ParameterKey) const;
+    
+    inline double GetVariance() const { return m_Variance; }
 
-    inline double GetMean() { return m_Mean; }
+    inline double GetMean() const { return m_Mean; }
 
     inline void SetMean(double Mean) { m_Mean = Mean; };
 
     inline void SetVariance(double Variance) {m_Variance = Variance; };
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Method(s) :
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     /// Draw a sample
     virtual double Sample();
 
@@ -35,6 +41,10 @@ public:
     
     /// Compute the loglikelihood given a current state
     virtual double LogLikelihood(double X);
+    
+    /// Update the random variable parameters
+    virtual void Update(StringScalarHash Parameters);
+    virtual void Update(IntScalarHash    Parameters);
 
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////

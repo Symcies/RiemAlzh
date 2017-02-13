@@ -11,7 +11,7 @@
 
   <number-of-dimensions>1827</number-of-dimensions>
 
-  <number-of-indepenent-sources>1</number-of-indepenent-sources>
+  <number-of-indepenent-sources>5</number-of-indepenent-sources>
 
   <parameters>
     <p0>
@@ -25,8 +25,8 @@
   </parameters>
   <!-- Comment -->
 
-  <path-to-kernel-Kxd>/Users/igor.koval/Documents/Work/RiemAlzh/data/Kxd_16.csv</path-to-kernel-Kxd>
-  <path-to-kernel-invKd>/Users/igor.koval/Documents/Work/RiemAlzh/data/invKd_16.csv</path-to-kernel-invKd>
+  <path-to-kernel-Kxd>/Users/igor.koval/Documents/Work/ok3/RiemAlzh/data/Kxd_16.csv</path-to-kernel-Kxd>
+  <path-to-kernel-invKd>/Users/igor.koval/Documents/Work/ok3/RiemAlzh/data/invKd_16.csv</path-to-kernel-invKd>
 
 
 </model-settings>

@@ -9,6 +9,7 @@ typedef double ScalarType;
 #include <string>
 #include <ios>
 
+#include "DataSettings.h"
 #include "LinearAlgebra.h"
 
 
@@ -40,7 +41,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Open multivariate files
-    static Data OpenFilesMultivariate(std::string FilesPath, int NbMaxOfSubjects);
+    static Data OpenFilesMultivariate(DataSettings& DS, int NbMaxOfSubjects);
     
     /// Open network propagation files
     static MatrixType OpenKernel(std::string FilePath);

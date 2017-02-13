@@ -10,9 +10,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    // For each block; vector of Name + SubjectNumber
-    typedef std::vector< std::tuple< std::string, int>> Block;
+
     
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,10 +51,8 @@ protected:
     void OneBlockSample(int BlockNumber, Realizations& R, AbstractModel& M, const Data& D);
     
     /// Compute Prior part of the ratio while updating the realization
-    ScalarType ComputePriorRatioAndUpdateRealizations(Realizations& R, const AbstractModel& M, const Block& Variables);
+    ScalarType ComputePriorRatioAndUpdateRealizations(Realizations& R, const AbstractModel& M, const MiniBlock& Variables);
     
-    /// Check if all the random variables are from one individual
-    int TypeRandomVariables(Block& B);
     
     /// Compute likelihood based on the block type
     VectorType ComputeLogLikelihood(AbstractModel& M, const Data& D);
@@ -68,12 +64,11 @@ protected:
     void UpdateLastLogLikelihood(VectorType& ComputedLogLikelihood);
     
         /// Update the random variable
-    void UpdateBlockRandomVariable(double AcceptanceRatio, const Block& Variables);
+    void UpdateBlockRandomVariable(double AcceptanceRatio, const MiniBlock& Variables);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
     
     /// Current Block Type
     int m_CurrentBlockType;
@@ -81,16 +76,12 @@ protected:
     /// Current iteration Number
     int m_CurrentIteration;
     
-    /// Candidates random variables, corresponding to those in the Model
-    CandidateRandomVariables m_CandidateRandomVariables;
-    
-    /// Blocks of the sampler
-    std::vector<Block> m_Blocks;
+
     
     /// Last likelihood computed : reused 
     VectorType m_LastLikelihoodComputed;
     
-        /// Parameters updated in the block
+    /// Parameters updated in the block
     std::vector<std::string> m_CurrentBlockParameters;
     std::vector<int> m_CurrentBlockParametersBIS;
     

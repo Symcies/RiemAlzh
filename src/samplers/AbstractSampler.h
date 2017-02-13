@@ -20,8 +20,16 @@ public:
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
+        
+    // For each block; vector of Name + SubjectNumber
+    typedef std::vector< std::tuple< std::string, int>> Block;
+    
+    
     typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
+    
+    typedef std::unordered_map<std::string, unsigned int> MiniBlock;
+    typedef std::pair<int, MiniBlock> SamplerBlock;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
 
@@ -63,12 +71,18 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+    /// Blocks of the sampler
+    std::vector<SamplerBlock> m_Blocks;
     
     /// Sampling time without memory
     unsigned int m_MemorylessSamplingTime = 10000;
     
     /// Acceptation ratio 
     double m_ExpectedAcceptanceRatio = 0.301;
+    
+    /// Candidates random variables, corresponding to those in the Model
+    CandidateRandomVariables m_CandidateRandomVariables;
     
 
 };

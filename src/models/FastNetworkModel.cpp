@@ -3,6 +3,26 @@
 
 
 FastNetworkModel
+::FastNetworkModel(ModelSettings &MS) 
+{
+    m_ManifoldDimension = MS.GetManifoldDimension();
+    m_NbIndependentComponents = MS.GetNumberOfIndependentSources();
+    
+    std::string KernelMatrixPath = MS.GetInvertKernelPath();
+    std::string InterpolationMatrixPath = MS.GetInterpolationKernelPath();
+
+    m_InvertKernelMatrix = ReadData::OpenKernel(KernelMatrixPath).transpose();
+    m_InterpolationMatrix = ReadData::OpenKernel(InterpolationMatrixPath);
+    
+    m_NbControlPoints = m_InvertKernelMatrix.columns();
+    m_Nus.set_size(m_ManifoldDimension);
+    m_Deltas.set_size(m_ManifoldDimension);
+    m_Block1.set_size(m_ManifoldDimension);
+    m_Block2.set_size(m_ManifoldDimension);
+}
+
+
+FastNetworkModel
 ::FastNetworkModel(const unsigned int NbIndependentComponents,
                           std::shared_ptr<MatrixType> KernelMatrix,
                           std::shared_ptr<MatrixType> InterpolationMatrix) 
@@ -34,51 +54,7 @@ FastNetworkModel
 {
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     
-     /// Population variables
-    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.000001 );
-    auto P0 = std::make_shared<GaussianRandomVariable>(0.1, 0.0001 * 0.0001);
-    m_PopulationRandomVariables.insert(RandomVariable("P0", P0));
-        
-    for(int i = 1; i < m_NbControlPoints; ++i)
-    {
-        auto Delta = std::make_shared<GaussianRandomVariable>(0, 0.003*0.003);
-        std::string Name1 = "Delta#" + std::to_string(i);
-        m_PopulationRandomVariables.insert(RandomVariable(Name1, Delta));
-    }
-    
-    // TODO : VERY IMPORTANT : This can be refactored such that there is only one random variable
-    //                         with Multiple Reals. It would be m_NbControlPoints realizations here
-    double V0 = 0.04088;
-    for(size_t i = 0; i < m_NbControlPoints; ++i)
-    {
-        auto Nu = std::make_shared<GaussianRandomVariable>(V0, 0.0004*0.0004);
-        std::string Name2 = "Nu#" + std::to_string(i);
-        m_PopulationRandomVariables.insert(RandomVariable(Name2, Nu));
-    }
-    
-    for(int i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension - 1); ++i)
-    {
-        auto Beta = std::make_shared<GaussianRandomVariable>(0, 0.001);
-        std::string Name = "Beta#" + std::to_string(i);
-        m_PopulationRandomVariables.insert(RandomVariable(Name, Beta));
-    }
-    
-    
-    /// Individual variables
-    auto Ksi = std::make_shared<GaussianRandomVariable>(0, 0.000000004);
-    auto Tau = std::make_shared<GaussianRandomVariable>(62, 0.25);
-    
-    m_IndividualRandomVariables.insert(RandomVariable("Ksi", Ksi));
-    m_IndividualRandomVariables.insert(RandomVariable("Tau", Tau));
-    
-    for(int i = 0; i < m_NbIndependentComponents; ++i)
-    {
-        auto S = std::make_shared<GaussianRandomVariable>(0.0, 1);
-        std::string Name = "S#" + std::to_string(i);
-        m_IndividualRandomVariables.insert(RandomVariable(Name, S));
-    }
-    
-    /// Other
+    /// Data-related attributes
     m_NumberOfSubjects = D.size();
     std::vector<VectorType> IndividualObservationDate;
     
@@ -100,6 +76,58 @@ FastNetworkModel
     m_SubjectTimePoints = IndividualObservationDate;
     m_SumObservations = SumObservations;
     m_NbTotalOfObservations = K;
+    
+    
+    
+     /// Population variables
+    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.000001 );
+
+    m_RandomVariables.AddRandomVariable("P0", "Gaussian", {0.1, 0.0001 * 0.0001});
+    m_RealizationsPerRandomVariable.insert({"P0", 1});
+        
+    for(int i = 1; i < m_NbControlPoints; ++i)
+    {
+        std::string NameDelta = "Delta#" + std::to_string(i);
+        m_RandomVariables.AddRandomVariable(NameDelta, "Gaussian", {0, 0.003 * 0.003});
+        m_RealizationsPerRandomVariable.insert({NameDelta, 1});
+    }
+    
+    // TODO : VERY IMPORTANT : This can be refactored such that there is only one random variable
+    //                         with Multiple Reals. It would be m_NbControlPoints realizations here
+    double V0 = 0.04088;
+    for(size_t i = 0; i < m_NbControlPoints; ++i)
+    {
+        std::string NameNu = "Nu#" + std::to_string(i);
+        m_RandomVariables.AddRandomVariable(NameNu, "Gaussian", {V0, 0.0004*0.0004});
+        m_RealizationsPerRandomVariable.insert({NameNu, 1});
+    }
+    
+    for(int i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension - 1); ++i)
+    {
+        std::string Name = "Beta#" + std::to_string(i);
+        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.001});
+        m_RealizationsPerRandomVariable.insert({Name, 1});
+    }
+    
+    
+    /// Individual variables
+    auto Ksi = std::make_shared<GaussianRandomVariable>(0, 0.000000004);
+    auto Tau = std::make_shared<GaussianRandomVariable>(62, 0.25);
+    
+    m_RandomVariables.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
+    m_RealizationsPerRandomVariable.insert({"Ksi", m_NumberOfSubjects});
+    
+    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {62, 0.25});
+    m_RealizationsPerRandomVariable.insert({"Tau", m_NumberOfSubjects});
+    
+    for(int i = 0; i < m_NbIndependentComponents; ++i)
+    {
+        std::string Name = "S#" + std::to_string(i);
+        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0.0, 1});
+        m_RealizationsPerRandomVariable.insert({Name, m_NumberOfSubjects});
+    }
+    
+
     
 }
 
@@ -443,8 +471,7 @@ FastNetworkModel
     }
     KsiVariance /= m_NumberOfSubjects;
     
-    auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));
-    Ksi->SetVariance(KsiVariance);
+    m_RandomVariables.UpdateRandomVariable("Ksi", {{"Variance", KsiVariance}});
     
     /// Update tau and sigma_tau
     double TauMean = 0.0, TauVariance = 0.0;
@@ -460,30 +487,23 @@ FastNetworkModel
     TauVariance -= m_NumberOfSubjects * TauMean * TauMean;
     TauVariance /= m_NumberOfSubjects;
     
-    auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));
-    Tau->SetMean(TauMean);
-    Tau->SetVariance(TauVariance);
+    m_RandomVariables.UpdateRandomVariable("Tau", {{"Mean", TauMean}, {"Variance", TauVariance}});
     
     /// Update P0
-    auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
-    P0->SetMean(SS[5](0));
+    m_RandomVariables.UpdateRandomVariable("P0", {{"Mean", SS[5](0)}});
     
     /// Update beta_k
     int i = 0;
     for(auto it = SS[6].begin(); it != SS[6].end(); ++it, ++i)
     {
-        auto AbstractBeta = m_PopulationRandomVariables.at("Beta#" + std::to_string(i));
-        auto Beta = std::static_pointer_cast<GaussianRandomVariable>(AbstractBeta);
-        Beta->SetMean(*it);
+        m_RandomVariables.UpdateRandomVariable("Beta#" + std::to_string(i), {{"Mean", *it}});
     }
         
     /// Update delta_k
     i = 1;
     for(auto it = SS[7].begin(); it != SS[7].end(); ++it, ++i)
     {
-        auto AbstractDelta = m_PopulationRandomVariables.at("Delta#" + std::to_string(i));
-        auto Delta = std::static_pointer_cast<GaussianRandomVariable>(AbstractDelta);
-        Delta->SetMean(*it);
+        m_RandomVariables.UpdateRandomVariable("Delta#" + std::to_string(i), {{"Mean", *it}});
     }
     
     /// Update nu_k = v0 and sigma_nu
@@ -502,30 +522,77 @@ FastNetworkModel
     
     for(i = 0; i < m_NbControlPoints; ++i)
     {
-        auto AbstractNu = m_PopulationRandomVariables.at("Nu#" + std::to_string(i));
-        auto Nu = std::static_pointer_cast<GaussianRandomVariable>(AbstractNu);
-        Nu->SetMean(V0);
-        Nu->SetVariance(NuVariance);
+        m_RandomVariables.UpdateRandomVariable("Nu#" + std::to_string(i), {{"Mean", V0}, {"Variance", NuVariance}});
     }
 }
 
 
-std::vector<SamplerBlock>
+std::vector<AbstractModel::SamplerBlock>
 FastNetworkModel
 ::GetSamplerBlocks() 
 const 
 {
+    int PopulationType = -1;
+    int NbBeta = 0;
+    int NbDelta = 0;
+    int NbNu = 0;
     
+    
+    std::vector<SamplerBlock> Blocks;
+    
+    /// Insert P0;
+    MiniBlock P;
+    P.insert({"P0", 0});
+    Blocks.push_back(std::make_pair(PopulationType, P));
+    
+    /// Insert Beta_k
+    MiniBlock Beta;
+    for(size_t i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension - 1); ++i)
+    {
+        Beta.insert({"Beta#" + std::to_string(i), 0});
+    }
+    Blocks.push_back(std::make_pair(PopulationType, Beta));
+    
+    /// Insert Delta_k
+    MiniBlock Delta;
+    for(size_t i = 1; i < m_NbControlPoints; ++i)
+    {
+        Delta.insert({"Delta#" + std::to_string(i), 0});
+    }
+    Blocks.push_back(std::make_pair(PopulationType, Delta));
+    
+    /// Insert Nu_k
+    MiniBlock Nu;
+    for(size_t i = 0; i < m_NbControlPoints; ++i)
+    {
+        Nu.insert({"Nu#" + std::to_string(i), 0});
+    }
+    Blocks.push_back(std::make_pair(PopulationType, Nu));
+    
+    /// Individual variables
+    for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+    {
+        MiniBlock IndividualBlock;
+        IndividualBlock.insert({"Ksi", i});
+        IndividualBlock.insert({"Tau", i});
+        for(size_t j = 0; j < m_NbIndependentComponents; ++j)
+            IndividualBlock.insert({"S#" + std::to_string(j), i});
+        
+        Blocks.push_back(std::make_pair(i, IndividualBlock));
+    }
+    
+    
+    return Blocks;
 }
 
 void 
 FastNetworkModel
 ::DisplayOutputs(const Realizations& R) 
 {
-    auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
-    auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));   
+    auto P0 = m_RandomVariables.GetRandomVariable("P0")->GetParameter("Mean");
+    auto Tau = m_RandomVariables.GetRandomVariable("Tau");
     
-    auto Nu = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Nu#0"));
+    auto Nu = m_RandomVariables.GetRandomVariable("Ksi"); 
 
     double NuMax = R.at("Nu#0", 0);
     double NuMin = R.at("Nu#0", 0);
@@ -546,11 +613,10 @@ FastNetworkModel
     }
     
     std::cout << "Noise: " << m_Noise->GetVariance();
-    std::cout << " - p0: " << exp(P0->GetMean()) << " - t0: " << Tau->GetMean() << " - S_tau:" << Tau->GetVariance();
-    std::cout << " - v0: " << Nu->GetMean() << " - S_nu:" << Nu->GetVariance();
+    std::cout << " - p0: " << exp(P0) << " - t0: " << Tau->GetParameter("Mean") << " - S_tau:" << Tau->GetParameter("Variance");
+    std::cout << " - v0: " << Nu->GetParameter("Mean") << " - S_nu:" << Nu->GetParameter("Variance");
     std::cout << " - MaxNu: " << NuMax << " - MinNu: " << NuMin;
     std::cout << " - MaxDelta: " << DeltaMax << " - MinDelta: " << DeltaMin << std::endl;
-    
     
 }
 
@@ -679,7 +745,7 @@ FastNetworkModel
 ::InitializeFakeRandomVariables() 
 {
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-    
+    /*
      /// Population variables
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.0000000001 );
     auto P0 = std::make_shared<GaussianRandomVariable>(0.932, 0.0001 * 0.0001);
@@ -723,7 +789,7 @@ FastNetworkModel
         std::string Name = "S#" + std::to_string(i);
         m_IndividualRandomVariables.insert(RandomVariable(Name, S));
     }
-    
+    */
     
 }
 
@@ -810,7 +876,7 @@ FastNetworkModel
 ::ComputeOrthonormalBasis() 
 {
     /// Get the data
-    auto V0 = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"))->GetMean();
+    auto V0 = m_RandomVariables.GetRandomVariable("Ksi")->GetParameter("Mean");
     V0 = exp(V0);
     
     VectorType U(m_ManifoldDimension);

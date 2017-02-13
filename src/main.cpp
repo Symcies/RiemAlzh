@@ -4,6 +4,10 @@
 
 typedef double ScalarType;
 
+#include "ModelSettings.h"
+#include "DataSettings.h"
+#include "AlgorithmSettings.h"
+
 #include "Algorithm.h"
 
 #include "ExponentialCurveManifold.h"
@@ -12,7 +16,6 @@ typedef double ScalarType;
 #include "LinearManifold.h"
 
 #include "FastNetworkModel.h"
-
 #include "BlockedGibbsSampler.h"
 
 #include "LinearAlgebra.h"
@@ -45,61 +48,45 @@ int main(int argc, char* argv[]) {
     if(argc != 4) 
     {
         std::cout << "Usage with real data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings " << "data_settings.xml" << std::endl;
-        //std::cout << "Usage with simulated data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings " << std::endl;
         return 1;
     }
 
-#pragma omp parallel for
-    for(int i = 0; i < 10; ++i)
-    {
-        
-        //printf("(%d - %d)", i,omp_get_num_threads());
-    }
+    /// GOOOD PART
+        /// Initialize tests
+    TestAssert::Init(false);
     
-
+    /// Load the XML file arguments
+    ModelSettings     MS(argv[1]);
+    AlgorithmSettings AS(argv[2]);
+    DataSettings      DS(argv[3]);
     
-    ///////////////////////
-    //// Initialization ///
-    ///////////////////////
-    
-    //TestAssert::Init(false);
-    std::string ModelType = "FastNetwork";
-    
-    std::string FilePath;
-    std::shared_ptr<AbstractModel> Model;
+    /// Initialize the sampler
     std::shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
     
-    /////////////////////////////
-    //// Initialize the model ///
-    /////////////////////////////
+    /// Initialize the model
+    std::shared_ptr<AbstractModel> Model;
+    //if(MS.GetType() == "Meshwork")  Model = make_shared<MeshworkModel>(MS);
+    if(MS.GetType() == "FastNetwork") Model = make_shared<FastNetworkModel>(MS);
     
-
-
-    if(ModelType == "FastNetwork")
+    /// Initialize the data
+    Data D;
+    if(DS.RealData())
     {
-        FilePath = "/Users/igor.koval/Documents/Work/ok3/RiemAlzh/data/NormalizedThickness/MCIconvertAD/";
-        
-        unsigned int NbIndependentComponents = 5;
-        
-        std::string KernelMatrixPath("/Users/igor.koval/Documents/Work/ok3/RiemAlzh/data/invKd_16.csv");
-        auto KernelMatrix = std::make_shared<FastNetworkModel::MatrixType>(ReadData::OpenKernel(KernelMatrixPath));
-        std::string InterpolationMatrixPath("/Users/igor.koval/Documents/Work/ok3/RiemAlzh/data/Kxd_16.csv");
-        auto InterpolationMatrix = std::make_shared<FastNetworkModel::MatrixType>(ReadData::OpenKernel(InterpolationMatrixPath));
-        
-        Model = make_shared<FastNetworkModel>(NbIndependentComponents, KernelMatrix, InterpolationMatrix);
+        int NbMaxOfSubjects = 250;
+        D = ReadData::OpenFilesMultivariate(DS, NbMaxOfSubjects);
     }
-
-    
-    
-    /////////////////////////////
-    /// Read or Simulate Data ///
-    /////////////////////////////
-    
+    else 
+    {
+        Model->InitializeFakeRandomVariables();
+        D = Model->SimulateData(150, 3, 5);
+    }
+    /*
     Data D;
     bool ReadData = true;
     if(ReadData)
     {
         int NbMaxOfSubjects = 250;
+        std::string FilePath = "/Users/igor.koval/Documents/Work/ok3/RiemAlzh/data/NormalizedThickness/MCIconvertAD/";
         D = ReadData::OpenFilesMultivariate(FilePath, NbMaxOfSubjects);
     }
     else
@@ -107,14 +94,13 @@ int main(int argc, char* argv[]) {
         Model->InitializeFakeRandomVariables();
         D = Model->SimulateData(150, 3, 5);
     }
-    
+    */
     
     
     
     //////////////////////////
     /// Algorithm pipeline ///
     //////////////////////////
-    AlgorithmSettings AS(argv[2]);
     auto Algo = make_shared<Algorithm>(AS);
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
@@ -149,6 +135,11 @@ int main(int argc, char* argv[]) {
     //               佛祖保佑         永无BUG
     //
 
-
+    #pragma omp parallel for
+    for(int i = 0; i < 10; ++i)
+    {
+        
+        //printf("(%d - %d)", i,omp_get_num_threads());
+    }
 
 }
