@@ -9,6 +9,7 @@
 #include <memory>
 #include <unordered_map>
 
+#include "ModelSettings.h"
 #include "MultiRandomVariables.h"
 #include "Realizations.h"
 #include "ReadData.h"
@@ -31,7 +32,8 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
     typedef typename std::unordered_map<std::string, int> StringIntHash;
-    typedef std::unordered_map<std::string, unsigned int> MiniBlock;
+    typedef std::vector<std::pair<std::string,  unsigned int>> MiniBlock;
+    //typedef std::unordered_map<std::string, unsigned int> MiniBlock;
     typedef std::pair<int, MiniBlock> SamplerBlock;
     
     typedef std::vector<VectorType> SufficientStatisticsVector;
@@ -47,6 +49,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     std::shared_ptr< AbstractRandomVariable > GetRandomVariable(std::string name) const;
+    std::shared_ptr< AbstractRandomVariable > GetRandomVariable(int Key) const;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Other method(s) :
@@ -74,7 +77,7 @@ public:
     virtual double ComputeIndividualLogLikelihood(const Data& D, const int SubjectNumber) = 0;
     
     /// Simulate data according to the model
-    virtual Data SimulateData(int NumberOfSubjects, int MinObs, int MaxObs) = 0;
+    virtual Data SimulateData(DataSettings& DS) = 0;
 
     /// Simulate some random variable realizations
     Realizations SimulateRealizations();

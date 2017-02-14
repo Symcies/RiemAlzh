@@ -26,6 +26,13 @@ const
     return m_RandomVariables.GetRandomVariable(Name);
 }
 
+std::shared_ptr< AbstractRandomVariable > // RandomVariable
+AbstractModel
+::GetRandomVariable(int Key)
+const
+{
+    return m_RandomVariables.GetRandomVariable(Key);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

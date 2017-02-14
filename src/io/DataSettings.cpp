@@ -54,7 +54,18 @@ void
 DataSettings
 ::LoadSimulatedDataSettings(const char *XMLFile) 
 {
+    tinyxml2::XMLDocument File;
+    File.LoadFile(XMLFile);
+    
+    auto Settings = File.FirstChildElement("data-settings");
+    
     m_RealData = false;
     
-    std::cout << "TODO ... to complete a data class ..." << std::endl;
+    m_NumberOfSubjects = atoi(Settings->FirstChildElement("number-of-individuals")->GetText());
+    m_MinimumNumberOfObservations = atoi(Settings->FirstChildElement("min-number-of-observations")->GetText());
+    m_MaximumNumberOfObservations = atoi(Settings->FirstChildElement("max-number-of-observations")->GetText());
+    
+    std::cout << "The model is simulating the between ";
+    std::cout << m_MinimumNumberOfObservations << " and " << m_MaximumNumberOfObservations;
+    std::cout << " for " << m_NumberOfSubjects << " subjects" << std::endl;
 }

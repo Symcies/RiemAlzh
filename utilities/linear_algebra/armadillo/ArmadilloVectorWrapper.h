@@ -54,6 +54,8 @@ std::ostream & operator<<(std::ostream& os, ArmadilloVectorWrapper<ScalarType> c
 template <class ScalarType>    
 bool operator==(const ArmadilloVectorWrapper<ScalarType> & left, const ArmadilloVectorWrapper<ScalarType> & right);
 
+template <class ScalarType>
+ArmadilloVectorWrapper<ScalarType> operator%(const ArmadilloVectorWrapper<ScalarType> & leftVector, const ArmadilloVectorWrapper<ScalarType> & rightVector);
 
 /**
  *  \brief      Mathematical vector class (Armadillo).
@@ -83,7 +85,8 @@ class ArmadilloVectorWrapper {
 	friend ArmadilloVectorWrapper<ScalarType> operator*<>(const ScalarType & leftScalar, const ArmadilloVectorWrapper<ScalarType> & rightVector);
     // ADDED BY IGOR
     friend bool operator==<>(const ArmadilloVectorWrapper<ScalarType> & left, const ArmadilloVectorWrapper<ScalarType> & right);
-
+	friend ArmadilloVectorWrapper<ScalarType> operator%<>(const ArmadilloVectorWrapper<ScalarType>& leftVector, const ArmadilloVectorWrapper<ScalarType> & rightVector);
+	
 	/// Overload of the stream operator.
 	friend std::ostream & operator<<<>(std::ostream& os, ArmadilloVectorWrapper<ScalarType> const& rhs);
 
@@ -172,6 +175,11 @@ public :
     inline       iterator end()       { return m_Vector.end(); }
     inline const_iterator end() const { return m_Vector.end(); }
     
+	// ADDED BY IGOR
+	/// Exponential of the vector
+	inline ArmadilloVectorWrapper<ScalarType> exp() const {
+		return ArmadilloVectorWrapper<ScalarType>(arma::exp(m_Vector));
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Arithmetic operations :

@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
     else 
     {
         Model->InitializeFakeRandomVariables();
-        D = Model->SimulateData(150, 3, 5);
+        D = Model->SimulateData(DS);
     }
     /*
     Data D;

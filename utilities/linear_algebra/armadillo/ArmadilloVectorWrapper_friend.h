@@ -83,6 +83,10 @@ bool operator==(const ArmadilloVectorWrapper<ScalarType> & left, const Armadillo
     return true;
 }
 
+template <class ScalarType>
+inline ArmadilloVectorWrapper<ScalarType> operator%(const ArmadilloVectorWrapper<ScalarType>& leftVector, const ArmadilloVectorWrapper<ScalarType>& rightVector) {
+	return ArmadilloVectorWrapper<ScalarType>(leftVector.m_Vector % rightVector.m_Vector);
+}
 
 
 #endif /* _ArmadilloVectorWrapper_friend_h */

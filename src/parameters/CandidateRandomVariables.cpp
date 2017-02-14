@@ -26,10 +26,19 @@ CandidateRandomVariables
 
 GaussianRandomVariable
 CandidateRandomVariables
-::GetRandomVariable(std::string NameRandomVariable,int SubjectNumber)
+::GetRandomVariable(std::string NameRandomVariable,int RealizationNumber)
 const
 {
-    return m_PropositionDistribution.at(NameRandomVariable)[SubjectNumber];
+    return m_NewPropositionDistribution.at(m_StringToIntKey.at(NameRandomVariable)).at(RealizationNumber);
+}
+
+
+GaussianRandomVariable
+CandidateRandomVariables
+::GetRandomVariable(int RandomVariableKey, int RealizationNumber) 
+const 
+{
+    return m_NewPropositionDistribution.at(RandomVariableKey).at(RealizationNumber);
 }
 
 
@@ -41,24 +50,24 @@ void
 CandidateRandomVariables
 ::InitializeCandidateRandomVariables(const Realizations& R)
 {
-    /// Initialization
-    PropositionDistribution PD;
     
     for(auto it = R.begin(); it != R.end(); ++it)
     {
         std::vector< GaussianRandomVariable > PropDistribPerRealization;
         std::string Name = R.ReverseKeyToName(it->first);
+        m_IntToStringKey.insert({it->first, Name});
+        m_StringToIntKey.insert({Name, it->first});
+        
         for(auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
         {
             
             GaussianRandomVariable&& GRV = ReadInitialPropositionDistribution(Name, *it2);
             PropDistribPerRealization.push_back( GRV );
         }
-        PD[Name] = PropDistribPerRealization;
+
+        m_NewPropositionDistribution[it->first] = PropDistribPerRealization;
     }
-    
-    m_PropositionDistribution = PD;
-    
+        
 }
 
 
@@ -99,7 +108,7 @@ CandidateRandomVariables
     double P0Variance = 0.0000005;
     double DeltaVariance = 0.000000003;
     double NuVariance = 0.0000000000000002;
-    double BetaVariance = 0.000006*0.00006;
+    double BetaVariance = 0.0000006*0.000006;
     double TauVariance = 0.1*0.1;
     double KsiVariance = 0.0001;
     double SVariance = 0.02;

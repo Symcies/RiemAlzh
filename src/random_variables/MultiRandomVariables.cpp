@@ -42,7 +42,7 @@ MultiRandomVariables
 ::GetRandomVariable(int Key) 
 const 
 {
-    if(m_KeyToRandomVariableIntType.at(Key)) 
+    if(m_KeyToRandomVariableIntType.at(Key) == 0) 
     {
         // TODO : Change to GetParameters(0) and GetPArameters(1) 
         ScalarType Mean = m_RandomVariables.at(Key)->GetParameter("Mean");

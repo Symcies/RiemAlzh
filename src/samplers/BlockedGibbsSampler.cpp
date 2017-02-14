@@ -83,6 +83,7 @@ BlockedGibbsSampler
     SamplerBlock CurrentBlock = m_Blocks.at(BlockNumber);
     m_CurrentBlockType = CurrentBlock.first;
     m_CurrentBlockParameters.clear();
+    m_CurrentBlockParametersBIS.clear();
     m_RecoverParameters.clear();
     
     /// Loop over the realizations of the block to update the ratio and the realizations
@@ -124,7 +125,7 @@ BlockedGibbsSampler
 
 ScalarType 
 BlockedGibbsSampler
-::ComputePriorRatioAndUpdateRealizations(Realizations& R, const AbstractModel &M, const MiniBlock &Variables) 
+::ComputePriorRatioAndUpdateRealizations(Realizations& R, const AbstractModel& M, const MiniBlock& Variables) 
 {
     double AcceptanceRatio = 0;
     
@@ -132,17 +133,19 @@ BlockedGibbsSampler
     {
         /// Initialization
         std::string NameRealization = it->first;
+        int Key = R.ReverseNameToKey(NameRealization);
         unsigned int RealizationNumber = it->second;
         m_CurrentBlockParameters.push_back(NameRealization);
+        m_CurrentBlockParametersBIS.push_back(Key);
         
         /// Get the current realization and recover it
-        auto CurrentRandomVariable = M.GetRandomVariable(NameRealization);
-        ScalarType CurrentRealization = R.at(NameRealization, RealizationNumber);
+        auto CurrentRandomVariable = M.GetRandomVariable(Key);
+        ScalarType CurrentRealization = R.at(Key, RealizationNumber);
         m_RecoverParameters[NameRealization] = {RealizationNumber, CurrentRealization};
         
         
         /// Get a candidate realization
-        auto CandidateRandomVariable = m_CandidateRandomVariables.GetRandomVariable(NameRealization, RealizationNumber);
+        auto CandidateRandomVariable = m_CandidateRandomVariables.GetRandomVariable(Key, RealizationNumber);
         CandidateRandomVariable.SetMean(CurrentRealization);
         ScalarType CandidateRealization = CandidateRandomVariable.Sample();
         

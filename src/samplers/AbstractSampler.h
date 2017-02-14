@@ -28,7 +28,8 @@ public:
     typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     
-    typedef std::unordered_map<std::string, unsigned int> MiniBlock;
+    typedef std::vector<std::pair<std::string,  unsigned int>> MiniBlock;
+    //typedef std::unordered_map<std::string, unsigned int> MiniBlock;
     typedef std::pair<int, MiniBlock> SamplerBlock;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
