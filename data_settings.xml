@@ -11,7 +11,7 @@
   <observations-file>Y.csv</observations-file>
 
   <!-- In case of simulated data -->
-  <number-of-individuals>100</number-of-individuals>
+  <number-of-individuals>150</number-of-individuals>
   <min-number-of-observations>3</min-number-of-observations>
   <max-number-of-observations>5</max-number-of-observations>
 

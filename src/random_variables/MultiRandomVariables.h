@@ -43,10 +43,12 @@ public:
     
     std::unique_ptr<AbstractRandomVariable> GetRandomVariable(int Key) const;
     
+    void Clear();
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     
     
     void AddRandomVariable(std::string Name, std::string Type, const std::vector<double>& Parameters);

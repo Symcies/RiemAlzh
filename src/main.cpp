@@ -10,18 +10,11 @@ typedef double ScalarType;
 
 #include "Algorithm.h"
 
-#include "ExponentialCurveManifold.h"
-#include "PropagationManifold.h"
-#include "LogisticBaseManifold.h"
-#include "LinearManifold.h"
-
+#include "MeshworkModel.h"
 #include "FastNetworkModel.h"
+
 #include "BlockedGibbsSampler.h"
 
-#include "LinearAlgebra.h"
-
-#include "ReadData.h"
-#include "AlgorithmSettings.h"
 
 #include "omp.h"
 #include "tinyxml2.h"

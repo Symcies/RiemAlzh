@@ -29,7 +29,6 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     
     typedef std::vector<std::pair<std::string,  unsigned int>> MiniBlock;
-    //typedef std::unordered_map<std::string, unsigned int> MiniBlock;
     typedef std::pair<int, MiniBlock> SamplerBlock;
     
     typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
@@ -65,9 +64,6 @@ protected:
 
     /// Compute the decreasing step size of the adaptive variances
     double DecreasingStepSize(int Iteration, int NoMemoryTime);
-    
-    /// Update the variance of the gaussian proposition distribution
-    void UpdatePropositionDistributionVariance(GaussianRandomVariable& GRV, double Ratio, int Iteration);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)

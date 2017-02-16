@@ -34,6 +34,9 @@ public:
     /// Initialize the model : random variables, interpolation matrix, parameters
     virtual void Initialize(const Data& D);
     
+        /// Initialize the variance of the proposition distribution
+    virtual ScalarType InitializePropositionDistributionVariance(std::string Name) const;
+    
     /// Update the model parameters != random variables parameters
     virtual void UpdateModel(const Realizations& R, int Type, const std::vector<std::string> Names = {"All"});
     

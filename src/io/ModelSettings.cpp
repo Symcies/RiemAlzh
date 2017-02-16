@@ -56,6 +56,8 @@ ModelSettings
     
     m_InvertKernelMatrixPath  = Settings->FirstChildElement("path-to-kernel-invKd")->GetText();
     m_InterpolationMatrixPath = Settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
+    
+    std::cout << "The model used is the " << m_Type << " model." << std::endl;
 }
 
 
@@ -68,9 +70,11 @@ ModelSettings
     
     auto Settings = Parameters.FirstChildElement("model-settings");
     
-    m_ManifoldDimension = atoi(Settings->FirstChildElement("manifold-dimension")->GetText());
+    m_ManifoldDimension = atoi(Settings->FirstChildElement("number-of-dimensions")->GetText());
     m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-indepenent-sources")->GetText());
     
     m_InvertKernelMatrixPath  = Settings->FirstChildElement("path-to-kernel-invKd")->GetText();
     m_InterpolationMatrixPath = Settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
+    
+    std::cout << "The model used is the " << m_Type << " model." << std::endl;
 }

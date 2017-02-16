@@ -57,6 +57,9 @@ public:
 
     /// Initialize the model
     virtual void Initialize(const Data& D) = 0;
+    
+    /// Initialize the variance of the proposition distribution
+    virtual ScalarType InitializePropositionDistributionVariance(std::string Name) const = 0;
         
     /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
     /// This update can depend on the parameter that has changed, provided by the Name argument

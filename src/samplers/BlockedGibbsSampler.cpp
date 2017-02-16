@@ -40,7 +40,7 @@ void
 BlockedGibbsSampler
 ::InitializeSampler(Realizations& R, AbstractModel &M, const Data& D) 
 {
-    m_CandidateRandomVariables.InitializeCandidateRandomVariables(R);
+    m_CandidateRandomVariables.InitializeCandidateRandomVariables(R, M);
     m_CurrentBlockType = -1;
     m_Blocks = M.GetSamplerBlocks();
     
@@ -226,11 +226,11 @@ BlockedGibbsSampler
         /// Compute newvariance
         GaussianRandomVariable GRV = m_CandidateRandomVariables.GetRandomVariable(NameRealization, RealizationNumber);
         double CurrentVariance = GRV.GetVariance();
-        double NewVariance = CurrentVariance * (1 + Epsilon * 100 * (AcceptanceRatio - m_ExpectedAcceptanceRatio) / Denom );
-        NewVariance = std::max(NewVariance, 0.0000001);
+        double NewVariance = CurrentVariance * (1 + Epsilon * (AcceptanceRatio - m_ExpectedAcceptanceRatio) / Denom );
+        NewVariance = std::max(NewVariance, 0.0000000000000000000000000000001);
+        NewVariance = std::max(NewVariance, CurrentVariance / 50);
+        NewVariance = std::min(NewVariance, CurrentVariance * 50);
         
-        // TODO : TO CHANGE LIKE THE MASTER BRANCH
-        UpdatePropositionDistributionVariance(GRV, AcceptanceRatio, m_CurrentIteration);
         /// Set new variance
         //m_CandidateRandomVariables.UpdatePropositionVariableVariance(NameRealization, RealizationNumber, NewVariance);
         

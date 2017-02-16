@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <algorithm>
+#include <math.h>
 #include "AlgorithmSettings.h"
 
 

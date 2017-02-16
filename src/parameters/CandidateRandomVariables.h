@@ -45,8 +45,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the candidate random variables
-    void InitializeCandidateRandomVariables(const Realizations& R);
+    void InitializeCandidateRandomVariables(const Realizations& R, const AbstractModel& M);
 
+    /// Update the variance of the random variable
+    void UpdatePropositionVariableVariance(std::string Name, int RealizationNumber, ScalarType NewVariance);
 
 
 protected:
@@ -54,8 +56,6 @@ protected:
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Return the initial proposition distribution corresponding to the variable
-    GaussianRandomVariable ReadInitialPropositionDistribution(std::string NameRandomVariable, ScalarType CurrentState);
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////

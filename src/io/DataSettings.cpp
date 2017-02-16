@@ -65,7 +65,7 @@ DataSettings
     m_MinimumNumberOfObservations = atoi(Settings->FirstChildElement("min-number-of-observations")->GetText());
     m_MaximumNumberOfObservations = atoi(Settings->FirstChildElement("max-number-of-observations")->GetText());
     
-    std::cout << "The model is simulating the between ";
+    std::cout << "The model is simulating between ";
     std::cout << m_MinimumNumberOfObservations << " and " << m_MaximumNumberOfObservations;
-    std::cout << " for " << m_NumberOfSubjects << " subjects" << std::endl;
+    std::cout << " observations for " << m_NumberOfSubjects << " subjects" << std::endl;
 }

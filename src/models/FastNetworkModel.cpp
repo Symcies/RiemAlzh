@@ -82,8 +82,8 @@ FastNetworkModel
      /// Population variables
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.000001 );
 
-    m_RandomVariables.AddRandomVariable("P0", "Gaussian", {0.1, 0.0001 * 0.0001});
-    m_RealizationsPerRandomVariable.insert({"P0", 1});
+    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.1, 0.0001 * 0.0001});
+    m_RealizationsPerRandomVariable.insert({"P", 1});
         
     for(int i = 1; i < m_NbControlPoints; ++i)
     {
@@ -122,6 +122,29 @@ FastNetworkModel
     
 }
 
+
+
+ScalarType 
+FastNetworkModel
+::InitializePropositionDistributionVariance(std::string Name) 
+const
+{
+    Name = Name.substr(0, Name.find_first_of("#"));
+    if("P" == Name)
+        return 0.0000005;
+    if("Delta" == Name)
+        return 0.000000003;
+    if("Nu" == Name)
+        return 0.0000000000000002;
+    if("Beta" == Name)
+        return 0.0000006*0.000006;
+    if("Ksi" == Name)
+        return 0.0001;
+    if("Tau" == Name)
+        return 0.1 * 0.1;
+    if("S" == Name)
+        return 0.2;
+}
 
 void 
 FastNetworkModel
@@ -172,7 +195,7 @@ FastNetworkModel
             ComputeBlock_1 = true;
             continue;
         }
-        else if(Name == "P0")
+        else if(Name == "P")
         {
             IndividualOnly = false;
             ComputePosition = true;
@@ -218,7 +241,7 @@ FastNetworkModel
     // TODO : To parse it even faster, update just the coordinates within the names
     if(IndividualOnly) ComputeSubjectTimePoint(AR, Type);
     
-    if(ComputePosition) { m_P0 = exp(AR.at("P0", 0)); }
+    if(ComputePosition) { m_P0 = exp(AR.at("P", 0)); }
     if(ComputeDelta) ComputeDeltas(AR);
     if(ComputeNu) ComputeNus(AR);
     if(ComputeBasis) ComputeOrthonormalBasis();
@@ -239,7 +262,7 @@ typedef std::vector< std::pair< VectorType, double> > IndividualData;
     
     
     /// Initialize the realizations and simulate them
-    m_RealizationsPerRandomVariable["P0"] = 1;
+    m_RealizationsPerRandomVariable["P"] = 1;
     
     for(int i = 1; i < m_NbControlPoints; ++i)
         m_RealizationsPerRandomVariable["Delta#" + std::to_string(i)] = 1;
@@ -260,7 +283,7 @@ typedef std::vector< std::pair< VectorType, double> > IndividualData;
     
     
     /// Update the model
-    m_P0 = exp(R.at("P0")(0));
+    m_P0 = exp(R.at("P")(0));
     ComputeDeltas(R);
     ComputeNus(R);
     ComputeOrthonormalBasis();
@@ -423,7 +446,7 @@ FastNetworkModel
     VectorType S5 = R.at("Tau") % R.at("Tau");
     
     /// S6 <- P0 
-    VectorType S6(1, R.at("P0", 0));
+    VectorType S6(1, R.at("P", 0));
     
     /// S7 <- beta_k
     VectorType S7((m_ManifoldDimension-1) * m_NbIndependentComponents);
@@ -491,7 +514,7 @@ FastNetworkModel
     m_RandomVariables.UpdateRandomVariable("Tau", {{"Mean", TauMean}, {"Variance", TauVariance}});
     
     /// Update P0
-    m_RandomVariables.UpdateRandomVariable("P0", {{"Mean", SS[5](0)}});
+    m_RandomVariables.UpdateRandomVariable("P", {{"Mean", SS[5](0)}});
     
     /// Update beta_k
     int i = 0;
@@ -531,7 +554,7 @@ FastNetworkModel
 const 
 {
     int PopulationType = -1;
-    int NbBeta = 0;
+    int NbBeta = 1;
     int NbDelta = 0;
     int NbNu = 0;
     
@@ -539,16 +562,34 @@ const
     std::vector<SamplerBlock> Blocks;
     
     /// Insert P0;
-    MiniBlock P = {std::make_pair("P0", 0)};
+    MiniBlock P = {std::make_pair("P", 0)};
     Blocks.push_back(std::make_pair(PopulationType, P));
     
     /// Insert Beta_k
+    /*
+    MiniBlock Beta;
+    int BetaModulo = (int)m_NbIndependentComponents*(m_ManifoldDimension - 1) /NbBeta;
+    for(size_t i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension - 1); ++i)
+    {
+        Beta.push_back(std::make_pair("Beta#" + std::to_string(i), 0));
+        bool HingeCondition = (i%BetaModulo == 0 && i != 0);
+        bool FinalCondition = (i == m_NbIndependentComponents*(m_ManifoldDimension - 1) - 1);
+        if(FinalCondition || HingeCondition)
+        {
+            Blocks.push_back(std::make_pair(PopulationType, Beta));
+            Beta.clear();
+        }
+    }
+    */
+    
+
     MiniBlock Beta;
     for(size_t i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension - 1); ++i)
     {
         Beta.push_back(std::make_pair("Beta#" + std::to_string(i), 0));
     }
     Blocks.push_back(std::make_pair(PopulationType, Beta));
+    
     
     /// Insert Delta_k
     MiniBlock Delta;
@@ -586,10 +627,10 @@ void
 FastNetworkModel
 ::DisplayOutputs(const Realizations& R) 
 {
-    auto P0 = m_RandomVariables.GetRandomVariable("P0")->GetParameter("Mean");
+    auto P0 = m_RandomVariables.GetRandomVariable("P")->GetParameter("Mean");
     auto Tau = m_RandomVariables.GetRandomVariable("Tau");
     
-    auto Nu = m_RandomVariables.GetRandomVariable("Ksi"); 
+    auto Nu = m_RandomVariables.GetRandomVariable("Nu"); 
 
     double NuMax = R.at("Nu").max_value();
     double NuMin = R.at("Nu").min_value();
@@ -618,116 +659,7 @@ FastNetworkModel
 ::SaveData(unsigned int IterationNumber, const Realizations& AR) 
 {
     
-    /*
-    unsigned int NumberOfSubjects = R.at("Tau").size();
-    std::ofstream Outputs;    
-    std::string FileName = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/Normalized/Parameters" + std::to_string(IterationNumber) + ".txt";
-    //std::string FileName = "Outputs/FastNetwork/Parameters.txt";
-    Outputs.open(FileName, std::ofstream::out | std::ofstream::trunc);
     
-    
-    /// Save the final noise variance
-    Outputs << m_Noise->GetVariance() << std::endl;
-    
-   /// Save Number of subject, Dimensions, Number of Sources, Number of control points
-    Outputs << NumberOfSubjects << ", " << m_ManifoldDimension << ", " << m_NbIndependentComponents  << ", " << m_NbControlPoints << std::endl;
-    
-    /// Save P0, P0_mean and P0_var
-    auto P0 = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("P0"));
-    Outputs << R.at("P0")(0) << ", " << P0->GetMean() << ", " << P0->GetVariance() << std::endl;
-    
-    /// Save (Ksi_i)
-    for(size_t i = 0; i < NumberOfSubjects; ++i)
-    {
-        Outputs << R.at("Ksi")(i);
-        if(i != NumberOfSubjects - 1) { Outputs << ", "; }
-    }
-    Outputs << std::endl;
-    
-    /// Save Ksi_mean and Ksi_Var
-    auto Ksi = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Ksi"));
-    Outputs << Ksi->GetMean() << ", " << Ksi->GetVariance() << std::endl;
-    
-    /// Save V0 
-    auto Nu = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at("Nu#0"));
-    Outputs << Nu->GetMean() << std::endl;
-    
-    /// Save (Tau_i)
-    for(size_t i = 0; i < NumberOfSubjects; ++i)
-    {
-        Outputs << R.at("Tau")(i);
-        if(i != NumberOfSubjects - 1) { Outputs << ", "; }
-    }
-    Outputs << std::endl;
-    
-    /// Save Tau_Mean and Tau_Var
-    auto Tau = std::static_pointer_cast<GaussianRandomVariable>(m_IndividualRandomVariables.at("Tau"));
-    Outputs << Tau->GetMean() << ", " << Tau->GetVariance() << std::endl;
-    
-    /// Save (Delta_tilde_k)
-    Outputs << 0 << ", ";
-    for(size_t i = 1; i < m_NbControlPoints; ++i)
-    {
-        Outputs << R.at("Delta#" + std::to_string(i))(0);
-        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
-    }
-    Outputs << std::endl;
-    
-    /// Save (Delta_k)
-    Outputs << 0 << ", ";
-    for(size_t i = 1; i < m_NbControlPoints; ++i)
-    {
-        std::string Name = "Delta#" + std::to_string(i);
-        auto Delta = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at(Name));
-        Outputs << Delta->GetMean();
-        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
-    }
-    Outputs << std::endl;
-    
-    /// Save (Nu_k)
-    for(size_t i = 0; i < m_NbControlPoints; ++i)  
-    {
-        Outputs << R.at("Nu#" + std::to_string(i))(0);  
-        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
-    }
-    Outputs << std::endl;
-    
-    /// Save (Nu_k_mean)
-    for(size_t i = 0; i < m_NbControlPoints; ++i)
-    {
-        std::string Name = "Nu#" + std::to_string(i);
-        auto Nu = std::static_pointer_cast<GaussianRandomVariable>(m_PopulationRandomVariables.at(Name));
-        Outputs << Nu->GetMean();
-        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
-    }
-    Outputs << std::endl;
-    
-    /// Save (S_i)
-    for(size_t i = 0; i < NumberOfSubjects; ++i)
-    {
-        for(size_t j = 0; j < m_NbIndependentComponents; ++j)
-        {
-            Outputs << R.at("S#" + std::to_string(j))(i);
-            if(i != m_NbIndependentComponents - 1) { Outputs << ", "; }
-        }
-        Outputs << std::endl;
-    }
-    
-    /// Save (W_i)
-    auto SizeW = m_NumberOfSubjects;
-    for(size_t i = 0; i < NumberOfSubjects; ++i)
-    {
-        //VectorType W = m_SpaceShifts[i];
-        VectorType W = m_SpaceShifts.get_column(i);
-        for(auto it = W.begin(); it != W.end(); ++it)
-        {
-            Outputs << *it;
-            if(i != SizeW - 1) { Outputs << ", "; }
-        }
-        Outputs << std::endl;
-    }
-     
-     */
 
 }
 
@@ -742,7 +674,7 @@ FastNetworkModel
      /// Population variables
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.1 );
 
-    m_RandomVariables.AddRandomVariable("P0", "Gaussian", {0.1, 0.00001 * 0.00001});
+    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.1, 0.00001 * 0.00001});
         
     for(int i = 1; i < m_NbControlPoints; ++i)
         m_RandomVariables.AddRandomVariable("Delta#" + std::to_string(i), "Gaussian", {0, 0.0001 * 0.0001});
@@ -868,7 +800,7 @@ FastNetworkModel
 ::ComputeOrthonormalBasis() 
 {
     /// Get the data
-    auto V0 = m_RandomVariables.GetRandomVariable("Ksi")->GetParameter("Mean");
+    auto V0 = m_RandomVariables.GetRandomVariable("Nu")->GetParameter("Mean");
     V0 = exp(V0);
     
     /*
@@ -973,7 +905,6 @@ FastNetworkModel
     double TimePoint = m_SubjectTimePoints[SubjectNumber](ObservationNumber);
     
     VectorType ParallelCurve(m_ManifoldDimension);
-    
     
     /*
     ScalarType * d = m_Deltas.memptr();

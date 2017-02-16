@@ -177,7 +177,6 @@ Algorithm
           bool Change = (*IterNewReal != *IterPrevReal);
           *IterAcceptRatio = (*IterAcceptRatio * m_IterationCounter + Change ) / (m_IterationCounter + 1);
       }
-      
   }
     
     if(m_IterationCounter%m_CounterToDisplayOutputs == 0) { DisplayAcceptanceRatio(); }
@@ -188,7 +187,7 @@ Algorithm
 ::DisplayAcceptanceRatio() {
     std::cout << "AcceptRatio: ";
     
-    auto NamesToShow = {"P0", "Tau", "Ksi", "Beta#43", "Delta#34"};
+    auto NamesToShow = {"P", "Tau", "Ksi", "Delta#1", "Beta#1"};
     
     for(auto it = NamesToShow.begin(); it != NamesToShow.end(); ++it)
     {
@@ -202,6 +201,34 @@ Algorithm
         std::cout << ". ";
     }
     std::cout << std::endl;
+    
+    /// Useless for now because all delta or beta are the same
+    /*
+    auto InName = {"Delta", "Beta"};
+    for(auto it = InName.begin(); it != InName.end(); ++it)
+    {
+        double Min = 1;
+        double Max = 0;
+        double Mean = 0;
+        int Count = 0;
+        for(auto it2 = m_AcceptanceRatios.begin(); it2 != m_AcceptanceRatios.end(); ++it2)
+        {
+            std::string Name = m_Realizations->ReverseKeyToName(it2->first);
+            Name = Name.substr(0, Name.find_first_of("#"));
+            if(Name == *it)
+            {
+                ++Count;
+                double AccepVal = it2->second(0);
+                Min = std::min(Min, AccepVal);
+                Max = std::max(Max, AccepVal);
+                Mean += AccepVal;
+            }
+        }
+        
+        std::cout << *it <<"(Min/Mean/Max): " << Min << "/" << Mean/Count << "/" << Max << ". ";  
+    }
+    std::cout << std::endl;
+    */
     
 }
 
