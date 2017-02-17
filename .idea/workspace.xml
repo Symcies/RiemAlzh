@@ -118,8 +118,8 @@
       <file leaf-file-name="MeshworkModel.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/models/MeshworkModel.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
-              <caret line="547" column="5" selection-start-line="547" selection-start-column="5" selection-end-line="547" selection-end-column="5" />
+            <state relative-caret-position="301">
+              <caret line="551" column="40" selection-start-line="551" selection-start-column="40" selection-end-line="551" selection-end-column="40" />
               <folding>
                 <element signature="e#266#930#0" expanded="false" />
                 <element signature="e#932#974#0" expanded="false" />
@@ -615,12 +615,12 @@
       <workItem from="1487192131358" duration="140000" />
       <workItem from="1487235109907" duration="503000" />
       <workItem from="1487235777727" duration="22566000" />
-      <workItem from="1487321262335" duration="13706000" />
+      <workItem from="1487321262335" duration="13732000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1061787000" />
+    <option name="totallyTimeSpent" value="1061813000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -1071,8 +1071,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/models/MeshworkModel.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="547" column="5" selection-start-line="547" selection-start-column="5" selection-end-line="547" selection-end-column="5" />
+        <state relative-caret-position="301">
+          <caret line="551" column="40" selection-start-line="551" selection-start-column="40" selection-end-line="551" selection-end-column="40" />
           <folding>
             <element signature="e#266#930#0" expanded="false" />
             <element signature="e#932#974#0" expanded="false" />

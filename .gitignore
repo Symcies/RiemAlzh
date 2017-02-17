@@ -1,5 +1,5 @@
 # Ignore the datasets
-io/outputs/
+src/io/outputs/
 data/
 
 # Ignore the results
