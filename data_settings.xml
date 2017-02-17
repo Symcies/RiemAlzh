@@ -5,15 +5,15 @@
 
 
   <!-- In case of real data -->
-  <folder-path>/Users/igor.koval/Documents/Work/RiemAlzh/data/NormalizedThickness/MCIconvertAD/</folder-path>
+  <folder-path>/Users/igor.koval/Documents/Work/RiemAlzh/data/UnnormalizedThickness/MCIconvertAD/</folder-path>
   <group-file>group.csv</group-file>
   <timepoints-file>X.csv</timepoints-file>
   <observations-file>Y.csv</observations-file>
 
   <!-- In case of simulated data -->
   <number-of-individuals>150</number-of-individuals>
-  <min-number-of-observations>3</min-number-of-observations>
-  <max-number-of-observations>5</max-number-of-observations>
+  <min-number-of-observations>4</min-number-of-observations>
+  <max-number-of-observations>6</max-number-of-observations>
 
   <!-- Comment -->
 

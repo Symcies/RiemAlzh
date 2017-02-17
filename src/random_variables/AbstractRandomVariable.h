@@ -6,6 +6,7 @@ typedef double ScalarType;
 #include <random>
 #include <iostream>     
 #include <unordered_map>
+#include <cassert>
 
 #include "LinearAlgebra.h"
 

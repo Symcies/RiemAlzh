@@ -88,6 +88,10 @@ public:
     /// Define the sampler block used in the gibbs sampler (should it be here?)
     virtual std::vector<SamplerBlock> GetSamplerBlocks() const = 0;
 
+    /// PROBABLY TO ERASE
+    /// Compute the parallel curve
+    virtual VectorType ComputeParallelCurve(int SubjectNumber, int ObservationNumber) = 0;
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Outputs
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +101,9 @@ public:
     
     /// Save the data into a file
     virtual void SaveData(unsigned int IterationNumber, const Realizations& R) = 0;
+    
+    /// Displau the noise variance - to control that it decreases
+    ScalarType ComputeNoiseVariance(const Data& D);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
@@ -129,6 +136,17 @@ protected:
     std::ofstream m_OutputParameters;
 
 
+    /// Sum of the observations - corresponds to the first sufficient statistic
+    double m_SumObservations;
+    
+    /// Total number of observations throughout all the individuals
+    double m_NbTotalOfObservations;
+    
+    /// Total number of subjects
+    unsigned int m_NumberOfSubjects;
+    
+    /// Dimension of the manifold
+    double m_ManifoldDimension;
 
 };
 

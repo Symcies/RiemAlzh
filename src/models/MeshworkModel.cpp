@@ -64,36 +64,36 @@ MeshworkModel
     
     
     /// Population variables
-    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.000001 );
+    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.01 );
 
-    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.1, 0.001 * 0.001});
+    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.13, 0.00005 * 0.00005});
     m_RealizationsPerRandomVariable["P"] = m_NbControlPoints;
     
     for(size_t i = 1; i < m_NbControlPoints; ++i)
     {
         std::string Name = "Delta#" + std::to_string(i);
-        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.0001 * 0.0001});
+        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.003 * 0.003});
         m_RealizationsPerRandomVariable[Name] = 1;
     }
     
     for(size_t i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
     {
         std::string Name = "Beta#" + std::to_string(i);
-        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.0001 * 0.0001});
+        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.001 * 0.001});
         m_RealizationsPerRandomVariable[Name] = 1;
     }
     
     /// Individual variables
-    m_RandomVariables.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
+    m_RandomVariables.AddRandomVariable("Ksi", "Gaussian", {-3.1971, 0.000000004});
     m_RealizationsPerRandomVariable["Ksi"] = m_NumberOfSubjects;
     
-    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {62, 0.25});
+    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
     m_RealizationsPerRandomVariable["Tau"] = m_NumberOfSubjects;
         
     for(int i = 0; i < m_NbIndependentSources; ++i)
     {
         std::string Name = "S#" + std::to_string(i);
-        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0.0, 0.5});
+        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0.0, 1});
         m_RealizationsPerRandomVariable[Name] =  m_NumberOfSubjects;
     }
     
@@ -107,17 +107,18 @@ const
     Name = Name.substr(0, Name.find_first_of("#"));
     
     if("P" == Name)
-        return 0.000000005;
+        return 0.00000005;
     if("Delta" == Name)
-        return 0.00000000005;
+        return 0.00000001;
     if("Beta" == Name)
-        return 0.0000006*0.000006;
+        return 0.00001*0.00001;
     if("Ksi" == Name)
-        return 0.00001;
+        return 0.0008;
     if("Tau" == Name)
-        return 0.03 * 0.03;
+        return 0.05 * 0.05;
     if("S" == Name)
-        return 0.02;
+        return 0.7;
+       
 }
 
 
@@ -277,7 +278,7 @@ MeshworkModel
     const ScalarType * itS3 = SS[2].memptr();
     const ScalarType * itS4 = SS[3].memptr();
     
-    for(size_t i = 0; i < m_NbControlPoints; ++i) 
+    for(size_t i = 0; i < m_NumberOfSubjects; ++i) 
     {
         KsiMean     += itS3[i];
         KsiVariance += itS4[i];
@@ -295,7 +296,7 @@ MeshworkModel
     const ScalarType * itS5 = SS[4].memptr();
     const ScalarType * itS6 = SS[5].memptr();
     
-    for(size_t i = 0; i < m_NbControlPoints; ++i)
+    for(size_t i = 0; i < m_NumberOfSubjects; ++i)
     {
         TauMean     += itS5[i];
         TauVariance += itS6[i];
@@ -324,9 +325,9 @@ MeshworkModel
         PVariance += itS9[i];
     }
     
-    PMean     /= m_NumberOfSubjects;
-    PVariance -= m_NumberOfSubjects * PMean * PMean;
-    PVariance /= m_NumberOfSubjects;
+    PMean     /= m_NbControlPoints;
+    PVariance -= m_NbControlPoints * PMean * PMean;
+    PVariance /= m_NbControlPoints;
     
     m_RandomVariables.UpdateRandomVariable("P", {{"Mean", PMean}, {"Variance", PVariance}});
     
@@ -341,7 +342,7 @@ MeshworkModel
 ::ComputeLogLikelihood(const Data &D) 
 {
     double LogLikelihood = 0;
-#pragma omp parallel for reduction(+:LogLikelihood)   
+//#pragma omp parallel for reduction(+:LogLikelihood)   
     for(size_t j = 0; j < m_NumberOfSubjects; ++j) 
     {
        double N = D.at(j).size();
@@ -503,22 +504,21 @@ const
     
     std::vector<SamplerBlock> Blocks;
     
+    
     /// Insert P;
     MiniBlock P;
-    int PModulo = (int)m_NbControlPoints/NbP;
+    
     for(size_t i = 0; i < m_NbControlPoints; ++i)
     {
         P.push_back(std::make_pair("P", i));
-        bool HingeCondition = (i%PModulo == 0 && i != 0);
-        bool FinalCondition = (i == m_NbControlPoints);
-        if(FinalCondition || HingeCondition)
-        {
-            Blocks.push_back(std::make_pair(PopulationType, P));
-            P.clear();
-        }
+        Blocks.push_back(std::make_pair(PopulationType, P));
+        P.clear();
     }
     
+    Blocks.push_back(std::make_pair(PopulationType, P));
+    
     /// Insert Beta_k
+    /*
     MiniBlock Beta;
     int BetaModulo = (int)m_NbIndependentSources*(m_ManifoldDimension - 1) /NbBeta;
     for(size_t i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
@@ -532,7 +532,13 @@ const
             Beta.clear();
         }
     }
-    
+     */
+    MiniBlock Beta;
+    for(size_t i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
+    {
+        Beta.push_back(std::make_pair("Beta#" + std::to_string(i), 0));   
+    }
+    Blocks.push_back(std::make_pair(PopulationType, Beta));
     
     /// Insert Delta_k
     MiniBlock Delta;
@@ -647,7 +653,7 @@ MeshworkModel
 ::InitializeFakeRandomVariables() 
 {
     /// Noise 
-    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.001 );
+    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.00001 );
     
     /// Population random variables
     m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.1, 0.001 * 0.001});
@@ -753,8 +759,7 @@ void
 MeshworkModel
 ::ComputeThicknesses(const Realizations &R) 
 {
-    VectorType RealP = R.at("P").exp();
-    m_Thicknesses = m_InterpolationMatrix * m_InvertKernelMatrix * RealP;
+    m_Thicknesses = m_InterpolationMatrix * m_InvertKernelMatrix * R.at("P").exp();
 }
 
 void 
@@ -855,10 +860,12 @@ MeshworkModel
     ScalarType * p = ParallelCurve.memptr();
     ScalarType * t = m_Thicknesses.memptr();
     ScalarType * d = m_Deltas.memptr();
+    ScalarType * b = m_Block1.memptr();
     ScalarType * w = m_SpaceShifts.get_column(SubjectNumber).memptr();
     
     for(size_t i = 0; i < m_ManifoldDimension; ++i)
-        p[i] = t[i] * exp( w[i] / (t[i]*exp(d[i]) + d[i] - TimePoint/t[i]));
+        p[i] = t[i] * exp( w[i] / (t[i]*exp(d[i])) + d[i] - TimePoint/t[i]);
+        
     
     return ParallelCurve;
 }

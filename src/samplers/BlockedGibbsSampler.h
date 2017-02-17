@@ -86,7 +86,7 @@ protected:
     std::vector<int> m_CurrentBlockParametersBIS;
     
     /// Parameters to recover back in the realization
-    std::unordered_map<std::string, std::pair<unsigned int, ScalarType >> m_RecoverParameters;
+    std::vector<std::tuple<std::string, unsigned int, ScalarType >> m_RecoverParameters;
     
     /// Uniform distrubution
     std::uniform_real_distribution<double> m_UniformDistribution;

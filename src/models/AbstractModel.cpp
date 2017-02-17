@@ -47,3 +47,23 @@ AbstractModel
 {
     return m_RandomVariables.SimulateRealizations(m_RealizationsPerRandomVariable);
 }
+
+ScalarType
+AbstractModel
+::ComputeNoiseVariance(const Data &D) 
+{
+    ScalarType NoiseVariance = m_SumObservations;
+    int i = 0;
+    for(auto itD = D.begin(); itD != D.end(); ++itD, ++i)
+    {        
+        int j = 0;
+        for(auto itD2 = itD->begin(); itD2 != itD->end(); ++itD2, ++j)
+        {
+            VectorType P2 = ComputeParallelCurve(i, j);
+            NoiseVariance +=  - 2 *dot_product(P2, itD2->first) + P2.squared_magnitude();
+        }
+    }
+    
+    NoiseVariance /= m_NbTotalOfObservations * m_ManifoldDimension;
+    return NoiseVariance;
+}

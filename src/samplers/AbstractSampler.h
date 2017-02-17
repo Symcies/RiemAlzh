@@ -21,10 +21,6 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
         
-    // For each block; vector of Name + SubjectNumber
-    typedef std::vector< std::tuple< std::string, int>> Block;
-    
-    
     typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     

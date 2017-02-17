@@ -96,6 +96,7 @@ GaussianRandomVariable
     }
     if(Parameters.find("Variance") != Parameters.end())
     {
+        assert(Parameters.at("Variance") > 0);
         m_Variance = Parameters.at("Variance");
         FindAnything = true;
     }
@@ -116,6 +117,7 @@ GaussianRandomVariable
     }
     if(Parameters.find(1) != Parameters.end())
     {
+        assert(Parameters.at(1) > 0);
         m_Variance = Parameters.at(1);
         FindAnything = true;
     }

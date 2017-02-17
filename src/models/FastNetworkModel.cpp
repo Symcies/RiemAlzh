@@ -82,7 +82,7 @@ FastNetworkModel
      /// Population variables
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.000001 );
 
-    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.1, 0.0001 * 0.0001});
+    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.13, 0.0001 * 0.0001});
     m_RealizationsPerRandomVariable.insert({"P", 1});
         
     for(int i = 1; i < m_NbControlPoints; ++i)
@@ -93,13 +93,13 @@ FastNetworkModel
     }
     
   
-    m_RandomVariables.AddRandomVariable("Nu", "Gaussian", {0.04088, 0.0004*0.0004});
+    m_RandomVariables.AddRandomVariable("Nu", "Gaussian", {0.04088, 0.001*0.001});
     m_RealizationsPerRandomVariable["Nu"] = m_NbControlPoints;
     
     for(int i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension - 1); ++i)
     {
         std::string Name = "Beta#" + std::to_string(i);
-        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.001});
+        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.001*0.001});
         m_RealizationsPerRandomVariable.insert({Name, 1});
     }
     
@@ -108,7 +108,7 @@ FastNetworkModel
     m_RandomVariables.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
     m_RealizationsPerRandomVariable.insert({"Ksi", m_NumberOfSubjects});
     
-    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {62, 0.25});
+    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
     m_RealizationsPerRandomVariable.insert({"Tau", m_NumberOfSubjects});
     
     for(int i = 0; i < m_NbIndependentComponents; ++i)
@@ -131,19 +131,19 @@ const
 {
     Name = Name.substr(0, Name.find_first_of("#"));
     if("P" == Name)
-        return 0.0000005;
+        return 0.000001;
     if("Delta" == Name)
-        return 0.000000003;
+        return 0.00000001;
     if("Nu" == Name)
-        return 0.0000000000000002;
+        return 0.00000001;
     if("Beta" == Name)
-        return 0.0000006*0.000006;
+        return 0.00001*0.00001;
     if("Ksi" == Name)
-        return 0.0001;
+        return 0.0008;
     if("Tau" == Name)
-        return 0.1 * 0.1;
+        return 0.05 * 0.05;
     if("S" == Name)
-        return 0.2;
+        return 0.7;
 }
 
 void 
@@ -241,7 +241,12 @@ FastNetworkModel
     // TODO : To parse it even faster, update just the coordinates within the names
     if(IndividualOnly) ComputeSubjectTimePoint(AR, Type);
     
-    if(ComputePosition) { m_P0 = exp(AR.at("P", 0)); }
+    if(ComputePosition) { 
+        m_P0 = exp(AR.at("P", 0)); 
+        //std::cout << "m_P0 " << m_P0 << " & " << AR.at("P", 0) <<  std::endl;
+        //std::cout << "P0 : " << m_RandomVariables.GetRandomVariable("P")->GetParameter(0) << " & " << m_RandomVariables.GetRandomVariable("P")->GetParameter(1) << std::endl;
+        //int a = 0;
+    }
     if(ComputeDelta) ComputeDeltas(AR);
     if(ComputeNu) ComputeNus(AR);
     if(ComputeBasis) ComputeOrthonormalBasis();
@@ -608,6 +613,7 @@ const
     Blocks.push_back(std::make_pair(PopulationType, Nu));
     
     /// Individual variables
+    
     for(size_t i = 0; i < m_NumberOfSubjects; ++i)
     {
         MiniBlock IndividualBlock;
@@ -619,6 +625,32 @@ const
         Blocks.push_back(std::make_pair(i, IndividualBlock));
     }
     
+    /*
+    /// Individual variables bis
+    MiniBlock TauBlock;
+    for(size_t i = 0; i < m_NumberOfSubjects; ++i) {
+        TauBlock.push_back(std::make_pair("Tau", i));
+        Blocks.push_back(std::make_pair(i, TauBlock));
+        TauBlock.clear();
+    }
+    
+    MiniBlock KsiBlock;
+    for(size_t i = 0; i < m_NumberOfSubjects; ++i) {
+        KsiBlock.push_back(std::make_pair("Ksi", i));
+        Blocks.push_back(std::make_pair(i, KsiBlock));
+        KsiBlock.clear();
+    }
+    
+    for(size_t j = 0; j < m_NbIndependentComponents; ++j)
+    {
+        MiniBlock SBlock;
+        for(size_t i = 0; i < m_NumberOfSubjects; ++i) {
+            SBlock.push_back(std::make_pair("S#" + std::to_string(j), i));
+            Blocks.push_back(std::make_pair(i, SBlock));
+            SBlock.clear();
+        }
+    }
+     */
     
     return Blocks;
 }
@@ -656,11 +688,112 @@ FastNetworkModel
 
 void 
 FastNetworkModel
-::SaveData(unsigned int IterationNumber, const Realizations& AR) 
+::SaveData(unsigned int IterationNumber, const Realizations& R) 
 {
     
+    unsigned int NumberOfSubjects = R.at("Tau").size();
+    std::ofstream Outputs;    
+    std::string FileName = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/FastNetwork/Parameters" + std::to_string(IterationNumber) + ".txt";
+    Outputs.open(FileName, std::ofstream::out | std::ofstream::trunc);
     
-
+    /// Save the final noise variance
+    Outputs << m_Noise->GetVariance() << std::endl;
+    
+   /// Save Number of subject, Dimensions, Number of Sources, Number of control points
+    Outputs << NumberOfSubjects << ", " << m_ManifoldDimension << ", " << m_NbIndependentComponents  << ", " << m_NbControlPoints << std::endl;
+    
+    /// Save P0, P0_mean and P0_var
+    auto P0 = m_RandomVariables.GetRandomVariable("P");
+    Outputs << R.at("P")(0) << ", " << P0->GetParameter("Mean") << ", " << P0->GetParameter("Variance") << std::endl;
+    std::cout  << R.at("P")(0) << ", " << P0->GetParameter("Mean") << ", " << P0->GetParameter("Variance") << std::endl;
+    
+    /// Save (Ksi_i)
+    for(size_t i = 0; i < NumberOfSubjects; ++i)
+    {
+        Outputs << R.at("Ksi")(i);
+        if(i != NumberOfSubjects - 1) { Outputs << ", "; }
+    }
+    Outputs << std::endl;
+    
+    /// Save Ksi_mean and Ksi_Var
+    auto Ksi = m_RandomVariables.GetRandomVariable("Ksi");
+    Outputs << Ksi->GetParameter("Mean") << ", " << Ksi->GetParameter("Variance") << std::endl;
+    
+    /// Save V0 
+    auto Nu = m_RandomVariables.GetRandomVariable("Nu");
+    Outputs << Nu->GetParameter("Mean") << std::endl;
+    
+    /// Save (Tau_i)
+    for(size_t i = 0; i < NumberOfSubjects; ++i)
+    {
+        Outputs << R.at("Tau")(i);
+        if(i != NumberOfSubjects - 1) { Outputs << ", "; }
+    }
+    Outputs << std::endl;
+    
+    /// Save Tau_Mean and Tau_Var
+    auto Tau = m_RandomVariables.GetRandomVariable("Tau");
+    Outputs << Tau->GetParameter("Mean") << ", " << Tau->GetParameter("Variance") << std::endl;
+    
+    /// Save (Delta_tilde_k)
+    Outputs << 0 << ", ";
+    for(size_t i = 1; i < m_NbControlPoints; ++i)
+    {
+        Outputs << R.at("Delta#" + std::to_string(i))(0);
+        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
+    }
+    Outputs << std::endl;
+    
+    /// Save (Delta_k)
+    Outputs << 0 << ", ";
+    for(size_t i = 1; i < m_NbControlPoints; ++i)
+    {
+        std::string Name = "Delta#" + std::to_string(i);
+        Outputs << m_RandomVariables.GetRandomVariable(Name)->GetParameter("Mean");
+        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
+    }
+    Outputs << std::endl;
+    
+    /// Save (Nu_k)
+    for(size_t i = 0; i < m_NbControlPoints; ++i)  
+    {
+        Outputs << R.at("Nu", i);  
+        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
+    }
+    Outputs << std::endl;
+    
+    /// Save (Nu_k_mean)
+    for(size_t i = 0; i < m_NbControlPoints; ++i)
+    {
+        Outputs << m_RandomVariables.GetRandomVariable("Nu")->GetParameter("Mean");
+        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
+    }
+    Outputs << std::endl;
+    
+    /// Save (S_i)
+    for(size_t i = 0; i < NumberOfSubjects; ++i)
+    {
+        for(size_t j = 0; j < m_NbIndependentComponents; ++j)
+        {
+            Outputs << R.at("S#" + std::to_string(j))(i);
+            if(i != m_NbIndependentComponents - 1) { Outputs << ", "; }
+        }
+        Outputs << std::endl;
+    }
+    
+    /// Save (W_i)
+    auto SizeW = m_NumberOfSubjects;
+    for(size_t i = 0; i < NumberOfSubjects; ++i)
+    {
+        VectorType W = m_SpaceShifts.get_column(i);
+        for(auto it = W.begin(); it != W.end(); ++it)
+        {
+            Outputs << *it;
+            if(i != SizeW - 1) { Outputs << ", "; }
+        }
+        Outputs << std::endl;
+    }
+    
 }
 
 
@@ -906,18 +1039,25 @@ FastNetworkModel
     
     VectorType ParallelCurve(m_ManifoldDimension);
     
-    /*
+    
     ScalarType * d = m_Deltas.memptr();
     ScalarType * b1 = m_Block1.memptr();
+    ScalarType * n = m_Nus.memptr();
     ScalarType * b2 = m_Block2.memptr();
     ScalarType * w = m_SpaceShifts.get_column(SubjectNumber).memptr();
     ScalarType * p = ParallelCurve.memptr();
 
 //#pragma omp simd
     for(size_t i = 0; i < m_ManifoldDimension; ++i)
-        p[i] = m_P0 * exp(d[i] + w[i] / b1[i]  - b2[i] * TimePoint);
-    */
-    ParallelCurve = m_P0 * (m_Deltas + m_SpaceShifts.get_column(SubjectNumber) % m_Block1 - TimePoint * m_Block2).exp();
+    {
+        p[i] = m_P0 * exp(d[i] + w[i] * b1[i]  - b2[i] * TimePoint);
+        //std::cout << "Observation at : " << m_IndividualObservationDate[SubjectNumber](ObservationNumber) << std::endl;
+        //std::cout << p[i] << " = " << m_P0 << " , " << d[i] << " , " << w[i] << " , " << n[i] << " , " << TimePoint << std::endl;
+        //int a = 0;
+    }
+        
+    
+    //ParallelCurve = m_P0 * (m_Deltas + m_SpaceShifts.get_column(SubjectNumber) % m_Block1 - TimePoint * m_Block2).exp();
     
     return ParallelCurve;
 }

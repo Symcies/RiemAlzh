@@ -1,7 +1,7 @@
 <model-settings>
 
   <!-- Type of the model : {Univariate, Multivariate, Network, ...} -->
-  <type>FastNetwork</type>
+  <type>Meshwork</type>
 
   <!-- Name of the outputs files -->
   <output-name>AwesomeNetwork</output-name>

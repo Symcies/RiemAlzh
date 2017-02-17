@@ -122,19 +122,7 @@ protected:
     
     /// Number of independent components
     unsigned int m_NbIndependentComponents;
-    
-    /// Sum of the observations - corresponds to the first sufficient statistic
-    double m_SumObservations;
-    
-    /// Total number of observations throughout all the individuals
-    double m_NbTotalOfObservations;
-    
-    /// Total number of subjects
-    unsigned int m_NumberOfSubjects;
-    
-    /// Dimension of the manifold
-    double m_ManifoldDimension = 1827;
-    
+        
     /// Kernel Matrix K
     MatrixType m_InvertKernelMatrix;
     

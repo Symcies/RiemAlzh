@@ -44,8 +44,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    /// GOOOD PART
-        /// Initialize tests
+    
+    /// Initialize tests
     TestAssert::Init(false);
     
     /// Load the XML file arguments
@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
     
     /// Initialize the model
     std::shared_ptr<AbstractModel> Model;
-    //if(MS.GetType() == "Meshwork")  Model = make_shared<MeshworkModel>(MS);
+    if(MS.GetType() == "Meshwork")    Model = make_shared<MeshworkModel>(MS);
     if(MS.GetType() == "FastNetwork") Model = make_shared<FastNetworkModel>(MS);
     
     /// Initialize the data
@@ -73,27 +73,8 @@ int main(int argc, char* argv[]) {
         Model->InitializeFakeRandomVariables();
         D = Model->SimulateData(DS);
     }
-    /*
-    Data D;
-    bool ReadData = true;
-    if(ReadData)
-    {
-        int NbMaxOfSubjects = 250;
-        std::string FilePath = "/Users/igor.koval/Documents/Work/ok3/RiemAlzh/data/NormalizedThickness/MCIconvertAD/";
-        D = ReadData::OpenFilesMultivariate(FilePath, NbMaxOfSubjects);
-    }
-    else
-    {
-        Model->InitializeFakeRandomVariables();
-        D = Model->SimulateData(150, 3, 5);
-    }
-    */
     
-    
-    
-    //////////////////////////
-    /// Algorithm pipeline ///
-    //////////////////////////
+    /// Algorithm pipeline
     auto Algo = make_shared<Algorithm>(AS);
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);

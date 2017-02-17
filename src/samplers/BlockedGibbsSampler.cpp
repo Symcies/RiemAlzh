@@ -91,7 +91,7 @@ BlockedGibbsSampler
     
     /// Compute the previous log likelihood
     AcceptationRatio -= GetPreviousLogLikelihood();
-
+    
     /// Compute the candidate log likelihood
     M.UpdateModel(R, m_CurrentBlockType, m_CurrentBlockParameters);
     VectorType ComputedLogLikelihood = ComputeLogLikelihood(M, D);
@@ -100,14 +100,16 @@ BlockedGibbsSampler
     /// Compute the aceceptance ratio
     AcceptationRatio = std::min(AcceptationRatio, 0.0);
     AcceptationRatio = exp(AcceptationRatio);
-    
-    
+        
     ///  Rejection : Candidate not accepted
     if(m_UniformDistribution(Generator) > AcceptationRatio)
     {
         for(auto it = m_RecoverParameters.begin(); it != m_RecoverParameters.end(); ++it) 
         {
-            R.at(it->first, it->second.first) = it->second.second;
+            std::string Name = std::get<0>(*it);
+            unsigned int RealizationNumber = std::get<1>(*it);
+            ScalarType PreviousRealization = std::get<2>(*it);
+            R.at(Name, RealizationNumber) = PreviousRealization;
         }
            
         M.UpdateModel(R, m_CurrentBlockType, m_CurrentBlockParameters);
@@ -141,8 +143,8 @@ BlockedGibbsSampler
         /// Get the current realization and recover it
         auto CurrentRandomVariable = M.GetRandomVariable(Key);
         ScalarType CurrentRealization = R.at(Key, RealizationNumber);
-        m_RecoverParameters[NameRealization] = {RealizationNumber, CurrentRealization};
-        
+        //m_RecoverParameters[NameRealization] = {RealizationNumber, CurrentRealization};
+        m_RecoverParameters.push_back(std::make_tuple(NameRealization, RealizationNumber, CurrentRealization));
         
         /// Get a candidate realization
         auto CandidateRandomVariable = m_CandidateRandomVariables.GetRandomVariable(Key, RealizationNumber);
