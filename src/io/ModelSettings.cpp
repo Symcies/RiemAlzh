@@ -22,6 +22,8 @@ ModelSettings
         LoadFastNetwork(XMLFile);
     else if(Type == "Meshwork")
         LoadMeshworkModel(XMLFile);
+    else if(Type == "Network")
+        LoadNetworkModel(XMLFile);
     else 
         std::cerr << "The model type defined in model_settings.xml should be in {FastNetwork, Meshwork}";
 }
@@ -52,7 +54,7 @@ ModelSettings
     auto Settings = Parameters.FirstChildElement("model-settings");
     
     m_ManifoldDimension = atoi(Settings->FirstChildElement("number-of-dimensions")->GetText());
-    m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-indepenent-sources")->GetText());
+    m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-independent-sources")->GetText());
     
     m_InvertKernelMatrixPath  = Settings->FirstChildElement("path-to-kernel-invKd")->GetText();
     m_InterpolationMatrixPath = Settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
@@ -71,7 +73,25 @@ ModelSettings
     auto Settings = Parameters.FirstChildElement("model-settings");
     
     m_ManifoldDimension = atoi(Settings->FirstChildElement("number-of-dimensions")->GetText());
-    m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-indepenent-sources")->GetText());
+    m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-independent-sources")->GetText());
+    
+    m_InvertKernelMatrixPath  = Settings->FirstChildElement("path-to-kernel-invKd")->GetText();
+    m_InterpolationMatrixPath = Settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
+    
+    std::cout << "The model used is the " << m_Type << " model." << std::endl;
+}
+
+void
+ModelSettings
+::LoadNetworkModel(const char *XMLFile) 
+{
+    tinyxml2::XMLDocument Parameters;
+    Parameters.LoadFile(XMLFile);
+    
+    auto Settings = Parameters.FirstChildElement("model-settings");
+    
+    m_ManifoldDimension = atoi(Settings->FirstChildElement("number-of-dimensions")->GetText());
+    m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-independent-sources")->GetText());
     
     m_InvertKernelMatrixPath  = Settings->FirstChildElement("path-to-kernel-invKd")->GetText();
     m_InterpolationMatrixPath = Settings->FirstChildElement("path-to-kernel-Kxd")->GetText();

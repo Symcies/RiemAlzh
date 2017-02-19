@@ -1,12 +1,8 @@
-#include "MeshworkModel.h"
+#include "NetworkModel.h"
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Constructor(s) / Destructor :
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-MeshworkModel
-::MeshworkModel(ModelSettings &MS) 
+NetworkModel
+::NetworkModel(ModelSettings &MS) 
 {
     m_ManifoldDimension = MS.GetManifoldDimension();
     m_NbIndependentSources= MS.GetNumberOfIndependentSources();
@@ -19,24 +15,23 @@ MeshworkModel
     
     m_NbControlPoints = m_InvertKernelMatrix.columns();
     m_Thicknesses.set_size(m_ManifoldDimension);
-    m_Deltas.set_size(m_ManifoldDimension);
-    m_Block1.set_size(m_ManifoldDimension);
+    m_Nus.set_size(m_ManifoldDimension);
+    m_Block.set_size(m_ManifoldDimension);
 }
 
-MeshworkModel
-::~MeshworkModel() 
+NetworkModel
+::~NetworkModel() 
 {
-    
+
 }
 
-    
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 void
-MeshworkModel
+NetworkModel
 ::Initialize(const Data &D) 
 {
     /// Data-related attributes
@@ -62,122 +57,113 @@ MeshworkModel
     m_SumObservations = SumObservations;
     m_NbTotalOfObservations = K;
     
+        
+    /// Noise
+    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.01 );
     
     /// Population variables
-    m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.01 );
-
-    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.13, 0.00005 * 0.00005});
+    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.13, 0.0001 * 0.0001});
     m_RealizationsPerRandomVariable["P"] = m_NbControlPoints;
     
-    for(size_t i = 1; i < m_NbControlPoints; ++i)
-    {
-        std::string Name = "Delta#" + std::to_string(i);
-        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.003 * 0.003});
-        m_RealizationsPerRandomVariable[Name] = 1;
-    }
+    m_RandomVariables.AddRandomVariable("Nu", "Gaussian", {0.04088, 0.001*0.001});
+    m_RealizationsPerRandomVariable["Nu"] = m_NbControlPoints;
     
-    for(size_t i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
+    for(int i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
     {
         std::string Name = "Beta#" + std::to_string(i);
-        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.001 * 0.001});
-        m_RealizationsPerRandomVariable[Name] = 1;
+        m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.001*0.001});
+        m_RealizationsPerRandomVariable.insert({Name, 1});
     }
     
-    /// Individual variables
-    m_RandomVariables.AddRandomVariable("Ksi", "Gaussian", {-3.1971, 0.000000004});
-    m_RealizationsPerRandomVariable["Ksi"] = m_NumberOfSubjects;
     
-    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
-    m_RealizationsPerRandomVariable["Tau"] = m_NumberOfSubjects;
-        
+    /// Individual variables
+    m_RandomVariables.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
+    m_RealizationsPerRandomVariable.insert({"Ksi", m_NumberOfSubjects});
+    
+    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {75, 0.5});
+    m_RealizationsPerRandomVariable.insert({"Tau", m_NumberOfSubjects});
+    
     for(int i = 0; i < m_NbIndependentSources; ++i)
     {
         std::string Name = "S#" + std::to_string(i);
         m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0.0, 1});
-        m_RealizationsPerRandomVariable[Name] =  m_NumberOfSubjects;
+        m_RealizationsPerRandomVariable.insert({Name, m_NumberOfSubjects});
     }
-    
 }
 
 ScalarType 
-MeshworkModel
+NetworkModel
 ::InitializePropositionDistributionVariance(std::string Name) 
 const 
 {
     Name = Name.substr(0, Name.find_first_of("#"));
-    
     if("P" == Name)
-        return 0.00000007;
-    if("Delta" == Name)
-        return 0.000000015;
+        return 0.000001;
+    if("Nu" == Name)
+        return 0.00000001;
     if("Beta" == Name)
-        return 0.000015*0.000015;
+        return 0.00001*0.00001;
     if("Ksi" == Name)
         return 0.0008;
     if("Tau" == Name)
         return 0.05 * 0.05;
     if("S" == Name)
         return 0.7;
-       
 }
 
-
 void 
-MeshworkModel
+NetworkModel
 ::UpdateModel(const Realizations &R, int Type,
               const std::vector<std::string, std::allocator<std::string>> Names) 
 {
     bool ComputeThickness = false;
-    bool ComputeDelta = false;
+    bool ComputeNu = false;
+    bool ComputeBlock1 = false;
     bool ComputeBasis = false;
     bool ComputeA = false;
-    bool ComputeSpaceShift = false;
-    bool ComputeBlock_ = false;
+    bool ComputeSpace = false;
     
     bool IndividualOnly = (Type > -1);
     
     for(auto it = Names.begin(); it != Names.end(); ++it)
     {
         std::string Name = it->substr(0, it->find_first_of("#"));
-        
         if(Name == "None")
         {
             continue;
         }
-        else if(Name == "Ksi" or Name == "Tau")
+        else if(Name == "Ksi" or Name == "Tau") 
         {
             continue;
+        }
+        else if(Name == "Nu")
+        {
+            IndividualOnly = false;
+            ComputeNu = true;
+            ComputeBlock1 = true;
+            ComputeBasis = true;
+            ComputeA = true;
+            ComputeSpace = true;
         }
         else if(Name == "P")
         {
             IndividualOnly = false;
             ComputeThickness = true;
+            ComputeBlock1 = true;
             ComputeBasis = true;
             ComputeA = true;
-            ComputeSpaceShift = true;
-            ComputeBlock_ = true;
-            continue;
-        }
-        else if(Name == "Delta")
-        { 
-            IndividualOnly = false;
-            ComputeDelta = true;
-            ComputeBasis = true;
-            ComputeA = true;
-            ComputeSpaceShift = true;
-            ComputeBlock_ = true;
-            continue;
+            ComputeSpace = true;
         }
         else if(Name == "Beta")
         {
             IndividualOnly = false;
             ComputeA = true;
-            ComputeSpaceShift = true;
+            ComputeSpace = true;
             continue;
         }
         else if(Name == "S")
         {
-            ComputeSpaceShift = true;
+            ComputeSpace= true;
         }
         else if(Name == "All")
         {
@@ -185,11 +171,11 @@ MeshworkModel
             ComputeSubjectTimePoint(R, -1);
             
             ComputeThickness = true;
-            ComputeDelta = true;
+            ComputeNu = true;
             ComputeBasis = true;
             ComputeA = true;
-            ComputeSpaceShift = true;
-            ComputeBlock_ = true;
+            ComputeSpace = true;
+            ComputeBlock1 = true;
             break;
         } 
         else
@@ -197,19 +183,19 @@ MeshworkModel
             std::cerr << "The random variable name " << Name << "is unknown to the meshwork model" << std::endl; 
         }
     }
+
     
-    if(IndividualOnly)    ComputeSubjectTimePoint(R, Type);
-    if(ComputeThickness)  ComputeThicknesses(R);
-    if(ComputeDelta)      ComputeDeltas(R);
-    if(ComputeBasis)      ComputeOrthonormalBasis();
-    if(ComputeA)          ComputeAMatrix(R);
-    if(ComputeSpaceShift) ComputeSpaceShifts(R);
-    if(ComputeBlock_)     ComputeBlock();
+    if(IndividualOnly)   ComputeSubjectTimePoint(R, Type);
+    if(ComputeThickness) ComputeThicknesses(R);
+    if(ComputeNu)        ComputeNus(R);
+    if(ComputeBlock1)    ComputeBlock();
+    if(ComputeBasis)     ComputeOrthonormalBasis();
+    if(ComputeA)         ComputeAMatrix(R);
+    if(ComputeSpace)     ComputeSpaceShifts(R);
 }
 
-
-MeshworkModel::SufficientStatisticsVector
-MeshworkModel
+AbstractModel::SufficientStatisticsVector
+NetworkModel
 ::GetSufficientStatistics(const Realizations &R, const Data &D) 
 {
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
@@ -228,13 +214,13 @@ MeshworkModel
         }
     }
     
-    /// Sufficient Statistic Ksi and Ksi*Ksi
-    VectorType S3 = R.at("Ksi");
-    VectorType S4 = R.at("Ksi") % R.at("Ksi");
+    /// Sufficient Statistic P_k and P_k * P_k
+    VectorType S3 = R.at("P");
+    VectorType S4 = R.at("P") % R.at("P");
     
-    /// Sufficient statistic Tau and Tau*Tau
-    VectorType S5 = R.at("Tau");
-    VectorType S6 = R.at("Tau") % R.at("Tau");
+    /// Sufficient Statistic Nu_k and Nu_k*Nu_k
+    VectorType S5 = R.at("Nu");
+    VectorType S6 = R.at("Nu") % R.at("Nu");
     
     /// Sufficient statistic beta_k
     VectorType S7((m_ManifoldDimension-1) * m_NbIndependentSources);
@@ -242,24 +228,19 @@ MeshworkModel
     for(size_t i = 0; i < ((m_ManifoldDimension-1) * m_NbIndependentSources); ++i)
         itS7[i] = R.at("Beta#" + std::to_string(i), 0);
     
-    /// Sufficient statistic p_k and p_k*p_k
-    VectorType S8 = R.at("P");
-    VectorType S9 = R.at("P") % R.at("P");
+    /// Sufficient statistic Ksi_i * Ksi_i
+    VectorType S8 = R.at("Ksi") % R.at("Ksi");
+
     
-    /// Sufficient statistic delta_k
-    VectorType S10(m_NbControlPoints - 1);
-    ScalarType * itS10 = S10.memptr();
-    for(size_t i = 1; i < m_NbControlPoints; ++i)
-        itS10[i-1] = R.at("Delta#" + std::to_string(i), 0);
+    /// Sufficient statistic Tau_i and Tau_i * Tau_i
+    VectorType S9 = R.at("Tau");
+    VectorType S10 = R.at("Tau") % R.at("Tau");
     
-    
-    /// Return the sufficient statistic vector
-    SufficientStatisticsVector S = {S1, S2, S3, S4, S5, S6, S7, S8, S9, S10};
-    return S;
+    return {S1, S2, S3, S4, S5, S6, S7, S8, S9, S10};
 }
 
 void 
-MeshworkModel
+NetworkModel
 ::UpdateRandomVariables(const SufficientStatisticsVector &SS, const Data &D) 
 {
     /// Update the noise variance, sigma
@@ -272,33 +253,66 @@ MeshworkModel
     NoiseVariance /= m_NbTotalOfObservations * m_ManifoldDimension;
     m_Noise->SetVariance(NoiseVariance);
     
-    /// Update Ksi : Mean and Variance
-    ScalarType KsiMean = 0.0, KsiVariance = 0.0;
+    /// Update P_k : Mean and Var
+    ScalarType PMean = 0.0, PVariance = 0.0;
     const ScalarType * itS3 = SS[2].memptr();
     const ScalarType * itS4 = SS[3].memptr();
     
-    for(size_t i = 0; i < m_NumberOfSubjects; ++i) 
+    for(size_t i = 0; i < m_NbControlPoints; ++i)
     {
-        KsiMean     += itS3[i];
-        KsiVariance += itS4[i];
+        PMean     += itS3[i];
+        PVariance += itS4[i];
     }
-        
-    KsiMean     /= m_NumberOfSubjects;
-    KsiVariance -= m_NumberOfSubjects * KsiMean * KsiMean;
+    
+    PMean     /= m_NbControlPoints;
+    PVariance -= m_NbControlPoints * PMean * PMean;
+    PVariance /= m_NbControlPoints;
+    
+    m_RandomVariables.UpdateRandomVariable("P", {{"Mean", PMean}, {"Variance", PVariance}});
+    
+    /// Update Nu_k : Mean and Var
+    ScalarType NuMean = 0.0, NuVariance = 0.0;
+    const ScalarType * itS5 = SS[4].memptr();
+    const ScalarType * itS6 = SS[5].memptr();
+    
+    for(size_t i = 0; i < m_NbControlPoints; ++i)
+    {
+        NuMean     += itS5[i];
+        NuVariance += itS6[i];
+    }
+    
+    NuMean     /= m_NbControlPoints;
+    NuVariance -= m_NbControlPoints * NuMean * NuMean;
+    NuVariance /= m_NbControlPoints;
+    
+    m_RandomVariables.UpdateRandomVariable("Nu", {{"Mean", NuMean}, {"Variance", NuVariance}});
+    
+    /// Update Beta_k : Mean
+    const ScalarType * itS7 = SS[6].memptr();
+    for(size_t i = 0; i < SS[6].size(); ++i)
+        m_RandomVariables.UpdateRandomVariable("Beta#" + std::to_string(i), {{"Mean", itS7[i]}});
+     
+    /// Update Ksi : Mean and Variance
+    ScalarType KsiVariance = 0.0;
+    const ScalarType * itS8 = SS[7].memptr();
+    
+    for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+        KsiVariance += itS4[i];
+
     KsiVariance /= m_NumberOfSubjects;
     
-    m_RandomVariables.UpdateRandomVariable("Ksi", {{"Mean", KsiMean}, {"Variance", KsiVariance}});
+    m_RandomVariables.UpdateRandomVariable("Ksi", {{"Variance", KsiVariance}});
     
     
     /// Update Tau : Mean and Variance
     ScalarType TauMean = 0.0, TauVariance = 0.0;
-    const ScalarType * itS5 = SS[4].memptr();
-    const ScalarType * itS6 = SS[5].memptr();
+    const ScalarType * itS9  = SS[8].memptr();
+    const ScalarType * itS10 = SS[9].memptr();
     
     for(size_t i = 0; i < m_NumberOfSubjects; ++i)
     {
-        TauMean     += itS5[i];
-        TauVariance += itS6[i];
+        TauMean     += itS9[i];
+        TauVariance += itS10[i];
     }
     
     TauMean     /= m_NumberOfSubjects;
@@ -308,36 +322,11 @@ MeshworkModel
     m_RandomVariables.UpdateRandomVariable("Tau", {{"Mean", TauMean}, {"Variance", TauVariance}});
     
     
-    /// Update Beta_k : Mean
-    const ScalarType * itS7 = SS[6].memptr();
-    for(size_t i = 0; i < SS[6].size(); ++i)
-        m_RandomVariables.UpdateRandomVariable("Beta#" + std::to_string(i), {{"Mean", itS7[i]}});
-     
-    /// Update P_k : Mean and Var
-    ScalarType PMean = 0.0, PVariance = 0.0;
-    const ScalarType * itS8 = SS[7].memptr();
-    const ScalarType * itS9 = SS[8].memptr();
     
-    for(size_t i = 0; i < m_NbControlPoints; ++i)
-    {
-        PMean     += itS8[i];
-        PVariance += itS9[i];
-    }
-    
-    PMean     /= m_NbControlPoints;
-    PVariance -= m_NbControlPoints * PMean * PMean;
-    PVariance /= m_NbControlPoints;
-    
-    m_RandomVariables.UpdateRandomVariable("P", {{"Mean", PMean}, {"Variance", PVariance}});
-    
-    /// Update Delta_k : Mean
-    const ScalarType * itS10 = SS[9].memptr();
-    for(size_t i = 0; i < m_NbControlPoints - 1; ++i)
-        m_RandomVariables.UpdateRandomVariable("Delta#" + std::to_string(i+1), {{"Mean", itS10[i]}});
 }
 
 ScalarType 
-MeshworkModel
+NetworkModel
 ::ComputeLogLikelihood(const Data &D) 
 {
     double LogLikelihood = 0;
@@ -362,10 +351,10 @@ MeshworkModel
 }
 
 ScalarType 
-MeshworkModel
+NetworkModel
 ::ComputeIndividualLogLikelihood(const Data &D, const int SubjectNumber) 
 {
-    /// Get the data
+        /// Get the data
     double LogLikelihood = 0;
     auto N = D.at(SubjectNumber).size();
     auto Did = D.at(SubjectNumber);
@@ -384,8 +373,8 @@ MeshworkModel
     return LogLikelihood;
 }
 
-MeshworkModel::Data
-MeshworkModel
+AbstractModel::Data
+NetworkModel
 ::SimulateData(DataSettings &DS) 
 {
     typedef std::vector< std::pair< VectorType, double> > IndividualData;
@@ -395,9 +384,7 @@ MeshworkModel
     /// Initialize the realizations and simulate them
     m_RealizationsPerRandomVariable["P"] = m_NbControlPoints;
     
-    for(int i = 1; i < m_NbControlPoints; ++i)
-        m_RealizationsPerRandomVariable["Delta#" + std::to_string(i)] = 1;
-    
+    m_RealizationsPerRandomVariable["Nu"] = m_NbControlPoints;
     
     for(size_t i = 0; i <  m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
         m_RealizationsPerRandomVariable["Beta#" + std::to_string(i)] = 1;
@@ -411,12 +398,12 @@ MeshworkModel
     auto R = SimulateRealizations();
     
     /// Update the model
-    ComputeDeltas(R);
     ComputeThicknesses(R);
+    ComputeNus(R);
+    ComputeBlock();
     ComputeOrthonormalBasis();
     ComputeAMatrix(R);
     ComputeSpaceShifts(R);
-    ComputeBlock();
     
     /// Simulate the data
     std::random_device RD;
@@ -489,62 +476,32 @@ MeshworkModel
     return D;
 }
 
-
 std::vector<AbstractModel::SamplerBlock>
-MeshworkModel
+NetworkModel
 ::GetSamplerBlocks() 
-const
+const 
 {
     int PopulationType = -1;
-    int NbBeta = 3;
-    int NbDelta = 0;
-    int NbP = 5;
-    
     
     std::vector<SamplerBlock> Blocks;
     
-    
-    /// Insert P;
+    /// Insert P
     MiniBlock P;
-    
     for(size_t i = 0; i < m_NbControlPoints; ++i)
-    {
         P.push_back(std::make_pair("P", i));
-        //P.clear();
-    }
     Blocks.push_back(std::make_pair(PopulationType, P));
     
+    // Insert Nu
+    MiniBlock Nu;
+    for(size_t i = 0; i < m_NbControlPoints; ++i)
+        Nu.push_back(std::make_pair("Nu", i));
+    Blocks.push_back(std::make_pair(PopulationType, Nu));
     
-    /// Insert Beta_k
-    /*
+    /// Insert Beta
     MiniBlock Beta;
-    int BetaModulo = (int)m_NbIndependentSources*(m_ManifoldDimension - 1) /NbBeta;
     for(size_t i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
-    {
         Beta.push_back(std::make_pair("Beta#" + std::to_string(i), 0));
-        bool HingeCondition = (i%BetaModulo == 0 && i != 0);
-        bool FinalCondition = (i == m_NbIndependentSources*(m_ManifoldDimension - 1) - 1);
-        if(FinalCondition || HingeCondition)
-        {
-            Blocks.push_back(std::make_pair(PopulationType, Beta));
-            Beta.clear();
-        }
-    }
-     */
-    MiniBlock Beta;
-    for(size_t i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
-    {
-        Beta.push_back(std::make_pair("Beta#" + std::to_string(i), 0));   
-    }
     Blocks.push_back(std::make_pair(PopulationType, Beta));
-    
-    /// Insert Delta_k
-    MiniBlock Delta;
-    for(size_t i = 1; i < m_NbControlPoints; ++i)
-    {
-        Delta.push_back(std::make_pair("Delta#" + std::to_string(i), 0));
-    }
-    Blocks.push_back(std::make_pair(PopulationType, Delta));
     
     /// Individual variables
     for(size_t i = 0; i < m_NumberOfSubjects; ++i)
@@ -558,151 +515,79 @@ const
         Blocks.push_back(std::make_pair(i, IndividualBlock));
     }
     
-    
     return Blocks;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Outputs
-////////////////////////////////////////////////////////////////////////////////////////////////////
-    
 
-void 
-MeshworkModel
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Outputs
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void
+NetworkModel
 ::DisplayOutputs(const Realizations &R) 
 {
     auto P = m_RandomVariables.GetRandomVariable("P");
     auto PReal = R.at("P");
     
+    auto Nu = m_RandomVariables.GetRandomVariable("Nu");
+    auto NuReal = R.at("Nu");
+    
     auto Tau = m_RandomVariables.GetRandomVariable("Tau");
     auto Ksi = m_RandomVariables.GetRandomVariable("Ksi");
     
-    double DeltaMin = R.at("Delta#1", 0);
-    double DeltaMax = DeltaMin;
-    for(size_t i = 1; i < 258; ++i)
-    {
-        double DeltaK = R.at("Delta#" + std::to_string(i), 0);
-        DeltaMax = std::max(DeltaMax, DeltaK);
-        DeltaMin = std::min(DeltaMin, DeltaK);
-    }
     
     
     std::cout << "Noise: " << m_Noise->GetVariance() << " - PMean: " << exp(P->GetParameter("Mean"));
     std::cout << " - PVar: " << P->GetParameter("Variance") << " - PMin: " << exp(PReal.min_value()) << " - PMax: " << exp(PReal.max_value());
     std::cout << " - T0: " << Tau->GetParameter("Mean") << " - TauVar: " << Tau->GetParameter("Variance");
-    std::cout << " - V0: " << exp(Ksi->GetParameter("Mean")) << " - KsiVar: " << Ksi->GetParameter("Variance");
-    std::cout << " - MinDelta: " << DeltaMin << " - MaxDelta: " << DeltaMax << std::endl;
+    std::cout << " - KsiVar: " << Ksi->GetParameter("Variance");
+    std::cout << " - NuMean/V0: " << Nu->GetParameter("Mean") << " - NuVar: " << Nu->GetParameter("Variance");
+    std::cout << " - NuMin: " << NuReal.min_value() << " - NuMax: " << NuReal.max_value() << std::endl;
+    
 }
 
-
 void 
-MeshworkModel
+NetworkModel
 ::SaveData(unsigned int IterationNumber, const Realizations &R) 
 {
     
-    std::ofstream Outputs;    
-    std::string FileName = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/Meshwork/Parameters" + std::to_string(IterationNumber) + ".txt";
-    Outputs.open(FileName, std::ofstream::out | std::ofstream::trunc);
-    
-    /// Save the final noise variance
-    Outputs << m_Noise->GetVariance() << std::endl;
-    
-    /// Save the number of subjects, the manifold dimension, the number of sources, and, the number of control points
-    Outputs << m_NumberOfSubjects << ", " << m_ManifoldDimension << ", " << m_NbIndependentSources << ", " << m_NbControlPoints << std::endl;
-    
-    /// Save the delta_mean -> First one being equal to 0 as the reference
-    Outputs << 0 << ", ";
-    for(size_t i = 1; i < m_NbControlPoints; ++i)
-    {
-        Outputs << m_RandomVariables.GetRandomVariable("Delta#" + std::to_string(i))->GetParameter("Mean");
-        if(i != m_NbControlPoints - 1) { Outputs << ", "; }
-    }
-    Outputs << std::endl;
-    
-    /// Save the thicknesses
-    for(size_t i = 0; i < m_NbControlPoints; ++i)
-    {
-        Outputs << R.at("P", i);
-        if(i != m_NbControlPoints - 1) { Outputs << ", ";}
-    }
-    Outputs << std::endl;
-    
-    /// Save the tau
-    for(size_t i = 0; i < m_NumberOfSubjects; ++i)
-    {
-        Outputs << R.at("Tau", i) ;
-        if(i != m_NumberOfSubjects - 1) { Outputs << ", ";}
-    }
-    Outputs << std::endl;
-    
-    /// Save the ksi
-    for(size_t i = 0; i < m_NumberOfSubjects; ++i)
-    {
-        Outputs << R.at("Ksi", i) ;
-        if(i != m_NumberOfSubjects - 1) { Outputs << ", ";}
-    }
-    
-        /// Save (S_i)
-    for(size_t i = 0; i < m_NumberOfSubjects; ++i)
-    {
-        for(size_t j = 0; j < m_NbIndependentSources; ++j)
-        {
-            Outputs << R.at("S#" + std::to_string(j))(i);
-            if(i != m_NbIndependentSources - 1) { Outputs << ", "; }
-        }
-        Outputs << std::endl;
-    }
-    
-    /// Save (W_i)
-    auto SizeW = m_NumberOfSubjects;
-    for(size_t i = 0; i < m_NumberOfSubjects; ++i)
-    {
-        VectorType W = m_SpaceShifts.get_column(i);
-        for(auto it = W.begin(); it != W.end(); ++it)
-        {
-            Outputs << *it;
-            if(i != SizeW - 1) { Outputs << ", "; }
-        }
-        Outputs << std::endl;
-    }
-    
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
-MeshworkModel
+void 
+NetworkModel
 ::InitializeFakeRandomVariables() 
 {
     /// Noise 
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.00001 );
     
-    /// Population random variables
-    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.1, 0.001 * 0.001});
+    /// Population variables
+    m_RandomVariables.AddRandomVariable("P",  "Gaussian", {0.13, 0.00005 * 0.00005});
+    m_RandomVariables.AddRandomVariable("Nu", "Gaussian", {0.04088, 0.001*0.001});
     
-    for(size_t i = 0; i < m_NbControlPoints; ++i)
-        m_RandomVariables.AddRandomVariable("Delta#" + std::to_string(i), "Gaussian", {0, 0.0001 * 0.0001});
+    for(int i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
+        m_RandomVariables.AddRandomVariable("Beta#" + std::to_string(i), "Gaussian", {0, 0.001*0.001});
     
-    for(size_t i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
-        m_RandomVariables.AddRandomVariable("Beta#" + std::to_string(i), "Gaussian", {0, 0.0001 * 0.0001});
-    
-    
-    /// Individual random variables
+    /// Individual variables
     m_RandomVariables.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
-    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {62, 0.25});
+    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
     
     for(int i = 0; i < m_NbIndependentSources; ++i)
-        m_RandomVariables.AddRandomVariable("S#" + std::to_string(i), "Gaussian", {0.0, 0.5});
-
+        m_RandomVariables.AddRandomVariable("S#" + std::to_string(i), "Gaussian", {0.0, 1});
     
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
-MeshworkModel
+
+void 
+NetworkModel
 ::ComputeSubjectTimePoint(const Realizations &R, const int SubjectNumber) 
 {
     if(SubjectNumber != -1) 
@@ -722,89 +607,35 @@ MeshworkModel
             m_SubjectTimePoints[i] = AccFactor * (m_IndividualObservationDate[i] - TimeShift);
         }
     }
-    /*
-    if(SubjectNumber != -1) {
-        double AccFactor = exp(R.at("Ksi", SubjectNumber));
-        double TimeShift = R.at("Tau", SubjectNumber);
-        
-        auto N = m_IndividualObservationDate[SubjectNumber].size();
-        
-        ScalarType * real = m_IndividualObservationDate[SubjectNumber].memptr();
-        ScalarType * reparam = m_SubjectTimePoints[SubjectNumber].memptr();
-    
-#pragma omp simd
-        for(size_t i = 0; i < N; ++i)
-            reparam[i] = AccFactor * (real[i] - TimeShift);
-        
-    }
-    else
-    {
-#pragma parallel for
-        for(size_t i = 0; i < m_NumberOfSubjects; ++i)
-        {
-            double AccFactor = exp(R.at("Ksi")(i));
-            double TimeShift = R.at("Tau")(i);
-            
-            auto N = m_IndividualObservationDate[i].size();
-            
-            ScalarType * real = m_IndividualObservationDate[i].memptr();
-            ScalarType * reparam = m_SubjectTimePoints[i].memptr();
-            
-            for(size_t j = 0; j < N; ++j)
-                reparam[j] = AccFactor * (real[j] - TimeShift);
-            
-            }
-    }
-     */
 }
 
-void 
-MeshworkModel
-::ComputeDeltas(const Realizations &R) 
+
+void
+NetworkModel
+::ComputeNus(const Realizations &R) 
 {
-    VectorType Delta(m_NbControlPoints);
-    Delta(0) = 0.0;
-    ScalarType * d = Delta.memptr();
-
-#pragma omp parallel for
-    for(size_t i = 1; i < m_NbControlPoints; ++i)
-    {
-        d[i] = R.at("Delta#" + std::to_string(i), 0);
-    }
-    
-    m_Deltas = m_InterpolationMatrix * m_InvertKernelMatrix * Delta;
+    m_Nus = m_InterpolationMatrix * m_InvertKernelMatrix * R.at("Nu");
 }
 
-
 void 
-MeshworkModel
+NetworkModel
 ::ComputeThicknesses(const Realizations &R) 
 {
     m_Thicknesses = m_InterpolationMatrix * m_InvertKernelMatrix * R.at("P").exp();
 }
 
 void 
-MeshworkModel
+NetworkModel
 ::ComputeOrthonormalBasis() 
 {
-        /// Get the data
-    auto V0 = m_RandomVariables.GetRandomVariable("Ksi")->GetParameter("Mean");
-    V0 = exp(V0);
-    
     
     VectorType U(m_ManifoldDimension);
-    ScalarType * t = m_Thicknesses.memptr();
-    ScalarType * d = m_Deltas.memptr();
     ScalarType * u = U.memptr();
+    ScalarType * t = m_Thicknesses.memptr();
+    ScalarType * n = m_Nus.memptr();
     
-#pragma omp simd
-    for(int i = 0; i < m_ManifoldDimension; ++i)
-    {
-        u[i] = V0 / (t[i] * t[i])* exp(-d[i]); 
-    }
-    
-    
-
+    for(size_t i = 0; i < m_ManifoldDimension; ++i)
+        u[i] = n[i] / (t[i] * t[i]);
     
     /// Compute the initial pivot vector U
     double Norm = U.magnitude();
@@ -821,11 +652,11 @@ MeshworkModel
     m_OrthogonalBasis = FinalMatrix2;
 }
 
+
 void 
-MeshworkModel
+NetworkModel
 ::ComputeAMatrix(const Realizations &R) 
 {
-        
     MatrixType NewA(m_ManifoldDimension, m_NbIndependentSources);
     
     for(int i = 0; i < m_NbIndependentSources; ++i)
@@ -843,11 +674,11 @@ MeshworkModel
     m_AMatrix = NewA;
 }
 
+
 void 
-MeshworkModel
+NetworkModel
 ::ComputeSpaceShifts(const Realizations &R) 
 {
-    
     MatrixType SS(m_NbIndependentSources, m_NumberOfSubjects);
     for(int i = 0; i < m_NbIndependentSources; ++i) 
     {
@@ -856,40 +687,46 @@ MeshworkModel
     m_SpaceShifts = m_AMatrix * SS;
 }
 
-void
-MeshworkModel
+void 
+NetworkModel
 ::ComputeBlock() 
 {
+    ScalarType * b = m_Block.memptr();
+    ScalarType * n = m_Nus.memptr();
     ScalarType * t = m_Thicknesses.memptr();
-    ScalarType * d = m_Deltas.memptr();
-    ScalarType * b = m_Block1.memptr();
-
-#pragma omp simd
+    
     for(size_t i = 0; i < m_ManifoldDimension; ++i)
-        b[i] = 1 / (t[i] * exp(d[i]));
+        b[i] = n[i] / (t[i] * t[i]);
 }
-
 
 AbstractModel::VectorType
-MeshworkModel
+NetworkModel
 ::ComputeParallelCurve(int SubjectNumber, int ObservationNumber) 
 {
-    double TimePoint = m_SubjectTimePoints[SubjectNumber](ObservationNumber);
-    
     VectorType ParallelCurve(m_ManifoldDimension);
-    
     ScalarType * p = ParallelCurve.memptr();
+    
+    double TimePoint = m_SubjectTimePoints[SubjectNumber](ObservationNumber);
     ScalarType * t = m_Thicknesses.memptr();
-    ScalarType * d = m_Deltas.memptr();
-    ScalarType * b = m_Block1.memptr();
     ScalarType * w = m_SpaceShifts.get_column(SubjectNumber).memptr();
+    ScalarType * b = m_Block.memptr();
     
     for(size_t i = 0; i < m_ManifoldDimension; ++i)
-        p[i] = t[i] * exp( w[i] / (t[i]*exp(d[i])) + d[i] - TimePoint/t[i]);
-        
-    
+        p[i] = t[i] * exp(w[i] + b[i]*TimePoint);
+
     return ParallelCurve;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

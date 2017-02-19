@@ -10,6 +10,7 @@ typedef double ScalarType;
 
 #include "Algorithm.h"
 
+#include "NetworkModel.h"
 #include "MeshworkModel.h"
 #include "FastNetworkModel.h"
 
@@ -60,6 +61,7 @@ int main(int argc, char* argv[]) {
     std::shared_ptr<AbstractModel> Model;
     if(MS.GetType() == "Meshwork")    Model = make_shared<MeshworkModel>(MS);
     if(MS.GetType() == "FastNetwork") Model = make_shared<FastNetworkModel>(MS);
+    if(MS.GetType() == "Network")     Model = make_shared<NetworkModel>(MS);
     
     /// Initialize the data
     Data D;

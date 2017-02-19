@@ -3,3 +3,4 @@ src/io/outputs/
 data/
 
 # Ignore the results
+*.xml

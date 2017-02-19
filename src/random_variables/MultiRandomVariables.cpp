@@ -167,8 +167,31 @@ MultiRandomVariables
         int Key = m_StringToIntKey.at(Name);
         int NumberOfRealizations = it->second;
 
-        VectorType Real = m_RandomVariables.at(Key)->Samples(NumberOfRealizations);
-        R.AddRealizations(Name, Key, Real);
+        if(Name == "P")
+        {
+            /// This is intended to start with good initialization
+            std::ifstream MeanThickness("/Users/igor.koval/Documents/Work/RiemAlzh/data/UnnormalizedThickness/MCIconvertAD/mean_thickness.csv");
+            if(MeanThickness.is_open())
+            {
+                std::string line;
+                VectorType Real(NumberOfRealizations);
+                int i = 0;
+                while(getline(MeanThickness, line))
+                {
+                    Real(i) = log(stod(line)); 
+                    ++i;
+                }
+                R.AddRealizations(Name, Key, Real);
+            }
+            else { std::cerr << "Mean thickness is not found" << std::endl; }
+        }
+        else 
+        {
+            VectorType Real = m_RandomVariables.at(Key)->Samples(NumberOfRealizations);
+            R.AddRealizations(Name, Key, Real);
+        }
+        
+
     }
 
     return R;

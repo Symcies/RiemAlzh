@@ -84,6 +84,9 @@ private:
     
     /// Load the meshwork model
     void LoadMeshworkModel(const char* XMLFile);
+    
+    /// Load the network model
+    void LoadNetworkModel(const char* XMLFile);
 };
 
 
