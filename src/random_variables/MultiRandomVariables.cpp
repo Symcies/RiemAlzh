@@ -166,7 +166,7 @@ MultiRandomVariables
         std::string Name = it->first;
         int Key = m_StringToIntKey.at(Name);
         int NumberOfRealizations = it->second;
-
+        /*
         if(Name == "P")
         {
             /// This is intended to start with good initialization
@@ -187,10 +187,12 @@ MultiRandomVariables
         }
         else 
         {
+         */
             VectorType Real = m_RandomVariables.at(Key)->Samples(NumberOfRealizations);
             R.AddRealizations(Name, Key, Real);
+        /*
         }
-        
+        */
 
     }
 

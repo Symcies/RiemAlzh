@@ -107,17 +107,17 @@ const
     Name = Name.substr(0, Name.find_first_of("#"));
     
     if("P" == Name)
-        return 0.00000007;
+        return 0.0000001;
     if("Delta" == Name)
-        return 0.000000015;
+        return 0.0000001;
     if("Beta" == Name)
-        return 0.000015*0.000015;
+        return 0.000007*0.000007;
     if("Ksi" == Name)
-        return 0.0008;
+        return 0.00003;
     if("Tau" == Name)
-        return 0.05 * 0.05;
+        return 0.04 * 0.04;
     if("S" == Name)
-        return 0.7;
+        return 0.4;
        
 }
 

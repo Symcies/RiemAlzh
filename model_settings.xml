@@ -1,7 +1,7 @@
 <model-settings>
 
   <!-- Type of the model : {Univariate, Multivariate, Network, ...} -->
-  <type>Network</type>
+  <type>FastNetwork</type>
 
   <!-- Name of the outputs files -->
   <output-name>AwesomeNetwork</output-name>
@@ -11,7 +11,7 @@
 
   <number-of-dimensions>1827</number-of-dimensions>
 
-  <number-of-independent-sources>5</number-of-independent-sources>
+  <number-of-independent-sources>7</number-of-independent-sources>
 
   <parameters>
     <p0>

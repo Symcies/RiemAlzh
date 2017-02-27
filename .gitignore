@@ -1,6 +1,7 @@
 # Ignore the datasets
 src/io/outputs/
 data/
+keep/
 
 # Ignore the results
 *.xml

@@ -1,16 +1,16 @@
 <algorithm-settings>
 
   <!-- Comment -->
-  <max-iterations>30000</max-iterations>
+  <max-iterations>50000</max-iterations>
 
   <!-- Comment -->
-  <burn-in>15000</burn-in>
+  <burn-in>25000</burn-in>
 
   <!-- Comment -->
-  <step-size-to-display>1</step-size-to-display>
+  <step-size-to-display>50</step-size-to-display>
 
   <!-- Comment -->
-  <step-size-to-save>250</step-size-to-save>
+  <step-size-to-save>500</step-size-to-save>
 
 
 </algorithm-settings>

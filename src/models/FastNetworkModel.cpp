@@ -82,7 +82,7 @@ FastNetworkModel
      /// Population variables
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.000001 );
 
-    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.13, 0.0001 * 0.0001});
+    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.12, 0.0001 * 0.0001});
     m_RealizationsPerRandomVariable.insert({"P", 1});
         
     for(int i = 1; i < m_NbControlPoints; ++i)
@@ -135,13 +135,13 @@ const
     if("Delta" == Name)
         return 0.00000001;
     if("Nu" == Name)
-        return 0.00000001;
+        return 0.00001;
     if("Beta" == Name)
         return 0.00001*0.00001;
     if("Ksi" == Name)
         return 0.0008;
     if("Tau" == Name)
-        return 0.05 * 0.05;
+        return 0.02 * 0.02;
     if("S" == Name)
         return 0.7;
 }
@@ -693,7 +693,7 @@ FastNetworkModel
     
     unsigned int NumberOfSubjects = R.at("Tau").size();
     std::ofstream Outputs;    
-    std::string FileName = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/FastNetwork/Parameters" + std::to_string(IterationNumber) + ".txt";
+    std::string FileName = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/Simulated/Parameters" + std::to_string(IterationNumber) + ".txt";
     Outputs.open(FileName, std::ofstream::out | std::ofstream::trunc);
     
     /// Save the final noise variance
@@ -705,7 +705,7 @@ FastNetworkModel
     /// Save P0, P0_mean and P0_var
     auto P0 = m_RandomVariables.GetRandomVariable("P");
     Outputs << R.at("P")(0) << ", " << P0->GetParameter("Mean") << ", " << P0->GetParameter("Variance") << std::endl;
-    std::cout  << R.at("P")(0) << ", " << P0->GetParameter("Mean") << ", " << P0->GetParameter("Variance") << std::endl;
+    // std::cout  << R.at("P")(0) << ", " << P0->GetParameter("Mean") << ", " << P0->GetParameter("Variance") << std::endl;
     
     /// Save (Ksi_i)
     for(size_t i = 0; i < NumberOfSubjects; ++i)
@@ -807,12 +807,12 @@ FastNetworkModel
      /// Population variables
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.1 );
 
-    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.1, 0.00001 * 0.00001});
+    m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.08, 0.00001 * 0.00001});
         
     for(int i = 1; i < m_NbControlPoints; ++i)
-        m_RandomVariables.AddRandomVariable("Delta#" + std::to_string(i), "Gaussian", {0, 0.0001 * 0.0001});
+        m_RandomVariables.AddRandomVariable("Delta#" + std::to_string(i), "Gaussian", {0.5, 0.0001 * 0.0001});
 
-    m_RandomVariables.AddRandomVariable("Nu", "Gaussian", {0.04088, 0.0004*0.0004});
+    m_RandomVariables.AddRandomVariable("Nu", "Gaussian", {0.036, 0.004*0.004});
     
     for(int i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension - 1); ++i)
         m_RandomVariables.AddRandomVariable("Beta#" + std::to_string(i), "Gaussian", {0, 0.0001 * 0.0001});
@@ -821,7 +821,7 @@ FastNetworkModel
     /// Individual variables    
     m_RandomVariables.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
     
-    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {62, 0.25});
+    m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {70, 0.25});
     
     for(int i = 0; i < m_NbIndependentComponents; ++i)
         m_RandomVariables.AddRandomVariable("S#" + std::to_string(i), "Gaussian", {0.0, 0.5});

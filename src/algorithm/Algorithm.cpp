@@ -187,7 +187,7 @@ Algorithm
 ::DisplayAcceptanceRatio() {
     std::cout << "AcceptRatio: ";
     
-    auto NamesToShow = {"P", "Tau", "Ksi", "Nu", "Beta#1"};
+    auto NamesToShow = {"P", "Tau", "Ksi", "Beta#1", "Delta#3", "Nu"};
     
     for(auto it = NamesToShow.begin(); it != NamesToShow.end(); ++it)
     {
