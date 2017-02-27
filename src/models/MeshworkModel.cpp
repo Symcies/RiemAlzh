@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 MeshworkModel
-::MeshworkModel(ModelSettings &MS) 
+::MeshworkModel(io::ModelSettings &MS) 
 {
     m_ManifoldDimension = MS.GetManifoldDimension();
     m_NbIndependentSources= MS.GetNumberOfIndependentSources();
@@ -14,8 +14,8 @@ MeshworkModel
     std::string KernelMatrixPath = MS.GetInvertKernelPath();
     std::string InterpolationMatrixPath = MS.GetInterpolationKernelPath();
 
-    m_InvertKernelMatrix = ReadData::OpenKernel(KernelMatrixPath).transpose();
-    m_InterpolationMatrix = ReadData::OpenKernel(InterpolationMatrixPath);
+    m_InvertKernelMatrix = io::ReadData::OpenKernel(KernelMatrixPath).transpose();
+    m_InterpolationMatrix = io::ReadData::OpenKernel(InterpolationMatrixPath);
     
     m_NbControlPoints = m_InvertKernelMatrix.columns();
     m_Thicknesses.set_size(m_ManifoldDimension);
@@ -37,7 +37,7 @@ MeshworkModel
 
 void
 MeshworkModel
-::Initialize(const Data &D) 
+::Initialize(const OldData &D) 
 {
     /// Data-related attributes
     m_NumberOfSubjects = D.size();
@@ -210,7 +210,7 @@ MeshworkModel
 
 MeshworkModel::SufficientStatisticsVector
 MeshworkModel
-::GetSufficientStatistics(const Realizations &R, const Data &D) 
+::GetSufficientStatistics(const Realizations &R, const OldData &D) 
 {
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
     VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
@@ -260,7 +260,7 @@ MeshworkModel
 
 void 
 MeshworkModel
-::UpdateRandomVariables(const SufficientStatisticsVector &SS, const Data &D) 
+::UpdateRandomVariables(const SufficientStatisticsVector &SS, const OldData &D) 
 {
     /// Update the noise variance, sigma
     ScalarType NoiseVariance = m_SumObservations;
@@ -338,7 +338,7 @@ MeshworkModel
 
 ScalarType 
 MeshworkModel
-::ComputeLogLikelihood(const Data &D) 
+::ComputeLogLikelihood(const OldData &D) 
 {
     double LogLikelihood = 0;
 //#pragma omp parallel for reduction(+:LogLikelihood)   
@@ -363,7 +363,7 @@ MeshworkModel
 
 ScalarType 
 MeshworkModel
-::ComputeIndividualLogLikelihood(const Data &D, const int SubjectNumber) 
+::ComputeIndividualLogLikelihood(const OldData &D, const int SubjectNumber) 
 {
     /// Get the data
     double LogLikelihood = 0;
@@ -384,9 +384,9 @@ MeshworkModel
     return LogLikelihood;
 }
 
-MeshworkModel::Data
+MeshworkModel::OldData
 MeshworkModel
-::SimulateData(DataSettings &DS) 
+::SimulateData(io::DataSettings &DS) 
 {
     typedef std::vector< std::pair< VectorType, double> > IndividualData;
     
@@ -425,7 +425,7 @@ MeshworkModel
     std::uniform_real_distribution<double> ObsDistrib(60, 95);
     std::normal_distribution<double> NoiseDistrib(0.0, sqrt(m_Noise->GetVariance()));
     
-    Data D;
+    OldData D;
     double RealNoise = 0.0;
     
     for(int i = 0; i < m_NumberOfSubjects; ++i)

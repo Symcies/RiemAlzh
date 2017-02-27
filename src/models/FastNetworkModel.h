@@ -19,7 +19,7 @@ public:
     /// Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    FastNetworkModel(ModelSettings& MS);
+    FastNetworkModel(io::ModelSettings& MS);
     FastNetworkModel(const unsigned int NbIndependentComponents, std::shared_ptr<MatrixType> KernelMatrix, std::shared_ptr<MatrixType> InterpolationMatrix);
     ~FastNetworkModel();
     
@@ -32,7 +32,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
   
     /// Initialize the model : random variables, interpolation matrix, parameters
-    virtual void Initialize(const Data& D);
+    virtual void Initialize(const OldData& D);
     
         /// Initialize the variance of the proposition distribution
     virtual ScalarType InitializePropositionDistributionVariance(std::string Name) const;
@@ -41,19 +41,19 @@ public:
     virtual void UpdateModel(const Realizations& R, int Type, const std::vector<std::string> Names = {"All"});
     
     /// Simulate data according to the model and the parameters
-    virtual Data SimulateData(DataSettings& DS);
+    virtual OldData SimulateData(io::DataSettings& DS);
     
     /// Compute the log likelihood of the model
-    virtual double ComputeLogLikelihood(const Data& D);
+    virtual double ComputeLogLikelihood(const OldData& D);
     
     /// Compute the log likelihood of the model for a given subject
-    virtual double ComputeIndividualLogLikelihood(const Data& D, const int SubjectNumber);
+    virtual double ComputeIndividualLogLikelihood(const OldData& D, const int SubjectNumber);
 
     /// Get the sufficient statistics of the model
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Data& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const OldData& D);
     
     /// Update the random variables <=> the parameters of the model
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, const Data& D);
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, const OldData& D);
     
     /// Define the sampler block used in the gibbs sampler (should it be here?)
     virtual std::vector<SamplerBlock> GetSamplerBlocks() const ;

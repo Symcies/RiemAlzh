@@ -31,12 +31,10 @@ public:
         
     typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
-    typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
+    typedef std::vector< std::vector< std::pair< VectorType, double> > > OldData;
     typedef typename std::unordered_map<std::string, int> StringIntHash;
     typedef std::vector<std::pair<std::string,  unsigned int>> MiniBlock;
-    //typedef std::unordered_map<std::string, unsigned int> MiniBlock;
     typedef std::pair<int, MiniBlock> SamplerBlock;
-    
     typedef std::vector<VectorType> SufficientStatisticsVector;
 
 
@@ -57,7 +55,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the model
-    virtual void Initialize(const Data& D) = 0;
+    virtual void Initialize(const OldData& D) = 0;
     
     /// Initialize the variance of the proposition distribution
     virtual ScalarType InitializePropositionDistributionVariance(std::string Name) const = 0;
@@ -67,21 +65,21 @@ public:
     virtual void UpdateModel(const Realizations& AR, int Type, const std::vector<std::string> Names = {"All"}) = 0;
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& AR, const Data& D) = 0;
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& AR, const OldData& D) = 0;
     
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const Data& D) = 0;
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const OldData& D) = 0;
     
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const Data& D)= 0;
+    virtual double ComputeLogLikelihood(const OldData& D)= 0;
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const Data& D, const int SubjectNumber) = 0;
+    virtual double ComputeIndividualLogLikelihood(const OldData& D, const int SubjectNumber) = 0;
     
     /// Simulate data according to the model
-    virtual Data SimulateData(DataSettings& DS) = 0;
+    virtual OldData SimulateData(io::DataSettings& DS) = 0;
 
     /// Simulate some random variable realizations
     Realizations SimulateRealizations();
@@ -104,7 +102,7 @@ public:
     virtual void SaveData(unsigned int IterationNumber, const Realizations& R) = 0;
     
     /// Displau the noise variance - to control that it decreases
-    ScalarType ComputeNoiseVariance(const Data& D);
+    ScalarType ComputeNoiseVariance(const OldData& D);
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:

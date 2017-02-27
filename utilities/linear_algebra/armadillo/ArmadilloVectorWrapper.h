@@ -180,6 +180,13 @@ public :
 	inline ArmadilloVectorWrapper<ScalarType> exp() const {
 		return ArmadilloVectorWrapper<ScalarType>(arma::exp(m_Vector));
 	}
+	
+	/// Adds a value at the end of the vector.
+    void push_back(const ScalarType& s) {
+        m_Vector.set_size(m_Vector.n_rows + 1); m_Vector(m_Vector.n_rows - 1) = s; }
+	
+	/// Delete all the elements in a vector
+	void clear() { m_Vector.clear(); }
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Arithmetic operations :

@@ -3,7 +3,7 @@
 
 
 FastNetworkModel
-::FastNetworkModel(ModelSettings &MS) 
+::FastNetworkModel(io::ModelSettings &MS) 
 {
     m_ManifoldDimension = MS.GetManifoldDimension();
     m_NbIndependentComponents = MS.GetNumberOfIndependentSources();
@@ -11,8 +11,8 @@ FastNetworkModel
     std::string KernelMatrixPath = MS.GetInvertKernelPath();
     std::string InterpolationMatrixPath = MS.GetInterpolationKernelPath();
 
-    m_InvertKernelMatrix = ReadData::OpenKernel(KernelMatrixPath).transpose();
-    m_InterpolationMatrix = ReadData::OpenKernel(InterpolationMatrixPath);
+    m_InvertKernelMatrix = io::ReadData::OpenKernel(KernelMatrixPath).transpose();
+    m_InterpolationMatrix = io::ReadData::OpenKernel(InterpolationMatrixPath);
     
     m_NbControlPoints = m_InvertKernelMatrix.columns();
     m_Nus.set_size(m_ManifoldDimension);
@@ -50,7 +50,7 @@ FastNetworkModel
 
 void
 FastNetworkModel
-::Initialize(const Data& D) 
+::Initialize(const OldData& D) 
 {
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     
@@ -257,9 +257,9 @@ FastNetworkModel
     
 }
 
-FastNetworkModel::Data
+FastNetworkModel::OldData
 FastNetworkModel
-::SimulateData(DataSettings& DS) 
+::SimulateData(io::DataSettings& DS) 
 {
 typedef std::vector< std::pair< VectorType, double> > IndividualData;
     
@@ -307,7 +307,7 @@ typedef std::vector< std::pair< VectorType, double> > IndividualData;
     
 
     
-    Data D;
+    OldData D;
     double RealNoise = 0.0;
     
     for(int i = 0; i < m_NumberOfSubjects; ++i)
@@ -375,7 +375,7 @@ typedef std::vector< std::pair< VectorType, double> > IndividualData;
 
 double 
 FastNetworkModel
-::ComputeLogLikelihood(const Data& D) 
+::ComputeLogLikelihood(const OldData& D) 
 {
     double LogLikelihood = 0;
 #pragma omp parallel for reduction(+:LogLikelihood)   
@@ -400,7 +400,7 @@ FastNetworkModel
 
 double
 FastNetworkModel
-::ComputeIndividualLogLikelihood(const Data& D, const int SubjectNumber) 
+::ComputeIndividualLogLikelihood(const OldData& D, const int SubjectNumber) 
 {
     /// Get the data
     double LogLikelihood = 0;
@@ -423,7 +423,7 @@ FastNetworkModel
 
 FastNetworkModel::SufficientStatisticsVector
 FastNetworkModel
-::GetSufficientStatistics(const Realizations& R, const Data& D) 
+::GetSufficientStatistics(const Realizations& R, const OldData& D) 
 {
     
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
@@ -481,7 +481,7 @@ FastNetworkModel
 
 void
 FastNetworkModel
-::UpdateRandomVariables(const SufficientStatisticsVector &SS, const Data& D) 
+::UpdateRandomVariables(const SufficientStatisticsVector &SS, const OldData& D) 
 {
     /// Update sigma
     double NoiseVariance = m_SumObservations;

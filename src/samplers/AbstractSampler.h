@@ -27,7 +27,7 @@ public:
     typedef std::vector<std::pair<std::string,  unsigned int>> MiniBlock;
     typedef std::pair<int, MiniBlock> SamplerBlock;
     
-    typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
+    typedef std::vector< std::vector< std::pair< VectorType, double> > > OldData;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
@@ -47,10 +47,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(Realizations& R, AbstractModel &M, const Data& D) = 0;
+    virtual void InitializeSampler(Realizations& R, AbstractModel &M, const OldData& D) = 0;
     
     /// Sample new realizations of the model random variables
-    virtual void Sample(Realizations& R, AbstractModel& M, const Data& D) = 0;
+    virtual void Sample(Realizations& R, AbstractModel& M, const OldData& D) = 0;
 
 
 protected:

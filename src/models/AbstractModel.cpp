@@ -50,7 +50,7 @@ AbstractModel
 
 ScalarType
 AbstractModel
-::ComputeNoiseVariance(const Data &D) 
+::ComputeNoiseVariance(const OldData &D) 
 {
     ScalarType NoiseVariance = m_SumObservations;
     int i = 0;

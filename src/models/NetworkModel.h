@@ -14,7 +14,7 @@ public:
     /// Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    NetworkModel(ModelSettings& MS);
+    NetworkModel(io::ModelSettings& MS);
     ~NetworkModel();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the model
-    virtual void Initialize(const Data& D);
+    virtual void Initialize(const OldData& D);
     
     /// Initialize the variance of the proposition distribution
     virtual ScalarType InitializePropositionDistributionVariance(std::string Name) const;
@@ -36,20 +36,20 @@ public:
     virtual void UpdateModel(const Realizations& R, int Type, const std::vector<std::string> Names = {"All"});
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Data& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const OldData& D);
     
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const Data& D);
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const OldData& D);
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual ScalarType ComputeLogLikelihood(const Data& D);
+    virtual ScalarType ComputeLogLikelihood(const OldData& D);
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual ScalarType ComputeIndividualLogLikelihood(const Data& D, const int SubjectNumber);
+    virtual ScalarType ComputeIndividualLogLikelihood(const OldData& D, const int SubjectNumber);
     
     /// Simulate data according to the model
-    virtual Data SimulateData(DataSettings& DS);
+    virtual OldData SimulateData(io::DataSettings& DS);
     
     /// Define the sampler block used in the gibbs sampler (should it be here?)
     virtual std::vector<SamplerBlock> GetSamplerBlocks() const;

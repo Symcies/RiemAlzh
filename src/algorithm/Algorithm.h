@@ -1,5 +1,4 @@
-#ifndef _Algorithm_h
-#define _Algorithm_h
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -13,6 +12,7 @@
 #include "AbstractSampler.h"
 #include "CandidateRandomVariables.h"
 
+
 class Algorithm {
 public:
 
@@ -24,8 +24,7 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     typedef typename std::unordered_map<int, VectorType> IntVectorHash;
     
-    typedef std::vector< std::vector< std::pair< VectorType, double> > > Data;
-    typedef std::unordered_map<std::string, VectorType> Reals;
+    typedef std::vector< std::vector< std::pair< VectorType, double> > > OldData;
     typedef std::vector<VectorType> SufficientStatisticsVector;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +33,7 @@ public:
 
     Algorithm();
     
-    Algorithm(AlgorithmSettings& Settings);
+    Algorithm(io::AlgorithmSettings& Settings);
     
     Algorithm(unsigned int MaxNumberOfIterations, unsigned int BurnIn);
     
@@ -55,7 +54,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the MCMC SAEM algorithm
-    void ComputeMCMCSAEM(const Data& D);
+    void ComputeMCMCSAEM(const OldData& D);
 
 
 protected:
@@ -64,16 +63,16 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the stochastic approximation
-    void InitializeStochasticSufficientStatistics(const Data& D);
+    void InitializeStochasticSufficientStatistics(const OldData& D);
         
     /// Initialize sampler
-    void InitializeSampler(const Data& D);
+    void InitializeSampler(const OldData& D);
     
     /// Initialize Manifold
-    void InitializeModel(const Data& D);
+    void InitializeModel(const OldData& D);
 
     /// Compute the simulation step : Gibbs Sampling
-    void ComputeSimulationStep(const Data& D);
+    void ComputeSimulationStep(const OldData& D);
 
     /// Compute the stochastic coefficient 
     void ComputeStochasticApproximation(SufficientStatisticsVector& S);
@@ -131,5 +130,3 @@ protected:
     unsigned int m_IterationCounter = 0;
 };
 
-
-#endif //_Algorithm_h

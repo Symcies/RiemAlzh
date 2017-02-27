@@ -11,7 +11,7 @@ Algorithm
 }
 
 Algorithm
-::Algorithm(AlgorithmSettings& Settings) 
+::Algorithm(io::AlgorithmSettings& Settings) 
 {
     m_MaxNumberOfIterations = Settings.GetMaximumNumberOfIterations();
     m_BurnIn = Settings.GetNumberOfBurnInIterations();
@@ -39,7 +39,7 @@ Algorithm
 
 void
 Algorithm
-::ComputeMCMCSAEM(const Data& D)
+::ComputeMCMCSAEM(const OldData& D)
 {
     InitializeModel(D);
     InitializeSampler(D);
@@ -67,7 +67,7 @@ Algorithm
 
 void
 Algorithm
-::InitializeStochasticSufficientStatistics(const Data& D)
+::InitializeStochasticSufficientStatistics(const OldData& D)
 {
     m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, D);
     for(auto&& it : m_StochasticSufficientStatistics)
@@ -79,7 +79,7 @@ Algorithm
 
 void
 Algorithm
-::InitializeModel(const Data& D) 
+::InitializeModel(const OldData& D) 
 {
     
     m_Model->Initialize(D);
@@ -98,14 +98,14 @@ Algorithm
 
 void 
 Algorithm
-::InitializeSampler(const Data& D)
+::InitializeSampler(const OldData& D)
 {
     m_Sampler->InitializeSampler(*m_Realizations, *m_Model, D);
 }
 
 void
 Algorithm
-::ComputeSimulationStep(const Data& D)
+::ComputeSimulationStep(const OldData& D)
 {
     Realizations PreviousRealisations2 = *m_Realizations;
     m_Sampler->Sample(*m_Realizations, *m_Model, D);

@@ -38,7 +38,7 @@ BlockedGibbsSampler
 
 void 
 BlockedGibbsSampler
-::InitializeSampler(Realizations& R, AbstractModel &M, const Data& D) 
+::InitializeSampler(Realizations& R, AbstractModel &M, const OldData& D) 
 {
     m_CandidateRandomVariables.InitializeCandidateRandomVariables(R, M);
     m_CurrentBlockType = -1;
@@ -49,7 +49,7 @@ BlockedGibbsSampler
 
 void
 BlockedGibbsSampler
-::Sample(Realizations& R, AbstractModel& M, const Data &D) 
+::Sample(Realizations& R, AbstractModel& M, const OldData &D) 
 {
     m_CurrentBlockType = -1;
     ////////////////////////////////////////
@@ -77,7 +77,7 @@ BlockedGibbsSampler
 
 void
 BlockedGibbsSampler
-::OneBlockSample(int BlockNumber, Realizations& R, AbstractModel &M, const Data &D) 
+::OneBlockSample(int BlockNumber, Realizations& R, AbstractModel &M, const OldData &D) 
 {
     /// Initialization
     SamplerBlock CurrentBlock = m_Blocks.at(BlockNumber);
@@ -168,7 +168,7 @@ BlockedGibbsSampler
 
 BlockedGibbsSampler::VectorType
 BlockedGibbsSampler
-::ComputeLogLikelihood(AbstractModel& M, const Data& D) 
+::ComputeLogLikelihood(AbstractModel& M, const OldData& D) 
 {
       
     if(m_CurrentBlockType == -1) 

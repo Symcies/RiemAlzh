@@ -16,6 +16,7 @@ typedef double ScalarType;
 
 #include "BlockedGibbsSampler.h"
 
+#include "Observations.h"
 
 #include "omp.h"
 #include "tinyxml2.h"
@@ -23,10 +24,9 @@ typedef double ScalarType;
 
 using namespace std;
 
-typedef vector< vector< pair< LinearAlgebra<ScalarType>::VectorType, double> > > Data;
+typedef vector< vector< pair< LinearAlgebra<ScalarType>::VectorType, double> > > OldData;
 
 // TODO : Change Model->UpdateModel because it ain't parameters
-// TODO : Finish the input classes : Model, Algo and data
 // TODO : Create an output file if it does not exist
 // TODO : add a class member to encode the number of samplings to do per MCMC-sampling method
 // TO ADD : Name of the output file
@@ -50,9 +50,9 @@ int main(int argc, char* argv[]) {
     TestAssert::Init(false);
     
     /// Load the XML file arguments
-    ModelSettings     MS(argv[1]);
-    AlgorithmSettings AS(argv[2]);
-    DataSettings      DS(argv[3]);
+    io::ModelSettings     MS(argv[1]);
+    io::AlgorithmSettings AS(argv[2]);
+    io::DataSettings      DS(argv[3]);
     
     /// Initialize the sampler
     std::shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
@@ -64,16 +64,21 @@ int main(int argc, char* argv[]) {
     if(MS.GetType() == "Network")     Model = make_shared<NetworkModel>(MS);
     
     /// Initialize the data
-    Data D;
-    if(DS.RealData())
+    Observations Obs;
+    OldData D;
+    if(DS.IsReal())
     {
         int NbMaxOfSubjects = 250;
-        D = ReadData::OpenFilesMultivariate(DS, NbMaxOfSubjects);
+        D = io::ReadData::OpenFilesMultivariate(DS, NbMaxOfSubjects);
+        Obs = io::ReadData::ReadObservations(DS);
+        
+        // Check if Obs == D! Probably with static seed generator and launch two times?
     }
     else 
     {
         Model->InitializeFakeRandomVariables();
         D = Model->SimulateData(DS);
+        //Obs = Model->SimulateData(DS);
     }
     
     /// Algorithm pipeline

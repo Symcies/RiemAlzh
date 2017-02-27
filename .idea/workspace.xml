@@ -22,18 +22,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="03e71383-5091-4290-9195-e722e3a9d4e8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/models/MultivariateModel.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/models/MultivariateModel.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/observations/IndividualObservations.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/observations/IndividualObservations.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/observations/Observations.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/observations/Observations.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/OldFilesToInsert/RiemAlzhold" afterPath="$PROJECT_DIR$/OldFilesToInsert/RiemAlzhold" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/tinyxml2" afterPath="$PROJECT_DIR$/lib/tinyxml2" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/RiemAlzh.iml" afterPath="$PROJECT_DIR$/.idea/RiemAlzh.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/algorithm_settings.xml" afterPath="$PROJECT_DIR$/algorithm_settings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CMakeLists.txt" afterPath="$PROJECT_DIR$/CMakeLists.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data_settings.xml" afterPath="$PROJECT_DIR$/data_settings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model_settings.xml" afterPath="$PROJECT_DIR$/model_settings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/algorithm/Algorithm.cpp" afterPath="$PROJECT_DIR$/src/algorithm/Algorithm.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/algorithm/Algorithm.h" afterPath="$PROJECT_DIR$/src/algorithm/Algorithm.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/AlgorithmSettings.cpp" afterPath="$PROJECT_DIR$/src/io/AlgorithmSettings.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/AlgorithmSettings.h" afterPath="$PROJECT_DIR$/src/io/AlgorithmSettings.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/DataSettings.cpp" afterPath="$PROJECT_DIR$/src/io/DataSettings.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/DataSettings.h" afterPath="$PROJECT_DIR$/src/io/DataSettings.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/ModelSettings.cpp" afterPath="$PROJECT_DIR$/src/io/ModelSettings.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/ModelSettings.h" afterPath="$PROJECT_DIR$/src/io/ModelSettings.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/ReadData.cpp" afterPath="$PROJECT_DIR$/src/io/ReadData.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/ReadData.h" afterPath="$PROJECT_DIR$/src/io/ReadData.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main.cpp" afterPath="$PROJECT_DIR$/src/main.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/AbstractModel.cpp" afterPath="$PROJECT_DIR$/src/models/AbstractModel.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/AbstractModel.h" afterPath="$PROJECT_DIR$/src/models/AbstractModel.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/FastNetworkModel.cpp" afterPath="$PROJECT_DIR$/src/models/FastNetworkModel.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/FastNetworkModel.h" afterPath="$PROJECT_DIR$/src/models/FastNetworkModel.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/MeshworkModel.cpp" afterPath="$PROJECT_DIR$/src/models/MeshworkModel.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/MeshworkModel.h" afterPath="$PROJECT_DIR$/src/models/MeshworkModel.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/NetworkModel.cpp" afterPath="$PROJECT_DIR$/src/models/NetworkModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/random_variables/MultiRandomVariables.cpp" afterPath="$PROJECT_DIR$/src/random_variables/MultiRandomVariables.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/NetworkModel.h" afterPath="$PROJECT_DIR$/src/models/NetworkModel.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/samplers/AbstractSampler.h" afterPath="$PROJECT_DIR$/src/samplers/AbstractSampler.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/samplers/BlockedGibbsSampler.cpp" afterPath="$PROJECT_DIR$/src/samplers/BlockedGibbsSampler.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/samplers/BlockedGibbsSampler.h" afterPath="$PROJECT_DIR$/src/samplers/BlockedGibbsSampler.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/utilities/linear_algebra/armadillo/ArmadilloVectorWrapper.h" afterPath="$PROJECT_DIR$/utilities/linear_algebra/armadillo/ArmadilloVectorWrapper.h" />
     </list>
     <ignored path="RiemAlzh.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -47,102 +70,152 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
+  <component name="DockManager">
+    <window id="1">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file leaf-file-name="DataSettings.h" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/io/DataSettings.h">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="428">
+                    <caret line="70" column="4" selection-start-line="70" selection-start-column="4" selection-end-line="70" selection-end-column="4" />
+                    <folding>
+                      <element signature="e#77#94#0" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="ArmadilloVectorWrapper.h" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/utilities/linear_algebra/armadillo/ArmadilloVectorWrapper.h">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="597">
+                    <caret line="188" column="38" selection-start-line="188" selection-start-column="38" selection-end-line="188" selection-end-column="38" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="ReadData.h" pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/src/io/ReadData.h">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="288">
+                    <caret line="18" column="16" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="16" />
+                    <folding>
+                      <element signature="e#67#85#0" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="Observations.cpp" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/observations/Observations.cpp">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="112">
+                    <caret line="7" column="4" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="Observations.h" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/observations/Observations.h">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="304">
+                    <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="IndividualObservations.h" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/observations/IndividualObservations.h">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="284">
+                    <caret line="20" column="27" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="IndividualObservations.cpp" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/observations/IndividualObservations.cpp">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="144">
+                    <caret line="9" column="30" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="ReadData.cpp" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/io/ReadData.cpp">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="992">
+                    <caret line="62" column="33" selection-start-line="62" selection-start-column="33" selection-end-line="62" selection-end-column="33" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="RiemAlzh" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="main.cpp" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main.cpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="192">
-                  <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
-                  <folding>
-                    <element signature="e#86#112#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Algorithm.cpp" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/algorithm/Algorithm.cpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="83">
-                  <caret line="189" column="67" selection-start-line="189" selection-start-column="67" selection-end-line="189" selection-end-column="67" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="AbstractModel.cpp" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/models/AbstractModel.cpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="187">
-                  <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="FastNetworkModel.cpp" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/models/FastNetworkModel.cpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="784">
-                  <caret line="135" column="26" selection-start-line="135" selection-start-column="26" selection-end-line="135" selection-end-column="26" />
-                  <folding>
-                    <element signature="e#7748#11471#0" expanded="false" />
-                    <element signature="e#11474#12151#0" expanded="false" />
-                    <element signature="e#12153#12799#0" expanded="false" />
-                    <element signature="e#16693#19711#0" expanded="false" />
-                    <element signature="e#19713#20802#0" expanded="false" />
-                    <element signature="e#20805#24587#0" expanded="false" />
-                    <element signature="e#25964#27745#0" expanded="false" />
-                    <element signature="e#27748#28181#0" expanded="false" />
-                    <element signature="e#28183#28639#0" expanded="false" />
-                    <element signature="e#28641#29656#0" expanded="false" />
-                    <element signature="e#29658#30233#0" expanded="false" />
-                    <element signature="e#30235#30550#0" expanded="false" />
-                    <element signature="e#30553#30785#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="FastNetworkModel.cpp" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/models/FastNetworkModel.cpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="145">
-                  <caret line="814" column="76" selection-start-line="814" selection-start-column="76" selection-end-line="814" selection-end-column="76" />
-                  <folding>
-                    <element signature="e#4021#4505#0" expanded="false" />
-                    <element signature="e#7748#11471#0" expanded="false" />
-                    <element signature="e#11474#12151#0" expanded="false" />
-                    <element signature="e#12153#12799#0" expanded="false" />
-                    <element signature="e#16693#19711#0" expanded="false" />
-                    <element signature="e#19713#20802#0" expanded="false" />
-                    <element signature="e#20805#24587#0" expanded="false" />
-                    <element signature="e#25964#27745#0" expanded="false" />
-                    <element signature="e#27748#28181#0" expanded="false" />
-                    <element signature="e#28183#28639#0" expanded="false" />
-                    <element signature="e#28641#29656#0" expanded="false" />
-                    <element signature="e#29658#30233#0" expanded="false" />
-                    <element signature="e#30235#30550#0" expanded="false" />
-                    <element signature="e#30553#30785#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="256">
+              <caret line="67" column="14" selection-start-line="67" selection-start-column="14" selection-end-line="67" selection-end-column="14" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Algorithm.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/algorithm/Algorithm.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="432">
+              <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+              <folding>
+                <element signature="e#14#33#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ReadData.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/io/ReadData.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="377">
+              <caret line="102" column="55" selection-start-line="102" selection-start-column="55" selection-end-line="102" selection-end-column="55" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DataSettings.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/io/DataSettings.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="540">
+              <caret line="66" column="42" selection-start-line="66" selection-start-column="42" selection-end-line="66" selection-end-column="42" />
+              <folding>
+                <element signature="e#727#762#0" expanded="false" />
+                <element signature="e#2569#3263#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -150,20 +223,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/io/AlgorithmSettings.cpp" />
-        <option value="$PROJECT_DIR$/src/io/AlgorithmSettings.h" />
-        <option value="$PROJECT_DIR$/src/models/LongitudinalModel.cpp" />
-        <option value="$PROJECT_DIR$/src/models/NetworkPropagationModel.cpp" />
-        <option value="$PROJECT_DIR$/src/models/NetworkPropagationModel2.cpp" />
-        <option value="$PROJECT_DIR$/src/models/UnivariateModel.cpp" />
-        <option value="$PROJECT_DIR$/src/models/TestModel.cpp" />
-        <option value="$PROJECT_DIR$/src/samplers/Realizations.cpp" />
-        <option value="$PROJECT_DIR$/src/samplers/Realizations.h" />
-        <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/src/random_variables/AbstractRandomVariable.cpp" />
-        <option value="$PROJECT_DIR$/src/random_variables/ConstantRandomVariable.cpp" />
-        <option value="$PROJECT_DIR$/src/random_variables/LaplaceRandomVariable.h" />
-        <option value="$PROJECT_DIR$/src/random_variables/LaplaceRandomVariable.cpp" />
         <option value="$PROJECT_DIR$/src/random_variables/LogitNormalRandomVariable.h" />
         <option value="$PROJECT_DIR$/src/random_variables/LogitNormalRandomVariable.cpp" />
         <option value="$PROJECT_DIR$/src/random_variables/LogNormalRandomVariable.h" />
@@ -177,30 +236,44 @@
         <option value="$PROJECT_DIR$/src/samplers/AbstractSampler.cpp" />
         <option value="$PROJECT_DIR$/src/parameters/CandidateRandomVariables.h" />
         <option value="$PROJECT_DIR$/src/parameters/CandidateRandomVariables.cpp" />
-        <option value="$PROJECT_DIR$/src/io/DataSettings.cpp" />
         <option value="$PROJECT_DIR$/src/random_variables/MultiRandomVariables.h" />
-        <option value="$PROJECT_DIR$/src/algorithm/Algorithm.h" />
-        <option value="$PROJECT_DIR$/src/models/FastNetworkModel.h" />
         <option value="$PROJECT_DIR$/src/samplers/BlockedGibbsSampler.h" />
         <option value="$PROJECT_DIR$/src/models/AbstractModel.cpp" />
-        <option value="$PROJECT_DIR$/src/samplers/AbstractSampler.h" />
         <option value="$PROJECT_DIR$/src/random_variables/AbstractRandomVariable.h" />
         <option value="$PROJECT_DIR$/src/random_variables/GaussianRandomVariable.cpp" />
         <option value="$PROJECT_DIR$/src/samplers/BlockedGibbsSampler.cpp" />
-        <option value="$PROJECT_DIR$/src/io/ReadData.cpp" />
         <option value="$PROJECT_DIR$/src/models/Meshwork2.h" />
-        <option value="$PROJECT_DIR$/src/models/MeshworkModel.h" />
-        <option value="$PROJECT_DIR$/src/io/DataSettings.h" />
+        <option value="$PROJECT_DIR$/src/random_variables/MultiRandomVariables.cpp" />
+        <option value="$PROJECT_DIR$/src/data_set/IndividualData.h" />
+        <option value="$PROJECT_DIR$/src/data_set/Data.cpp" />
+        <option value="$PROJECT_DIR$/src/data_set/IndividualData.cpp" />
+        <option value="$PROJECT_DIR$/src/samplers/AbstractSampler.h" />
+        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/src/data_set/Data.h" />
         <option value="$PROJECT_DIR$/src/io/ModelSettings.h" />
         <option value="$PROJECT_DIR$/src/io/ModelSettings.cpp" />
-        <option value="$PROJECT_DIR$/src/main.cpp" />
-        <option value="$PROJECT_DIR$/src/models/NetworkModel.h" />
+        <option value="$PROJECT_DIR$/src/io/AlgorithmSettings.h" />
+        <option value="$PROJECT_DIR$/src/io/AlgorithmSettings.cpp" />
         <option value="$PROJECT_DIR$/src/models/AbstractModel.h" />
-        <option value="$PROJECT_DIR$/src/models/NetworkModel.cpp" />
-        <option value="$PROJECT_DIR$/src/models/MeshworkModel.cpp" />
-        <option value="$PROJECT_DIR$/src/random_variables/MultiRandomVariables.cpp" />
-        <option value="$PROJECT_DIR$/src/algorithm/Algorithm.cpp" />
         <option value="$PROJECT_DIR$/src/models/FastNetworkModel.cpp" />
+        <option value="$PROJECT_DIR$/src/models/MeshworkModel.h" />
+        <option value="$PROJECT_DIR$/src/models/FastNetworkModel.h" />
+        <option value="$PROJECT_DIR$/src/models/NetworkModel.h" />
+        <option value="$PROJECT_DIR$/src/algorithm/Algorithm.cpp" />
+        <option value="$PROJECT_DIR$/src/models/MultivariateModel.cpp" />
+        <option value="$PROJECT_DIR$/src/models/MeshworkModel.cpp" />
+        <option value="$PROJECT_DIR$/src/models/NetworkModel.cpp" />
+        <option value="$PROJECT_DIR$/src/models/MultivariateModel.h" />
+        <option value="$PROJECT_DIR$/src/observations/Observations.h" />
+        <option value="$PROJECT_DIR$/src/algorithm/Algorithm.h" />
+        <option value="$PROJECT_DIR$/src/io/ReadData.h" />
+        <option value="$PROJECT_DIR$/src/io/DataSettings.h" />
+        <option value="$PROJECT_DIR$/src/observations/IndividualObservations.cpp" />
+        <option value="$PROJECT_DIR$/utilities/linear_algebra/armadillo/ArmadilloVectorWrapper.h" />
+        <option value="$PROJECT_DIR$/src/observations/IndividualObservations.h" />
+        <option value="$PROJECT_DIR$/src/io/ReadData.cpp" />
+        <option value="$PROJECT_DIR$/src/io/DataSettings.cpp" />
+        <option value="$PROJECT_DIR$/src/main.cpp" />
       </list>
     </option>
   </component>
@@ -217,8 +290,8 @@
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds">
-    <option name="width" value="1440" />
-    <option name="height" value="900" />
+    <option name="width" value="1680" />
+    <option name="height" value="1050" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -277,7 +350,74 @@
     </navigator>
     <panes>
       <pane id="ProjectPane">
-        <subPane />
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="observations" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="io" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
       </pane>
     </panes>
   </component>
@@ -464,7 +604,7 @@
       <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="Longitudina" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="model_settings.xml algorithm_settings.xml data_settings.xml " WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Longitudina" TARGET_NAME="Longitudina" CONFIG_NAME="Release" RUN_TARGET_PROJECT_NAME="Longitudina" RUN_TARGET_NAME="Longitudina">
+    <configuration default="false" name="Longitudina" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="model_settings.xml algorithm_settings.xml data_settings.xml " WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Longitudina" TARGET_NAME="Longitudina" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Longitudina" RUN_TARGET_NAME="Longitudina">
       <envs />
       <method />
     </configuration>
@@ -622,23 +762,24 @@
       <workItem from="1487666678063" duration="3022000" />
       <workItem from="1487719037000" duration="3726000" />
       <workItem from="1487839364455" duration="1605000" />
+      <workItem from="1488191823529" duration="14904000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1084742000" />
+    <option name="totallyTimeSpent" value="1099646000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.136716" sideWeight="0.49609375" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.088607594" sideWeight="0.49609375" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.412" sideWeight="0.58844256" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.321" sideWeight="0.58844256" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31462926" sideWeight="0.47860157" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2517647" sideWeight="0.50880903" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.461" sideWeight="0.4298802" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.46" sideWeight="0.4298802" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23294118" sideWeight="0.5701198" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1672619" sideWeight="0.50390625" order="2" side_tool="true" content_ui="tabs" />
@@ -734,61 +875,20 @@
           <line>150</line>
           <option name="timeStamp" value="671" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/main.cpp</url>
+          <line>84</line>
+          <option name="timeStamp" value="982" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="979" />
+      <option name="time" value="983" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/random_variables/LaplaceRandomVariable.cpp" />
-    <entry file="file:///usr/local/Cellar/llvm/3.9.0/include/c++/v1/map">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="1446" column="0" selection-start-line="1446" selection-start-column="0" selection-end-line="1446" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utilities/linear_algebra/LinearAlgebra.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="34" column="38" selection-start-line="34" selection-start-column="38" selection-end-line="34" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utilities/linear_algebra/armadillo/ArmadilloLinearAlgebra.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="34" column="25" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/random_variables/MultiRandomVariable.h" />
-    <entry file="file://$PROJECT_DIR$/src/random_variables/MultiRandomVariable.cpp" />
-    <entry file="file://$PROJECT_DIR$/src/random_variables/ConstantRandomVariable.h" />
-    <entry file="file://$PROJECT_DIR$/src/random_variables/GaussianRandomVariable.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="40" column="48" selection-start-line="40" selection-start-column="48" selection-end-line="40" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/realizations/Realizations.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/samplers/AbstractSampler.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="544">
@@ -800,13 +900,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="25" column="0" selection-start-line="24" selection-start-column="61" selection-end-line="25" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/DataSettings.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="69" column="35" selection-start-line="69" selection-start-column="35" selection-end-line="69" selection-end-column="35" />
         </state>
       </provider>
     </entry>
@@ -852,13 +945,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/algorithm/Algorithm.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/include/armadillo_bits/eop_aux.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="49">
@@ -887,13 +973,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/samplers/AbstractSampler.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="22" column="4" selection-start-line="22" selection-start-column="4" selection-end-line="22" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/random_variables/AbstractRandomVariable.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="107">
@@ -905,13 +984,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
           <caret line="1515" column="0" selection-start-line="1515" selection-start-column="0" selection-end-line="1515" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/ReadData.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="43" column="22" selection-start-line="43" selection-start-column="22" selection-end-line="43" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -929,33 +1001,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/ReadData.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="34" column="22" selection-start-line="34" selection-start-column="22" selection-end-line="34" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/models/Meshwork2.h" />
     <entry file="file://$PROJECT_DIR$/src/models/Meshwork2.cpp" />
-    <entry file="file://$PROJECT_DIR$/src/io/ModelSettings.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1126">
-          <caret line="79" column="4" selection-start-line="79" selection-start-column="4" selection-end-line="79" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/Cellar/llvm/3.9.0/include/c++/v1/memory">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60672">
           <caret line="3792" column="0" selection-start-line="3792" selection-start-column="0" selection-end-line="3792" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/ModelSettings.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1408">
-          <caret line="88" column="47" selection-start-line="88" selection-start-column="47" selection-end-line="88" selection-end-column="47" />
         </state>
       </provider>
     </entry>
@@ -966,78 +1017,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/AbstractModel.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="86" column="30" selection-start-line="86" selection-start-column="30" selection-end-line="86" selection-end-column="30" />
-          <folding>
-            <element signature="e#51#71#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/NetworkModel.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="110" column="16" selection-start-line="110" selection-start-column="16" selection-end-line="110" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/MeshworkModel.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1344">
-          <caret line="84" column="4" selection-start-line="84" selection-start-column="4" selection-end-line="84" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/NetworkModel.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="128">
-          <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/DataSettings.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="790">
-          <caret line="95" column="4" selection-start-line="95" selection-start-column="4" selection-end-line="95" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/MeshworkModel.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="940">
-          <caret line="115" column="22" selection-start-line="115" selection-start-column="22" selection-end-line="115" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/models/FastNetworkModel.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="21" column="11" selection-start-line="21" selection-start-column="11" selection-end-line="21" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utilities/linear_algebra/armadillo/ArmadilloVectorWrapper.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="235" column="0" selection-start-line="235" selection-start-column="0" selection-end-line="235" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/include/armadillo_bits/debug.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="94" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/random_variables/MultiRandomVariables.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="523">
@@ -1045,51 +1024,280 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/algorithm/Algorithm.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="189" column="67" selection-start-line="189" selection-start-column="67" selection-end-line="189" selection-end-column="67" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/models/AbstractModel.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
+        <state relative-caret-position="374">
           <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main.cpp">
+    <entry file="file://$PROJECT_DIR$/src/samplers/AbstractSampler.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
-          <folding>
-            <element signature="e#86#112#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="320">
+          <caret line="29" column="76" selection-start-line="29" selection-start-column="76" selection-end-line="29" selection-end-column="76" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="68" column="41" selection-start-line="68" selection-start-column="41" selection-end-line="68" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/ModelSettings.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/ModelSettings.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="73" column="12" selection-start-line="73" selection-start-column="12" selection-end-line="73" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/AlgorithmSettings.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="592">
+          <caret line="37" column="1" selection-start-line="37" selection-start-column="1" selection-end-line="37" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/AlgorithmSettings.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="774">
+          <caret line="79" column="1" selection-start-line="0" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/models/FastNetworkModel.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="784">
-          <caret line="135" column="26" selection-start-line="135" selection-start-column="26" selection-end-line="135" selection-end-column="26" />
+        <state relative-caret-position="157">
+          <caret line="261" column="19" selection-start-line="261" selection-start-column="19" selection-end-line="261" selection-end-column="19" />
           <folding>
-            <element signature="e#7748#11471#0" expanded="false" />
-            <element signature="e#11474#12151#0" expanded="false" />
-            <element signature="e#12153#12799#0" expanded="false" />
-            <element signature="e#16693#19711#0" expanded="false" />
-            <element signature="e#19713#20802#0" expanded="false" />
-            <element signature="e#20805#24587#0" expanded="false" />
-            <element signature="e#25964#27745#0" expanded="false" />
-            <element signature="e#27748#28181#0" expanded="false" />
-            <element signature="e#28183#28639#0" expanded="false" />
-            <element signature="e#28641#29656#0" expanded="false" />
-            <element signature="e#29658#30233#0" expanded="false" />
-            <element signature="e#30235#30550#0" expanded="false" />
-            <element signature="e#30553#30785#0" expanded="false" />
+            <element signature="e#7763#11496#0" expanded="false" />
+            <element signature="e#11499#12179#0" expanded="false" />
+            <element signature="e#12181#12830#0" expanded="false" />
+            <element signature="e#16730#19748#0" expanded="false" />
+            <element signature="e#19750#20839#0" expanded="false" />
+            <element signature="e#20842#24624#0" expanded="false" />
+            <element signature="e#26001#27782#0" expanded="false" />
+            <element signature="e#27785#28218#0" expanded="false" />
+            <element signature="e#28220#28676#0" expanded="false" />
+            <element signature="e#28678#29693#0" expanded="false" />
+            <element signature="e#29695#30270#0" expanded="false" />
+            <element signature="e#30272#30587#0" expanded="false" />
+            <element signature="e#30590#30822#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/NetworkModel.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/MeshworkModel.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="388" column="19" selection-start-line="388" selection-start-column="19" selection-end-line="388" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/FastNetworkModel.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="43" column="0" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/AbstractModel.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="81" column="0" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/NetworkModel.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/MeshworkModel.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="51" column="37" selection-start-line="51" selection-start-column="37" selection-end-line="51" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/algorithm/Algorithm.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="13" column="16" selection-start-line="13" selection-start-column="16" selection-end-line="13" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/MultivariateModel.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="15" column="76" selection-start-line="15" selection-start-column="76" selection-end-line="15" selection-end-column="76" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models/MultivariateModel.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="84" column="19" selection-start-line="84" selection-start-column="19" selection-end-line="84" selection-end-column="19" />
+          <folding>
+            <marker date="1488204457000" expanded="true" signature="333:459" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="503:511" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="793:797" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="1059:1067" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="1198:1206" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="1361:1369" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="1439:1447" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="1552:1560" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="1642:1650" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="1740:1748" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="2152:2160" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="2251:2259" ph="{...}" />
+            <marker date="1488204457000" expanded="true" signature="2628:2636" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/algorithm/Algorithm.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <folding>
+            <element signature="e#14#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/DataSettings.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="428">
+          <caret line="70" column="4" selection-start-line="70" selection-start-column="4" selection-end-line="70" selection-end-column="4" />
+          <folding>
+            <element signature="e#77#94#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utilities/linear_algebra/armadillo/ArmadilloVectorWrapper.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="597">
+          <caret line="188" column="38" selection-start-line="188" selection-start-column="38" selection-end-line="188" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/observations/Observations.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/observations/IndividualObservations.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="9" column="30" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/observations/IndividualObservations.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="284">
+          <caret line="20" column="27" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/observations/Observations.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="7" column="4" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/Cellar/llvm/3.9.0/include/c++/v1/string">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="646" column="0" selection-start-line="646" selection-start-column="0" selection-end-line="646" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/armadillo_bits/debug.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="27">
+          <caret line="82" column="9" selection-start-line="82" selection-start-column="9" selection-end-line="82" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/DataSettings.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="66" column="42" selection-start-line="66" selection-start-column="42" selection-end-line="66" selection-end-column="42" />
+          <folding>
+            <element signature="e#727#762#0" expanded="false" />
+            <element signature="e#2569#3263#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/ReadData.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="377">
+          <caret line="102" column="55" selection-start-line="102" selection-start-column="55" selection-end-line="102" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/io/ReadData.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="18" column="16" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="16" />
+          <folding>
+            <element signature="e#67#85#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="67" column="14" selection-start-line="67" selection-start-column="14" selection-end-line="67" selection-end-column="14" />
+          <folding />
         </state>
       </provider>
     </entry>
