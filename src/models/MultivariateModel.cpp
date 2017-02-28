@@ -26,7 +26,7 @@ MultivariateModel
 
 void
 MultivariateModel
-::Initialize(const OldData &D) 
+::Initialize(const Observations& Obs) 
 {
 
 }
@@ -49,7 +49,7 @@ MultivariateModel
 
 AbstractModel::SufficientStatisticsVector
 MultivariateModel
-::GetSufficientStatistics(const Realizations &AR, const OldData &D) 
+::GetSufficientStatistics(const Realizations &AR, const Observations& Obs) 
 {
     
 }
@@ -57,8 +57,7 @@ MultivariateModel
 
 void 
 MultivariateModel
-::UpdateRandomVariables(const SufficientStatisticsVector &StochSufficientStatistics,
-                        const OldData &D) 
+::UpdateRandomVariables(const SufficientStatisticsVector &StochSufficientStatistics) 
 {
     
 }
@@ -74,7 +73,7 @@ MultivariateModel
 
 double
 MultivariateModel
-::ComputeIndividualLogLikelihood(const OldData &D, const int SubjectNumber) 
+::ComputeIndividualLogLikelihood(const IndividualObservations& Obs, const int SubjectNumber) 
 {
     
 }

@@ -10,10 +10,10 @@ typedef double ScalarType;
 
 #include "LinearAlgebra.h"
 
-static std::random_device RD;
-static std::mt19937 Generator(RD());
+//static std::random_device RD;
+//static std::mt19937 Generator(RD());
 
-//static std::mt19937 Generator(1);
+static std::mt19937 Generator(1);
 
 
 class AbstractRandomVariable {

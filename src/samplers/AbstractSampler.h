@@ -47,10 +47,10 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(Realizations& R, AbstractModel &M, const OldData& D) = 0;
+    virtual void InitializeSampler(Realizations& R, AbstractModel &M) = 0;
     
     /// Sample new realizations of the model random variables
-    virtual void Sample(Realizations& R, AbstractModel& M, const OldData& D) = 0;
+    virtual void Sample(Realizations& R, AbstractModel& M, const OldData& D, const Observations& Obs) = 0;
 
 
 protected:

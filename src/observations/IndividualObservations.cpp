@@ -8,6 +8,7 @@ IndividualObservations
 ::IndividualObservations(VectorType TimePoints) 
 {
     m_TimePoints = TimePoints;
+    m_NumberOfTimePoints = m_TimePoints.size();
 }
 
 

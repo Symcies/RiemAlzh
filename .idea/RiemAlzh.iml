@@ -60,10 +60,10 @@
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/LinearManifold.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/AbstractManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/manifolds/ExponentialCurveManifold.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/observations/IndividualObservations.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/observations/IndividualObservations.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/observations/Observations.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/observations/Observations.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/observations/IndividualObservations.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/observations/IndividualObservations.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/ModelSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters3250.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters26000.txt" isTestSource="false" />
@@ -104,7 +104,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters17500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters6000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters3750.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters9750.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters4250.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters18000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters15750.txt" isTestSource="false" />
@@ -156,7 +155,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters16750.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters25250.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters8000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters18750.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters23750.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters8500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters10000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters20500.txt" isTestSource="false" />
@@ -167,11 +166,12 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters29750.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters21500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters8750.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters23750.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters9750.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters13000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters10750.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters9250.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters11000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters18750.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters750.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters3500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Network/Parameters1750.txt" isTestSource="false" />
@@ -191,6 +191,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters2500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters22000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters14500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters11000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/.DS_Store" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters17000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters2000.txt" isTestSource="false" />
@@ -208,7 +209,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters14000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters8500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters8000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters11000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters10000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters1000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters3000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters18000.txt" isTestSource="false" />
@@ -216,12 +217,11 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters23000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters9500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters6000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters4500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters24500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters16500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters12000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters21000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters10000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters4500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters1500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters18500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/Meshwork/Parameters5500.txt" isTestSource="false" />
@@ -290,7 +290,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters8000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters45500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters8500.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters48000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters46000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters29000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters15000.txt" isTestSource="false" />
@@ -313,6 +312,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters26500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters5500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters34500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters28000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters43500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters6000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/.DS_Store" isTestSource="false" />
@@ -334,7 +334,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters39000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters4000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters12000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters48500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters2500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters21000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters31500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters14500.txt" isTestSource="false" />
@@ -358,14 +358,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters27500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters36000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters45000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters28000.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters49000.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters48500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters48000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters37000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters47500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters10000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters20500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters39500.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters2500.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters49000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters12500.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters1000.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/outputs/FastNetwork/Parameters21500.txt" isTestSource="false" />

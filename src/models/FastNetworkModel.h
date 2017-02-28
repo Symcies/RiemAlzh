@@ -32,7 +32,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
   
     /// Initialize the model : random variables, interpolation matrix, parameters
-    virtual void Initialize(const OldData& D);
+    virtual void Initialize(const Observations& Obs);
     
         /// Initialize the variance of the proposition distribution
     virtual ScalarType InitializePropositionDistributionVariance(std::string Name) const;
@@ -47,13 +47,13 @@ public:
     virtual double ComputeLogLikelihood(const OldData& D);
     
     /// Compute the log likelihood of the model for a given subject
-    virtual double ComputeIndividualLogLikelihood(const OldData& D, const int SubjectNumber);
+    virtual double ComputeIndividualLogLikelihood(const IndividualObservations& Obs, const int SubjectNumber);
 
     /// Get the sufficient statistics of the model
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const OldData& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Observations& Obs);
     
     /// Update the random variables <=> the parameters of the model
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS, const OldData& D);
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS);
     
     /// Define the sampler block used in the gibbs sampler (should it be here?)
     virtual std::vector<SamplerBlock> GetSamplerBlocks() const ;
@@ -139,7 +139,6 @@ protected:
     VectorType m_Nus;
     
     /// Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns> (Basis orthogonal to gamma0_deriv(T0)
-    //std::vector<VectorType> m_OrthogonalBasis;
     MatrixType m_OrthogonalBasis;
     
     /// A Matrix vec<A1, ..., A(N)> where Ai is vec<Ns> (Ai is a column)
@@ -147,7 +146,6 @@ protected:
 
     /// Space shifts w(i) of the model
     MatrixType m_SpaceShifts;
-    //std::vector<VectorType> m_SpaceShifts;
     
     /// Real time of observation of each individual
     std::vector<VectorType> m_IndividualObservationDate;

@@ -16,7 +16,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the model
-    virtual void Initialize(const OldData& D);
+    virtual void Initialize(const Observations& Obs);
     
     /// Initialize the variance of the proposition distribution
     virtual ScalarType InitializePropositionDistributionVariance(std::string Name) const;
@@ -26,10 +26,10 @@ public:
     virtual void UpdateModel(const Realizations& AR, int Type, const std::vector<std::string> Names = {"All"});
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& AR, const OldData& D);
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& AR, const Observations& Obs);
     
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const OldData& D);
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics);
     
     
     /// Compute the log likelihood of the model
@@ -37,7 +37,7 @@ public:
     virtual double ComputeLogLikelihood(const OldData& D);
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const OldData& D, const int SubjectNumber);
+    virtual double ComputeIndividualLogLikelihood(const IndividualObservations& Obs, const int SubjectNumber);
     
     /// Simulate data according to the model
     virtual OldData SimulateData(io::DataSettings& DS);

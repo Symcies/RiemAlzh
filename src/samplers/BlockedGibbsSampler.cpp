@@ -38,7 +38,7 @@ BlockedGibbsSampler
 
 void 
 BlockedGibbsSampler
-::InitializeSampler(Realizations& R, AbstractModel &M, const OldData& D) 
+::InitializeSampler(Realizations& R, AbstractModel &M) 
 {
     m_CandidateRandomVariables.InitializeCandidateRandomVariables(R, M);
     m_CurrentBlockType = -1;
@@ -49,20 +49,20 @@ BlockedGibbsSampler
 
 void
 BlockedGibbsSampler
-::Sample(Realizations& R, AbstractModel& M, const OldData &D) 
+::Sample(Realizations& R, AbstractModel& M, const OldData &D, const Observations& Obs) 
 {
     m_CurrentBlockType = -1;
     ////////////////////////////////////////
     // TODO : Check if the update is needed
     M.UpdateModel(R, -1);
-    VectorType LL = ComputeLogLikelihood(M, D);
+    VectorType LL = ComputeLogLikelihood(M, D, Obs);
     UpdateLastLogLikelihood(LL);
     ////////////////////////////////////////
     
     
     for (int i = 0; i < m_Blocks.size(); ++i) 
     {
-        OneBlockSample(i, R, M, D);
+        OneBlockSample(i, R, M, D, Obs);
     }
         
     ++m_CurrentIteration;
@@ -77,7 +77,7 @@ BlockedGibbsSampler
 
 void
 BlockedGibbsSampler
-::OneBlockSample(int BlockNumber, Realizations& R, AbstractModel &M, const OldData &D) 
+::OneBlockSample(int BlockNumber, Realizations& R, AbstractModel &M, const OldData &D, const Observations& Obs) 
 {
     /// Initialization
     SamplerBlock CurrentBlock = m_Blocks.at(BlockNumber);
@@ -94,7 +94,7 @@ BlockedGibbsSampler
     
     /// Compute the candidate log likelihood
     M.UpdateModel(R, m_CurrentBlockType, m_CurrentBlockParameters);
-    VectorType ComputedLogLikelihood = ComputeLogLikelihood(M, D);
+    VectorType ComputedLogLikelihood = ComputeLogLikelihood(M, D, Obs);
     AcceptationRatio += ComputedLogLikelihood.sum();
     
     /// Compute the aceceptance ratio
@@ -168,22 +168,22 @@ BlockedGibbsSampler
 
 BlockedGibbsSampler::VectorType
 BlockedGibbsSampler
-::ComputeLogLikelihood(AbstractModel& M, const OldData& D) 
+::ComputeLogLikelihood(AbstractModel& M, const OldData& D, const Observations& Obs) 
 {
       
     if(m_CurrentBlockType == -1) 
     {
-        VectorType LogLikelihood(D.size(), 0);
+        VectorType LogLikelihood(Obs.GetNumberOfSubjects(), 0);
         int i = 0;
         for (auto it = LogLikelihood.begin(); it != LogLikelihood.end(); ++it, ++i) 
         {
-            *it = M.ComputeIndividualLogLikelihood(D, i);
+            *it = M.ComputeIndividualLogLikelihood(Obs.GetSubjectObservations(i) ,i);
         }
         return LogLikelihood;
     }
     else 
     {
-        return VectorType(1, M.ComputeIndividualLogLikelihood(D, m_CurrentBlockType));
+        return VectorType(1, M.ComputeIndividualLogLikelihood(Obs.GetSubjectObservations(m_CurrentBlockType), m_CurrentBlockType));
     }
 }
 

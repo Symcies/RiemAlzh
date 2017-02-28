@@ -25,6 +25,16 @@ public:
     /// Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
+    unsigned int GetNumberOfTimePoints() const { return m_NumberOfTimePoints; }
+    
+    ScalarType GetTimePoint(unsigned int TimePointNumber) const { return m_TimePoints(TimePointNumber); }
+    
+    VectorType GetTimePoints() const { return m_TimePoints; }
+    
+    const VectorType& GetLandmark(unsigned int TimePointNumber) const { return m_Landmarks.at(TimePointNumber); }
+    
+    const VectorType& GetCognitiveScore(unsigned int TimePointNumber) const { return m_CognitiveScores.at(TimePointNumber); }
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +60,9 @@ protected:
     
     /// RID (ADNI feature) of the patient
     unsigned int m_RID;
+    
+    /// Number of timePoints
+    unsigned int m_NumberOfTimePoints;
     
     /// List of patient observations
     VectorType m_TimePoints;

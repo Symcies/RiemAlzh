@@ -10,6 +10,7 @@
 #include <unordered_map>
 
 
+#include "Observations.h"
 #include "ModelSettings.h"
 #include "MultiRandomVariables.h"
 #include "Realizations.h"
@@ -55,7 +56,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the model
-    virtual void Initialize(const OldData& D) = 0;
+    virtual void Initialize(const Observations& Obs) = 0;
     
     /// Initialize the variance of the proposition distribution
     virtual ScalarType InitializePropositionDistributionVariance(std::string Name) const = 0;
@@ -65,10 +66,10 @@ public:
     virtual void UpdateModel(const Realizations& AR, int Type, const std::vector<std::string> Names = {"All"}) = 0;
 
     /// Update the sufficient statistics according to the model variables / parameters 
-    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& AR, const OldData& D) = 0;
+    virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& AR, const Observations& Obs) = 0;
     
     /// Update the fixed effects thanks to the approximation step of the algorithm
-    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics, const OldData& D) = 0;
+    virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics) = 0;
     
     
     /// Compute the log likelihood of the model
@@ -76,7 +77,7 @@ public:
     virtual double ComputeLogLikelihood(const OldData& D)= 0;
     
     /// Compute the log likelihood of the model for a particular individual
-    virtual double ComputeIndividualLogLikelihood(const OldData& D, const int SubjectNumber) = 0;
+    virtual double ComputeIndividualLogLikelihood(const IndividualObservations& Obs ,const int SubjectNumber) = 0;
     
     /// Simulate data according to the model
     virtual OldData SimulateData(io::DataSettings& DS) = 0;

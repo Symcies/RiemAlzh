@@ -7,7 +7,7 @@
   <burn-in>25000</burn-in>
 
   <!-- Comment -->
-  <step-size-to-display>50</step-size-to-display>
+  <step-size-to-display>1</step-size-to-display>
 
   <!-- Comment -->
   <step-size-to-save>500</step-size-to-save>

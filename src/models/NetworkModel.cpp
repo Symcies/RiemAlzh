@@ -32,30 +32,14 @@ NetworkModel
 
 void
 NetworkModel
-::Initialize(const OldData &D)
+::Initialize(const Observations& Obs)
 {
     /// Data-related attributes
-    m_NumberOfSubjects = D.size();
-    std::vector<VectorType> IndividualObservationDate;
-
-    double SumObservations = 0.0, K = 0.0;
-    unsigned int Indiv = 0;
-    for(auto it = D.begin(); it != D.end(); ++it, ++Indiv)
-    {
-        VectorType IndividualObs(it->size());
-        K += it->size();
-        int i = 0;
-        for(auto it2 = it->begin(); it2 != it->end(); ++it2, ++i)
-        {
-            SumObservations += it2->first.squared_magnitude();
-            IndividualObs(i) = it2->second;
-        }
-        IndividualObservationDate.push_back(IndividualObs);
-    }
-    m_IndividualObservationDate = IndividualObservationDate;
-    m_SubjectTimePoints = IndividualObservationDate;
-    m_SumObservations = SumObservations;
-    m_NbTotalOfObservations = K;
+    m_NumberOfSubjects          = Obs.GetNumberOfSubjects();
+    m_IndividualObservationDate = Obs.GetObservations();
+    m_SubjectTimePoints         = Obs.GetObservations();
+    m_NbTotalOfObservations     = Obs.GetTotalNumberOfObservations();
+    m_SumObservations           = Obs.GetTotalSumOfLandmarks();
 
 
     /// Noise
@@ -196,20 +180,18 @@ NetworkModel
 
 AbstractModel::SufficientStatisticsVector
 NetworkModel
-::GetSufficientStatistics(const Realizations &R, const OldData &D)
+::GetSufficientStatistics(const Realizations &R, const Observations& Obs)
 {
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
     VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
     auto itS1 = S1.begin(), itS2 = S2.begin();
-    int i = 0;
-    for(auto itD = D.begin(); itD != D.end(); ++itD, ++i)
+    for(size_t i = 0; i < m_NumberOfSubjects; ++i)
     {
-        int j = 0;
-        for(auto itD2 = itD->begin(); itD2 != itD->end(); ++itD2, ++j)
+        for(size_t j = 0; j < Obs.GetNumberOfTimePoints(i); ++j)
         {
-            VectorType P2 = ComputeParallelCurve(i, j);
-            *itS1 = dot_product(P2, itD2->first);
-            *itS2 = P2.squared_magnitude();
+            VectorType PC = ComputeParallelCurve(i, j);
+            *itS1 = dot_product(PC, Obs.GetSubjectLandmark(i, j));
+            *itS2 = PC.squared_magnitude();
             ++itS1, ++itS2;
         }
     }
@@ -217,9 +199,8 @@ NetworkModel
     /// Sufficient Statistic P_k and P_k * P_k
     VectorType S3 = R.at("P");
     VectorType S4 = R.at("P") % R.at("P");
-
-    /// TO DEBUG
-        /// Update P_k : Mean and Var
+    
+    /// Update P_k : Mean and Var
     ScalarType PMean = 0.0, PVariance = 0.0;
     const ScalarType * itS3 = S3.memptr();
     const ScalarType * itS4 = S4.memptr();
@@ -254,7 +235,7 @@ NetworkModel
 
 void
 NetworkModel
-::UpdateRandomVariables(const SufficientStatisticsVector &SS, const OldData &D)
+::UpdateRandomVariables(const SufficientStatisticsVector &SS)
 {
     /// Update the noise variance, sigma
     ScalarType NoiseVariance = m_SumObservations;
@@ -366,24 +347,23 @@ NetworkModel
 
 ScalarType
 NetworkModel
-::ComputeIndividualLogLikelihood(const OldData &D, const int SubjectNumber)
+::ComputeIndividualLogLikelihood( const IndividualObservations& Obs, const int SubjectNumber)
 {
-        /// Get the data
+    /// Get the data
     double LogLikelihood = 0;
-    auto N = D.at(SubjectNumber).size();
-    auto Did = D.at(SubjectNumber);
-
-
+    auto N = Obs.GetNumberOfTimePoints();
+    
+#pragma omp parallel for reduction(+:LogLikelihood)   
     for(size_t i = 0; i < N; ++i)
     {
-        auto& it = Did.at(i);
+        auto& it = Obs.GetLandmark(i);
         VectorType P2 = ComputeParallelCurve(SubjectNumber, i);
-        LogLikelihood += (it.first - P2).squared_magnitude();
+        LogLikelihood += (it - P2).squared_magnitude();
     }
-
+    
     LogLikelihood /= -2*m_Noise->GetVariance();
     LogLikelihood -= N * log(2 * m_Noise->GetVariance() * M_PI) / 2.0;
-
+    
     return LogLikelihood;
 }
 

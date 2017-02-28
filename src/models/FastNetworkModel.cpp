@@ -36,7 +36,6 @@ FastNetworkModel
     m_Deltas.set_size(m_ManifoldDimension);
     m_Block1.set_size(m_ManifoldDimension);
     m_Block2.set_size(m_ManifoldDimension);
-
 }
 
 
@@ -50,34 +49,16 @@ FastNetworkModel
 
 void
 FastNetworkModel
-::Initialize(const OldData& D) 
+::Initialize(const Observations& Obs) 
 {
     typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
     
     /// Data-related attributes
-    m_NumberOfSubjects = D.size();
-    std::vector<VectorType> IndividualObservationDate;
-    
-    double SumObservations = 0.0, K = 0.0;
-    unsigned int Indiv = 0;
-    for(auto it = D.begin(); it != D.end(); ++it, ++Indiv)
-    {
-        VectorType IndividualObs(it->size());
-        K += it->size();
-        int i = 0;
-        for(auto it2 = it->begin(); it2 != it->end(); ++it2, ++i)
-        {
-            SumObservations += it2->first.squared_magnitude();
-            IndividualObs(i) = it2->second;
-        }
-        IndividualObservationDate.push_back(IndividualObs);
-    }
-    m_IndividualObservationDate = IndividualObservationDate;
-    m_SubjectTimePoints = IndividualObservationDate;
-    m_SumObservations = SumObservations;
-    m_NbTotalOfObservations = K;
-    
-    
+    m_NumberOfSubjects          = Obs.GetNumberOfSubjects();
+    m_IndividualObservationDate = Obs.GetObservations();
+    m_SubjectTimePoints         = Obs.GetObservations();
+    m_NbTotalOfObservations     = Obs.GetTotalNumberOfObservations();
+    m_SumObservations           = Obs.GetTotalSumOfLandmarks();
     
      /// Population variables
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.000001 );
@@ -117,8 +98,6 @@ FastNetworkModel
         m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0.0, 1});
         m_RealizationsPerRandomVariable.insert({Name, m_NumberOfSubjects});
     }
-    
-
     
 }
 
@@ -400,19 +379,18 @@ FastNetworkModel
 
 double
 FastNetworkModel
-::ComputeIndividualLogLikelihood(const OldData& D, const int SubjectNumber) 
+::ComputeIndividualLogLikelihood(const IndividualObservations& Obs, const int SubjectNumber) 
 {
     /// Get the data
     double LogLikelihood = 0;
-    auto N = D.at(SubjectNumber).size();
-    auto Did = D.at(SubjectNumber);
+    auto N = Obs.GetNumberOfTimePoints();
     
 #pragma omp parallel for reduction(+:LogLikelihood)   
     for(size_t i = 0; i < N; ++i)
     {
-        auto& it = Did.at(i);
+        auto& it = Obs.GetLandmark(i);
         VectorType P2 = ComputeParallelCurve(SubjectNumber, i);
-        LogLikelihood += (it.first - P2).squared_magnitude();
+        LogLikelihood += (it - P2).squared_magnitude();
     }
     
     LogLikelihood /= -2*m_Noise->GetVariance();
@@ -423,28 +401,25 @@ FastNetworkModel
 
 FastNetworkModel::SufficientStatisticsVector
 FastNetworkModel
-::GetSufficientStatistics(const Realizations& R, const OldData& D) 
+::GetSufficientStatistics(const Realizations& R,  const Observations& Obs) 
 {
     
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
     VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
     auto itS1 = S1.begin(), itS2 = S2.begin();
-    int i = 0;
-    for(auto itD = D.begin(); itD != D.end(); ++itD, ++i)
-    {        
-        int j = 0;
-        for(auto itD2 = itD->begin(); itD2 != itD->end(); ++itD2, ++j)
+    for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+    {
+        for(size_t j = 0; j < Obs.GetNumberOfTimePoints(i); ++j)
         {
-            VectorType P2 = ComputeParallelCurve(i, j);
-            *itS1 = dot_product(P2, itD2->first);
-            *itS2 = P2.squared_magnitude();
+            VectorType PC = ComputeParallelCurve(i, j);
+            *itS1 = dot_product(PC, Obs.GetSubjectLandmark(i, j));
+            *itS2 = PC.squared_magnitude();
             ++itS1, ++itS2;
         }
     }
     
     /// S3 <- Ksi_i * Ksi_i
     VectorType S3 = R.at("Ksi") % R.at("Ksi");
-
     
     /// S4 <- Tau_i   &    S5 <- Tau_i * Tau_i
     VectorType S4 = R.at("Tau");
@@ -455,7 +430,7 @@ FastNetworkModel
     
     /// S7 <- beta_k
     VectorType S7((m_ManifoldDimension-1) * m_NbIndependentComponents);
-    i = 0;
+    int i = 0;
     for(auto it = S7.begin(); it != S7.end(); ++it, ++i)
     {
         *it = R.at("Beta#" + std::to_string(i), 0);
@@ -481,7 +456,7 @@ FastNetworkModel
 
 void
 FastNetworkModel
-::UpdateRandomVariables(const SufficientStatisticsVector &SS, const OldData& D) 
+::UpdateRandomVariables(const SufficientStatisticsVector &SS) 
 {
     /// Update sigma
     double NoiseVariance = m_SumObservations;

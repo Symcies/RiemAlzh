@@ -5,9 +5,9 @@
 #include <cassert>
 #include <algorithm>
 #include <math.h>
+
+#include "Observations.h"
 #include "AlgorithmSettings.h"
-
-
 #include "AbstractModel.h"
 #include "AbstractSampler.h"
 #include "CandidateRandomVariables.h"
@@ -54,7 +54,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the MCMC SAEM algorithm
-    void ComputeMCMCSAEM(const OldData& D);
+    void ComputeMCMCSAEM(const OldData& D, const Observations& Obs);
 
 
 protected:
@@ -63,16 +63,16 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the stochastic approximation
-    void InitializeStochasticSufficientStatistics(const OldData& D);
+    void InitializeStochasticSufficientStatistics(const Observations& Obs);
         
     /// Initialize sampler
-    void InitializeSampler(const OldData& D);
+    void InitializeSampler();
     
     /// Initialize Manifold
-    void InitializeModel(const OldData& D);
+    void InitializeModel(const Observations& Obs);
 
     /// Compute the simulation step : Gibbs Sampling
-    void ComputeSimulationStep(const OldData& D);
+    void ComputeSimulationStep(const OldData& D, const Observations& Obs);
 
     /// Compute the stochastic coefficient 
     void ComputeStochasticApproximation(SufficientStatisticsVector& S);

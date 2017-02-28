@@ -39,20 +39,20 @@ Algorithm
 
 void
 Algorithm
-::ComputeMCMCSAEM(const OldData& D)
+::ComputeMCMCSAEM(const OldData& D, const Observations& Obs)
 {
-    InitializeModel(D);
-    InitializeSampler(D);
-    InitializeStochasticSufficientStatistics(D);
+    InitializeModel(Obs);
+    InitializeSampler();
+    InitializeStochasticSufficientStatistics(Obs);
 
     for(m_IterationCounter = 0; m_IterationCounter < m_MaxNumberOfIterations; m_IterationCounter += 1)
     {
         if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
         
-        ComputeSimulationStep(D);
-        SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, D);
+        ComputeSimulationStep(D, Obs);
+        SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, Obs);
         ComputeStochasticApproximation(SufficientStatistics);
-        m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics, D);
+        m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics);
         
         if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { DisplayOutputs(); }
         if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter, *m_Realizations); }
@@ -67,9 +67,9 @@ Algorithm
 
 void
 Algorithm
-::InitializeStochasticSufficientStatistics(const OldData& D)
+::InitializeStochasticSufficientStatistics(const Observations& Obs)
 {
-    m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, D);
+    m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, Obs);
     for(auto&& it : m_StochasticSufficientStatistics)
     {
         std::fill(it.begin(), it.end(), 0.0);
@@ -79,10 +79,10 @@ Algorithm
 
 void
 Algorithm
-::InitializeModel(const OldData& D) 
+::InitializeModel(const Observations& Obs) 
 {
     
-    m_Model->Initialize(D);
+    m_Model->Initialize(Obs);
     Realizations R = m_Model->SimulateRealizations();
     
     m_Realizations = std::make_shared<Realizations>(R);
@@ -98,17 +98,17 @@ Algorithm
 
 void 
 Algorithm
-::InitializeSampler(const OldData& D)
+::InitializeSampler()
 {
-    m_Sampler->InitializeSampler(*m_Realizations, *m_Model, D);
+    m_Sampler->InitializeSampler(*m_Realizations, *m_Model);
 }
 
 void
 Algorithm
-::ComputeSimulationStep(const OldData& D)
+::ComputeSimulationStep(const OldData& D, const Observations& Obs)
 {
     Realizations PreviousRealisations2 = *m_Realizations;
-    m_Sampler->Sample(*m_Realizations, *m_Model, D);
+    m_Sampler->Sample(*m_Realizations, *m_Model, D, Obs);
     ComputeAcceptanceRatio(PreviousRealisations2);
 }
 

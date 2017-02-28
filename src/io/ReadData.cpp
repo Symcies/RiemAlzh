@@ -105,35 +105,8 @@ ReadData
         if(DS.LandmarkPresence())        getline(LandmarksFile, LandmarksLine);
         if(DS.CognitiveScoresPresence()) getline(CognitiveScoresFile, CognitiveScoresLine);
         
-        /// Same subject
-        if(NewSubjectID == CurrentSubjectID)
-        {
-            TimePoints.push_back(stod(TimePointsLine));
-            if(DS.LandmarkPresence()) 
-            {
-                VectorType NewObs;
-                std::stringstream LineStream(LandmarksLine);
-                std::string cell;
-                while(std::getline(LineStream, cell, ','))
-                {
-                    NewObs.push_back(std::stod(cell));
-                }
-                Landmarks.push_back(NewObs);
-            }
-            if(DS.CognitiveScoresPresence())
-            {
-                VectorType NewObs;
-                std::stringstream LineStream(CognitiveScoresLine);
-                std::string cell;
-                while(std::getline(LineStream, cell, ','))
-                {
-                    NewObs.push_back(std::stod(cell));
-                }
-                CognitiveScores.push_back(NewObs);
-            }
-        }
-        /// New Subject    
-        else
+        /// New subject
+        if(NewSubjectID != CurrentSubjectID)
         {
             IndividualObservations Individual(TimePoints);
             if(DS.LandmarkPresence())        Individual.AddLandmarks(Landmarks);
@@ -144,6 +117,35 @@ ReadData
             TimePoints.clear();
             Landmarks.clear();
             CognitiveScores.clear();
+        }
+
+        TimePoints.push_back(stod(TimePointsLine));
+        if(DS.LandmarkPresence()) 
+        {
+            // TO DO : Check how to avoid 1827 !!!!
+            VectorType NewObs(1827);
+            int i = 0;
+            std::stringstream LineStream(LandmarksLine);
+            std::string cell;
+            while(std::getline(LineStream, cell, ','))
+            {
+                NewObs(i) = std::stod(cell);
+                ++i;
+            }
+            
+            Landmarks.push_back(NewObs);
+        }
+        if(DS.CognitiveScoresPresence())
+        {
+            // TO DO : This does not work. But same as previous! 
+            VectorType NewObs;
+            std::stringstream LineStream(CognitiveScoresLine);
+            std::string cell;
+            while(std::getline(LineStream, cell, ','))
+            {
+                NewObs.push_back(std::stod(cell));
+            }
+            CognitiveScores.push_back(NewObs);
         }
     }
     

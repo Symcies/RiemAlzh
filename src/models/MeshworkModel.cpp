@@ -37,31 +37,14 @@ MeshworkModel
 
 void
 MeshworkModel
-::Initialize(const OldData &D) 
+::Initialize(const Observations& Obs) 
 {
     /// Data-related attributes
-    m_NumberOfSubjects = D.size();
-    std::vector<VectorType> IndividualObservationDate;
-    
-    double SumObservations = 0.0, K = 0.0;
-    unsigned int Indiv = 0;
-    for(auto it = D.begin(); it != D.end(); ++it, ++Indiv)
-    {
-        VectorType IndividualObs(it->size());
-        K += it->size();
-        int i = 0;
-        for(auto it2 = it->begin(); it2 != it->end(); ++it2, ++i)
-        {
-            SumObservations += it2->first.squared_magnitude();
-            IndividualObs(i) = it2->second;
-        }
-        IndividualObservationDate.push_back(IndividualObs);
-    }
-    m_IndividualObservationDate = IndividualObservationDate;
-    m_SubjectTimePoints = IndividualObservationDate;
-    m_SumObservations = SumObservations;
-    m_NbTotalOfObservations = K;
-    
+    m_NumberOfSubjects          = Obs.GetNumberOfSubjects();
+    m_IndividualObservationDate = Obs.GetObservations();
+    m_SubjectTimePoints         = Obs.GetObservations();
+    m_NbTotalOfObservations     = Obs.GetTotalNumberOfObservations();
+    m_SumObservations           = Obs.GetTotalSumOfLandmarks();
     
     /// Population variables
     m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.01 );
@@ -210,20 +193,18 @@ MeshworkModel
 
 MeshworkModel::SufficientStatisticsVector
 MeshworkModel
-::GetSufficientStatistics(const Realizations &R, const OldData &D) 
+::GetSufficientStatistics(const Realizations &R, const Observations& Obs) 
 {
     /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
     VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
     auto itS1 = S1.begin(), itS2 = S2.begin();
-    int i = 0;
-    for(auto itD = D.begin(); itD != D.end(); ++itD, ++i)
-    {        
-        int j = 0;
-        for(auto itD2 = itD->begin(); itD2 != itD->end(); ++itD2, ++j)
+    for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+    {
+        for(size_t j = 0; j < Obs.GetNumberOfTimePoints(i); ++j)
         {
-            VectorType P2 = ComputeParallelCurve(i, j);
-            *itS1 = dot_product(P2, itD2->first);
-            *itS2 = P2.squared_magnitude();
+            VectorType PC = ComputeParallelCurve(i, j);
+            *itS1 = dot_product(PC, Obs.GetSubjectLandmark(i, j));
+            *itS2 = PC.squared_magnitude();
             ++itS1, ++itS2;
         }
     }
@@ -260,7 +241,7 @@ MeshworkModel
 
 void 
 MeshworkModel
-::UpdateRandomVariables(const SufficientStatisticsVector &SS, const OldData &D) 
+::UpdateRandomVariables(const SufficientStatisticsVector &SS) 
 {
     /// Update the noise variance, sigma
     ScalarType NoiseVariance = m_SumObservations;
@@ -363,19 +344,18 @@ MeshworkModel
 
 ScalarType 
 MeshworkModel
-::ComputeIndividualLogLikelihood(const OldData &D, const int SubjectNumber) 
+::ComputeIndividualLogLikelihood(const IndividualObservations& Obs, const int SubjectNumber) 
 {
     /// Get the data
     double LogLikelihood = 0;
-    auto N = D.at(SubjectNumber).size();
-    auto Did = D.at(SubjectNumber);
+    auto N = Obs.GetNumberOfTimePoints();
     
-  
+#pragma omp parallel for reduction(+:LogLikelihood)   
     for(size_t i = 0; i < N; ++i)
     {
-        auto& it = Did.at(i);
+        auto& it = Obs.GetLandmark(i);
         VectorType P2 = ComputeParallelCurve(SubjectNumber, i);
-        LogLikelihood += (it.first - P2).squared_magnitude();
+        LogLikelihood += (it - P2).squared_magnitude();
     }
     
     LogLikelihood /= -2*m_Noise->GetVariance();
@@ -722,40 +702,6 @@ MeshworkModel
             m_SubjectTimePoints[i] = AccFactor * (m_IndividualObservationDate[i] - TimeShift);
         }
     }
-    /*
-    if(SubjectNumber != -1) {
-        double AccFactor = exp(R.at("Ksi", SubjectNumber));
-        double TimeShift = R.at("Tau", SubjectNumber);
-        
-        auto N = m_IndividualObservationDate[SubjectNumber].size();
-        
-        ScalarType * real = m_IndividualObservationDate[SubjectNumber].memptr();
-        ScalarType * reparam = m_SubjectTimePoints[SubjectNumber].memptr();
-    
-#pragma omp simd
-        for(size_t i = 0; i < N; ++i)
-            reparam[i] = AccFactor * (real[i] - TimeShift);
-        
-    }
-    else
-    {
-#pragma parallel for
-        for(size_t i = 0; i < m_NumberOfSubjects; ++i)
-        {
-            double AccFactor = exp(R.at("Ksi")(i));
-            double TimeShift = R.at("Tau")(i);
-            
-            auto N = m_IndividualObservationDate[i].size();
-            
-            ScalarType * real = m_IndividualObservationDate[i].memptr();
-            ScalarType * reparam = m_SubjectTimePoints[i].memptr();
-            
-            for(size_t j = 0; j < N; ++j)
-                reparam[j] = AccFactor * (real[j] - TimeShift);
-            
-            }
-    }
-     */
 }
 
 void 

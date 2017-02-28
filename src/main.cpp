@@ -71,8 +71,7 @@ int main(int argc, char* argv[]) {
         int NbMaxOfSubjects = 250;
         D = io::ReadData::OpenFilesMultivariate(DS, NbMaxOfSubjects);
         Obs = io::ReadData::ReadObservations(DS);
-        
-        // Check if Obs == D! Probably with static seed generator and launch two times?
+        Obs.InitializeGlobalAttributes();
     }
     else 
     {
@@ -85,7 +84,7 @@ int main(int argc, char* argv[]) {
     auto Algo = make_shared<Algorithm>(AS);
     Algo->SetModel(Model);
     Algo->SetSampler(Sampler);
-    Algo->ComputeMCMCSAEM(D);
+    Algo->ComputeMCMCSAEM(D, Obs);
     
     
     return 0;
