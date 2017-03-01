@@ -1,0 +1,16 @@
+//
+// Created by KOVAL Igor on 01/03/2017.
+//
+
+#ifndef LONGITUDINA_UNIFORMRANDOMVARIABLE_H
+#define LONGITUDINA_UNIFORMRANDOMVARIABLE_H
+
+
+
+class UniformRandomVariable {
+
+};
+
+
+
+#endif //LONGITUDINA_UNIFORMRANDOMVARIABLE_H
