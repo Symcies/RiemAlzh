@@ -59,29 +59,30 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/realizations
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io/outputs
         ${CMAKE_CURRENT_SOURCE_DIR}/src/observations
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/support
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra/armadillo
         
-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities
-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/linear_algebra
-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/linear_algebra/armadillo
-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/matrix
-        ${CMAKE_CURRENT_SOURCE_DIR}/utilities/tests
-        
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/
+        ${CMAKE_CURRENT_SOURCE_DIR}/test
         )
 
 file( GLOB_RECURSE SRC src/* )
-file( GLOB_RECURSE UTILITIES utilities/* )
+file( GLOB_RECURSE TEST test/* )
+file( GLOB_RECURSE EXAMPLES examples/* )
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/tinyxml2)
 
 ### Executable Declaration
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 add_executable(Longitudina 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-        ${IO}
         ${SRC}
+        ${TEST}
+        ${EXAMPLES}
         ${UTILITIES})
 
 include_directories(${SOURCE_FILES})

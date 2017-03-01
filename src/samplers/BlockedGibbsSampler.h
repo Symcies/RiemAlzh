@@ -39,7 +39,7 @@ public:
     virtual void InitializeSampler(Realizations& R, AbstractModel &M);
     
     /// Sample new realizations
-    virtual void Sample(Realizations& R, AbstractModel& M, const OldData& D, const Observations& Obs);
+    virtual void Sample(Realizations& R, AbstractModel& M, const Observations& Obs);
 
 
 protected:
@@ -48,14 +48,14 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /// Sample one block
-    void OneBlockSample(int BlockNumber, Realizations& R, AbstractModel& M, const OldData& D, const Observations& Obs);
+    void OneBlockSample(int BlockNumber, Realizations& R, AbstractModel& M, const Observations& Obs);
     
     /// Compute Prior part of the ratio while updating the realization
     ScalarType ComputePriorRatioAndUpdateRealizations(Realizations& R, const AbstractModel& M, const MiniBlock& Variables);
     
     
     /// Compute likelihood based on the block type
-    VectorType ComputeLogLikelihood(AbstractModel& M, const OldData& D, const Observations& Obs);
+    VectorType ComputeLogLikelihood(AbstractModel& M, const Observations& Obs);
     
     /// Get previously computed log likelihood
     double GetPreviousLogLikelihood();

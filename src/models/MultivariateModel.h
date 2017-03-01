@@ -34,13 +34,13 @@ public:
     
     /// Compute the log likelihood of the model
     /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-    virtual double ComputeLogLikelihood(const OldData& D);
+    virtual double ComputeLogLikelihood(const Observations &Obs);
     
     /// Compute the log likelihood of the model for a particular individual
     virtual double ComputeIndividualLogLikelihood(const IndividualObservations& Obs, const int SubjectNumber);
     
     /// Simulate data according to the model
-    virtual OldData SimulateData(io::DataSettings& DS);
+    virtual Observations SimulateData(io::DataSettings& DS);
     
     
     /// Define the sampler block used in the gibbs sampler (should it be here?)

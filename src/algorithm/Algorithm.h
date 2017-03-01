@@ -23,8 +23,6 @@ public:
     typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     typedef typename std::unordered_map<int, VectorType> IntVectorHash;
-    
-    typedef std::vector< std::vector< std::pair< VectorType, double> > > OldData;
     typedef std::vector<VectorType> SufficientStatisticsVector;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +52,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the MCMC SAEM algorithm
-    void ComputeMCMCSAEM(const OldData& D, const Observations& Obs);
+    void ComputeMCMCSAEM(const Observations& Obs);
 
 
 protected:
@@ -72,7 +70,7 @@ protected:
     void InitializeModel(const Observations& Obs);
 
     /// Compute the simulation step : Gibbs Sampling
-    void ComputeSimulationStep(const OldData& D, const Observations& Obs);
+    void ComputeSimulationStep(const Observations& Obs);
 
     /// Compute the stochastic coefficient 
     void ComputeStochasticApproximation(SufficientStatisticsVector& S);

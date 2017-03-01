@@ -39,7 +39,7 @@ Algorithm
 
 void
 Algorithm
-::ComputeMCMCSAEM(const OldData& D, const Observations& Obs)
+::ComputeMCMCSAEM(const Observations& Obs)
 {
     InitializeModel(Obs);
     InitializeSampler();
@@ -49,7 +49,7 @@ Algorithm
     {
         if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
         
-        ComputeSimulationStep(D, Obs);
+        ComputeSimulationStep(Obs);
         SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, Obs);
         ComputeStochasticApproximation(SufficientStatistics);
         m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics);
@@ -105,10 +105,10 @@ Algorithm
 
 void
 Algorithm
-::ComputeSimulationStep(const OldData& D, const Observations& Obs)
+::ComputeSimulationStep(const Observations& Obs)
 {
     Realizations PreviousRealisations2 = *m_Realizations;
-    m_Sampler->Sample(*m_Realizations, *m_Model, D, Obs);
+    m_Sampler->Sample(*m_Realizations, *m_Model, Obs);
     ComputeAcceptanceRatio(PreviousRealisations2);
 }
 

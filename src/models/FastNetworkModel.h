@@ -41,10 +41,10 @@ public:
     virtual void UpdateModel(const Realizations& R, int Type, const std::vector<std::string> Names = {"All"});
     
     /// Simulate data according to the model and the parameters
-    virtual OldData SimulateData(io::DataSettings& DS);
+    virtual Observations SimulateData(io::DataSettings& DS);
     
     /// Compute the log likelihood of the model
-    virtual double ComputeLogLikelihood(const OldData& D);
+    virtual double ComputeLogLikelihood(const Observations &Obs);
     
     /// Compute the log likelihood of the model for a given subject
     virtual double ComputeIndividualLogLikelihood(const IndividualObservations& Obs, const int SubjectNumber);

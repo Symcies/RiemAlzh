@@ -49,20 +49,20 @@ BlockedGibbsSampler
 
 void
 BlockedGibbsSampler
-::Sample(Realizations& R, AbstractModel& M, const OldData &D, const Observations& Obs) 
+::Sample(Realizations& R, AbstractModel& M, const Observations& Obs) 
 {
     m_CurrentBlockType = -1;
     ////////////////////////////////////////
     // TODO : Check if the update is needed
     M.UpdateModel(R, -1);
-    VectorType LL = ComputeLogLikelihood(M, D, Obs);
+    VectorType LL = ComputeLogLikelihood(M, Obs);
     UpdateLastLogLikelihood(LL);
     ////////////////////////////////////////
     
     
     for (int i = 0; i < m_Blocks.size(); ++i) 
     {
-        OneBlockSample(i, R, M, D, Obs);
+        OneBlockSample(i, R, M, Obs);
     }
         
     ++m_CurrentIteration;
@@ -77,7 +77,7 @@ BlockedGibbsSampler
 
 void
 BlockedGibbsSampler
-::OneBlockSample(int BlockNumber, Realizations& R, AbstractModel &M, const OldData &D, const Observations& Obs) 
+::OneBlockSample(int BlockNumber, Realizations& R, AbstractModel &M, const Observations& Obs) 
 {
     /// Initialization
     SamplerBlock CurrentBlock = m_Blocks.at(BlockNumber);
@@ -94,7 +94,7 @@ BlockedGibbsSampler
     
     /// Compute the candidate log likelihood
     M.UpdateModel(R, m_CurrentBlockType, m_CurrentBlockParameters);
-    VectorType ComputedLogLikelihood = ComputeLogLikelihood(M, D, Obs);
+    VectorType ComputedLogLikelihood = ComputeLogLikelihood(M, Obs);
     AcceptationRatio += ComputedLogLikelihood.sum();
     
     /// Compute the aceceptance ratio
@@ -168,7 +168,7 @@ BlockedGibbsSampler
 
 BlockedGibbsSampler::VectorType
 BlockedGibbsSampler
-::ComputeLogLikelihood(AbstractModel& M, const OldData& D, const Observations& Obs) 
+::ComputeLogLikelihood(AbstractModel& M, const Observations& Obs) 
 {
       
     if(m_CurrentBlockType == -1) 

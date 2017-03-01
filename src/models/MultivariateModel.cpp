@@ -65,7 +65,7 @@ MultivariateModel
 
 double
 MultivariateModel
-::ComputeLogLikelihood(const OldData &D) 
+::ComputeLogLikelihood(const Observations &Obs) 
 {
     
 }
@@ -79,7 +79,7 @@ MultivariateModel
 }
 
 
-AbstractModel::OldData
+Observations
 MultivariateModel
 ::SimulateData(io::DataSettings &DS) 
 {
