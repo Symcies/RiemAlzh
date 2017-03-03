@@ -15,7 +15,7 @@ MultivariateModel
   
   /// Initialize the size of some parameters
   m_Deltas.set_size(m_ManifoldDimension);
-  m_Block1.set_size(m_ManifoldDimension);
+  m_Block.set_size(m_ManifoldDimension);
 }
 
 MultivariateModel
@@ -364,7 +364,6 @@ MultivariateModel
   return LogLikelihood;
 }
 
-
 Observations
 MultivariateModel
 ::SimulateData(io::DataSettings &DS) 
@@ -457,7 +456,7 @@ const
   /// Each pair is composed of <Name of the random variable, Realization number>
   /// TO IMPROVE : These blocks may change during the iterations or they can be random, ...
   
-  int PopulationType = -1
+  int PopulationType = -1;
   std::vector<SamplerBlock> Blocks;
   
   /// Block G
@@ -630,9 +629,9 @@ MultivariateModel
 {
   /// It computes the A matrix (ref documentation) based on the orthonormal basis B and the beta coefficients
   
-  MatrixType NewA(m_ManifoldDimension, m_NbIndependentComponents);
+  MatrixType NewA(m_ManifoldDimension, m_NbIndependentSources);
   
-  for(int i = 0; i < m_NbIndependentComponents; ++i)
+  for(int i = 0; i < m_NbIndependentSources; ++i)
   {
     VectorType Beta(m_ManifoldDimension, 0.0);
     for(size_t j = 0; j < m_ManifoldDimension - 1; ++j)
@@ -652,9 +651,9 @@ MultivariateModel
 ::ComputeSpaceShifts(const Realizations &R) 
 {
   /// It computes the individual space shifts w_i (ref documentation or NIPS paper)
-  MatrixType SS(m_NbIndependentComponents, m_NumberOfSubjects);
+  MatrixType SS(m_NbIndependentSources, m_NumberOfSubjects);
   
-  for(int i = 0; i < m_NbIndependentComponents; ++i) 
+  for(int i = 0; i < m_NbIndependentSources; ++i) 
     SS.set_row(i, R.at("S#" + std::to_string(i)));
   
   m_SpaceShifts = m_AMatrix * SS;
@@ -683,10 +682,11 @@ MultivariateModel
   /// it computes the f(t_i) value corresponding to the current model
   
   VectorType ParallelCurve(m_ManifoldDimension);
-  ScalarType * p = ParallelCurve.memptr()
+  ScalarType * p = ParallelCurve.memptr();
   
   double Time = m_SubjectTimePoints[SubjectNumber](ObservationNumber);
   ScalarType * d = m_Deltas.memptr();
+  ScalarType * b = m_Block.memptr();
   ScalarType * w = m_SpaceShifts.get_column(SubjectNumber).memptr();
   
   for(size_t i = 0; i < m_ManifoldDimension; ++i)

@@ -5,28 +5,18 @@
 // Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Algorithm
-::Algorithm()
-{
-}
 
 Algorithm
 ::Algorithm(io::AlgorithmSettings& Settings) 
 {
-    m_MaxNumberOfIterations = Settings.GetMaximumNumberOfIterations();
-    m_BurnIn = Settings.GetNumberOfBurnInIterations();
-    m_CounterToDisplayOutputs = Settings.GetCounterToDisplayOutputs();
-    m_CounterToSaveData = Settings.GetCounterToSaveData();
-    
+  /// Initialize the algorithm attributes
+  // TODO : check if it is enough, based on future needs
+  m_MaxNumberOfIterations   = Settings.GetMaximumNumberOfIterations();
+  m_BurnIn                  = Settings.GetNumberOfBurnInIterations();
+  m_CounterToDisplayOutputs = Settings.GetCounterToDisplayOutputs();
+  m_CounterToSaveData       = Settings.GetCounterToSaveData();
 }
 
-
-Algorithm
-::Algorithm(unsigned int MaxNumberOfIterations, unsigned int BurnIn) 
-{
-    m_MaxNumberOfIterations = MaxNumberOfIterations;
-    m_BurnIn = BurnIn;
-}
 
 Algorithm
 ::~Algorithm()
@@ -41,23 +31,25 @@ void
 Algorithm
 ::ComputeMCMCSAEM(const Observations& Obs)
 {
-    InitializeModel(Obs);
-    InitializeSampler();
-    InitializeStochasticSufficientStatistics(Obs);
+  /// This function is core to the software. It initialize parts of the model and sampler
+  /// and runs the MCMC-SAEM algorithm. The class attributes define the properties of the MCMC-SAEM
+  InitializeModel(Obs);
+  InitializeSampler();
+  InitializeStochasticSufficientStatistics(Obs);
 
-    for(m_IterationCounter = 0; m_IterationCounter < m_MaxNumberOfIterations; m_IterationCounter += 1)
-    {
-        if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
-        
-        ComputeSimulationStep(Obs);
-        SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, Obs);
-        ComputeStochasticApproximation(SufficientStatistics);
-        m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics);
-        
-        if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { DisplayOutputs(); }
-        if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter, *m_Realizations); }
-        
-    }
+  for(m_IterationCounter = 0; m_IterationCounter < m_MaxNumberOfIterations; m_IterationCounter += 1)
+  {
+    if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
+    
+    ComputeSimulationStep(Obs);
+    SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, Obs);
+    ComputeStochasticApproximation(SufficientStatistics);
+    m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics);
+    
+    if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { DisplayOutputs(); }
+    if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter, *m_Realizations); }
+      
+  }
 }
 
 
@@ -69,11 +61,13 @@ void
 Algorithm
 ::InitializeStochasticSufficientStatistics(const Observations& Obs)
 {
-    m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, Obs);
-    for(auto&& it : m_StochasticSufficientStatistics)
-    {
-        std::fill(it.begin(), it.end(), 0.0);
-    }
+  /// It initialize the stochastic sufficient statistics by copying the one from the model.
+  /// Pitfall : it computes the suff stat of the model where only the length is needed
+  
+  m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, Obs);
+  for(auto&& it : m_StochasticSufficientStatistics)
+    std::fill(it.begin(), it.end(), 0.0);
+  
 }
 
 
@@ -81,18 +75,20 @@ void
 Algorithm
 ::InitializeModel(const Observations& Obs) 
 {
+  /// It initialize the model, draw its respective realizations and initialize the acceptance ratios
+  /// which are key to observe the algorithm convergence
     
-    m_Model->Initialize(Obs);
-    Realizations R = m_Model->SimulateRealizations();
-    
-    m_Realizations = std::make_shared<Realizations>(R);
-    m_Model->UpdateModel(R, -1);
-    
-    for(auto it = m_Realizations->begin(); it != m_Realizations->end(); ++it)
-    {
-        VectorType v(it->second.size(), 0);
-        m_AcceptanceRatios[it->first] = v;
-    }
+  m_Model->Initialize(Obs);
+  Realizations R = m_Model->SimulateRealizations();
+  
+  m_Realizations = std::make_shared<Realizations>(R);
+  m_Model->UpdateModel(R, -1);
+  
+  for(auto it = m_Realizations->begin(); it != m_Realizations->end(); ++it)
+  {
+    VectorType v(it->second.size(), 0);
+    m_AcceptanceRatios[it->first] = v;
+  }
 
 }
 
@@ -100,16 +96,19 @@ void
 Algorithm
 ::InitializeSampler()
 {
-    m_Sampler->InitializeSampler(*m_Realizations, *m_Model);
+  m_Sampler->InitializeSampler(*m_Realizations, *m_Model);
 }
 
 void
 Algorithm
 ::ComputeSimulationStep(const Observations& Obs)
 {
-    Realizations PreviousRealisations2 = *m_Realizations;
-    m_Sampler->Sample(*m_Realizations, *m_Model, Obs);
-    ComputeAcceptanceRatio(PreviousRealisations2);
+  /// It compute the simulate step to draw new realizations based on the previous one.
+  /// The previous realizations are kept to compute the acceptance ratio
+  
+  Realizations PreviousRealisations = *m_Realizations;
+  m_Sampler->Sample(*m_Realizations, *m_Model, Obs);
+  ComputeAcceptanceRatio(PreviousRealisations);
 }
 
 
@@ -117,16 +116,15 @@ void
 Algorithm
 ::ComputeStochasticApproximation(SufficientStatisticsVector& S)
 {   
-    
-    assert(S.size() == m_StochasticSufficientStatistics.size()); 
-    
-    double StepSize = DecreasingStepSize();
-    auto itStochS = m_StochasticSufficientStatistics.begin();
-    
-    for(auto itS = S.begin(); itS != S.end(); ++itS, ++itStochS)
-    {
-        *itStochS += StepSize * (*itS - *itStochS);
-    }
+  /// It comptue the stochastic approximation step S_(k+1) = S(k) + stochastic variation of the previous state
+  assert(S.size() == m_StochasticSufficientStatistics.size()); 
+  
+  double StepSize = DecreasingStepSize();
+  auto itStochS = m_StochasticSufficientStatistics.begin();
+  
+  for(auto itS = S.begin(); itS != S.end(); ++itS, ++itStochS)
+      *itStochS += StepSize * (*itS - *itStochS);
+  
 }
 
 
@@ -139,8 +137,6 @@ Algorithm
     return 1.0 / pow(Epsilon, 0.6); // TODO : TO CHECK
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Output(s)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +148,6 @@ Algorithm
 {
     m_Model->DisplayOutputs(*m_Realizations);
 }
-
 
 void
 Algorithm
