@@ -70,7 +70,6 @@ public:
   /// Update the fixed effects thanks to the approximation step of the algorithm
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics) = 0;
   
-  
   /// Compute the log likelihood of the model
   /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
   virtual double ComputeLogLikelihood(const Observations &Obs)= 0;

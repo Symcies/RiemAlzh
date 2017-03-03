@@ -23,23 +23,6 @@ FastNetworkModel
 
 
 FastNetworkModel
-::FastNetworkModel(const unsigned int NbIndependentComponents,
-                        std::shared_ptr<MatrixType> KernelMatrix,
-                        std::shared_ptr<MatrixType> InterpolationMatrix) 
-{
-  m_NbIndependentComponents = NbIndependentComponents;
-  m_InvertKernelMatrix = KernelMatrix->transpose();
-  m_InterpolationMatrix = *InterpolationMatrix;
-  
-  m_NbControlPoints = m_InvertKernelMatrix.columns();
-  m_Nus.set_size(m_ManifoldDimension);
-  m_Deltas.set_size(m_ManifoldDimension);
-  m_Block1.set_size(m_ManifoldDimension);
-  m_Block2.set_size(m_ManifoldDimension);
-}
-
-
-FastNetworkModel
 ::~FastNetworkModel() 
 {
   
@@ -51,8 +34,6 @@ void
 FastNetworkModel
 ::Initialize(const Observations& Obs) 
 {
-  typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-  
   /// Data-related attributes
   m_NumberOfSubjects          = Obs.GetNumberOfSubjects();
   m_IndividualObservationDate = Obs.GetObservations();
@@ -220,17 +201,14 @@ FastNetworkModel
   // TODO : To parse it even faster, update just the coordinates within the names
   if(IndividualOnly) ComputeSubjectTimePoint(AR, Type);
   
-  if(ComputePosition) 
-  { 
-    m_P0 = exp(AR.at("P", 0));
-  }
-  if(ComputeDelta) ComputeDeltas(AR);
-  if(ComputeNu) ComputeNus(AR);
-  if(ComputeBasis) ComputeOrthonormalBasis();
-  if(ComputeA) ComputeAMatrix(AR);
+  if(ComputePosition)   m_P0 = exp(AR.at("P", 0));
+  if(ComputeDelta)      ComputeDeltas(AR);
+  if(ComputeNu)         ComputeNus(AR);
+  if(ComputeBasis)      ComputeOrthonormalBasis();
+  if(ComputeA)          ComputeAMatrix(AR);
   if(ComputeSpaceShift) ComputeSpaceShifts(AR);
-  if(ComputeBlock_1) ComputeBlock1();
-  if(ComputeBlock_2) ComputeBlock2();
+  if(ComputeBlock_1)    ComputeBlock1();
+  if(ComputeBlock_2)    ComputeBlock2();
   
 }
 
@@ -735,8 +713,6 @@ void
 FastNetworkModel
 ::InitializeFakeRandomVariables() 
 {
-  typedef std::pair< std::string, std::shared_ptr< AbstractRandomVariable >> RandomVariable;
-     
   
    /// Population variables
   m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.1 );
@@ -744,12 +720,12 @@ FastNetworkModel
   m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.08, 0.00001 * 0.00001});
       
   for(int i = 1; i < m_NbControlPoints; ++i)
-      m_RandomVariables.AddRandomVariable("Delta#" + std::to_string(i), "Gaussian", {0.5, 0.0001 * 0.0001});
+    m_RandomVariables.AddRandomVariable("Delta#" + std::to_string(i), "Gaussian", {0.5, 0.0001 * 0.0001});
 
   m_RandomVariables.AddRandomVariable("Nu", "Gaussian", {0.036, 0.004*0.004});
   
   for(int i = 0; i < m_NbIndependentComponents*(m_ManifoldDimension - 1); ++i)
-      m_RandomVariables.AddRandomVariable("Beta#" + std::to_string(i), "Gaussian", {0, 0.0001 * 0.0001});
+    m_RandomVariables.AddRandomVariable("Beta#" + std::to_string(i), "Gaussian", {0, 0.0001 * 0.0001});
   
   
   /// Individual variables    
@@ -758,7 +734,7 @@ FastNetworkModel
   m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {70, 0.25});
   
   for(int i = 0; i < m_NbIndependentComponents; ++i)
-      m_RandomVariables.AddRandomVariable("S#" + std::to_string(i), "Gaussian", {0.0, 0.5});
+    m_RandomVariables.AddRandomVariable("S#" + std::to_string(i), "Gaussian", {0.0, 0.5});
   
 }
 
@@ -894,7 +870,7 @@ FastNetworkModel
   double NormU2 = U.squared_magnitude();
   MatrixType FinalMatrix2 = (-2.0/NormU2) * U2*U2.transpose();
   for(size_t i = 0; i < m_ManifoldDimension; ++i)
-      FinalMatrix2(i, i ) += 1;
+    FinalMatrix2(i, i ) += 1;
   
 
   m_OrthogonalBasis = FinalMatrix2;
@@ -910,14 +886,14 @@ FastNetworkModel
   
   for(int i = 0; i < m_NbIndependentComponents; ++i)
   {
-      VectorType Beta(m_ManifoldDimension, 0.0);
-      for(size_t j = 0; j < m_ManifoldDimension - 1; ++j)
-      {
-          std::string Number = std::to_string(int(j + i*(m_ManifoldDimension - 1)));
-          Beta(j) = R.at( "Beta#" + Number, 0);
-      }
-      
-      NewA.set_column(i, m_OrthogonalBasis * Beta);
+    VectorType Beta(m_ManifoldDimension, 0.0);
+    for(size_t j = 0; j < m_ManifoldDimension - 1; ++j)
+    {
+      std::string Number = std::to_string(int(j + i*(m_ManifoldDimension - 1)));
+      Beta(j) = R.at( "Beta#" + Number, 0);
+    }
+    
+    NewA.set_column(i, m_OrthogonalBasis * Beta);
   }
   
   m_AMatrix = NewA;
@@ -928,15 +904,12 @@ void
 FastNetworkModel
 ::ComputeSpaceShifts(const Realizations& R) 
 {
-  
   MatrixType SS(m_NbIndependentComponents, m_NumberOfSubjects);
-  for(int i = 0; i < m_NbIndependentComponents; ++i) 
-  {
-      
-      SS.set_row(i, R.at("S#" + std::to_string(i)));
-  }
-  m_SpaceShifts = m_AMatrix * SS;
   
+  for(int i = 0; i < m_NbIndependentComponents; ++i)
+    SS.set_row(i, R.at("S#" + std::to_string(i)));
+  
+  m_SpaceShifts = m_AMatrix * SS;
 }
 
 

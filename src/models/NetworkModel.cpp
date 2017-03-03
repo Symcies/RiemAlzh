@@ -200,18 +200,6 @@ NetworkModel
   VectorType S3 = R.at("P");
   VectorType S4 = R.at("P") % R.at("P");
   
-  /// Update P_k : Mean and Var
-  ScalarType PMean = 0.0, PVariance = 0.0;
-  const ScalarType * itS3 = S3.memptr();
-  const ScalarType * itS4 = S4.memptr();
-
-  for(size_t i = 0; i < m_NbControlPoints; ++i)
-  {
-      PMean     += itS3[i];
-      PVariance += itS4[i];
-  }
-
-
   /// Sufficient Statistic Nu_k and Nu_k*Nu_k
   VectorType S5 = R.at("Nu");
   VectorType S6 = R.at("Nu") % R.at("Nu");
@@ -255,8 +243,8 @@ NetworkModel
 
   for(size_t i = 0; i < m_NbControlPoints; ++i)
   {
-      PMean     += itS3[i];
-      PVariance += itS4[i];
+    PMean     += itS3[i];
+    PVariance += itS4[i];
   }
 
   PMean     /= m_NbControlPoints;
@@ -272,8 +260,8 @@ NetworkModel
 
   for(size_t i = 0; i < m_NbControlPoints; ++i)
   {
-      NuMean     += itS5[i];
-      NuVariance += itS6[i];
+    NuMean     += itS5[i];
+    NuVariance += itS6[i];
   }
 
   NuMean     /= m_NbControlPoints;
@@ -285,14 +273,14 @@ NetworkModel
   /// Update Beta_k : Mean
   const ScalarType * itS7 = SS[6].memptr();
   for(size_t i = 0; i < SS[6].size(); ++i)
-      m_RandomVariables.UpdateRandomVariable("Beta#" + std::to_string(i), {{"Mean", itS7[i]}});
+    m_RandomVariables.UpdateRandomVariable("Beta#" + std::to_string(i), {{"Mean", itS7[i]}});
 
   /// Update Ksi : Mean and Variance
   ScalarType KsiVariance = 0.0;
   const ScalarType * itS8 = SS[7].memptr();
 
   for(size_t i = 0; i < m_NumberOfSubjects; ++i)
-      KsiVariance += itS4[i];
+    KsiVariance += itS4[i];
 
   KsiVariance /= m_NumberOfSubjects;
 
@@ -338,7 +326,7 @@ NetworkModel
     }
   }
   
-  LogLikelihood  /= -2*m_Noise->GetVariance();
+  LogLikelihood /= -2*m_Noise->GetVariance();
   LogLikelihood -= m_NbTotalOfObservations*log(sqrt(2 * m_Noise->GetVariance() * M_PI ));
   
   return LogLikelihood;
@@ -370,8 +358,6 @@ Observations
 NetworkModel
 ::SimulateData(io::DataSettings &DS)
 {
-  typedef std::vector< std::pair< VectorType, double> > IndividualData;
-
   m_NumberOfSubjects = DS.GetNumberOfSimulatedSubjects();
 
   /// Initialize the realizations and simulate them
@@ -447,31 +433,31 @@ const
   /// Insert P
   MiniBlock P;
   for(size_t i = 0; i < m_NbControlPoints; ++i)
-      P.push_back(std::make_pair("P", i));
+    P.push_back(std::make_pair("P", i));
   Blocks.push_back(std::make_pair(PopulationType, P));
 
   // Insert Nu
   MiniBlock Nu;
   for(size_t i = 0; i < m_NbControlPoints; ++i)
-      Nu.push_back(std::make_pair("Nu", i));
+    Nu.push_back(std::make_pair("Nu", i));
   Blocks.push_back(std::make_pair(PopulationType, Nu));
 
   /// Insert Beta
   MiniBlock Beta;
   for(size_t i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
-      Beta.push_back(std::make_pair("Beta#" + std::to_string(i), 0));
+    Beta.push_back(std::make_pair("Beta#" + std::to_string(i), 0));
   Blocks.push_back(std::make_pair(PopulationType, Beta));
 
   /// Individual variables
   for(size_t i = 0; i < m_NumberOfSubjects; ++i)
   {
-      MiniBlock IndividualBlock;
-      IndividualBlock.push_back(std::make_pair("Ksi", i));
-      IndividualBlock.push_back(std::make_pair("Tau", i));
-      for(size_t j = 0; j < m_NbIndependentSources; ++j)
-          IndividualBlock.push_back(std::make_pair("S#" + std::to_string(j), i));
+    MiniBlock IndividualBlock;
+    IndividualBlock.push_back(std::make_pair("Ksi", i));
+    IndividualBlock.push_back(std::make_pair("Tau", i));
+    for(size_t j = 0; j < m_NbIndependentSources; ++j)
+      IndividualBlock.push_back(std::make_pair("S#" + std::to_string(j), i));
 
-      Blocks.push_back(std::make_pair(i, IndividualBlock));
+    Blocks.push_back(std::make_pair(i, IndividualBlock));
   }
 
   return Blocks;
