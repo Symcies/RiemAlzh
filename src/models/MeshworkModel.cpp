@@ -8,7 +8,6 @@
 MeshworkModel
 ::MeshworkModel(io::ModelSettings &MS) 
 {
-  m_ManifoldDimension = MS.GetManifoldDimension();
   m_NbIndependentSources= MS.GetNumberOfIndependentSources();
   
   std::string KernelMatrixPath = MS.GetInvertKernelPath();
@@ -18,9 +17,11 @@ MeshworkModel
   m_InterpolationMatrix = io::ReadData::OpenKernel(InterpolationMatrixPath);
   
   m_NbControlPoints = m_InvertKernelMatrix.columns();
+  m_ManifoldDimension = m_InterpolationMatrix.rows();
   m_Thicknesses.set_size(m_ManifoldDimension);
   m_Deltas.set_size(m_ManifoldDimension);
   m_Block1.set_size(m_ManifoldDimension);
+  
 }
 
 MeshworkModel

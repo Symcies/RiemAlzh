@@ -10,6 +10,7 @@ using namespace std;
 
 #include "Algorithm.h"
 
+#include "MultivariateModel.h"
 #include "NetworkModel.h"
 #include "MeshworkModel.h"
 #include "FastNetworkModel.h"
@@ -42,9 +43,10 @@ int main(int argc, char* argv[]) {
   
   /// Initialize the model
   std::shared_ptr<AbstractModel> Model;
-  if(MS.GetType() == "Meshwork")    Model = make_shared<MeshworkModel>(MS);
-  if(MS.GetType() == "FastNetwork") Model = make_shared<FastNetworkModel>(MS);
-  if(MS.GetType() == "Network")     Model = make_shared<NetworkModel>(MS);
+  if(MS.GetType() == "Meshwork")     Model = make_shared<MeshworkModel>(MS);
+  if(MS.GetType() == "FastNetwork")  Model = make_shared<FastNetworkModel>(MS);
+  if(MS.GetType() == "Network")      Model = make_shared<NetworkModel>(MS);
+  if(MS.GetType() == "Multivariate") Model = make_shared<MultivariateModel>(MS);
   
   /// Initialize the data
   Observations Obs;

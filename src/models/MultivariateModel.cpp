@@ -10,12 +10,7 @@ MultivariateModel
 ::MultivariateModel(io::ModelSettings &MS) 
 {
   /// Initialize the data dimension and the number of sources
-  m_ManifoldDimension = MS.GetManifoldDimension();
   m_NbIndependentSources = MS.GetNumberOfIndependentSources();
-  
-  /// Initialize the size of some parameters
-  m_Deltas.set_size(m_ManifoldDimension);
-  m_Block.set_size(m_ManifoldDimension);
 }
 
 MultivariateModel
@@ -40,11 +35,16 @@ MultivariateModel
   
   
   /// Data-related attributes
+  m_ManifoldDimension         = Obs.GetSubjectObservations(0).GetCognitiveScore(0).size();
   m_NumberOfSubjects          = Obs.GetNumberOfSubjects();
   m_IndividualObservationDate = Obs.GetObservations();
   m_SubjectTimePoints         = Obs.GetObservations();
   m_NbTotalOfObservations     = Obs.GetTotalNumberOfObservations();
   m_SumObservations           = Obs.GetTotalSumOfCognitiveScores();
+  
+  /// Initialize the size of some parameters
+  m_Deltas.set_size(m_ManifoldDimension);
+  m_Block.set_size(m_ManifoldDimension);
   
   /// Population variables 
   /// (Initialization of the random variable m_Random Variable 
@@ -52,7 +52,7 @@ MultivariateModel
   m_Noise = std::make_shared<GaussianRandomVariable>(0.0, 0.00001);
   
   m_RandomVariables.AddRandomVariable("G", "Gaussian", {0.12, 0.0001 * 0.0001});
-  m_RealizationsPerRandomVariable["P"] = 1;
+  m_RealizationsPerRandomVariable["G"] = 1;
   
   for(size_t i = 1; i < m_ManifoldDimension; ++i)
   {
@@ -208,7 +208,7 @@ MultivariateModel
       for(size_t j = 0; j < Obs.GetNumberOfTimePoints(i); ++j)
       {
           VectorType PC = ComputeParallelCurve(i, j);
-          *itS1 = dot_product(PC, Obs.GetSubjectLandmark(i, j));
+          *itS1 = dot_product(PC, Obs.GetSubjectCognitiveScore(i, j));
           *itS2 = PC.squared_magnitude();
           ++itS1, ++itS2;
       }
@@ -234,8 +234,8 @@ MultivariateModel
   /// S8 <- delta_k
   VectorType S9(m_ManifoldDimension - 1);
   ScalarType * itS9 = S9.memptr();
-  for(size_t i = 0; i < S9.size(); ++i)
-      itS8[i] = R.at("Delta#" + std::to_string(i), 0);
+  for(size_t i = 1; i < S9.size(); ++i)
+      itS9[i] = R.at("Delta#" + std::to_string(i), 0);
 
   return {S1, S2, S3, S4, S5, S6, S7, S8, S9};
   
@@ -304,7 +304,7 @@ MultivariateModel
   
   /// Update Delta_k : Mean
   const ScalarType * itS9 = SS[8].memptr();
-  for(size_t i = 0; i < SS[8].size(); ++i)
+  for(size_t i = 1; i < SS[8].size(); ++i)
     m_RandomVariables.UpdateRandomVariable("Delta#" + std::to_string(i), {{"Mean", itS9[i]}});
   
 }
@@ -353,7 +353,7 @@ MultivariateModel
   /// For each timepoints of the particular subject
   for(size_t i = 0; i < N; ++i)
   {
-    auto& it = Obs.GetLandmark(i);
+    auto& it = Obs.GetCognitiveScore(i);
     VectorType PC = ComputeParallelCurve(SubjectNumber, i);
     LogLikelihood += (it - PC).squared_magnitude();
   }
@@ -383,7 +383,8 @@ MultivariateModel
   
   
   /// Initialize the model
-  m_NumberOfSubjects = DS.GetNumberOfSimulatedSubjects();
+  m_ManifoldDimension = DS.GetCognitiveScoresDimension();
+  m_NumberOfSubjects  = DS.GetNumberOfSimulatedSubjects();
   
   m_RealizationsPerRandomVariable["G"] = 1;
   
@@ -501,6 +502,16 @@ MultivariateModel
 ::DisplayOutputs(const Realizations &AR) 
 {
   /// It defines the outputs displayed on the terminal
+  
+  auto G = m_RandomVariables.GetRandomVariable("G")->GetParameter("Mean");
+  auto Tau = m_RandomVariables.GetRandomVariable("Tau");
+  auto Ksi = m_RandomVariables.GetRandomVariable("Ksi");
+  
+  
+  std::cout << "Noise: " << m_Noise->GetVariance();
+  std::cout << " - G: " << G;
+  std::cout << " - T0: " << Tau->GetParameter("Mean") << " - Var(Tau): " << Tau->GetParameter("Variance");
+  std::cout << " - Ksi: " << Ksi->GetParameter("Mean") << " - Var(Ksi): " << Ksi->GetParameter("Variance") << std::endl;
 }
 
 void 
