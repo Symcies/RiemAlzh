@@ -22,24 +22,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="03e71383-5091-4290-9195-e722e3a9d4e8" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/MultivariateModel/launch_simulation.sh" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Longitudina" afterPath="$PROJECT_DIR$/bin/Longitudina" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/tinyxml2" afterPath="$PROJECT_DIR$/lib/tinyxml2" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/algorithm/Algorithm.cpp" afterPath="$PROJECT_DIR$/src/algorithm/Algorithm.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/DataSettings.cpp" afterPath="$PROJECT_DIR$/src/io/DataSettings.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/DataSettings.h" afterPath="$PROJECT_DIR$/src/io/DataSettings.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/ModelSettings.cpp" afterPath="$PROJECT_DIR$/src/io/ModelSettings.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/ModelSettings.h" afterPath="$PROJECT_DIR$/src/io/ModelSettings.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/ReadData.cpp" afterPath="$PROJECT_DIR$/src/io/ReadData.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/ReadData.h" afterPath="$PROJECT_DIR$/src/io/ReadData.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main.cpp" afterPath="$PROJECT_DIR$/src/main.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/FastNetworkModel.cpp" afterPath="$PROJECT_DIR$/src/models/FastNetworkModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/MeshworkModel.cpp" afterPath="$PROJECT_DIR$/src/models/MeshworkModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/MultivariateModel.cpp" afterPath="$PROJECT_DIR$/src/models/MultivariateModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/models/NetworkModel.cpp" afterPath="$PROJECT_DIR$/src/models/NetworkModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/observations/IndividualObservations.cpp" afterPath="$PROJECT_DIR$/src/observations/IndividualObservations.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/observations/IndividualObservations.h" afterPath="$PROJECT_DIR$/src/observations/IndividualObservations.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/observations/Observations.cpp" afterPath="$PROJECT_DIR$/src/observations/Observations.cpp" />
     </list>
     <ignored path="RiemAlzh.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -61,26 +48,25 @@
     <splitter split-orientation="horizontal" split-proportion="0.5">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="Algorithm.cpp" pinned="false" current-in-tab="false">
+          <file leaf-file-name="Algorithm.cpp" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/algorithm/Algorithm.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="657">
-                  <caret line="148" column="19" selection-start-line="148" selection-start-column="13" selection-end-line="148" selection-end-column="19" />
+                <state relative-caret-position="243">
+                  <caret line="185" column="4" selection-start-line="185" selection-start-column="4" selection-end-line="185" selection-end-column="4" />
                   <folding>
                     <element signature="e#3825#4310#0" expanded="false" />
                     <element signature="e#4313#4512#0" expanded="false" />
                     <element signature="e#4816#5776#0" expanded="false" />
-                    <element signature="e#5778#7343#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="MultivariateModel.cpp" pinned="false" current-in-tab="true">
+          <file leaf-file-name="MultivariateModel.cpp" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/models/MultivariateModel.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="475">
-                  <caret line="513" column="120" selection-start-line="513" selection-start-column="120" selection-end-line="513" selection-end-column="120" />
+                <state relative-caret-position="491">
+                  <caret line="514" column="1" selection-start-line="514" selection-start-column="1" selection-end-line="514" selection-end-column="1" />
                   <folding>
                     <element signature="e#463#511#0" expanded="false" />
                     <element signature="e#3365#3860#0" expanded="false" />
@@ -96,6 +82,19 @@
               </provider>
             </entry>
           </file>
+          <file leaf-file-name="main.cpp" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main.cpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="400">
+                  <caret line="25" column="4" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="4" />
+                  <folding>
+                    <element signature="e#0#19#0" expanded="true" />
+                    <element signature="e#89#115#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
         </leaf>
       </split-first>
       <split-second>
@@ -103,7 +102,7 @@
           <file leaf-file-name="FastNetworkModel.cpp" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/models/FastNetworkModel.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="315">
+                <state relative-caret-position="1147">
                   <caret line="571" column="9" selection-start-line="571" selection-start-column="2" selection-end-line="571" selection-end-column="9" />
                   <folding>
                     <element signature="e#810#861#0" expanded="false" />
@@ -180,8 +179,8 @@
         <option value="$PROJECT_DIR$/src/observations/Observations.cpp" />
         <option value="$PROJECT_DIR$/src/io/ReadData.cpp" />
         <option value="$PROJECT_DIR$/src/io/DataSettings.cpp" />
-        <option value="$PROJECT_DIR$/src/algorithm/Algorithm.cpp" />
         <option value="$PROJECT_DIR$/src/models/MultivariateModel.cpp" />
+        <option value="$PROJECT_DIR$/src/algorithm/Algorithm.cpp" />
       </list>
     </option>
   </component>
@@ -622,12 +621,12 @@
       <workItem from="1488444820603" duration="7751000" />
       <workItem from="1488474536093" duration="239000" />
       <workItem from="1488532110028" duration="8608000" />
-      <workItem from="1488792130849" duration="8146000" />
+      <workItem from="1488792130849" duration="8935000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1151829000" />
+    <option name="totallyTimeSpent" value="1152618000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -635,7 +634,7 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1681736" sideWeight="0.49609375" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.274" sideWeight="0.5858951" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.274" sideWeight="0.5858951" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.314" sideWeight="0.47860157" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32" sideWeight="0.41410488" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.212" sideWeight="0.48884872" order="1" side_tool="false" content_ui="tabs" />
@@ -739,7 +738,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="1053" />
+      <option name="time" value="1054" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1053,17 +1052,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="52" column="0" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-            <element signature="e#89#115#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/include/armadillo_bits/debug.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="218">
@@ -1128,22 +1116,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/algorithm/Algorithm.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="657">
-          <caret line="148" column="19" selection-start-line="148" selection-start-column="13" selection-end-line="148" selection-end-column="19" />
-          <folding>
-            <element signature="e#3825#4310#0" expanded="false" />
-            <element signature="e#4313#4512#0" expanded="false" />
-            <element signature="e#4816#5776#0" expanded="false" />
-            <element signature="e#5778#7343#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/models/FastNetworkModel.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
+        <state relative-caret-position="1147">
           <caret line="571" column="9" selection-start-line="571" selection-start-column="2" selection-end-line="571" selection-end-column="9" />
           <folding>
             <element signature="e#810#861#0" expanded="false" />
@@ -1170,8 +1145,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/models/MultivariateModel.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="513" column="120" selection-start-line="513" selection-start-column="120" selection-end-line="513" selection-end-column="120" />
+        <state relative-caret-position="491">
+          <caret line="514" column="1" selection-start-line="514" selection-start-column="1" selection-end-line="514" selection-end-column="1" />
           <folding>
             <element signature="e#463#511#0" expanded="false" />
             <element signature="e#3365#3860#0" expanded="false" />
@@ -1182,6 +1157,29 @@
             <element signature="e#18986#20101#0" expanded="false" />
             <element signature="e#20471#21515#0" expanded="false" />
             <element signature="e#22504#22877#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="25" column="4" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#89#115#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/algorithm/Algorithm.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="185" column="4" selection-start-line="185" selection-start-column="4" selection-end-line="185" selection-end-column="4" />
+          <folding>
+            <element signature="e#3825#4310#0" expanded="false" />
+            <element signature="e#4313#4512#0" expanded="false" />
+            <element signature="e#4816#5776#0" expanded="false" />
           </folding>
         </state>
       </provider>
