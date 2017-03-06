@@ -29,12 +29,12 @@ if (OPENMP_FOUND)
     #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     Message("OpenMP has been found")
 else()
-    Message(WARNING "NOOOOO")
-    MESSAGE(Warning OpenMP)    
-    Set(CMAKE_C_COMPILER "/usr/local/Cellar/llvm/3.9.0/bin/clang")
-    Set(CMAKE_CXX_COMPILER "/usr/local/Cellar/llvm/3.9.0/bin/clang++")
+    #Message(WARNING "NOOOOO")
+    #MESSAGE(Warning OpenMP)
+    #Set(CMAKE_C_COMPILER "/usr/local/Cellar/llvm/3.9.0/bin/clang")
+    #Set(CMAKE_CXX_COMPILER "/usr/local/Cellar/llvm/3.9.0/bin/clang++")
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -l/usr/local/Cellar/llvm/3.9.0/lib/libomp.dylib")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /usr/local/Cellar/llvm/3.9.0/lib/libomp.dylib")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /usr/local/Cellar/llvm/3.9.0/lib/libomp.dylib")
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
@@ -46,7 +46,7 @@ endif()
 
 Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}
-        
+
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds
@@ -62,7 +62,7 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra/armadillo
-        
+
         ${CMAKE_CURRENT_SOURCE_DIR}/test
         )
 
@@ -78,7 +78,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
-add_executable(Longitudina 
+add_executable(Longitudina
         ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
         ${SRC}
         ${TEST}
@@ -92,4 +92,3 @@ add_dependencies(Longitudina tinyxml2)
 
 Target_Link_Libraries(Longitudina ${ARMADILLO_LIBRARIES})
 Target_Link_Libraries(Longitudina tinyxml2)
-
