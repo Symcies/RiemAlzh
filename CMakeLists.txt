@@ -4,7 +4,8 @@ cmake_minimum_required(VERSION 3.2)
 project(Longitudina CXX)
 Set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
-
+option(BUILD_TEST "BUILD TEST FOR RiemAlzh" ON)
+option(BUILD_BENCH "BUILD BENCHMARKS FOR RiemAlzh" OFF)
 
 if (APPLE)
     set(CMAKE_MACOSX_RPATH 1)
@@ -21,29 +22,6 @@ else()
 endif()
 
 
-### OPENMP
-
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
-
-find_package(OpenMP)
-if (OPENMP_FOUND)
-    #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    Message("OpenMP has been found")
-else()
-    Message("OpenMP has not been found")
-    #MESSAGE(Warning OpenMP)
-    #Set(CMAKE_C_COMPILER "/usr/local/Cellar/llvm/3.9.0/bin/clang")
-    #Set(CMAKE_CXX_COMPILER "/usr/local/Cellar/llvm/3.9.0/bin/clang++")
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -l/usr/local/Cellar/llvm/3.9.0/lib/libomp.dylib")
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /usr/local/Cellar/llvm/3.9.0/lib/libomp.dylib")
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
-
-endif()
-
-
-
 ### Set new project folders / files
 
 Set(SOURCE_FILES
@@ -53,8 +31,8 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds
         ${CMAKE_CURRENT_SOURCE_DIR}/src/models
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar
         ${CMAKE_CURRENT_SOURCE_DIR}/src/models/network
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar
         ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds/base_manifold
         ${CMAKE_CURRENT_SOURCE_DIR}/src/parameters
         ${CMAKE_CURRENT_SOURCE_DIR}/src/random_variables
@@ -67,30 +45,49 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra/armadillo
 
+#TODO: Compile test apart from main code.
+#Are the current test files utils instead of tests?
         ${CMAKE_CURRENT_SOURCE_DIR}/test
         )
 
+#TODO: Change the recurse and include all files manually
 file( GLOB_RECURSE SRC src/* )
 file( GLOB_RECURSE TEST test/* )
+file( GLOB_RECURSE EXAMPLES examples/* )
+
+### TINYXML2
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/tinyxml2)
 
-### Executable Declaration
+### LIBRARIES
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_CURRENT_SOURCE_DIR}/bin")
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-
-add_executable(Longitudina
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-        ${SRC}
-        ${TEST}
-        ${UTILITIES})
 
 include_directories(${SOURCE_FILES})
 
+# Creation of the src library, linked with armadillo and tinyxml
+Add_Library(riem-lib
+  STATIC
+  ${SRC}
+#TODO: Compile test apart from main code.
+  ${TEST})
+Target_Link_Libraries(riem-lib
+  ${ARMADILLO_LIBRARIES}
+  tinyxml2)
 
-add_dependencies(Longitudina tinyxml2)
+### EXECUTABLE
 
-Target_Link_Libraries(Longitudina ${ARMADILLO_LIBRARIES})
-Target_Link_Libraries(Longitudina tinyxml2)
+#Creation of the executable, linked with the src library
+add_executable(Longitudina
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+
+Target_Link_Libraries(Longitudina riem-lib)
+
+### TESTS
+
+if(BUILD_TESTS)
+    enable_tests()
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/googletest)
+    #add_subdirectory(test)
+endif()
