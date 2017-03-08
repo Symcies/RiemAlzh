@@ -1,5 +1,4 @@
 #include "AbstractManifold.h"
-#include "TestAssert.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -12,9 +11,6 @@ AbstractManifold::VectorType
 AbstractManifold
 ::ComputeGeodesic(VectorType& P0, double T0, VectorType& V0, double TimePoint)
 {
-    /// Tests
-    TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeGeodesic");
-
     /// Initialization
     VectorType Geodesic(P0.size());
     auto IterPos = P0.begin();
@@ -34,9 +30,6 @@ AbstractManifold::VectorType
 AbstractManifold
 ::ComputeGeodesicDerivative(VectorType& P0, double T0, VectorType& V0, double TimePoint)
 {
-    /// Tests
-    TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeGeodesicDerivative");
-
     /// Initialization
     VectorType GeodesicDerivative(P0.size());
     auto IterPos = P0.begin();
@@ -57,11 +50,6 @@ AbstractManifold::VectorType
 AbstractManifold
 ::ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift, double TimePoint)
 {
-    /// Tests
-    TestAssert::WarningEquality_Object(P0.size(), V0.size(), "P0 and V0 does not have the same size in AbstractManifold > ComputeParallelCurve");
-    TestAssert::WarningEquality_Object(V0.size(), SpaceShift.size(), "V0 and SpaceShift does not have the same size in AbstractManifold > ComputeParallelCurve");
-    TestAssert::WarningEquality_Object(P0.size(), SpaceShift.size(), "P0 and SpaceShift does not have the same size in AbstractManifold > ComputeParallelCurve");
-
     /// Initialization
     VectorType ParallelCurve(SpaceShift.size());
     auto IterPos = P0.begin();

@@ -59,6 +59,11 @@ public:
   /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
   virtual void InitializeFakeRandomVariables();
   
+  /// Probably to erase
+  /// Compute the parallel curve
+  VectorType ComputeParallelCurve(int SubjectNumber, int ObservationNumber);
+  
+  
 protected:
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,9 +88,7 @@ protected:
   /// Compute block 1 (1/p0 -1)
   void ComputeBlock(const Realizations& R);
   
-  /// Compute the parallel curve
-  VectorType ComputeParallelCurve(int SubjectNumber, int ObservationNumber);
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Attribute(s)
   ////////////////////////////////////////////////////////////////////////////////////////////////////

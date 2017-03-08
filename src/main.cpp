@@ -29,10 +29,7 @@ int main(int argc, char* argv[]) {
   {
       std::cerr << "Usage with real data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings " << "data_settings.xml" << std::endl;
   }
-
-  /// Initialize tests
-  TestAssert::Init(false);
-
+  
   /// Load the XML file arguments
   io::ModelSettings     MS(argv[1]);
   io::AlgorithmSettings AS(argv[2]);

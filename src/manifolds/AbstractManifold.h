@@ -9,7 +9,6 @@ typedef double ScalarType;
 #include <map>
 
 
-#include "TestAssert.h"
 #include "GaussianRandomVariable.h"
 #include "AbstractRandomVariable.h"
 #include "AbstractBaseManifold.h"
