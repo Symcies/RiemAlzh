@@ -89,9 +89,6 @@ double
 ExponentialCurveManifold
 ::ComputeScalarProduct(VectorType& U, VectorType& V, VectorType& ApplicationPoint) 
 {
-    TestAssert::WarningEquality_Object(U.size(), V.size(), "ExponentialCurveManifold > ComputeScalarProduct");
-    TestAssert::WarningEquality_Object(U.size(), ApplicationPoint.size(), "ExponentialCurveManifold > ComputeScalarProduct");
-    
     double ScalarProduct = 0.0;
     
     auto IterU = U.begin(), IterV = V.begin(), IterA = ApplicationPoint.begin();

@@ -16,7 +16,6 @@
 #include "Realizations.h"
 #include "ReadData.h"
 #include "LinearAlgebra.h"
-#include "TestAssert.h"
 #include "UniformRandomVariable.h"
 #include "AbstractRandomVariable.h"
 #include "AbstractManifold.h"

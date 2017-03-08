@@ -4,8 +4,7 @@ cmake_minimum_required(VERSION 3.2)
 project(Longitudina CXX)
 Set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+
 
 if (APPLE)
     set(CMAKE_MACOSX_RPATH 1)
@@ -24,12 +23,15 @@ endif()
 
 ### OPENMP
 
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+
 find_package(OpenMP)
 if (OPENMP_FOUND)
     #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     Message("OpenMP has been found")
 else()
-    #Message(WARNING "NOOOOO")
+    Message("OpenMP has not been found")
     #MESSAGE(Warning OpenMP)
     #Set(CMAKE_C_COMPILER "/usr/local/Cellar/llvm/3.9.0/bin/clang")
     #Set(CMAKE_CXX_COMPILER "/usr/local/Cellar/llvm/3.9.0/bin/clang++")
@@ -51,6 +53,8 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds
         ${CMAKE_CURRENT_SOURCE_DIR}/src/models
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/network
         ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds/base_manifold
         ${CMAKE_CURRENT_SOURCE_DIR}/src/parameters
         ${CMAKE_CURRENT_SOURCE_DIR}/src/random_variables
@@ -68,7 +72,6 @@ Set(SOURCE_FILES
 
 file( GLOB_RECURSE SRC src/* )
 file( GLOB_RECURSE TEST test/* )
-file( GLOB_RECURSE EXAMPLES examples/* )
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/tinyxml2)
 
@@ -82,7 +85,6 @@ add_executable(Longitudina
         ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
         ${SRC}
         ${TEST}
-        ${EXAMPLES}
         ${UTILITIES})
 
 include_directories(${SOURCE_FILES})
