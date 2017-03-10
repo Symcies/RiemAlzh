@@ -8,29 +8,27 @@ namespace io {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-AlgorithmSettings
-::AlgorithmSettings(char *XMLFile) {
-    tinyxml2::XMLDocument Parameters;
-    Parameters.LoadFile(XMLFile);
+AlgorithmSettings::AlgorithmSettings(char *xml_file) {
+    tinyxml2::XMLDocument parameters;
+    parameters.LoadFile(xml_file);
 
-    auto Settings = Parameters.FirstChildElement("algorithm-settings");
+    auto settings = parameters.FirstChildElement("algorithm-settings");
 
-    m_MaximumNumberOfIterations = atoi(
-            Settings->FirstChildElement("max-iterations")->GetText());
-    m_NumberOfBurnInIterations = atoi(Settings->FirstChildElement("burn-in")->GetText());
-    m_CounterToDisplayOutputs = atoi(
-            Settings->FirstChildElement("step-size-to-display")->GetText());
-    m_CounterToSaveData = atoi(Settings->FirstChildElement("step-size-to-save")->GetText());
+    max_num_iter_ = atoi(
+            settings->FirstChildElement("max-iterations")->GetText());
+    num_burn_iter_ = atoi(settings->FirstChildElement("burn-in")->GetText());
+    counter_to_next_output_display_ = atoi(
+            settings->FirstChildElement("step-size-to-display")->GetText());
+    counter_to_next_data_save_ = atoi(settings->FirstChildElement("step-size-to-save")->GetText());
 }
 
 
-AlgorithmSettings
-::~AlgorithmSettings() {
+AlgorithmSettings::~AlgorithmSettings() {
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-/// 
+///
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 

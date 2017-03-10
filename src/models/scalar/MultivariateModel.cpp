@@ -10,7 +10,7 @@ MultivariateModel
 ::MultivariateModel(io::ModelSettings &MS) 
 {
   /// Initialize the data dimension and the number of sources
-  m_NbIndependentSources = MS.GetNumberOfIndependentSources();
+  m_NbIndependentSources = MS.GetIndependentSourcesNumber();
 }
 
 MultivariateModel

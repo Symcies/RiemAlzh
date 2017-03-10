@@ -8,7 +8,7 @@
 MeshworkModel
 ::MeshworkModel(io::ModelSettings &MS) 
 {
-  m_NbIndependentSources= MS.GetNumberOfIndependentSources();
+  m_NbIndependentSources= MS.GetIndependentSourcesNumber();
   
   std::string KernelMatrixPath = MS.GetInvertKernelPath();
   std::string InterpolationMatrixPath = MS.GetInterpolationKernelPath();

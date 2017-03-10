@@ -7,23 +7,36 @@ namespace io {
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-DataSettings
-::DataSettings(const char *XMLFile) {
- 
-  tinyxml2::XMLDocument File;
-  File.LoadFile(XMLFile);
+DataSettings::DataSettings(const char *xml_file) {
 
-  auto Settings = File.FirstChildElement("data-settings");
+  if (xml_file == NULL || xml_file == ""){
+    std::cerr << "Problem in DataSettings. xml_file name null." << std::endl;
+    //TODO: define exit behavior
+    return;
+  }
 
-  std::string RealData = Settings->FirstChildElement("data")->GetText();
+  tinyxml2::XMLDocument file;
+  file.LoadFile(xml_file);
 
-  if (RealData == "true")  LoadRealDataSettings(Settings->FirstChildElement("real-data"));
-  if (RealData == "false") LoadSimulatedDataSettings(Settings->FirstChildElement("simulated-data"));
-  
+  //TODO: check if auto is good practice or can generate crash
+  auto settings = file.FirstChildElement("data-settings");
+
+  std::string real_data = settings->FirstChildElement("data-type")->GetText();
+  if (real_data == "true") {
+    LoadRealDataSettings(settings->FirstChildElement("real-data"));
+  }
+  else if (real_data == "false") {
+    LoadSimulatedDataSettings(settings->FirstChildElement("simulated-data"));
+  }
+  else {
+    //TODO: better error message
+    std::cerr << "Problem in DataSettings (loading data)" << std::endl;
+  }
+
+
 }
 
-DataSettings
-::~DataSettings() {
+DataSettings::~DataSettings() {
 
 }
 
@@ -32,98 +45,89 @@ DataSettings
 /// Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
-DataSettings
-::LoadRealDataSettings(const tinyxml2::XMLElement* Settings) {
-  
-  m_RealData = true;
-  m_PathToData = Settings->FirstChildElement("folder-path")->GetText();
-  
-  m_PathToGroup = m_PathToData + Settings->FirstChildElement("group-file")->GetText();
-  m_PathToTimepoints = m_PathToData + Settings->FirstChildElement("timepoints-file")->GetText();
+void DataSettings::LoadRealDataSettings(const tinyxml2::XMLElement* settings) {
 
-  // TODO : For the path to data, path to timepoints and path to group, need to check if it is ok!!! 
-  /// Read the Cognitive scores 
-  const tinyxml2::XMLElement* Data = Settings->FirstChildElement("observations");
-  const tinyxml2::XMLElement* CognitiveScores = Data->FirstChildElement("cognitive-scores");
-  const tinyxml2::XMLElement* Landmarks       = Data->FirstChildElement("landmarks");
-  
-  LoadRealCognitiveScores(CognitiveScores);
-  LoadRealLandmarks(Landmarks);
+  is_data_real_ = true;
+  data_path_ = settings->FirstChildElement("folder-path")->GetText();
 
-  
+  group_path_ = data_path_ + settings->FirstChildElement("group-file")->GetText();
+  timepoints_path_ = data_path_ + settings->FirstChildElement("timepoints-file")->GetText();
+
+  // TODO : For the path to data, path to timepoints and path to group, need to check if it is ok!!!
+  /// Read the Cognitive scores
+  const tinyxml2::XMLElement* data = settings->FirstChildElement("observations");
+  const tinyxml2::XMLElement* cog_scores = data->FirstChildElement("cognitive-scores");
+  const tinyxml2::XMLElement* landmarks  = data->FirstChildElement("landmarks");
+
+  LoadRealCognitiveScores(cog_scores);
+  LoadRealLandmarks(landmarks);
+
 }
 
 
-void
-DataSettings
-::LoadRealCognitiveScores(const tinyxml2::XMLElement *Settings) {
-  
-  std::string Presence = Settings->FirstChildElement("presence")->GetText();
-  
-  if(Presence == "yes") 
-  {
-    m_CognitiveScoresPresence = true;
-    m_PathToCognitiveScores = m_PathToData + Settings->FirstChildElement("path-to-data")->GetText();
-    
-    if (!std::ifstream(m_PathToCognitiveScores))
-    {
-      std::cerr << "The file located at " << m_PathToCognitiveScores << " does not exist" << std::endl;
-    } 
+void DataSettings::LoadRealCognitiveScores(const tinyxml2::XMLElement *settings) {
 
-    m_CognitiveScoresDimension = atoi(Settings->FirstChildElement("dimension")->GetText());
-    
+  std::string Presence = settings->FirstChildElement("presence")->GetText();
 
-    std::cout << "The model is reading cognitive scores located at " << m_PathToCognitiveScores << std::endl;
-  }
-  else
-  {
-    m_CognitiveScoresPresence = false;
-  }
-}
-
-void 
-DataSettings
-::LoadRealLandmarks(const tinyxml2::XMLElement *Settings) 
-{
-  std::string Presence = Settings->FirstChildElement("presence")->GetText();
-  
   if(Presence == "yes")
   {
-    m_LandmarksPresence = true;
-    m_PathToLandmarks = m_PathToData + Settings->FirstChildElement("path-to-data")->GetText();
-    
-    if(!std::ifstream(m_PathToLandmarks))
+    are_cog_scores_present_ = true;
+    cog_scores_path_ = data_path_ + settings->FirstChildElement("path-to-data")->GetText();
+
+    if (!std::ifstream(cog_scores_path_))
     {
-      std::cerr << "The file located at " << m_PathToLandmarks << " does not exist" << std::endl;
+      std::cerr << "The file located at " << cog_scores_path_ << " does not exist" << std::endl;
     }
-    
-    m_LandmarksDimension = atoi(Settings->FirstChildElement("dimension")->GetText());
-    
-    std::cout << "The model is reading landmarks located at " << m_PathToLandmarks << std::endl;
+
+    cog_scores_dim_ = atoi(settings->FirstChildElement("dimension")->GetText());
+
+
+    std::cout << "The model is reading cognitive scores located at " << cog_scores_path_ << std::endl;
   }
   else
   {
-    m_LandmarksPresence = false;
+    are_cog_scores_present_ = false;
+  }
+}
+
+void DataSettings::LoadRealLandmarks(const tinyxml2::XMLElement *settings)
+{
+  std::string Presence = settings->FirstChildElement("presence")->GetText();
+
+  if(Presence == "yes")
+  {
+    are_landmarks_present_ = true;
+    landmarks_path = data_path_ + settings->FirstChildElement("path-to-data")->GetText();
+
+    if(!std::ifstream(landmarks_path))
+    {
+      std::cerr << "The file located at " << landmarks_path << " does not exist" << std::endl;
+    }
+
+    landmarks_dim_ = atoi(settings->FirstChildElement("dimension")->GetText());
+
+    std::cout << "The model is reading landmarks located at " << landmarks_path << std::endl;
+  }
+  else
+  {
+    are_landmarks_present_ = false;
   }
 }
 
 
-void
-DataSettings
-::LoadSimulatedDataSettings(const tinyxml2::XMLElement* Settings) {
+void DataSettings::LoadSimulatedDataSettings(const tinyxml2::XMLElement* settings) {
 
-  m_RealData = false;
+  is_data_real_ = false;
 
-  m_NumberOfSubjects = atoi(Settings->FirstChildElement("number-of-individuals")->GetText());
-  m_MinimumNumberOfObservations = atoi(Settings->FirstChildElement("min-number-of-observations")->GetText());
-  m_MaximumNumberOfObservations = atoi(Settings->FirstChildElement("max-number-of-observations")->GetText());
+  subjects_total_num_  = atoi(settings->FirstChildElement("number-of-individuals")->GetText());
+  min_observation_num_ = atoi(settings->FirstChildElement("min-number-of-observations")->GetText());
+  max_observation_num_ = atoi(settings->FirstChildElement("max-number-of-observations")->GetText());
 
   std::cout << "The model is simulating between ";
-  std::cout << m_MinimumNumberOfObservations << " and " << m_MaximumNumberOfObservations;
-  std::cout << " observations for " << m_NumberOfSubjects << " subjects" << std::endl;
+  std::cout << min_observation_num_ << " and " << max_observation_num_;
+  std::cout << " observations for " << subjects_total_num_ << " subjects" << std::endl;
 }
 
-  
-  
-}
+
+
+} //end namespace

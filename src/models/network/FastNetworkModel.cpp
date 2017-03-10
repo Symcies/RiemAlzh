@@ -5,7 +5,7 @@
 FastNetworkModel
 ::FastNetworkModel(io::ModelSettings &MS) 
 {
-  m_NbIndependentComponents = MS.GetNumberOfIndependentSources();
+  m_NbIndependentComponents = MS.GetIndependentSourcesNumber();
   
   std::string KernelMatrixPath = MS.GetInvertKernelPath();
   std::string InterpolationMatrixPath = MS.GetInterpolationKernelPath();

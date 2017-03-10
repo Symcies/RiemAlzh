@@ -42,12 +42,12 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-  
+
     /// Open observations
-    static Observations ReadObservations(DataSettings& DS);
-    
+    static Observations ReadObservations(DataSettings& ds);
+
     /// Open network propagation files
-    static MatrixType OpenKernel(std::string FilePath);
+    static MatrixType OpenKernel(std::string file_path);
 
 
 protected:
@@ -63,6 +63,6 @@ protected:
 
 };
 
-}
+} //end io namespace
 
 #endif //ReadData_h

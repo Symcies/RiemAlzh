@@ -6,31 +6,29 @@ namespace io {
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-ModelSettings
-::ModelSettings(const char *XMLFile) {
-  tinyxml2::XMLDocument Parameters;
-  Parameters.LoadFile(XMLFile);
+ModelSettings::ModelSettings(const char *xml_file) {
+  tinyxml2::XMLDocument parameters;
+  parameters.LoadFile(xml_file);
 
-  auto Settings = Parameters.FirstChildElement("model-settings");
+  auto settings = parameters.FirstChildElement("model-settings");
 
-  std::string Type = Settings->FirstChildElement("type")->GetText();
-  m_Type = Type;
+  type_ = settings->FirstChildElement("type")->GetText();
+  independent_sources_nb_ = atoi(settings->FirstChildElement("number-of-independent-sources")->GetText());
 
-  if (Type == "FastNetwork")
-    LoadFastNetwork(XMLFile);
-  else if (Type == "Meshwork")
-    LoadMeshworkModel(XMLFile);
-  else if (Type == "Network")
-    LoadNetworkModel(XMLFile);
-  else if (Type == "Multivariate")
-    LoadMultivariate(XMLFile);
-  else
+  if (type_ == "FastNetwork") {
+    LoadFastNetwork(settings);
+  } else if (type_ == "Meshwork") {
+    LoadMeshworkModel(settings);
+  } else if (type_ == "Network") {
+    LoadNetworkModel(settings);
+  } else if (type_ == "Multivariate") {
+    LoadMultivariate(settings);
+  } else {
     std::cerr << "The model type defined in model_settings.xml should be in {FastNetwork, Meshwork}";
+  }
 }
 
-ModelSettings
-::~ModelSettings() {
-
+ModelSettings::~ModelSettings() {
 }
 
 
@@ -43,69 +41,34 @@ ModelSettings
 /// Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
-ModelSettings
-::LoadFastNetwork(const char *XMLFile) {
-  tinyxml2::XMLDocument Parameters;
-  Parameters.LoadFile(XMLFile);
+void ModelSettings::LoadFastNetwork(const tinyxml2::XMLElement *settings) {
+  invert_kernel_matrix_path_ = settings->FirstChildElement("path-to-kernel-invKd")->GetText();
+  interpolation_matrix_path_ = settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
 
-  auto Settings = Parameters.FirstChildElement("model-settings");
-  
-  m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-independent-sources")->GetText());
-
-  m_InvertKernelMatrixPath = Settings->FirstChildElement("path-to-kernel-invKd")->GetText();
-  m_InterpolationMatrixPath = Settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
-
-  std::cout << "The model used is the " << m_Type << " model." << std::endl;
+  PrintModelInfo();
 }
 
 
-void
-ModelSettings
-::LoadMeshworkModel(const char *XMLFile) {
-  tinyxml2::XMLDocument Parameters;
-  Parameters.LoadFile(XMLFile);
+void ModelSettings::LoadMeshworkModel(const tinyxml2::XMLElement *settings) {
+  invert_kernel_matrix_path_ = settings->FirstChildElement("path-to-kernel-invKd")->GetText();
+  interpolation_matrix_path_ = settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
 
-  auto Settings = Parameters.FirstChildElement("model-settings");
-  
-  m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-independent-sources")->GetText());
-
-  m_InvertKernelMatrixPath = Settings->FirstChildElement("path-to-kernel-invKd")->GetText();
-  m_InterpolationMatrixPath = Settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
-
-  std::cout << "The model used is the " << m_Type << " model." << std::endl;
+  PrintModelInfo();
 }
 
-void
-ModelSettings
-::LoadNetworkModel(const char *XMLFile) {
-  tinyxml2::XMLDocument Parameters;
-  Parameters.LoadFile(XMLFile);
+void ModelSettings::LoadNetworkModel(const tinyxml2::XMLElement *settings) {
+  invert_kernel_matrix_path_ = settings->FirstChildElement("path-to-kernel-invKd")->GetText();
+  interpolation_matrix_path_ = settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
 
-  auto Settings = Parameters.FirstChildElement("model-settings");
-  
-  m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-independent-sources")->GetText());
-
-  m_InvertKernelMatrixPath = Settings->FirstChildElement("path-to-kernel-invKd")->GetText();
-  m_InterpolationMatrixPath = Settings->FirstChildElement("path-to-kernel-Kxd")->GetText();
-
-  std::cout << "The model used is the " << m_Type << " model." << std::endl;
+  PrintModelInfo();
 }
 
-void
-ModelSettings
-::LoadMultivariate(const char *XMLFile) 
-{
-  tinyxml2::XMLDocument Parameters;
-  Parameters.LoadFile(XMLFile);
-  
-  auto Settings = Parameters.FirstChildElement("model-settings");
-  
-  m_NbIndependentSources = atoi(Settings->FirstChildElement("number-of-independent-sources")->GetText());
-  
-  std::cout << "The model used is the " << m_Type << " model." << std::endl;
+void ModelSettings::LoadMultivariate(const tinyxml2::XMLElement *settings) {
+  PrintModelInfo();
 }
 
-
+void ModelSettings::PrintModelInfo(){
+  std::cout << "The model used is the " << type_ << " model." << std::endl;
+}
 
 }
