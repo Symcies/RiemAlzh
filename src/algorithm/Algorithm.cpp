@@ -6,197 +6,200 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-Algorithm
-::Algorithm(io::AlgorithmSettings& Settings) 
-{
+Algorithm::Algorithm(io::AlgorithmSettings& settings) {
   /// Initialize the algorithm attributes
   // TODO : check if it is enough, based on future needs
-  m_MaxNumberOfIterations   = Settings.GetMaximumNumberOfIterations();
-  m_BurnIn                  = Settings.GetNumberOfBurnInIterations();
-  m_CounterToDisplayOutputs = Settings.GetCounterToDisplayOutputs();
-  m_CounterToSaveData       = Settings.GetCounterToSaveData();
+  max_iter_num_                   = settings.GetMaximumNumberOfIterations();
+  burnin_iter_num_                = settings.GetNumberOfBurnInIterations();
+  output_iter_ = settings.GetOutputDisplayIteration();
+  data_save_iter_      = settings.GetDataSaveIteration();
 }
 
 
-Algorithm
-::~Algorithm()
-{ }
+Algorithm::~Algorithm() {
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Other method(s) :
+// Core method :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
-Algorithm
-::ComputeMCMCSAEM(const Observations& Obs)
-{
+void Algorithm::ComputeMCMCSAEM(const Observations& obs) {
   /// This function is core to the software. It initialize parts of the model and sampler
   /// and runs the MCMC-SAEM algorithm. The class attributes define the properties of the MCMC-SAEM
-  InitializeModel(Obs);
+  InitializeModel(obs);
   InitializeSampler();
-  InitializeStochasticSufficientStatistics(Obs);
+  InitializeStochasticSufficientStatistics(obs);
 
-  for(m_IterationCounter = 0; m_IterationCounter < m_MaxNumberOfIterations; m_IterationCounter += 1)
+  for(int iter = 0; iter < max_iter_num_; iter ++)
   {
-    if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { std::cout  << std::endl << "--------------------- Iteration " << m_IterationCounter << " -------------------------------" << std::endl; }
-    
-    ComputeSimulationStep(Obs);
-    SufficientStatisticsVector SufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, Obs);
-    ComputeStochasticApproximation(SufficientStatistics);
-    m_Model->UpdateRandomVariables(m_StochasticSufficientStatistics);
-    
-    if( m_IterationCounter%m_CounterToDisplayOutputs == 0 ) { DisplayOutputs(); }
-    if( m_IterationCounter%m_CounterToSaveData == 0) { m_Model->SaveData(m_IterationCounter, *m_Realizations); }
-      
+    IterationMCMCSAEM(obs, iter);
   }
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Method(s) :
+// Method(s) : Initialization
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
-Algorithm
-::InitializeStochasticSufficientStatistics(const Observations& Obs)
+void Algorithm::InitializeStochasticSufficientStatistics(const Observations& obs)
 {
   /// It initialize the stochastic sufficient statistics by copying the one from the model.
   /// Pitfall : it computes the suff stat of the model where only the length is needed
-  
-  m_StochasticSufficientStatistics = m_Model->GetSufficientStatistics(*m_Realizations, Obs);
-  for(auto&& it : m_StochasticSufficientStatistics)
+
+  stochastic_sufficient_stats_ = model_->GetSufficientStatistics(*realizations_, obs);
+  for(auto&& it : stochastic_sufficient_stats_)
     std::fill(it.begin(), it.end(), 0.0);
-  
+
 }
 
 
-void
-Algorithm
-::InitializeModel(const Observations& Obs) 
+void Algorithm::InitializeModel(const Observations& obs)
 {
   /// It initialize the model, draw its respective realizations and initialize the acceptance ratios
   /// which are key to observe the algorithm convergence
-    
-  m_Model->Initialize(Obs);
-  Realizations R = m_Model->SimulateRealizations();
-  
-  m_Realizations = std::make_shared<Realizations>(R);
-  m_Model->UpdateModel(R, -1);
-  
-  for(auto it = m_Realizations->begin(); it != m_Realizations->end(); ++it)
+
+  model_->Initialize(obs);
+  Realizations real = model_->SimulateRealizations();
+
+  realizations_ = std::make_shared<Realizations>(real);
+  model_->UpdateModel(real, -1);
+
+  for(auto it = realizations_->begin(); it != realizations_->end(); ++it)
   {
     VectorType v(it->second.size(), 0);
-    m_AcceptanceRatios[it->first] = v;
+    acceptance_ratio_[it->first] = v;
   }
 
 }
 
-void 
-Algorithm
-::InitializeSampler()
+void Algorithm::InitializeSampler()
 {
-  m_Sampler->InitializeSampler(*m_Realizations, *m_Model);
+  sampler_->InitializeSampler(*realizations_, *model_);
 }
 
-void
-Algorithm
-::ComputeSimulationStep(const Observations& Obs)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Method(s) : Iteration
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void Algorithm::IterationMCMCSAEM(const Observations& obs, int iter){
+  if( IsOutputIteration(iter) ) {
+    DisplayIterations(iter);
+  }
+
+  ComputeSimulationStep(obs, iter);
+  SufficientStatisticsVector sufficient_stats = model_->GetSufficientStatistics(*realizations_, obs);
+  ComputeStochasticApproximation(sufficient_stats, iter);
+  model_->UpdateRandomVariables(stochastic_sufficient_stats_);
+
+  if( IsOutputIteration(iter) ) {
+    DisplayOutputs();
+  }
+  if( IsDataSaveIteration(iter)) {
+    model_->SaveData(iter, *realizations_);
+  }
+}
+
+void Algorithm::ComputeSimulationStep(const Observations& obs, int iter)
 {
   /// It compute the simulate step to draw new realizations based on the previous one.
   /// The previous realizations are kept to compute the acceptance ratio
-  
-  Realizations PreviousRealisations = *m_Realizations;
-  m_Sampler->Sample(*m_Realizations, *m_Model, Obs);
-  ComputeAcceptanceRatio(PreviousRealisations);
+
+  Realizations prev_realizations = *realizations_;
+  sampler_->Sample(*realizations_, *model_, obs);
+  ComputeAcceptanceRatio(prev_realizations,iter);
 }
 
 
-void 
-Algorithm
-::ComputeStochasticApproximation(SufficientStatisticsVector& S)
-{   
-  /// It comptue the stochastic approximation step S_(k+1) = S(k) + stochastic variation of the previous state
-  assert(S.size() == m_StochasticSufficientStatistics.size()); 
-  
-  double StepSize = DecreasingStepSize();
-  auto itStochS = m_StochasticSufficientStatistics.begin();
-  
-  for(auto itS = S.begin(); itS != S.end(); ++itS, ++itStochS)
-      *itStochS += StepSize * (*itS - *itStochS);
-  
-}
-
-
-double
-Algorithm
-::DecreasingStepSize()
+void Algorithm::ComputeAcceptanceRatio(Realizations& prev_real_, int iter)
 {
-    double Q = (double)m_IterationCounter - (double)m_BurnIn;
-    double Epsilon = std::max(1.0, Q);
-    return 1.0 / pow(Epsilon, 0.6); // TODO : TO CHECK
+  for(auto it = realizations_->begin(); it != acceptance_ratio_.end(); ++it)
+  {
+      int key_var = it->first;
+
+      VectorType new_real = it->second;
+      VectorType prev_real = prev_real_.at(key_var);
+
+      auto iter_prev_real_ = prev_real.begin();
+      auto iter_new_real = new_real.begin();
+      auto iter_accept_ratio = acceptance_ratio_.at(key_var).begin();
+
+      for(    ; iter_prev_real_ != prev_real.end() && iter_new_real != new_real.end() && iter_accept_ratio != acceptance_ratio_.at(key_var).end()
+              ; ++iter_prev_real_, ++iter_new_real, ++iter_accept_ratio)
+      {
+          bool Change = (*iter_new_real != *iter_prev_real_);
+          *iter_accept_ratio = (*iter_accept_ratio * iter + Change ) / (iter + 1);
+      }
+  }
+
+    if(iter%output_iter_ == 0) { DisplayAcceptanceRatio(); }
 }
 
+void Algorithm::ComputeStochasticApproximation(SufficientStatisticsVector& stat_vector, int iter)
+{
+  /// It comptue the stochastic approximation step S_(k+1) = stat_vector(k) + stochastic variation of the previous state
+  assert(stat_vector.size() == stochastic_sufficient_stats_.size());
+
+  double step_size = DecreasingStepSize(iter);
+  auto it_stoch_s = stochastic_sufficient_stats_.begin();
+
+  for(auto it_s = stat_vector.begin(); it_s != stat_vector.end(); ++it_s, ++it_stoch_s)
+      *it_stoch_s += step_size * (*it_s - *it_stoch_s);
+
+}
+
+
+double Algorithm::DecreasingStepSize(int iter)
+{
+    double Q = (double)iter - (double)burnin_iter_num_;
+    double epsilon = std::max(1.0, Q);
+    return 1.0 / pow(epsilon, 0.6); // TODO : TO CHECK
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Method(s) : Conditions
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool Algorithm::IsOutputIteration(int iter){
+  return (iter%output_iter_ == 0);
+}
+
+bool Algorithm::IsDataSaveIteration(int iter){
+  return (iter%data_save_iter_ == 0);
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Output(s)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void Algorithm::DisplayIterations(int iter){
+    std::cout  << std::endl << "--------------------- Iteration " <<
+    iter << " -------------------------------" << std::endl;
+}
 
-void
-Algorithm
-::DisplayOutputs()
+void Algorithm::DisplayOutputs()
 {
-    m_Model->DisplayOutputs(*m_Realizations);
+    model_->DisplayOutputs(*realizations_);
 }
 
-void
-Algorithm
-::ComputeAcceptanceRatio(Realizations& PreviousReals)
-{ 
-    
-
-  for(auto it = m_Realizations->begin(); it != m_AcceptanceRatios.end(); ++it)
-  {
-      int KeyVariable = it->first;
-      
-      VectorType NewReal = it->second;
-      VectorType PrevReal = PreviousReals.at(KeyVariable);
-      
-      auto IterPrevReal = PrevReal.begin();
-      auto IterNewReal = NewReal.begin();
-      auto IterAcceptRatio = m_AcceptanceRatios.at(KeyVariable).begin();
-      
-      for(    ; IterPrevReal != PrevReal.end() && IterNewReal != NewReal.end() && IterAcceptRatio != m_AcceptanceRatios.at(KeyVariable).end()
-              ; ++IterPrevReal, ++IterNewReal, ++IterAcceptRatio)
-      {
-          bool Change = (*IterNewReal != *IterPrevReal);
-          *IterAcceptRatio = (*IterAcceptRatio * m_IterationCounter + Change ) / (m_IterationCounter + 1);
-      }
-  }
-    
-    if(m_IterationCounter%m_CounterToDisplayOutputs == 0) { DisplayAcceptanceRatio(); }
-}
-
-void
-Algorithm
-::DisplayAcceptanceRatio() {
+void Algorithm::DisplayAcceptanceRatio() {
     std::cout << "AcceptRatio: ";
-    
-    auto NamesToShow = {"Tau", "Ksi", "Beta#1", "Delta#3"};
-    
-    for(auto it = NamesToShow.begin(); it != NamesToShow.end(); ++it)
+
+    auto names_to_show = {"Tau", "Ksi", "Beta#1", "Delta#3"};
+
+    for(auto it = names_to_show.begin(); it != names_to_show.end(); ++it)
     {
-        std::string Name = *it;
-        int Key = m_Realizations->ReverseNameToKey(Name);
-        VectorType Ratios = m_AcceptanceRatios.at(Key);
-        
-        std::cout << Name << ": " << Ratios.mean_value();
-        if(Ratios.size() != 1)
-            std::cout << " & Min: " << Ratios.min_value() << " & Max: " << Ratios.max_value();
+        std::string name = *it;
+        int key = realizations_->ReverseNameToKey(name);
+        VectorType ratios = acceptance_ratio_.at(key);
+
+        std::cout << name << ": " << ratios.mean_value();
+        if(ratios.size() != 1)
+            std::cout << " & Min: " << ratios.min_value() << " & Max: " << ratios.max_value();
         std::cout << ". ";
     }
     std::cout << std::endl;
-    
+
     /// Useless for now because all delta or beta are the same
     /*
     auto InName = {"Delta", "Beta"};
@@ -206,11 +209,11 @@ Algorithm
         double Max = 0;
         double Mean = 0;
         int Count = 0;
-        for(auto it2 = m_AcceptanceRatios.begin(); it2 != m_AcceptanceRatios.end(); ++it2)
+        for(auto it2 = acceptance_ratio_.begin(); it2 != acceptance_ratio_.end(); ++it2)
         {
-            std::string Name = m_Realizations->ReverseKeyToName(it2->first);
-            Name = Name.substr(0, Name.find_first_of("#"));
-            if(Name == *it)
+            std::string name = realizations_->ReverseKeyToName(it2->first);
+            name = name.substr(0, name.find_first_of("#"));
+            if(name == *it)
             {
                 ++Count;
                 double AccepVal = it2->second(0);
@@ -219,11 +222,10 @@ Algorithm
                 Mean += AccepVal;
             }
         }
-        
-        std::cout << *it <<"(Min/Mean/Max): " << Min << "/" << Mean/Count << "/" << Max << ". ";  
+
+        std::cout << *it <<"(Min/Mean/Max): " << Min << "/" << Mean/Count << "/" << Max << ". ";
     }
     std::cout << std::endl;
     */
-    
-}
 
+}

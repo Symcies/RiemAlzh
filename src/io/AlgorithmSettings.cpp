@@ -16,10 +16,10 @@ AlgorithmSettings::AlgorithmSettings(char *xml_file) {
 
     max_num_iter_ = atoi(
             settings->FirstChildElement("max-iterations")->GetText());
-    num_burn_iter_ = atoi(settings->FirstChildElement("burn-in")->GetText());
-    counter_to_next_output_display_ = atoi(
+    num_burnin_iter_ = atoi(settings->FirstChildElement("burn-in")->GetText());
+    output_iter_ = atoi(
             settings->FirstChildElement("step-size-to-display")->GetText());
-    counter_to_next_data_save_ = atoi(settings->FirstChildElement("step-size-to-save")->GetText());
+    data_save_iter_ = atoi(settings->FirstChildElement("step-size-to-save")->GetText());
 }
 
 

@@ -32,13 +32,13 @@ public:
     unsigned int GetMaximumNumberOfIterations() { return max_num_iter_; }
 
     /// Get the number of burn-in iterations
-    unsigned int GetNumberOfBurnInIterations() { return num_burn_iter_; }
+    unsigned int GetNumberOfBurnInIterations() { return num_burnin_iter_; }
 
     /// Get the number of iterations to wait till newt output display
-    unsigned int GetCounterToDisplayOutputs() { return counter_to_next_output_display_; }
+    unsigned int GetOutputDisplayIteration() { return output_iter_; }
 
     /// Get the number of iteration to wait till next data saving
-    unsigned int GetCounterToSaveData() { return counter_to_next_data_save_; }
+    unsigned int GetDataSaveIteration() { return data_save_iter_; }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,17 +55,17 @@ private:
     unsigned int max_num_iter_;
 
     /// Number of Burn-In Iterations
-    unsigned int num_burn_iter_;
+    unsigned int num_burnin_iter_;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Display attribute(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Number of iterations to wait till newt output display
-    unsigned int counter_to_next_output_display_;
+    unsigned int output_iter_;
 
     /// Number of iteration to wait till next data saving
-    unsigned int counter_to_next_data_save_;
+    unsigned int data_save_iter_;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
