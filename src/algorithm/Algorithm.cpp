@@ -9,10 +9,10 @@
 Algorithm::Algorithm(io::AlgorithmSettings& settings) {
   /// Initialize the algorithm attributes
   // TODO : check if it is enough, based on future needs
-  max_iter_num_                   = settings.GetMaximumNumberOfIterations();
-  burnin_iter_num_                = settings.GetNumberOfBurnInIterations();
-  output_iter_ = settings.GetOutputDisplayIteration();
-  data_save_iter_      = settings.GetDataSaveIteration();
+  max_iter_num_     = settings.GetMaximumNumberOfIterations();
+  burnin_iter_num_  = settings.GetNumberOfBurnInIterations();
+  output_iter_      = settings.GetOutputDisplayIteration();
+  data_save_iter_   = settings.GetDataSaveIteration();
 }
 
 
@@ -106,9 +106,9 @@ void Algorithm::ComputeSimulationStep(const Observations& obs, int iter)
   /// It compute the simulate step to draw new realizations based on the previous one.
   /// The previous realizations are kept to compute the acceptance ratio
 
-  Realizations prev_realizations = *realizations_;
+  Realizations prev_reals = *realizations_;
   sampler_->Sample(*realizations_, *model_, obs);
-  ComputeAcceptanceRatio(prev_realizations,iter);
+  ComputeAcceptanceRatio(prev_reals , iter);
 }
 
 
