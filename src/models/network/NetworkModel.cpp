@@ -13,10 +13,10 @@ NetworkModel
   m_InterpolationMatrix = io::ReadData::OpenKernel(InterpolationMatrixPath);
 
   m_NbControlPoints = m_InvertKernelMatrix.columns();
-  m_ManifoldDimension = m_InterpolationMatrix.rows();
-  m_Thicknesses.set_size(m_ManifoldDimension);
-  m_Nus.set_size(m_ManifoldDimension);
-  m_Block.set_size(m_ManifoldDimension);
+  manifold_dim_ = m_InterpolationMatrix.rows();
+  m_Thicknesses.set_size(manifold_dim_);
+  nus_.set_size(manifold_dim_);
+  m_Block.set_size(manifold_dim_);
 }
 
 NetworkModel
@@ -35,43 +35,43 @@ NetworkModel
 ::Initialize(const Observations& Obs)
 {
   /// Data-related attributes
-  m_NumberOfSubjects          = Obs.GetNumberOfSubjects();
-  m_IndividualObservationDate = Obs.GetObservations();
-  m_SubjectTimePoints         = Obs.GetObservations();
-  m_NbTotalOfObservations     = Obs.GetTotalNumberOfObservations();
-  m_SumObservations           = Obs.GetTotalSumOfLandmarks();
+  subjects_tot_num_          = Obs.GetNumberOfSubjects();
+  indiv_obs_date_ = Obs.GetObservations();
+  indiv_time_points_         = Obs.GetObservations();
+  obs_tot_num_     = Obs.GetTotalNumberOfObservations();
+  sum_obs_           = Obs.GetTotalSumOfLandmarks();
 
 
   /// Noise
   m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.00001 );
 
   /// Population variables
-  m_RandomVariables.AddRandomVariable("P", "Gaussian", {0.13, 0.0001 * 0.0001});
-  m_RealizationsPerRandomVariable["P"] = m_NbControlPoints;
+  rand_var_.AddRandomVariable("P", "Gaussian", {0.13, 0.0001 * 0.0001});
+  asso_num_real_per_rand_var_["P"] = m_NbControlPoints;
 
-  m_RandomVariables.AddRandomVariable("Nu", "Gaussian", {0.04088, 0.001*0.001});
-  m_RealizationsPerRandomVariable["Nu"] = m_NbControlPoints;
+  rand_var_.AddRandomVariable("Nu", "Gaussian", {0.04088, 0.001*0.001});
+  asso_num_real_per_rand_var_["Nu"] = m_NbControlPoints;
 
-  for(int i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
+  for(int i = 0; i < m_NbIndependentSources*(manifold_dim_ - 1); ++i)
   {
       std::string Name = "Beta#" + std::to_string(i);
-      m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0, 0.001*0.001});
-      m_RealizationsPerRandomVariable.insert({Name, 1});
+      rand_var_.AddRandomVariable(Name, "Gaussian", {0, 0.001*0.001});
+      asso_num_real_per_rand_var_.insert({Name, 1});
   }
 
 
   /// Individual variables
-  m_RandomVariables.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
-  m_RealizationsPerRandomVariable.insert({"Ksi", m_NumberOfSubjects});
+  rand_var_.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
+  asso_num_real_per_rand_var_.insert({"Ksi", subjects_tot_num_});
 
-  m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {75, 0.5});
-  m_RealizationsPerRandomVariable.insert({"Tau", m_NumberOfSubjects});
+  rand_var_.AddRandomVariable("Tau", "Gaussian", {75, 0.5});
+  asso_num_real_per_rand_var_.insert({"Tau", subjects_tot_num_});
 
   for(int i = 0; i < m_NbIndependentSources; ++i)
   {
       std::string Name = "S#" + std::to_string(i);
-      m_RandomVariables.AddRandomVariable(Name, "Gaussian", {0.0, 1});
-      m_RealizationsPerRandomVariable.insert({Name, m_NumberOfSubjects});
+      rand_var_.AddRandomVariable(Name, "Gaussian", {0.0, 1});
+      asso_num_real_per_rand_var_.insert({Name, subjects_tot_num_});
   }
 }
 
@@ -183,9 +183,9 @@ NetworkModel
 ::GetSufficientStatistics(const Realizations &R, const Observations& Obs)
 {
   /// S1 <- y_ij * eta_ij    &    S2 <- eta_ij * eta_ij
-  VectorType S1(m_NbTotalOfObservations), S2(m_NbTotalOfObservations);
+  VectorType S1(obs_tot_num_), S2(obs_tot_num_);
   auto itS1 = S1.begin(), itS2 = S2.begin();
-  for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+  for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
       for(size_t j = 0; j < Obs.GetNumberOfTimePoints(i); ++j)
       {
@@ -205,9 +205,9 @@ NetworkModel
   VectorType S6 = R.at("Nu") % R.at("Nu");
 
   /// Sufficient statistic beta_k
-  VectorType S7((m_ManifoldDimension-1) * m_NbIndependentSources);
+  VectorType S7((manifold_dim_-1) * m_NbIndependentSources);
   ScalarType * itS7 = S7.memptr();
-  for(size_t i = 0; i < ((m_ManifoldDimension-1) * m_NbIndependentSources); ++i)
+  for(size_t i = 0; i < ((manifold_dim_-1) * m_NbIndependentSources); ++i)
       itS7[i] = R.at("Beta#" + std::to_string(i), 0);
 
   /// Sufficient statistic Ksi_i * Ksi_i
@@ -226,13 +226,13 @@ NetworkModel
 ::UpdateRandomVariables(const SufficientStatisticsVector &SS)
 {
   /// Update the noise variance, sigma
-  ScalarType NoiseVariance = m_SumObservations;
+  ScalarType NoiseVariance = sum_obs_;
   const ScalarType * itS1 = SS[0].memptr();
   const ScalarType * itS2 = SS[1].memptr();
   for(size_t i = 0; i < SS[0].size(); ++i)
       NoiseVariance += - 2 * itS1[i] + itS2[i];
 
-  NoiseVariance /= m_NbTotalOfObservations * m_ManifoldDimension;
+  NoiseVariance /= obs_tot_num_ * manifold_dim_;
   m_Noise->SetVariance(NoiseVariance);
 
 
@@ -251,7 +251,7 @@ NetworkModel
   PVariance -= m_NbControlPoints * PMean * PMean;
   PVariance /= m_NbControlPoints;
 
-  m_RandomVariables.UpdateRandomVariable("P", {{"Mean", PMean}, {"Variance", PVariance}});
+  rand_var_.UpdateRandomVariable("P", {{"Mean", PMean}, {"Variance", PVariance}});
 
   /// Update Nu_k : Mean and Var
   ScalarType NuMean = 0.0, NuVariance = 0.0;
@@ -268,23 +268,23 @@ NetworkModel
   NuVariance -= m_NbControlPoints * NuMean * NuMean;
   NuVariance /= m_NbControlPoints;
 
-  m_RandomVariables.UpdateRandomVariable("Nu", {{"Mean", NuMean}, {"Variance", NuVariance}});
+  rand_var_.UpdateRandomVariable("Nu", {{"Mean", NuMean}, {"Variance", NuVariance}});
 
   /// Update Beta_k : Mean
   const ScalarType * itS7 = SS[6].memptr();
   for(size_t i = 0; i < SS[6].size(); ++i)
-    m_RandomVariables.UpdateRandomVariable("Beta#" + std::to_string(i), {{"Mean", itS7[i]}});
+    rand_var_.UpdateRandomVariable("Beta#" + std::to_string(i), {{"Mean", itS7[i]}});
 
   /// Update Ksi : Mean and Variance
   ScalarType KsiVariance = 0.0;
   const ScalarType * itS8 = SS[7].memptr();
 
-  for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+  for(size_t i = 0; i < subjects_tot_num_; ++i)
     KsiVariance += itS4[i];
 
-  KsiVariance /= m_NumberOfSubjects;
+  KsiVariance /= subjects_tot_num_;
 
-  m_RandomVariables.UpdateRandomVariable("Ksi", {{"Variance", KsiVariance}});
+  rand_var_.UpdateRandomVariable("Ksi", {{"Variance", KsiVariance}});
 
 
   /// Update Tau : Mean and Variance
@@ -292,17 +292,17 @@ NetworkModel
   const ScalarType * itS9  = SS[8].memptr();
   const ScalarType * itS10 = SS[9].memptr();
 
-  for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+  for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
       TauMean     += itS9[i];
       TauVariance += itS10[i];
   }
 
-  TauMean     /= m_NumberOfSubjects;
-  TauVariance -= m_NumberOfSubjects * TauMean * TauMean;
-  TauVariance /= m_NumberOfSubjects;
+  TauMean     /= subjects_tot_num_;
+  TauVariance -= subjects_tot_num_ * TauMean * TauMean;
+  TauVariance /= subjects_tot_num_;
 
-  m_RandomVariables.UpdateRandomVariable("Tau", {{"Mean", TauMean}, {"Variance", TauVariance}});
+  rand_var_.UpdateRandomVariable("Tau", {{"Mean", TauMean}, {"Variance", TauVariance}});
 
 
 
@@ -314,7 +314,7 @@ NetworkModel
 {
   double LogLikelihood = 0;
 
-  for(size_t i = 0; i < m_NumberOfSubjects; ++i) 
+  for(size_t i = 0; i < subjects_tot_num_; ++i) 
   {
    ScalarType N = Obs.GetNumberOfTimePoints(i);
     
@@ -327,7 +327,7 @@ NetworkModel
   }
   
   LogLikelihood /= -2*m_Noise->GetVariance();
-  LogLikelihood -= m_NbTotalOfObservations*log(sqrt(2 * m_Noise->GetVariance() * M_PI ));
+  LogLikelihood -= obs_tot_num_*log(sqrt(2 * m_Noise->GetVariance() * M_PI ));
   
   return LogLikelihood;
 }
@@ -358,21 +358,21 @@ Observations
 NetworkModel
 ::SimulateData(io::DataSettings &DS)
 {
-  m_NumberOfSubjects = DS.GetNumberOfSimulatedSubjects();
+  subjects_tot_num_ = DS.GetNumberOfSimulatedSubjects();
 
   /// Initialize the realizations and simulate them
-  m_RealizationsPerRandomVariable["P"] = m_NbControlPoints;
+  asso_num_real_per_rand_var_["P"] = m_NbControlPoints;
 
-  m_RealizationsPerRandomVariable["Nu"] = m_NbControlPoints;
+  asso_num_real_per_rand_var_["Nu"] = m_NbControlPoints;
 
-  for(size_t i = 0; i <  m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
-      m_RealizationsPerRandomVariable["Beta#" + std::to_string(i)] = 1;
+  for(size_t i = 0; i <  m_NbIndependentSources*(manifold_dim_ - 1); ++i)
+      asso_num_real_per_rand_var_["Beta#" + std::to_string(i)] = 1;
 
-  m_RealizationsPerRandomVariable["Ksi"] = m_NumberOfSubjects;
-  m_RealizationsPerRandomVariable["Tau"] = m_NumberOfSubjects;
+  asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
+  asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
 
   for(int i = 0; i < m_NbIndependentSources; ++i)
-      m_RealizationsPerRandomVariable["S#" + std::to_string(i)] = m_NumberOfSubjects;
+      asso_num_real_per_rand_var_["S#" + std::to_string(i)] = subjects_tot_num_;
 
   auto R = SimulateRealizations();
 
@@ -393,19 +393,19 @@ NetworkModel
   
   /// Simulate the data
   Observations Obs;
-  for(int i = 0; i < m_NumberOfSubjects; ++i)
+  for(int i = 0; i < subjects_tot_num_; ++i)
   { 
     /// Get a random number of timepoints and sort them
     VectorType T = NumberOfTimePoints.Samples(Uni(RNG));
     T.sort();
-    m_SubjectTimePoints.push_back(T);
+    indiv_time_points_.push_back(T);
     
     /// Simulate the data base on the time-points
     IndividualObservations IO(T);   
     std::vector<VectorType> Landmarks;
     for(size_t j = 0; j < T.size(); ++j)
     {
-      Landmarks.push_back(ComputeParallelCurve(i, j) + Noise.Samples(m_ManifoldDimension));
+      Landmarks.push_back(ComputeParallelCurve(i, j) + Noise.Samples(manifold_dim_));
     }
     
     IO.AddLandmarks(Landmarks);
@@ -414,9 +414,9 @@ NetworkModel
   
   /// Initialize the observation and model attributes
   Obs.InitializeGlobalAttributes();
-  m_IndividualObservationDate = Obs.GetObservations();
-  m_SumObservations           = Obs.GetTotalSumOfLandmarks();
-  m_NbTotalOfObservations     = Obs.GetTotalNumberOfObservations();
+  indiv_obs_date_ = Obs.GetObservations();
+  sum_obs_           = Obs.GetTotalSumOfLandmarks();
+  obs_tot_num_     = Obs.GetTotalNumberOfObservations();
   
   return Obs;
 }
@@ -444,12 +444,12 @@ const
 
   /// Insert Beta
   MiniBlock Beta;
-  for(size_t i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
+  for(size_t i = 0; i < m_NbIndependentSources*(manifold_dim_ - 1); ++i)
     Beta.push_back(std::make_pair("Beta#" + std::to_string(i), 0));
   Blocks.push_back(std::make_pair(PopulationType, Beta));
 
   /// Individual variables
-  for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+  for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
     MiniBlock IndividualBlock;
     IndividualBlock.push_back(std::make_pair("Ksi", i));
@@ -472,14 +472,14 @@ void
 NetworkModel
 ::DisplayOutputs(const Realizations &R)
 {
-  auto P = m_RandomVariables.GetRandomVariable("P");
+  auto P = rand_var_.GetRandomVariable("P");
   auto PReal = R.at("P");
 
-  auto Nu = m_RandomVariables.GetRandomVariable("Nu");
+  auto Nu = rand_var_.GetRandomVariable("Nu");
   auto NuReal = R.at("Nu");
 
-  auto Tau = m_RandomVariables.GetRandomVariable("Tau");
-  auto Ksi = m_RandomVariables.GetRandomVariable("Ksi");
+  auto Tau = rand_var_.GetRandomVariable("Tau");
+  auto Ksi = rand_var_.GetRandomVariable("Ksi");
 
   std::cout << "Noise: " << m_Noise->GetVariance() << " - PMean: " << exp(P->GetParameter("Mean"));
   std::cout << " - PVar: " << P->GetParameter("Variance") << " - PMin: " << exp(PReal.min_value()) << " - PMax: " << exp(PReal.max_value());
@@ -502,7 +502,7 @@ NetworkModel
   Outputs << m_Noise->GetVariance() << std::endl;
 
   /// Save the number of subjects, the manifold dimension, the number of sources, and, the number of control points
-  Outputs << m_NumberOfSubjects << ", " << m_ManifoldDimension << ", " << m_NbIndependentSources << ", " << m_NbControlPoints << std::endl;
+  Outputs << subjects_tot_num_ << ", " << manifold_dim_ << ", " << m_NbIndependentSources << ", " << m_NbControlPoints << std::endl;
 
   /// Save the thicknesses
   for(size_t i = 0; i < m_NbControlPoints; ++i)
@@ -521,22 +521,22 @@ NetworkModel
   Outputs << std::endl;
 
       /// Save the tau
-  for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+  for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
       Outputs << R.at("Tau", i) ;
-      if(i != m_NumberOfSubjects - 1) { Outputs << ", ";}
+      if(i != subjects_tot_num_ - 1) { Outputs << ", ";}
   }
   Outputs << std::endl;
 
   /// Save the ksi
-  for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+  for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
       Outputs << R.at("Ksi", i) ;
-      if(i != m_NumberOfSubjects - 1) { Outputs << ", ";}
+      if(i != subjects_tot_num_ - 1) { Outputs << ", ";}
   }
 
   /// Save (S_i)
-  for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+  for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
       for(size_t j = 0; j < m_NbIndependentSources; ++j)
       {
@@ -547,10 +547,10 @@ NetworkModel
   }
 
   /// Save (W_i)
-  auto SizeW = m_NumberOfSubjects;
-  for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+  auto SizeW = subjects_tot_num_;
+  for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
-      VectorType W = m_SpaceShifts.get_column(i);
+      VectorType W = space_shifts_.get_column(i);
       for(auto it = W.begin(); it != W.end(); ++it)
       {
           Outputs << *it;
@@ -574,18 +574,18 @@ NetworkModel
   m_Noise = std::make_shared<GaussianRandomVariable>( 0.0, 0.00001 );
 
   /// Population variables
-  m_RandomVariables.AddRandomVariable("P",  "Gaussian", {0.13, 0.00005 * 0.00005});
-  m_RandomVariables.AddRandomVariable("Nu", "Gaussian", {0.04088, 0.001*0.001});
+  rand_var_.AddRandomVariable("P",  "Gaussian", {0.13, 0.00005 * 0.00005});
+  rand_var_.AddRandomVariable("Nu", "Gaussian", {0.04088, 0.001*0.001});
 
-  for(int i = 0; i < m_NbIndependentSources*(m_ManifoldDimension - 1); ++i)
-      m_RandomVariables.AddRandomVariable("Beta#" + std::to_string(i), "Gaussian", {0, 0.001*0.001});
+  for(int i = 0; i < m_NbIndependentSources*(manifold_dim_ - 1); ++i)
+      rand_var_.AddRandomVariable("Beta#" + std::to_string(i), "Gaussian", {0, 0.001*0.001});
 
   /// Individual variables
-  m_RandomVariables.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
-  m_RandomVariables.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
+  rand_var_.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
+  rand_var_.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
 
   for(int i = 0; i < m_NbIndependentSources; ++i)
-      m_RandomVariables.AddRandomVariable("S#" + std::to_string(i), "Gaussian", {0.0, 1});
+      rand_var_.AddRandomVariable("S#" + std::to_string(i), "Gaussian", {0.0, 1});
 
 }
 
@@ -602,17 +602,17 @@ NetworkModel
   {
       double AccFactor = exp(R.at("Ksi", SubjectNumber));
       double TimeShift = R.at("Tau", SubjectNumber);
-      m_SubjectTimePoints[SubjectNumber] = AccFactor * (m_IndividualObservationDate[SubjectNumber] - TimeShift);
+      indiv_time_points_[SubjectNumber] = AccFactor * (indiv_obs_date_[SubjectNumber] - TimeShift);
   }
   else
   {
 
-      for(size_t i = 0; i < m_NumberOfSubjects; ++i)
+      for(size_t i = 0; i < subjects_tot_num_; ++i)
       {
           double AccFactor = exp(R.at("Ksi")(i));
           double TimeShift = R.at("Tau")(i);
 
-          m_SubjectTimePoints[i] = AccFactor * (m_IndividualObservationDate[i] - TimeShift);
+          indiv_time_points_[i] = AccFactor * (indiv_obs_date_[i] - TimeShift);
       }
   }
 }
@@ -622,7 +622,7 @@ void
 NetworkModel
 ::ComputeNus(const Realizations &R)
 {
-  m_Nus = m_InterpolationMatrix * m_InvertKernelMatrix * R.at("Nu");
+  nus_ = m_InterpolationMatrix * m_InvertKernelMatrix * R.at("Nu");
 }
 
 void
@@ -637,12 +637,12 @@ NetworkModel
 ::ComputeOrthonormalBasis()
 {
 
-  VectorType U(m_ManifoldDimension);
+  VectorType U(manifold_dim_);
   ScalarType * u = U.memptr();
   ScalarType * t = m_Thicknesses.memptr();
-  ScalarType * n = m_Nus.memptr();
+  ScalarType * n = nus_.memptr();
 
-  for(size_t i = 0; i < m_ManifoldDimension; ++i)
+  for(size_t i = 0; i < manifold_dim_; ++i)
       u[i] = n[i] / (t[i] * t[i]);
 
   /// Compute the initial pivot vector U
@@ -653,11 +653,11 @@ NetworkModel
   MatrixType U2(U);
   double NormU2 = U.squared_magnitude();
   MatrixType FinalMatrix2 = (-2.0/NormU2) * U2*U2.transpose();
-  for(size_t i = 0; i < m_ManifoldDimension; ++i)
+  for(size_t i = 0; i < manifold_dim_; ++i)
       FinalMatrix2(i, i ) += 1;
 
 
-  m_OrthogonalBasis = FinalMatrix2;
+  orthog_basis_ = FinalMatrix2;
 }
 
 
@@ -665,21 +665,21 @@ void
 NetworkModel
 ::ComputeAMatrix(const Realizations &R)
 {
-  MatrixType NewA(m_ManifoldDimension, m_NbIndependentSources);
+  MatrixType NewA(manifold_dim_, m_NbIndependentSources);
 
   for(int i = 0; i < m_NbIndependentSources; ++i)
   {
-      VectorType Beta(m_ManifoldDimension, 0.0);
-      for(size_t j = 0; j < m_ManifoldDimension - 1; ++j)
+      VectorType Beta(manifold_dim_, 0.0);
+      for(size_t j = 0; j < manifold_dim_ - 1; ++j)
       {
-          std::string Number = std::to_string(int(j + i*(m_ManifoldDimension - 1)));
+          std::string Number = std::to_string(int(j + i*(manifold_dim_ - 1)));
           Beta(j) = R.at( "Beta#" + Number, 0);
       }
 
-      NewA.set_column(i, m_OrthogonalBasis * Beta);
+      NewA.set_column(i, orthog_basis_ * Beta);
   }
 
-  m_AMatrix = NewA;
+  a_matrix_ = NewA;
 }
 
 
@@ -687,12 +687,12 @@ void
 NetworkModel
 ::ComputeSpaceShifts(const Realizations &R)
 {
-  MatrixType SS(m_NbIndependentSources, m_NumberOfSubjects);
+  MatrixType SS(m_NbIndependentSources, subjects_tot_num_);
   for(int i = 0; i < m_NbIndependentSources; ++i)
   {
       SS.set_row(i, R.at("S#" + std::to_string(i)));
   }
-  m_SpaceShifts = m_AMatrix * SS;
+  space_shifts_ = a_matrix_ * SS;
 }
 
 void
@@ -700,10 +700,10 @@ NetworkModel
 ::ComputeBlock()
 {
   ScalarType * b = m_Block.memptr();
-  ScalarType * n = m_Nus.memptr();
+  ScalarType * n = nus_.memptr();
   ScalarType * t = m_Thicknesses.memptr();
 
-  for(size_t i = 0; i < m_ManifoldDimension; ++i)
+  for(size_t i = 0; i < manifold_dim_; ++i)
       b[i] = n[i] / (t[i] * t[i]);
 }
 
@@ -711,15 +711,15 @@ AbstractModel::VectorType
 NetworkModel
 ::ComputeParallelCurve(int SubjectNumber, int ObservationNumber)
 {
-  VectorType ParallelCurve(m_ManifoldDimension);
+  VectorType ParallelCurve(manifold_dim_);
   ScalarType * p = ParallelCurve.memptr();
 
-  double TimePoint = m_SubjectTimePoints[SubjectNumber](ObservationNumber);
+  double TimePoint = indiv_time_points_[SubjectNumber](ObservationNumber);
   ScalarType * t = m_Thicknesses.memptr();
-  ScalarType * w = m_SpaceShifts.get_column(SubjectNumber).memptr();
+  ScalarType * w = space_shifts_.get_column(SubjectNumber).memptr();
   ScalarType * b = m_Block.memptr();
 
-  for(size_t i = 0; i < m_ManifoldDimension; ++i)
+  for(size_t i = 0; i < manifold_dim_; ++i)
       p[i] = t[i] * exp(w[i] + b[i]*TimePoint);
 
 

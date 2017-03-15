@@ -4,12 +4,10 @@
 // Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-AbstractManifold
-::AbstractManifold()
+AbstractManifold::AbstractManifold()
 { }
 
-AbstractManifold
-::~AbstractManifold()
+AbstractManifold::~AbstractManifold()
 { }
 
 
@@ -18,20 +16,14 @@ AbstractManifold
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-std::shared_ptr< AbstractRandomVariable > // RandomVariable
-AbstractModel
-::GetRandomVariable(std::string Name)
-const
-{ 
-  return m_RandomVariables.GetRandomVariable(Name);
+std::shared_ptr< AbstractRandomVariable > AbstractModel::GetRandomVariable(std::string name) const
+{
+  return rand_var_.GetRandomVariable(name);
 }
 
-std::shared_ptr< AbstractRandomVariable > // RandomVariable
-AbstractModel
-::GetRandomVariable(int Key)
-const
+std::shared_ptr< AbstractRandomVariable > AbstractModel::GetRandomVariable(int key) const
 {
-  return m_RandomVariables.GetRandomVariable(Key);
+  return rand_var_.GetRandomVariable(key);
 }
 
 
@@ -41,9 +33,7 @@ const
 
 
 
-Realizations
-AbstractModel
-::SimulateRealizations()
+Realizations AbstractModel::SimulateRealizations()
 {
-  return m_RandomVariables.SimulateRealizations(m_RealizationsPerRandomVariable);
+  return rand_var_.SimulateRealizations(asso_num_real_per_rand_var_);
 }

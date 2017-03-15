@@ -128,22 +128,22 @@ protected:
     VectorType m_Deltas;
     
     /// Orthonormal Basis vec<B1, ..., B(N-1)> where Bi is vec<Ns> (Basis orthogonal to gamma0_deriv(T0)
-    MatrixType m_OrthogonalBasis;
+    MatrixType orthog_basis_;
     
     /// A Matrix vec<A1, ..., A(N)> where Ai is vec<Ns> (Ai is a column)
-    MatrixType m_AMatrix;
+    MatrixType a_matrix_;
 
     /// Space shifts w(i) of the model
-    MatrixType m_SpaceShifts;
+    MatrixType space_shifts_;
     
     /// Real time of observation of each individual
-    std::vector<VectorType> m_IndividualObservationDate;
+    std::vector<VectorType> indiv_obs_date_;
     
     /// Time reparametrization of each individual
-    std::vector<VectorType> m_SubjectTimePoints;
+    std::vector<VectorType> indiv_time_points_;
         
     /// Block1 corresponds to p0 * exp(Delta)
-    VectorType m_Block1;
+    VectorType block1_;
     
    
     
