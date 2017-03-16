@@ -8,14 +8,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-CandidateRandomVariables
-::CandidateRandomVariables()
+CandidateRandomVariables::CandidateRandomVariables()
 {
 
 }
 
-CandidateRandomVariables
-::~CandidateRandomVariables()
+CandidateRandomVariables::~CandidateRandomVariables()
 {
     // TODO : How to generalize?
 }
@@ -24,21 +22,17 @@ CandidateRandomVariables
 // Encapsulation method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-GaussianRandomVariable
-CandidateRandomVariables
-::GetRandomVariable(std::string NameRandomVariable,int RealizationNumber)
+GaussianRandomVariable CandidateRandomVariables::GetRandomVariable(std::string rand_var_name,int num_real)
 const
 {
-    return m_NewPropositionDistribution.at(m_StringToIntKey.at(NameRandomVariable)).at(RealizationNumber);
+    return new_proposition_distribution_.at(string_to_int_key_.at(rand_var_name)).at(num_real);
 }
 
 
-GaussianRandomVariable
-CandidateRandomVariables
-::GetRandomVariable(int RandomVariableKey, int RealizationNumber) 
-const 
+GaussianRandomVariable CandidateRandomVariables::GetRandomVariable(int rand_var_key, int num_real)
+const
 {
-    return m_NewPropositionDistribution.at(RandomVariableKey).at(RealizationNumber);
+    return new_proposition_distribution_.at(rand_var_key).at(num_real);
 }
 
 
@@ -46,37 +40,35 @@ const
 // Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
-CandidateRandomVariables
-::InitializeCandidateRandomVariables(const Realizations& R, const AbstractModel& M)
+void CandidateRandomVariables::InitializeCandidateRandomVariables(const Realizations& reals, const AbstractModel& model)
 {
-    
-    for(auto it = R.begin(); it != R.end(); ++it)
+
+    for(auto it = reals.begin(); it != reals.end(); ++it)
     {
-        std::vector< GaussianRandomVariable > PropDistribPerRealization;
-        std::string Name = R.ReverseKeyToName(it->first);
-        m_IntToStringKey.insert({it->first, Name});
-        m_StringToIntKey.insert({Name, it->first});
-        
+        std::vector< GaussianRandomVariable > prop_distrib_per_real;
+        std::string name = reals.ReverseKeyToName(it->first);
+        int_to_string_key_.insert({it->first, name});
+        string_to_int_key_.insert({name, it->first});
+
         for(auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
         {
-            double Variance = M.InitializePropositionDistributionVariance(Name);
-            GaussianRandomVariable GRV(*it2, Variance);
-            PropDistribPerRealization.push_back( GRV );
+            double variance = model.InitializePropositionDistributionVariance(name);
+            GaussianRandomVariable gaussian_rand_var(*it2, variance);
+            prop_distrib_per_real.push_back( gaussian_rand_var );
         }
 
-        m_NewPropositionDistribution[it->first] = PropDistribPerRealization;
+        new_proposition_distribution_[it->first] = prop_distrib_per_real;
     }
-        
+
 }
 
 
 void
 CandidateRandomVariables
-::UpdatePropositionVariableVariance(std::string Name, int RealizationNumber, ScalarType NewVariance) 
+::UpdatePropositionVariableVariance(std::string name, int num_real, ScalarType new_variance)
 {
- 
-    m_NewPropositionDistribution.at(m_StringToIntKey.at(Name))[RealizationNumber].Update({{"Variance", NewVariance}});
+
+    new_proposition_distribution_.at(string_to_int_key_.at(name))[num_real].Update({{"variance", new_variance}});
 }
 
 

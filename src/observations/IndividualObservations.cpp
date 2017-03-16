@@ -5,39 +5,34 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 IndividualObservations
-::IndividualObservations(VectorType TimePoints) 
+::IndividualObservations(VectorType time_points)
 {
-  m_TimePoints = TimePoints;
-  m_NumberOfTimePoints = m_TimePoints.size();
-  
-  m_LandmarksPresence = false;
-  m_CognitiveScoresPresence = false;
+  time_points_ = time_points;
+  time_points_num_ = time_points_.size();
+
+  landmarks_presence_ = false;
+  cog_score_presence_ = false;
 }
 
 
-IndividualObservations
-::~IndividualObservations() 
+IndividualObservations::~IndividualObservations()
 {
-  
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void
-IndividualObservations
-::AddCognitiveScores(std::vector<VectorType> CognitiveScores) 
+void IndividualObservations::AddCognitiveScores(std::vector<VectorType> cog_scores)
 {
-  m_CognitiveScores = CognitiveScores;
-  m_CognitiveScoresPresence = true;
+  cog_scores_ = cog_scores;
+  cog_score_presence_ = true;
 }
 
 
-void
-IndividualObservations
-::AddLandmarks(std::vector<VectorType> Landmarks) 
+void IndividualObservations::AddLandmarks(std::vector<VectorType> Landmarks) 
 {
-  m_Landmarks = Landmarks;
-  m_LandmarksPresence = true;
+  landmarks_ = Landmarks;
+  landmarks_presence_ = true;
 }

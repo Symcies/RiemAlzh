@@ -9,75 +9,75 @@ typedef double ScalarType;
 
 
 class Realizations {
-    
-    
+
+
 public:
-    
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
     typedef typename std::unordered_map<int, VectorType> IntVectorHash;
     typedef typename std::unordered_map<std::string, int> StringIntHash;
     typedef typename std::unordered_map<int, std::string> IntStringHash;
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
     Realizations();
     ~Realizations();
-    
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Efficient way to get the vector of realizations
-    inline       VectorType& at(const int Key)       { return m_Realizations.at(Key); }
-    inline const VectorType& at(const int Key) const { return m_Realizations.at(Key); }
-    
+    inline       VectorType& at(const int key)       { return realizations_.at(key); }
+    inline const VectorType& at(const int key) const { return realizations_.at(key); }
+
     /// Less efficient way to get the vector of realizations
-    inline       VectorType& at(const std::string Name)       { return m_Realizations.at(m_StringToIntKey.at(Name)); };
-    inline const VectorType& at(const std::string Name) const { return m_Realizations.at(m_StringToIntKey.at(Name)); };
-    
+    inline       VectorType& at(const std::string name)       { return realizations_.at(string_to_int_key_.at(name)); };
+    inline const VectorType& at(const std::string name) const { return realizations_.at(string_to_int_key_.at(name)); };
+
     /// Efficient way to get a particular realization
-    inline       ScalarType& at(const int Key, const unsigned int Number)       { return m_Realizations.at(Key)(Number); }
-    inline const ScalarType& at(const int Key, const unsigned int Number) const { return m_Realizations.at(Key)(Number); }
-    
+    inline       ScalarType& at(const int key, const unsigned int number)       { return realizations_.at(key)(number); }
+    inline const ScalarType& at(const int key, const unsigned int number) const { return realizations_.at(key)(number); }
+
     /// Less efficient way to get a particular realization
-    inline       ScalarType& at(const std::string Name, const unsigned int Number)       { return m_Realizations.at(m_StringToIntKey.at(Name))(Number); }
-    inline const ScalarType& at(const std::string Name, const unsigned int Number) const { return m_Realizations.at(m_StringToIntKey.at(Name))(Number); }
-    
+    inline       ScalarType& at(const std::string name, const unsigned int number)       { return realizations_.at(string_to_int_key_.at(name))(number); }
+    inline const ScalarType& at(const std::string name, const unsigned int number) const { return realizations_.at(string_to_int_key_.at(name))(number); }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-    void AddRealizations(std::string Name, int Key, VectorType& Values);
-    
-    inline int ReverseNameToKey(std::string Name) const { return m_StringToIntKey.at(Name); }
-    
-    inline std::string ReverseKeyToName(int Key) const { return m_IntToStringKey.at(Key); }
-    
-    inline IntVectorHash::iterator begin() { return m_Realizations.begin(); }
-    inline IntVectorHash::iterator   end() { return m_Realizations.end(); }
-    
-    inline IntVectorHash::const_iterator begin() const { return m_Realizations.begin(); }
-    inline IntVectorHash::const_iterator   end() const { return m_Realizations.end(); }
-    
-    inline VectorType::iterator begin(int Key) { return m_Realizations.at(Key).begin(); }
-    inline VectorType::iterator   end(int Key) { return m_Realizations.at(Key).end(); }
-    
-    inline VectorType::const_iterator begin(int Key) const { return m_Realizations.at(Key).begin(); }
-    inline VectorType::const_iterator   end(int Key) const { return m_Realizations.at(Key).end(); }
-    
-    inline VectorType::iterator begin(std::string Name)  { return m_Realizations.at(m_StringToIntKey.at(Name)).begin(); }
-    inline VectorType::iterator   end(std::string Name) { return m_Realizations.at(m_StringToIntKey.at(Name)).end(); }
-    
-    inline VectorType::const_iterator begin(std::string Name) const { return m_Realizations.at(m_StringToIntKey.at(Name)).begin(); }
-    inline VectorType::const_iterator   end(std::string Name) const { return m_Realizations.at(m_StringToIntKey.at(Name)).end(); }
+
+    void AddRealizations(std::string name, int key, VectorType& values);
+
+    inline int ReverseNameToKey(std::string name) const { return string_to_int_key_.at(name); }
+
+    inline std::string ReverseKeyToName(int key) const { return int_to_string_key_.at(key); }
+
+    inline IntVectorHash::iterator begin() { return realizations_.begin(); }
+    inline IntVectorHash::iterator   end() { return realizations_.end(); }
+
+    inline IntVectorHash::const_iterator begin() const { return realizations_.begin(); }
+    inline IntVectorHash::const_iterator   end() const { return realizations_.end(); }
+
+    inline VectorType::iterator begin(int key) { return realizations_.at(key).begin(); }
+    inline VectorType::iterator   end(int key) { return realizations_.at(key).end(); }
+
+    inline VectorType::const_iterator begin(int key) const { return realizations_.at(key).begin(); }
+    inline VectorType::const_iterator   end(int key) const { return realizations_.at(key).end(); }
+
+    inline VectorType::iterator begin(std::string name)  { return realizations_.at(string_to_int_key_.at(name)).begin(); }
+    inline VectorType::iterator   end(std::string name) { return realizations_.at(string_to_int_key_.at(name)).end(); }
+
+    inline VectorType::const_iterator begin(std::string name) const { return realizations_.at(string_to_int_key_.at(name)).begin(); }
+    inline VectorType::const_iterator   end(std::string name) const { return realizations_.at(string_to_int_key_.at(name)).end(); }
 
 
 
@@ -86,21 +86,21 @@ private:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
 
-    
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Attribute(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
     /// Hash table of all the attributes
-    IntVectorHash m_Realizations;
-    
+    IntVectorHash realizations_;
+
     /// Convert the names into the int key
-    StringIntHash m_StringToIntKey;
-    
+    StringIntHash string_to_int_key_;
+
     /// Convert the int into their names
-    IntStringHash m_IntToStringKey;
+    IntStringHash int_to_string_key_;
 };
 
 

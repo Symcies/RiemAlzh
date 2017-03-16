@@ -13,42 +13,42 @@ public:
 
   typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
   typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  IndividualObservations(VectorType TimePoints);
+  IndividualObservations(VectorType time_points);
   ~IndividualObservations();
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Encapsulation method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  
-  unsigned int GetNumberOfTimePoints() const { return m_NumberOfTimePoints; }
-  
-  ScalarType GetTimePoint(unsigned int TimePointNumber) const { return m_TimePoints(TimePointNumber); }
-  
-  VectorType GetTimePoints() const { return m_TimePoints; }
-  
-  const VectorType& GetLandmark(unsigned int TimePointNumber) const { return m_Landmarks.at(TimePointNumber); }
-  
-  const VectorType& GetCognitiveScore(unsigned int TimePointNumber) const { return m_CognitiveScores.at(TimePointNumber); }
-  
-  const bool LandmarksPresence() const { return m_LandmarksPresence; }
-  
-  const bool CognitiveScoresPresence() const { return m_CognitiveScoresPresence; }
-  
+
+  unsigned int GetNumberOfTimePoints() const { return time_points_num_; }
+
+  ScalarType GetTimePoint(unsigned int time_points_num) const { return time_points_(time_points_num); }
+
+  VectorType GetTimePoints() const { return time_points_; }
+
+  const VectorType& GetLandmark(unsigned int time_points_num) const { return landmarks_.at(time_points_num); }
+
+  const VectorType& GetCognitiveScore(unsigned int time_points_num) const { return cog_scores_.at(time_points_num); }
+
+  const bool LandmarksPresence() const { return landmarks_presence_; }
+
+  const bool CognitiveScoresPresence() const { return cog_score_presence_; }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Other method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Add the cognitive scores
-  void AddCognitiveScores(std::vector<VectorType> CognitiveScores);
+  void AddCognitiveScores(std::vector<VectorType> cog_scores);
 
   /// Add the landmarks
-  void AddLandmarks(std::vector<VectorType> Landmarks) ;
-  
+  void AddLandmarks(std::vector<VectorType> landmarks) ;
+
 protected:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Method(s) :
@@ -60,28 +60,27 @@ protected:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// ID of the patient
-  unsigned int m_ID;
-  
+  unsigned int id_;
+
   /// RID (ADNI feature) of the patient
-  unsigned int m_RID;
-  
+  unsigned int rid_;
+
   /// Number of timePoints
-  unsigned int m_NumberOfTimePoints;
-  
+  unsigned int time_points_num_;
+
   /// List of patient observations
-  VectorType m_TimePoints;
-  
+  VectorType time_points_;
+
   /// List of cognitive scores - listed according to the observations
-  std::vector<VectorType> m_CognitiveScores;
-  
+  std::vector<VectorType> cog_scores_;
+
   /// Presence of cognitive scores
-  bool m_CognitiveScoresPresence;
+  bool cog_score_presence_;
 
   /// List of landmarks - listed according to the observations
-  std::vector<VectorType> m_Landmarks;
-  
-  /// Presence of landmarks
-  bool m_LandmarksPresence;
-  
-};
+  std::vector<VectorType> landmarks_;
 
+  /// Presence of landmarks
+  bool landmarks_presence_;
+
+};

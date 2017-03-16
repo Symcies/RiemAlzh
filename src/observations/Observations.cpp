@@ -4,17 +4,15 @@
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Observations
-::Observations() 
+Observations::Observations()
 {
-  m_NumberOfSubjects = 0;
+  tot_indiv_num_ = 0;
 }
 
 
-Observations
-::~Observations() 
+Observations::~Observations()
 {
-  
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,36 +20,32 @@ Observations
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void
-Observations
-::AddIndividualData(IndividualObservations& ID) 
+void Observations::AddIndividualData(IndividualObservations& indiv_obs)
 {
-  m_Data.push_back(ID);
-  m_IndividualObservations.push_back(ID.GetTimePoints());
+  data_.push_back(indiv_obs);
+  indiv_obs_.push_back(indiv_obs.GetTimePoints());
 }
 
 
-void 
-Observations
-::InitializeGlobalAttributes() 
+void Observations::InitializeGlobalAttributes() 
 {
-  m_NumberOfSubjects = m_Data.size();
-  m_TotalNumberOfObservations = 0;
-  m_TotalSumOfCognitiveScores = 0;
-  m_TotalSumOfLandmarks = 0;
-  
-  for(auto it = m_Data.begin(); it != m_Data.end(); ++it)
+  tot_indiv_num_ = data_.size();
+  tot_obs_num_ = 0;
+  cog_scores_tot_sum_ = 0;
+  landmarks_tot_sum_ = 0;
+
+  for(auto it = data_.begin(); it != data_.end(); ++it)
   {
-    m_TotalNumberOfObservations += it->GetNumberOfTimePoints();
+    tot_obs_num_ += it->GetNumberOfTimePoints();
     for(size_t i = 0; i < it->GetNumberOfTimePoints(); ++i)
     {
-      if(it->LandmarksPresence())      
+      if(it->LandmarksPresence())
       {
-        m_TotalSumOfLandmarks += it->GetLandmark(i).squared_magnitude();
+        landmarks_tot_sum_ += it->GetLandmark(i).squared_magnitude();
       }
-      if(it->CognitiveScoresPresence()) 
+      if(it->CognitiveScoresPresence())
       {
-        m_TotalSumOfCognitiveScores += it->GetCognitiveScore(i).squared_magnitude();
+        cog_scores_tot_sum_ += it->GetCognitiveScore(i).squared_magnitude();
       }
     }
   }
