@@ -395,7 +395,7 @@ Observations MultivariateModel::SimulateData(io::DataSettings &data_settings)
 
   /// Simulate the data
   std::random_device random_devices;
-  std::mt19937 RNG(random_devices());
+  std::mt19937 rand_num_gen(random_devices());
   std::uniform_int_distribution<int> uni(data_settings.GetMinimumNumberOfObservations(), data_settings.GetMaximumNumberOfObservations());
   UniformRandomVariable ran_time_points_num(60, 95);
   GaussianRandomVariable noise(0, noise_->GetVariance());
@@ -405,7 +405,7 @@ Observations MultivariateModel::SimulateData(io::DataSettings &data_settings)
   for(int i = 0; i < subjects_tot_num_; ++i)
   {
     /// Get a random number of timepoints and sort them
-    VectorType time_points = ran_time_points_num.Samples(uni(RNG));
+    VectorType time_points = ran_time_points_num.Samples(uni(rand_num_gen));
     time_points.sort();
     individual_time_points_.push_back(time_points);
 

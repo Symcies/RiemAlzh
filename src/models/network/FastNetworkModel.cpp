@@ -241,7 +241,7 @@ Observations FastNetworkModel::SimulateData(io::DataSettings& data_settings)
 
   /// Simulate the data
   std::random_device rand_device;
-  std::mt19937 RNG(rand_device());
+  std::mt19937 rand_num_gen(rand_device());
   std::uniform_int_distribution<int> unif_distrib(data_settings.GetMinimumNumberOfObservations(), data_settings.GetMaximumNumberOfObservations());
   UniformRandomVariable time_points_num(60, 95);
   GaussianRandomVariable noise(0, noise_->GetVariance());
@@ -251,7 +251,7 @@ Observations FastNetworkModel::SimulateData(io::DataSettings& data_settings)
   for(int i = 0; i < subjects_tot_num_; ++i)
   {
     /// Get a random number of timepoints and sort them
-    VectorType time_points_vec = time_points_num.Samples(unif_distrib(RNG));
+    VectorType time_points_vec = time_points_num.Samples(unif_distrib(rand_num_gen));
     time_points_vec.sort();
     indiv_time_points_.push_back(time_points_vec);
 
