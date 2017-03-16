@@ -7,14 +7,12 @@
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-MultiRandomVariables
-::MultiRandomVariables()
+MultiRandomVariables::MultiRandomVariables()
 {
 
 }
 
-MultiRandomVariables
-::~MultiRandomVariables()
+MultiRandomVariables::~MultiRandomVariables()
 {
 
 }
@@ -23,42 +21,35 @@ MultiRandomVariables
 /// Encapsulation method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::unique_ptr<AbstractRandomVariable>
-MultiRandomVariables
-::GetRandomVariable(std::string Name)
-const
+std::unique_ptr<AbstractRandomVariable> MultiRandomVariables::GetRandomVariable(std::string name) const
 {
-  if(m_KeyToRandomVariableStringType.at(m_StringToIntKey.at(Name)) == "Gaussian")
+  if(rand_var_string_type_key_.at(string_to_int_key_.at(name)) == "Gaussian")
   {
     // TODO : Change to GetParameters(0) and GetPArameters(1)
-    ScalarType Mean = m_RandomVariables.at(m_StringToIntKey.at(Name))->GetParameter("Mean");
-    ScalarType Variance = m_RandomVariables.at(m_StringToIntKey.at(Name))->GetParameter("Variance");
-    return std::make_unique<GaussianRandomVariable>(Mean, Variance);
+    ScalarType mean = rand_var_.at(string_to_int_key_.at(name))->GetParameter("Mean");
+    ScalarType variance = rand_var_.at(string_to_int_key_.at(name))->GetParameter("Variance");
+    return std::make_unique<GaussianRandomVariable>(mean, variance);
   }
 }
 
-std::unique_ptr<AbstractRandomVariable>
-MultiRandomVariables
-::GetRandomVariable(int Key)
+std::unique_ptr<AbstractRandomVariable> MultiRandomVariables::GetRandomVariable(int key)
 const
 {
-  if(m_KeyToRandomVariableIntType.at(Key) == 0)
+  if(rand_var_int_type_key_.at(key) == 0)
   {
     // TODO : Change to GetParameters(0) and GetPArameters(1)
-    ScalarType Mean = m_RandomVariables.at(Key)->GetParameter("Mean");
-    ScalarType Variance = m_RandomVariables.at(Key)->GetParameter("Variance");
-    return std::make_unique<GaussianRandomVariable>(Mean, Variance);
+    ScalarType mean = rand_var_.at(key)->GetParameter("Mean");
+    ScalarType variance = rand_var_.at(key)->GetParameter("Variance");
+    return std::make_unique<GaussianRandomVariable>(mean, variance);
   }
 }
 
-void
-MultiRandomVariables
-::Clear()
+void MultiRandomVariables::Clear()
 {
-  m_RandomVariables.clear();
-  m_StringToIntKey.clear();
-  m_IntToStringKey.clear();
-  m_KeyCounter = 0;
+  rand_var_.clear();
+  string_to_int_key_.clear();
+  int_to_string_key_.clear();
+  key_count_ = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,136 +57,124 @@ MultiRandomVariables
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void
-MultiRandomVariables
-::AddRandomVariable(std::string Name, std::string Type, const std::vector<double>& Parameters)
+void MultiRandomVariables::AddRandomVariable(std::string name, std::string type, const std::vector<double>& params)
 {
   ////////////////////////////////////////////////////////////
-  //// The RV is not in the random variables
+  //// The rand_var is not in the random variables
   ////////////////////////////////////////////////////////////
-  if(m_StringToIntKey.find(Name) == m_StringToIntKey.end())
+  if(string_to_int_key_.find(name) == string_to_int_key_.end())
   {
-    //std::cout << "You add the random variable " << Name << std::endl;
-    std::shared_ptr<AbstractRandomVariable> RV;
-    if (Type == "Gaussian") {
-      RV = std::make_shared<GaussianRandomVariable>(Parameters[0], Parameters[1]);
-      m_KeyToRandomVariableStringType.insert({m_KeyCounter, "Gaussian"});
-      m_KeyToRandomVariableIntType.insert({m_KeyCounter, 0});
+    //std::cout << "You add the random variable " << name << std::endl;
+    std::shared_ptr<AbstractRandomVariable> rand_var;
+    if (type == "Gaussian") {
+      rand_var = std::make_shared<GaussianRandomVariable>(params[0], params[1]);
+      rand_var_string_type_key_.insert({key_count_, "Gaussian"});
+      rand_var_int_type_key_.insert({key_count_, 0});
     }
 
-    m_StringToIntKey.insert({Name, m_KeyCounter});
-    m_IntToStringKey.insert({m_KeyCounter, Name});
-    m_RandomVariables.insert({m_KeyCounter, RV});
-    ++m_KeyCounter;
+    string_to_int_key_.insert({name, key_count_});
+    int_to_string_key_.insert({key_count_, name});
+    rand_var_.insert({key_count_, rand_var});
+    ++key_count_;
   }
   ////////////////////////////////////////////////////////////
-  //// The RV is already in the random variables of the class
+  //// The rand_var is already in the random variables of the class
   ////////////////////////////////////////////////////////////
   else
   {
-    int Key = m_StringToIntKey.at(Name);
-    std::string PreviousType = m_KeyToRandomVariableStringType.at(Key);
-    std::shared_ptr<AbstractRandomVariable> RV;
+    int key = string_to_int_key_.at(name);
+    std::string prev_type = rand_var_string_type_key_.at(key);
+    std::shared_ptr<AbstractRandomVariable> rand_var;
 
-    if(Type == PreviousType)
+    if(type == prev_type)
     {
-      //std::cout << "You overwrite the random variable " << Name << " with the same type" << std::endl;
-      RV = std::make_shared<GaussianRandomVariable>(Parameters[0], Parameters[1]);
+      //std::cout << "You overwrite the random variable " << name << " with the same type" << std::endl;
+      rand_var = std::make_shared<GaussianRandomVariable>(params[0], params[1]);
     }
     else
     {
-      std::cout << "You overwrite the random variable " << Name << " with a new type" << std::endl;
+      std::cout << "You overwrite the random variable " << name << " with a new type" << std::endl;
       std::cerr << "TODO in the multi random variables ..." << std::endl;
     }
 
-    m_RandomVariables[Key] = RV;
+    rand_var_[key] = rand_var;
   }
 }
 
-void
-MultiRandomVariables
-::UpdateRandomVariable(std::string Name, IntScalarHash Parameters)
+void MultiRandomVariables::UpdateRandomVariable(std::string name, IntScalarHash params)
 {
-  if(m_RandomVariables.find(m_StringToIntKey.at(Name)) != m_RandomVariables.end())
-    m_RandomVariables.at(m_StringToIntKey.at(Name))->Update(Parameters);
+  if(rand_var_.find(string_to_int_key_.at(name)) != rand_var_.end())
+    rand_var_.at(string_to_int_key_.at(name))->Update(params);
   else
-    std::cerr << Name << " is not found in the random variables";
+    std::cerr << name << " is not found in the random variables";
 }
 
-void
-MultiRandomVariables
-::UpdateRandomVariable(std::string Name, StringScalarHash Parameters)
+void MultiRandomVariables::UpdateRandomVariable(std::string name, StringScalarHash params)
 {
-  if(m_RandomVariables.find(m_StringToIntKey.at(Name)) != m_RandomVariables.end())
-    m_RandomVariables.at(m_StringToIntKey.at(Name))->Update(Parameters);
+  if(rand_var_.find(string_to_int_key_.at(name)) != rand_var_.end())
+    rand_var_.at(string_to_int_key_.at(name))->Update(params);
   else
-    std::cerr << Name << " is not found in the random variables";
+    std::cerr << name << " is not found in the random variables";
 }
 
 
-void
-MultiRandomVariables
-::UpdateRandomVariable(int Key, IntScalarHash Parameters)
+void MultiRandomVariables::UpdateRandomVariable(int key, IntScalarHash params)
 {
-  if(m_RandomVariables.find(Key) != m_RandomVariables.end())
-    m_RandomVariables.at(Key)->Update(Parameters);
+  if(rand_var_.find(key) != rand_var_.end())
+    rand_var_.at(key)->Update(params);
   else
-    std::cerr << m_IntToStringKey.at(Key) << " is not found in the random variable";
+    std::cerr << int_to_string_key_.at(key) << " is not found in the random variable";
 }
 
 
-void
-MultiRandomVariables
-::UpdateRandomVariable(int Key, StringScalarHash Parameters)
+void MultiRandomVariables::UpdateRandomVariable(int key, StringScalarHash params)
 {
-  if(m_RandomVariables.find(Key) != m_RandomVariables.end())
-    m_RandomVariables.at(Key)->Update(Parameters);
+  if(rand_var_.find(key) != rand_var_.end())
+    rand_var_.at(key)->Update(params);
   else
-    std::cerr << m_IntToStringKey.at(Key) << " is not found in the random variable";
+    std::cerr << int_to_string_key_.at(key) << " is not found in the random variable";
 }
 
 
-Realizations
-MultiRandomVariables
-::SimulateRealizations(StringIntHash NumberOfRealizationsPerRandomVariable)
+Realizations MultiRandomVariables::SimulateRealizations(StringIntHash num_of_real_per_rand_var)
 {
-  Realizations R;
-  
+  Realizations realizations;
 
-  for(auto it = NumberOfRealizationsPerRandomVariable.begin(); it != NumberOfRealizationsPerRandomVariable.end(); ++it)
+
+  for(auto it = num_of_real_per_rand_var.begin(); it != num_of_real_per_rand_var.end(); ++it)
   {
-    std::string Name = it->first;
-    int Key = m_StringToIntKey.at(Name);
-    int NumberOfRealizations = it->second;
+    std::string name = it->first;
+    int key = string_to_int_key_.at(name);
+    int reals_num = it->second;
     /*
-    if(Name == "P")
+    if(name == "P")
     {
         /// This is intended to start with good initialization
         std::ifstream MeanThickness("/Users/igor.koval/Documents/Work/RiemAlzh/data/UnnormalizedThickness/MCIconvertAD/mean_thickness.csv");
         if(MeanThickness.is_open())
         {
             std::string line;
-            VectorType Real(NumberOfRealizations);
+            VectorType real_vec(reals_num);
             int i = 0;
             while(getline(MeanThickness, line))
             {
-                Real(i) = log(stod(line)); 
+                real_vec(i) = log(stod(line));
                 ++i;
             }
-            R.AddRealizations(Name, Key, Real);
+            realizations.AddRealizations(name, key, real_vec);
         }
-        else { std::cerr << "Mean thickness is not found" << std::endl; }
+        else { std::cerr << "mean thickness is not found" << std::endl; }
     }
-    else 
+    else
     {
      */
-      VectorType Real = m_RandomVariables.at(Key)->Samples(NumberOfRealizations);
-      R.AddRealizations(Name, Key, Real);
+      VectorType real_vec = rand_var_.at(key)->Samples(reals_num);
+      realizations.AddRealizations(name, key, real_vec);
     /*
     }
     */
 
   }
 
-  return R;
+  return realizations;
 }

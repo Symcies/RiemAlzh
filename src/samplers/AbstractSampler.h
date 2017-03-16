@@ -19,15 +19,15 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-        
+
+
     typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
-    
+
     typedef std::vector<std::pair<std::string,  unsigned int>> MiniBlock;
     typedef std::pair<int, MiniBlock> SamplerBlock;
-    
-  
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,16 +40,16 @@ public:
     // Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Initialize the sampler
-    virtual void InitializeSampler(Realizations& R, AbstractModel &M) = 0;
-    
+    virtual void InitializeSampler(Realizations& reals, AbstractModel &model) = 0;
+
     /// Sample new realizations of the model random variables
-    virtual void Sample(Realizations& R, AbstractModel& M, const Observations& Obs) = 0;
+    virtual void Sample(Realizations& reals, AbstractModel& model, const Observations& obs) = 0;
 
 
 protected:
@@ -58,24 +58,24 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the decreasing step size of the adaptive variances
-    double DecreasingStepSize(int Iteration, int NoMemoryTime);
-    
+    double DecreasingStepSize(int iter, int no_memory_time);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-        
+
     /// Blocks of the sampler
-    std::vector<SamplerBlock> m_Blocks;
-    
+    std::vector<SamplerBlock> blocks_;
+
     /// Sampling time without memory
-    unsigned int m_MemorylessSamplingTime = 10000;
-    
-    /// Acceptation ratio 
-    double m_ExpectedAcceptanceRatio = 0.301;
-    
+    unsigned int memoryless_sampling_time_ = 10000;
+
+    /// Acceptation ratio
+    double expected_acceptance_ratio_ = 0.301;
+
     /// Candidates random variables, corresponding to those in the Model
-    CandidateRandomVariables m_CandidateRandomVariables;
-    
+    CandidateRandomVariables candidate_rand_var_;
+
 
 };
 

@@ -7,14 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-AbstractSampler
-::AbstractSampler()
+AbstractSampler::AbstractSampler()
 {
 
 }
 
-AbstractSampler
-::~AbstractSampler()
+AbstractSampler::~AbstractSampler()
 {
 
 }
@@ -24,11 +22,9 @@ AbstractSampler
 /// Methods :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-double
-AbstractSampler
-::DecreasingStepSize(int Iteration, int NoMemoryTime) 
+double AbstractSampler::DecreasingStepSize(int iter, int no_memory_time)
 {
-    double Epsilon = std::max(1, Iteration - NoMemoryTime);
-    double Lambda = 0.51; // Lambda should belong to ]1/2 ; 1]
-    return 1.0 / pow(Epsilon, Lambda);
+    double epsilon = std::max(1, iter - no_memory_time);
+    double lambda = 0.51; // lambda should belong to ]1/2 ; 1]
+    return 1.0 / pow(epsilon, lambda);
 }

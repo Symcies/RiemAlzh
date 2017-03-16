@@ -68,7 +68,7 @@ CandidateRandomVariables
 ::UpdatePropositionVariableVariance(std::string name, int num_real, ScalarType new_variance)
 {
 
-    new_proposition_distribution_.at(string_to_int_key_.at(name))[num_real].Update({{"variance", new_variance}});
+    new_proposition_distribution_.at(string_to_int_key_.at(name))[num_real].Update({{"Variance", new_variance}});
 }
 
 

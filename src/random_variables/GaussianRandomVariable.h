@@ -11,40 +11,40 @@ public:
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    GaussianRandomVariable(double Mean, double Variance);
+    GaussianRandomVariable(double mean, double variance);
     ~GaussianRandomVariable();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Getter(s) and Setter(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    virtual ScalarType GetParameter(std::string ParameterName) const;
-    virtual ScalarType GetParameter(int ParameterKey) const;
-    
-    inline double GetVariance() const { return m_Variance; }
+    virtual ScalarType GetParameter(std::string param_name) const;
+    virtual ScalarType GetParameter(int param_key) const;
 
-    inline double GetMean() const { return m_Mean; }
+    inline double GetVariance() const { return variance_; }
 
-    inline void SetMean(double Mean) { m_Mean = Mean; };
+    inline double GetMean() const { return mean_; }
 
-    inline void SetVariance(double Variance) {m_Variance = Variance; };
+    inline void SetMean(double mean) { mean_ = mean; };
+
+    inline void SetVariance(double variance) {variance_ = variance; };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
     /// Draw a sample
     virtual double Sample();
 
     /// Compute the likelihood given a current state
-    virtual double Likelihood(double X);
-    
+    virtual double Likelihood(double x);
+
     /// Compute the loglikelihood given a current state
-    virtual double LogLikelihood(double X);
-    
+    virtual double LogLikelihood(double x);
+
     /// Update the random variable parameters
-    virtual void Update(StringScalarHash Parameters);
-    virtual void Update(IntScalarHash    Parameters);
+    virtual void Update(StringScalarHash params);
+    virtual void Update(IntScalarHash    params);
 
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,11 +56,11 @@ protected:
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Mean of the Gaussian
-    double m_Mean;
+    /// mean of the Gaussian
+    double mean_;
 
-    /// Variance of the Gaussian
-    double m_Variance;
+    /// variance of the Gaussian
+    double variance_;
 
 };
 
