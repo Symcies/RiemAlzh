@@ -181,18 +181,18 @@ PropagationManifold::VectorType PropagationManifold::GetVelocityTransformToEucli
 }
 
 
-double PropagationManifold::ComputeScalarProduct(VectorType& u, VectorType& v, VectorType& application_point)
+double PropagationManifold::ComputeScalarProduct(VectorType& u_vec, VectorType& v_vec, VectorType& application_point)
 {
-    if(u.size() != v.size() or u.size() != application_point.size())
+    if(u_vec.size() != v_vec.size() or u_vec.size() != application_point.size())
     {
         std::cout << " The vectors do not have the same size. How to do a scalar product?";
     }
 
     double scalar_product = 0;
-    auto u = u.begin();
-    auto v = v.begin();
+    auto u = u_vec.begin();
+    auto v = v_vec.begin();
     auto p = application_point.begin();
-    for(    ; u != u.end() && v != v.end() && p != application_point.end()
+    for(    ; u != u_vec.end() && v != v_vec.end() && p != application_point.end()
             ; ++u, ++v, ++p)
     {
         scalar_product += base_manifold_->ComputeScalarProduct(*u, *v, *p);
