@@ -5,14 +5,12 @@
 // Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-AbstractBaseManifold
-::AbstractBaseManifold()
+AbstractBaseManifold::AbstractBaseManifold()
 {
 
 }
 
-AbstractBaseManifold
-::~AbstractBaseManifold()
-{ 
-    
+AbstractBaseManifold::~AbstractBaseManifold()
+{
+
 }

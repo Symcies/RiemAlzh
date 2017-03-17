@@ -29,40 +29,40 @@ int main(int argc, char* argv[]) {
   {
       std::cerr << "Usage with real data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings " << "data_settings.xml" << std::endl;
   }
-  
+
   /// Load the XML file arguments
-  io::ModelSettings     MS(argv[1]);
-  io::AlgorithmSettings AS(argv[2]);
-  io::DataSettings      DS(argv[3]);
+  io::ModelSettings     model_settings(argv[1]);
+  io::AlgorithmSettings algo_settings(argv[2]);
+  io::DataSettings      data_settings(argv[3]);
 
   /// Initialize the sampler
-  std::shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
+  std::shared_ptr<AbstractSampler> sampler = make_shared<BlockedGibbsSampler>();
 
   /// Initialize the model
-  std::shared_ptr<AbstractModel> Model;
-  if(MS.GetType() == "Meshwork")     Model = make_shared<MeshworkModel>(MS);
-  if(MS.GetType() == "FastNetwork")  Model = make_shared<FastNetworkModel>(MS);
-  if(MS.GetType() == "Network")      Model = make_shared<NetworkModel>(MS);
-  if(MS.GetType() == "Multivariate") Model = make_shared<MultivariateModel>(MS);
+  std::shared_ptr<AbstractModel> model;
+  if(model_settings.GetType() == "Meshwork")     model = make_shared<MeshworkModel>(model_settings);
+  if(model_settings.GetType() == "FastNetwork")  model = make_shared<FastNetworkModel>(model_settings);
+  if(model_settings.GetType() == "Network")      model = make_shared<NetworkModel>(model_settings);
+  if(model_settings.GetType() == "Multivariate") model = make_shared<MultivariateModel>(model_settings);
 
   /// Initialize the data
-  Observations Obs;
-  if(DS.IsReal())
+  Observations obs;
+  if(data_settings.IsReal())
   {
-    Obs = io::ReadData::ReadObservations(DS);
-    Obs.InitializeGlobalAttributes();
+    obs = io::ReadData::ReadObservations(data_settings);
+    obs.InitializeGlobalAttributes();
   }
   else
   {
-    Model->InitializeFakeRandomVariables();
-    Obs = Model->SimulateData(DS);
+    model->InitializeFakeRandomVariables();
+    obs = model->SimulateData(data_settings);
   }
 
   /// Algorithm pipeline
-  auto Algo = make_shared<Algorithm>(AS);
-  Algo->SetModel(Model);
-  Algo->SetSampler(Sampler);
-  Algo->ComputeMCMCSAEM(Obs);
+  auto algo = make_shared<Algorithm>(algo_settings);
+  algo->SetModel(model);
+  algo->SetSampler(sampler);
+  algo->ComputeMCMCSAEM(obs);
 
 
   return 0;

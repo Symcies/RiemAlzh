@@ -21,7 +21,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // typedef :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
     typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
 
@@ -37,7 +37,7 @@ public:
     // Encapsulation method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    inline const double GetDimension() { return m_Dimension; }
+    inline const double GetDimension() { return dimension_; }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,20 +45,20 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the geodesic
-    virtual VectorType ComputeGeodesic(VectorType& P0, double T0, VectorType& V0, double TimePoint);
+    virtual VectorType ComputeGeodesic(VectorType& p0, double t0, VectorType& v0, double time_point);
 
     /// Compute the geodesic derivative
-    virtual VectorType ComputeGeodesicDerivative(VectorType& P0, double T0, VectorType& V0, double TimePoint);
+    virtual VectorType ComputeGeodesicDerivative(VectorType& p0, double t0, VectorType& v0, double time_point);
 
     /// Compute the parallel curve
-    virtual VectorType ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0,
-                                                     VectorType& SpaceShift, double TimePoint );
+    virtual VectorType ComputeParallelCurve(VectorType& p0, double t0, VectorType& v0,
+                                                     VectorType& space_shift, double time_point );
 
-    /// Get V0 transformation  wrt the metric at the application point P0 (used in the householder method)
-    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0) = 0;
+    /// Get v0 transformation  wrt the metric at the application point p0 (used in the householder method)
+    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& p0, double t0, VectorType& v0) = 0;
 
     /// Compute the scalar product corresponding to the manifold metric
-    virtual double ComputeScalarProduct(VectorType& U, VectorType& V, VectorType& ApplicationPoint) = 0;
+    virtual double ComputeScalarProduct(VectorType& u, VectorType& v, VectorType& application_point) = 0;
 
 protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,11 +72,11 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Dimension of the Riemanian Manifold
-    unsigned int m_Dimension;
+    unsigned int dimension_;
 
     /// Base Manifold
-    std::shared_ptr<AbstractBaseManifold> m_BaseManifold;
-    
+    std::shared_ptr<AbstractBaseManifold> base_manifold_;
+
 };
 
 

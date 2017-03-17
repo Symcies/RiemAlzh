@@ -18,7 +18,7 @@ public:
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ExponentialCurveManifold(unsigned int NumberOfDimension);
+    ExponentialCurveManifold(unsigned int dim_num);
     ~ExponentialCurveManifold();
 
 
@@ -33,19 +33,19 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the parallel curve
-    virtual VectorType ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift, double TimePoint, VectorType& Delta);
+    virtual VectorType ComputeParallelCurve(VectorType& p0, double t0, VectorType& v0, VectorType& space_shift, double time_point, VectorType& delta);
     
     /// Compute the parallel curve  - NULL propagation
-    virtual VectorType ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift, double TimePoint);
+    virtual VectorType ComputeParallelCurve(VectorType& p0, double t0, VectorType& v0, VectorType& space_shift, double time_point);
     
-    /// Get V0 transformation  wrt the metric at the application point P0 (used in the householder method)
-    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0, VectorType& Delta);
+    /// Get v0 transformation  wrt the metric at the application point p0 (used in the householder method)
+    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& p0, double t0, VectorType& v0, VectorType& delta);
     
-    /// Get V0 transformation  wrt the metric at the application point P0 (used in the householder method)  - NULL propagation
-    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0);
+    /// Get v0 transformation  wrt the metric at the application point p0 (used in the householder method)  - NULL propagation
+    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& p0, double t0, VectorType& v0);
 
     /// Compute the scalar product corresponding to the manifold metric
-    virtual double ComputeScalarProduct(VectorType& U, VectorType& V, VectorType& ApplicationPoint);
+    virtual double ComputeScalarProduct(VectorType& u, VectorType& v, VectorType& application_point);
 
     
 };
