@@ -1,6 +1,4 @@
-#ifndef _ExponentialBaseManifold_h
-#define _ExponentialBaseManifold_h
-
+#pragma once
 
 #include "AbstractBaseManifold.h"
 
@@ -53,6 +51,3 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 };
-
-
-#endif //_ExponentialBaseManifold_h

@@ -1,6 +1,4 @@
-#ifndef _GaussianRandomVariable_h
-#define _GaussianRandomVariable_h
-
+#pragma once
 
 #include "AbstractRandomVariable.h"
 
@@ -63,6 +61,3 @@ protected:
     double variance_;
 
 };
-
-
-#endif //_GaussianRandomVariable_h

@@ -1,7 +1,5 @@
-#ifndef _AbstractBaseManifold_h
-#define _AbstractBaseManifold_h
+#pragma once
 
-#include <iostream>
 #include <cmath>
 
 class AbstractBaseManifold {
@@ -53,6 +51,3 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 };
-
-
-#endif //_AbstractBaseManifold_h

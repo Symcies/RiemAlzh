@@ -1,5 +1,4 @@
-#ifndef _Realizations_h
-#define _Realizations_h
+#pragma once
 
 typedef double ScalarType;
 
@@ -102,6 +101,3 @@ private:
     /// Convert the int into their names
     IntStringHash int_to_string_key_;
 };
-
-
-#endif //_Realizations_h

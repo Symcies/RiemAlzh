@@ -1,7 +1,4 @@
-
-#ifndef _PropagationManifold_h
-#define _PropagationManifold_h
-
+#pragma once
 
 #include "AbstractManifold.h"
 
@@ -79,6 +76,3 @@ protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 };
-
-
-#endif //_PropagationManifold_h

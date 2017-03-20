@@ -1,8 +1,8 @@
-#ifndef _BlockedGibbsSampler_h
-#define _BlockedGibbsSampler_h
+#pragma once
+
+#include <algorithm>
 
 #include "AbstractSampler.h"
-#include <algorithm>
 
 class BlockedGibbsSampler : public AbstractSampler {
 
@@ -92,6 +92,3 @@ protected:
     std::uniform_real_distribution<double> uniform_distrib_;
 
 };
-
-
-#endif //_BlockedGibbsSampler_h

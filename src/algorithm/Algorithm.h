@@ -1,17 +1,14 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <cassert>
 #include <algorithm>
-#include <math.h>
+#include <cassert>
+#include <cmath>
+#include <iostream>
 
-#include "Observations.h"
-#include "AlgorithmSettings.h"
 #include "AbstractModel.h"
 #include "AbstractSampler.h"
-#include "CandidateRandomVariables.h"
-
+#include "AlgorithmSettings.h"
+#include "Observations.h"
 
 class Algorithm {
 public:

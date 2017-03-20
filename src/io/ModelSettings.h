@@ -1,5 +1,4 @@
-#ifndef m_ModelSettings_h
-#define m_ModelSettings_h
+#pragma once
 
 typedef double ScalarType;
 
@@ -95,6 +94,4 @@ private:
 
 };
 
-
 }
-#endif //m_ModelSettings_h

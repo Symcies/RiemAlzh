@@ -1,14 +1,10 @@
-#ifndef ReadData_h
-#define ReadData_h
+#pragma once
 
 typedef double ScalarType;
 
-#include <utility>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <ios>
-#include <src/observations/Observations.h>
 
 #include "Observations.h"
 #include "DataSettings.h"
@@ -64,5 +60,3 @@ protected:
 };
 
 } //end io namespace
-
-#endif //ReadData_h

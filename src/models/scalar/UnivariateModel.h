@@ -1,5 +1,4 @@
-#ifndef _UnivariateModel_h
-#define _UnivariateModel_h
+#pragma once
 
 #include "AbstractModel.h"
 
@@ -90,5 +89,3 @@ protected:
   ScalarType position_;
 
 };
-
-#endif //_UnivariateModel_h

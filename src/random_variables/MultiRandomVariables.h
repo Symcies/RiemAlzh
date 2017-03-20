@@ -1,9 +1,7 @@
-#ifndef _MultiRandomVariables_h
-#define _MultiRandomVariables_h
+#pragma once
 
-#include <unordered_map>
 #include <memory>
-
+#include <unordered_map>
 
 #include "Realizations.h"
 #include "AbstractRandomVariable.h"
@@ -94,6 +92,3 @@ private:
   int key_count_ = 0;
 
 };
-
-
-#endif //_MultiRandomVariables_h

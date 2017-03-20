@@ -1,14 +1,11 @@
-#ifndef _AbstractSampler_h
-#define _AbstractSampler_h
+#pragma once
 
-
-#include <memory>
 #include <algorithm>
-#include <string>
 #include <map>
+#include <memory>
+#include <string>
 
 #include "GaussianRandomVariable.h"
-#include "AbstractRandomVariable.h"
 #include "AbstractModel.h"
 #include "CandidateRandomVariables.h"
 #include "Realizations.h"
@@ -78,6 +75,3 @@ protected:
 
 
 };
-
-
-#endif //_AbstractSampler_h

@@ -2,8 +2,8 @@
 
 typedef double ScalarType;
 
-#include "LinearAlgebra.h"
 #include "IndividualObservations.h"
+#include "LinearAlgebra.h"
 
 class Observations {
 public:

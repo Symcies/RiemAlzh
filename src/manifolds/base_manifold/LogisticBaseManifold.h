@@ -1,7 +1,4 @@
-#ifndef _LogisticBaseManifold_h
-#define _LogisticBaseManifold_h
-
-#include <math.h>
+#pragma once
 
 #include "AbstractBaseManifold.h"
 
@@ -56,6 +53,3 @@ protected:
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 };
-
-
-#endif //_LogisticBaseManifold_h

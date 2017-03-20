@@ -1,8 +1,6 @@
-#ifndef _AlgorithmSettings_h
-#define _AlgorithmSettings_h
+#pragma once
 
 #include <string>
-#include <iostream>
 
 #include "tinyxml2.h"
 
@@ -78,4 +76,3 @@ private:
 
 
 }
-#endif //_AlgorithmSettings_h

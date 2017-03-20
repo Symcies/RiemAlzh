@@ -1,12 +1,11 @@
-#ifndef _AbstractRandomVariable_h
-#define _AbstractRandomVariable_h
+#pragma once
 
 typedef double ScalarType;
 
-#include <random>
-#include <iostream>
-#include <unordered_map>
 #include <cassert>
+#include <iostream>
+#include <random>
+#include <unordered_map>
 
 #include "LinearAlgebra.h"
 
@@ -66,12 +65,4 @@ protected:
     // Attribute(s)
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
 };
-
-
-#endif //_AbstractRandomVariable_h

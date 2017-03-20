@@ -1,16 +1,9 @@
-#ifndef _AbstractManifold_h
-#define _AbstractManifold_h
-
+#pragma once
 
 typedef double ScalarType;
 
 #include <memory>
-#include <string>
-#include <map>
 
-
-#include "GaussianRandomVariable.h"
-#include "AbstractRandomVariable.h"
 #include "AbstractBaseManifold.h"
 #include "LinearAlgebra.h"
 
@@ -78,6 +71,3 @@ protected:
     std::shared_ptr<AbstractBaseManifold> base_manifold_;
 
 };
-
-
-#endif //_AbstractManifold_h

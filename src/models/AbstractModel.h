@@ -1,24 +1,22 @@
 #ifndef _AbstractModel_h
 #define _AbstractModel_h
 
-#include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <fstream>
-#include <functional>
-#include <math.h>
 #include <memory>
 #include <unordered_map>
 
-
-#include "Observations.h"
+#include "AbstractManifold.h"
+#include "AbstractRandomVariable.h"
+#include "DataSettings.h"
+#include "LinearAlgebra.h"
 #include "ModelSettings.h"
 #include "MultiRandomVariables.h"
+#include "Observations.h"
 #include "Realizations.h"
 #include "ReadData.h"
-#include "LinearAlgebra.h"
 #include "UniformRandomVariable.h"
-#include "AbstractRandomVariable.h"
-#include "AbstractManifold.h"
 
 
 class AbstractModel {

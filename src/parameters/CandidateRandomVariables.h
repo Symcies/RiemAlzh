@@ -1,11 +1,9 @@
-#ifndef _CandidateRandomVariables_h
-#define _CandidateRandomVariables_h
+#pragma once
 
 #include <map>
 
 #include "LinearAlgebra.h"
 #include "GaussianRandomVariable.h"
-#include "AbstractRandomVariable.h"
 #include "AbstractModel.h"
 #include "Realizations.h"
 
@@ -73,6 +71,3 @@ protected:
     StringIntHash string_to_int_key_;
 
 };
-
-
-#endif //_CandidateRandomVariables_h

@@ -1,12 +1,10 @@
-#ifndef _DataSettings_h
-#define _DataSettings_h
+#pragma once
 
 typedef double ScalarType;
 
-#include <string>
 #include <fstream>
 #include <iostream>
-#include <src/observations/Observations.h>
+#include <string>
 
 #include "tinyxml2.h"
 
@@ -133,5 +131,3 @@ private:
 };
 
 }
-
-#endif //_DataSettings_h
