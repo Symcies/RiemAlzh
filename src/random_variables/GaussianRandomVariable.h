@@ -10,7 +10,9 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     GaussianRandomVariable(double mean, double variance);
-    ~GaussianRandomVariable();
+    GaussianRandomVariable(const GaussianRandomVariable &);
+    virtual ~GaussianRandomVariable();
+    GaussianRandomVariable& operator=(const GaussianRandomVariable&);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Getter(s) and Setter(s) :

@@ -10,9 +10,22 @@ GaussianRandomVariable::GaussianRandomVariable(double mean, double variance)
   variance_ = variance;
 }
 
+GaussianRandomVariable::GaussianRandomVariable(const GaussianRandomVariable& gr_var)
+{
+  mean_ = gr_var.mean_;
+  variance_ = gr_var.variance_;
+}
+
 GaussianRandomVariable::~GaussianRandomVariable()
 { }
 
+GaussianRandomVariable& GaussianRandomVariable::operator=(const GaussianRandomVariable& gr_var)
+{
+  mean_ = gr_var.mean_;
+  variance_ = gr_var.variance_;
+
+  return *this;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Getter(s)  and Setter(s):

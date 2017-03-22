@@ -29,8 +29,8 @@ public:
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    AbstractSampler();
-    ~AbstractSampler();
+    AbstractSampler(){};
+    virtual ~AbstractSampler() = 0;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,5 +73,8 @@ protected:
     /// Candidates random variables, corresponding to those in the Model
     CandidateRandomVariables candidate_rand_var_;
 
+private:
+    AbstractSampler(const AbstractSampler &);
+    AbstractSampler& operator=(const AbstractSampler &);
 
 };

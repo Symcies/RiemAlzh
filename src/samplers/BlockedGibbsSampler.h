@@ -42,10 +42,12 @@ public:
     virtual void Sample(Realizations& reals, AbstractModel& models, const Observations& obs);
 
 
-protected:
+private:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+    BlockedGibbsSampler(const BlockedGibbsSampler&);
+    BlockedGibbsSampler& operator=(const BlockedGibbsSampler&);
 
     /// Sample one block
     void OneBlockSample(int block_num, Realizations& reals, AbstractModel& models, const Observations& obs);

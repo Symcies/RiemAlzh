@@ -17,6 +17,18 @@ UniformRandomVariable::UniformRandomVariable(double min, double max)
 UniformRandomVariable::~UniformRandomVariable()
 { }
 
+UniformRandomVariable::UniformRandomVariable(const UniformRandomVariable& ur_var)
+{
+  min_ = ur_var.min_;
+  max_ = ur_var.max_;
+}
+
+UniformRandomVariable& UniformRandomVariable::operator=(const UniformRandomVariable& ur_var)
+{
+  min_ = ur_var.min_;
+  max_ = ur_var.max_;
+  return *this;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Getter(s)  and Setter(s):

@@ -9,7 +9,10 @@ class UniformRandomVariable : public AbstractRandomVariable {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   UniformRandomVariable(ScalarType min, ScalarType max);
-  ~UniformRandomVariable();
+  virtual ~UniformRandomVariable();
+
+  UniformRandomVariable(const UniformRandomVariable&);
+  virtual UniformRandomVariable& operator=(const UniformRandomVariable&);
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Getter(s) and Setter(s) :
