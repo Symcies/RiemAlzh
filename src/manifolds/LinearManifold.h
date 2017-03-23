@@ -6,44 +6,41 @@ class LinearManifold : public AbstractManifold{
 public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // typedef :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     LinearManifold(unsigned int dim_num);
     ~LinearManifold();
 
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Encapsulation method(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Other method(s) :
+    // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Compute the parallel curve
-    virtual VectorType ComputeParallelCurve(VectorType& p0, double t0, VectorType& v0, VectorType& space_shift, double time_point, VectorType& delta);
+    virtual VectorType ComputeParallelCurve(VectorType& p0, double t0,
+      VectorType& v0, VectorType& space_shift, double time_point, VectorType& delta);
 
     /// Compute the parallel curve  - NULL propagation
-    virtual VectorType ComputeParallelCurve(VectorType& p0, double t0, VectorType& v0, VectorType& space_shift, double time_point);
+    virtual VectorType ComputeParallelCurve(VectorType& p0, double t0,
+      VectorType& v0, VectorType& space_shift, double time_point);
 
     /// Get v0 transformation  wrt the metric at the application point p0 (used in the householder method)
-    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& p0, double t0, VectorType& v0, VectorType& delta);
+    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& p0,
+      double t0, VectorType& v0, VectorType& delta);
 
     /// Get v0 transformation  wrt the metric at the application point p0 (used in the householder method)  - NULL propagation
-    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& p0, double t0, VectorType& v0);
+    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& p0,
+      double t0, VectorType& v0);
 
     /// Compute the scalar product corresponding to the manifold metric
-    virtual double ComputeScalarProduct(VectorType& u, VectorType& v, VectorType& application_point);
+    virtual double ComputeScalarProduct(VectorType& u, VectorType& v,
+      VectorType& application_point);
 
 
 private:
-    LinearManifold(const LinearManifold &); //Voluntarily not implemented, prevents automatic copy by compiler
-    LinearManifold& operator=(const LinearManifold &); //Voluntarily not implemented, prevents automatic copy by compiler
+    /// Copy constructor, private to prevent copy
+    LinearManifold(const LinearManifold &);
+
+    /// Assignment operator, private to prevent copy
+    LinearManifold& operator=(const LinearManifold &);
 };

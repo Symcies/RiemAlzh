@@ -88,8 +88,10 @@ private:
   ///Print the type of the model
   void PrintModelInfo();
 
-
+  /// Copy constructor, private to prevent copy
   ModelSettings(const ModelSettings&);
+
+  /// Assignment operator, private to prevent copy
   ModelSettings& operator=(const ModelSettings&);
 
 };

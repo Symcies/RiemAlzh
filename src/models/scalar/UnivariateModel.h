@@ -63,11 +63,14 @@ class UnivariateModel : public AbstractModel {
   VectorType ComputeParallelCurve(int subjects_tot_num_, int ObservationNumber);
 
 
-protected:
+private:
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  UnivariateModel(const UnivariateModel &);
+  UnivariateModel& operator=(const UnivariateModel &);
 
   /// Compute the subject time points
   void ComputeSubjectTimePoint(const Realizations& reals, const int subjects_tot_num_ = -1);
@@ -87,10 +90,7 @@ protected:
 
   /// Attribute encoding for the position P
   ScalarType position_;
-  
 
-private:
-  UnivariateModel(const UnivariateModel &);
-  UnivariateModel& operator=(const UnivariateModel &);
+
 
 };

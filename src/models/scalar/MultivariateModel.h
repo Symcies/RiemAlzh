@@ -52,23 +52,26 @@ public:
   /// Save the data into a file
   virtual void SaveData(unsigned int IterationNumber, const Realizations& reals);
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
-  virtual void InitializeFakeRandomVariables();
-
-  /// Probably to erase
-  /// Compute the parallel curve
-  VectorType ComputeParallelCurve(int subjects_num, int obs_num);
 
 
-protected:
+private:
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
+    virtual void InitializeFakeRandomVariables();
+
+    /// Probably to erase
+    /// Compute the parallel curve
+    VectorType ComputeParallelCurve(int subjects_num, int obs_num);
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+  MultivariateModel(const MultivariateModel &);
+  MultivariateModel& operator=(const MultivariateModel &);
 
   /// Compute the subjects time points
   void ComputeSubjectTimePoint(const Realizations& reals, const int subjects_num = -1);
@@ -122,9 +125,5 @@ protected:
 
   /// Block1 corresponds to p0 * exp(Delta)
   VectorType block_;
-
-private:
-  MultivariateModel(const MultivariateModel &);
-  MultivariateModel& operator=(const MultivariateModel &);
 
 };

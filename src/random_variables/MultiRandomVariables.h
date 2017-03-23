@@ -47,8 +47,6 @@ public:
   /// Other method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
   void AddRandomVariable(std::string name, std::string type, const std::vector<double>& params);
 
   /// Update a random variable based on its name
@@ -63,8 +61,6 @@ public:
   Realizations SimulateRealizations(StringIntHash num_of_real_per_rand_var);
 
 private:
-
-
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Method(s) :

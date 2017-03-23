@@ -42,10 +42,6 @@ public:
 
   unsigned int GetMaximumNumberOfObservations() const { return max_observation_num_; }
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Other method(s) :
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-
   bool IsReal() const { return is_data_real_; }
 
   bool LandmarkPresence() const { return are_landmarks_present_; }
@@ -119,7 +115,10 @@ private:
   /// Load simulated data settings
   void LoadSimulatedDataSettings(const tinyxml2::XMLElement* settings);
 
+  /// Copy constructor, private to prevent copy
   DataSettings(const DataSettings&);
+
+  /// Assignment operator, private to prevent copy
   DataSettings& operator=(const DataSettings&);
 };
 
