@@ -22,8 +22,8 @@ public:
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    AbstractManifold();
-    ~AbstractManifold();
+    AbstractManifold(){};
+    virtual ~AbstractManifold(){};
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,4 +70,7 @@ protected:
     /// Base Manifold
     std::shared_ptr<AbstractBaseManifold> base_manifold_;
 
+private:
+    AbstractManifold(const AbstractManifold &); //Voluntarily not implemented, prevents automatic copy by compiler
+    AbstractManifold& operator=(const AbstractManifold &); //Voluntarily not implemented, prevents automatic copy by compiler
 };

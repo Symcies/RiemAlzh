@@ -17,7 +17,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ExponentialCurveManifold(unsigned int dim_num);
-    ~ExponentialCurveManifold();
+    virtual ~ExponentialCurveManifold();
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,5 +45,9 @@ public:
     /// Compute the scalar product corresponding to the manifold metric
     virtual double ComputeScalarProduct(VectorType& u, VectorType& v, VectorType& application_point);
 
+
+private:
+    ExponentialCurveManifold(const ExponentialCurveManifold &); //Voluntarily not implemented, prevents automatic copy by compiler
+    ExponentialCurveManifold& operator=(const ExponentialCurveManifold &); //Voluntarily not implemented, prevents automatic copy by compiler
 
 };

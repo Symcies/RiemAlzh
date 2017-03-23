@@ -141,4 +141,8 @@ protected:
   /// Block2 corresponds to vu_k / p0
   VectorType block2_;
 
+
+private:
+  FastNetworkModel(const FastNetworkModel &);
+  FastNetworkModel& operator=(const FastNetworkModel &);
 };

@@ -24,7 +24,7 @@ public:
     BlockedGibbsSampler(unsigned int memoryless_sampling_time, double expected_acceptance_ratio);
 
     /// Destructor
-    ~BlockedGibbsSampler();
+    virtual ~BlockedGibbsSampler();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Encapsulation method(s) :

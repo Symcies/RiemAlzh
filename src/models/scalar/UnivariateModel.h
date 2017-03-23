@@ -87,5 +87,10 @@ protected:
 
   /// Attribute encoding for the position P
   ScalarType position_;
+  
+
+private:
+  UnivariateModel(const UnivariateModel &);
+  UnivariateModel& operator=(const UnivariateModel &);
 
 };

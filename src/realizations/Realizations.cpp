@@ -15,7 +15,12 @@ Realizations::~Realizations()
 {
 
 }
-
+Realizations::Realizations(const Realizations& reals)
+{
+    realizations_      = reals.realizations_;
+    string_to_int_key_ = reals.string_to_int_key_;
+    int_to_string_key_ = reals.int_to_string_key_;
+}
 
 
 

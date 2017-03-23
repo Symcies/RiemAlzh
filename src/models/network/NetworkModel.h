@@ -146,6 +146,11 @@ protected:
     VectorType block1_;
 
 
+
+private:
+    NetworkModel(const NetworkModel &);
+    NetworkModel& operator=(const NetworkModel &);
+
 };
 
 

@@ -12,8 +12,7 @@ ExponentialCurveManifold::ExponentialCurveManifold(unsigned int dim_num)
 }
 
 
-ExponentialCurveManifold::~ExponentialCurveManifold()
-{
+ExponentialCurveManifold::~ExponentialCurveManifold(){
 
 }
 

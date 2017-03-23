@@ -7,10 +7,7 @@ LinearManifold::LinearManifold(unsigned int dim_num)
     dimension_ = dim_num;
 }
 
-LinearManifold::~LinearManifold()
-{
-
-}
+LinearManifold::~LinearManifold(){}
 
 
 
@@ -55,7 +52,7 @@ LinearManifold::VectorType LinearManifold::GetVelocityTransformToEuclideanSpace(
 }
 
 
-double LinearManifold::ComputeScalarProduct(VectorType &u, VectorType &v, VectorType &application_point) 
+double LinearManifold::ComputeScalarProduct(VectorType &u, VectorType &v, VectorType &application_point)
 {
     double scalar_product = 0.0;
 

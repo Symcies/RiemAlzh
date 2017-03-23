@@ -123,4 +123,8 @@ protected:
   /// Block1 corresponds to p0 * exp(Delta)
   VectorType block_;
 
+private:
+  MultivariateModel(const MultivariateModel &);
+  MultivariateModel& operator=(const MultivariateModel &);
+
 };

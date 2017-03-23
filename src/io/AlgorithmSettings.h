@@ -70,7 +70,8 @@ private:
     /// Methods(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Convert the max number of iteration from the xml file
+    AlgorithmSettings(const AlgorithmSettings&);
+    AlgorithmSettings& operator=(const AlgorithmSettings&);
 
 };
 

@@ -13,7 +13,7 @@ PropagationManifold::PropagationManifold(unsigned int dim_num, std::shared_ptr<A
     base_manifold_ = base_manifold;
 }
 
-
+PropagationManifold::~PropagationManifold(){}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Encapsulation method(s) :

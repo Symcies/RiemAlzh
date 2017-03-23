@@ -146,6 +146,9 @@ protected:
     VectorType block1_;
 
 
+private:
+    MeshworkModel(const MeshworkModel &);
+    MeshworkModel& operator=(const MeshworkModel &);
 
 
 };

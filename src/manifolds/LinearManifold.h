@@ -41,4 +41,9 @@ public:
 
     /// Compute the scalar product corresponding to the manifold metric
     virtual double ComputeScalarProduct(VectorType& u, VectorType& v, VectorType& application_point);
+
+
+private:
+    LinearManifold(const LinearManifold &); //Voluntarily not implemented, prevents automatic copy by compiler
+    LinearManifold& operator=(const LinearManifold &); //Voluntarily not implemented, prevents automatic copy by compiler
 };

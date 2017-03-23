@@ -1,5 +1,4 @@
-#ifndef _AbstractModel_h
-#define _AbstractModel_h
+#pragma once
 
 #include <cmath>
 #include <iostream>
@@ -38,7 +37,8 @@ public:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-
+  AbstractModel(){};
+  virtual ~AbstractModel(){};
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Encapsulation method(s) :
@@ -141,7 +141,8 @@ protected:
   /// Dimension of the manifold
   double manifold_dim_;
 
+private:
+  AbstractModel(const AbstractModel &);
+  AbstractModel& operator=(const AbstractModel &);
+
 };
-
-
-#endif //_AbstractModel_h

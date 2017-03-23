@@ -35,7 +35,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Other method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    virtual ~AbstractRandomVariable() = 0;
+    virtual ~AbstractRandomVariable(){};
     AbstractRandomVariable(){};
     AbstractRandomVariable(const AbstractRandomVariable&){};
     virtual AbstractRandomVariable& operator=(const AbstractRandomVariable&){};
