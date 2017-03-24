@@ -66,14 +66,7 @@ public:
 
   /// Update the fixed effects thanks to the approximation step of the algorithm
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats) = 0;
-
-  /// Compute the log likelihood of the model
-  /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-  virtual double ComputeLogLikelihood(const Observations &obs)= 0;
-
-  /// Compute the log likelihood of the model for a particular individual
-  virtual double ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_) = 0;
-
+  
   /// Simulate data according to the model
   virtual Observations SimulateData(io::DataSettings& data_settings) = 0;
 
@@ -87,6 +80,22 @@ public:
   /// Compute the parallel curve
   virtual VectorType ComputeParallelCurve(int subjects_tot_num_, int obs_num) = 0;
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Log-likelihood related method(s) :
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Compute the log likelihood of the model
+  virtual VectorType ComputeLogLikelihood(const Observations &obs, const int type)= 0;
+
+  /// Compute the log likelihood of the model for a particular individual
+  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_) = 0;
+  
+  /// Get the previous loglikelihood computed
+  virtual ScalarType GetPreviousLogLikelihood(const int type) = 0;
+  
+  /// Update the previous loglikelihood computed
+  virtual void SetPreviousLogLikelihood(VectorType& log_likelihood, const int type) = 0;
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   // Outputs
   ////////////////////////////////////////////////////////////////////////////////////////////////////

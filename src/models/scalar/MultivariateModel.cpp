@@ -298,57 +298,6 @@ void MultivariateModel::UpdateRandomVariables(const SufficientStatisticsVector &
 
 }
 
-
-double MultivariateModel::ComputeLogLikelihood(const Observations &obs)
-{
-  /// It computes the likelihood of the model. For each subject i, it sums its likelihood, namely the distance,
-  /// for each time t_ij, between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
-
-  ScalarType log_likelihood = 0;
-
-  /// For each subject
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-    ScalarType time_points = obs.GetNumberOfTimePoints(i);
-
-    /// For each timepoint
-    for(size_t j = 0; j < time_points; ++j)
-    {
-      auto& indiv_cog_scores = obs.GetSubjectCognitiveScore(i, j);
-      VectorType parallel_curve = ComputeParallelCurve(i, j);
-      log_likelihood += (indiv_cog_scores - parallel_curve).squared_magnitude();
-    }
-  }
-
-  log_likelihood /= -2*noise_->GetVariance();
-  log_likelihood -= obs_tot_num_ * log(sqrt(2 * noise_->GetVariance() * M_PI));
-
-  return log_likelihood;
-}
-
-
-double MultivariateModel::ComputeIndividualLogLikelihood(const IndividualObservations& obs, const int subject_num)
-{
-  /// Given a particular subject i, it computes its likelihood, namely the distance, for each observation t_ij,
-  /// between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
-
-  ScalarType log_likelihood = 0;
-  auto time_points = obs.GetNumberOfTimePoints();
-
-  /// For each timepoints of the particular subject
-  for(size_t i = 0; i < time_points; ++i)
-  {
-    auto& indiv_cog_scores = obs.GetCognitiveScore(i);
-    VectorType parallel_curve = ComputeParallelCurve(subject_num, i);
-    log_likelihood += (indiv_cog_scores - parallel_curve).squared_magnitude();
-  }
-
-  log_likelihood /= - 2 * noise_->GetVariance();
-  log_likelihood -= time_points * log(2 * noise_->GetVariance() * M_PI) / 2.0;
-
-  return log_likelihood;
-}
-
 Observations MultivariateModel::SimulateData(io::DataSettings &data_settings)
 {
   /// This function simulates observations (Patients and their measurements y_ij at different time points t_ij)
@@ -472,6 +421,75 @@ std::vector<AbstractModel::SamplerBlock> MultivariateModel::GetSamplerBlocks() c
   return blocks;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Log-likelihood related method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+AbstractModel::VectorType MultivariateModel::ComputeLogLikelihood(const Observations &obs, const int type)
+{
+  /// It computes the likelihood of the model. For each subject i, it sums its likelihood, namely the distance,
+  /// for each time t_ij, between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
+  if(type == -1) {
+    VectorType ok(subjects_tot_num_);
+    ScalarType *ok2 = ok.memptr();
+    for (size_t i = 0; i < subjects_tot_num_; ++i)
+      ok2[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
+
+    return ok;
+  } else {
+    return VectorType(1, ComputeIndividualLogLikelihood(obs.GetSubjectObservations(type), type));
+  }
+}
+
+
+ScalarType MultivariateModel::ComputeIndividualLogLikelihood(const IndividualObservations& obs, const int subject_num)
+{
+  /// Given a particular subject i, it computes its likelihood, namely the distance, for each observation t_ij,
+  /// between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
+
+  ScalarType log_likelihood = 0;
+  auto time_points = obs.GetNumberOfTimePoints();
+
+  /// For each timepoints of the particular subject
+  for(size_t i = 0; i < time_points; ++i)
+  {
+    auto& indiv_cog_scores = obs.GetCognitiveScore(i);
+    VectorType parallel_curve = ComputeParallelCurve(subject_num, i);
+    log_likelihood += (indiv_cog_scores - parallel_curve).squared_magnitude();
+  }
+
+  log_likelihood /= - 2 * noise_->GetVariance();
+  log_likelihood -= time_points * log(2 * noise_->GetVariance() * M_PI) / 2.0;
+
+  return log_likelihood;
+}
+
+ScalarType MultivariateModel::GetPreviousLogLikelihood(const int type) {
+  
+  if (type == -1) {
+    return last_loglikelihood_.sum();
+  }
+  else if (type >= 0 && type <= last_loglikelihood_.size()) {
+    return last_loglikelihood_(type);
+  }
+  else {
+    std::cerr << "there is something wrong with the type";
+  }
+}
+
+void MultivariateModel::SetPreviousLogLikelihood(VectorType& log_likelihood, const int type) {
+  
+  if (type == -1) {
+    last_loglikelihood_ = log_likelihood;
+  }  else if (type >= 0 && type <= last_loglikelihood_.size()) {
+    last_loglikelihood_(type) = log_likelihood.sum();
+  }
+  else {
+    std::cerr << "there is something wrong with the type";
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Outputs
@@ -676,3 +694,4 @@ AbstractModel::VectorType MultivariateModel::ComputeParallelCurve(int subject_nu
 
   return parallel_curve;
 }
+

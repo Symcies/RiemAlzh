@@ -11,9 +11,9 @@ using namespace std;
 #include "Algorithm.h"
 
 #include "MultivariateModel.h"
-#include "NetworkModel.h"
-#include "MeshworkModel.h"
-#include "FastNetworkModel.h"
+//#include "NetworkModel.h"
+//#include "MeshworkModel.h"
+//#include "FastNetworkModel.h"
 
 #include "BlockedGibbsSampler.h"
 
@@ -40,9 +40,9 @@ int main(int argc, char* argv[]) {
 
   /// Initialize the model
   std::shared_ptr<AbstractModel> model;
-  if(model_settings.GetType() == "Meshwork")     model = make_shared<MeshworkModel>(model_settings);
-  if(model_settings.GetType() == "FastNetwork")  model = make_shared<FastNetworkModel>(model_settings);
-  if(model_settings.GetType() == "Network")      model = make_shared<NetworkModel>(model_settings);
+  //if(model_settings.GetType() == "Meshwork")     model = make_shared<MeshworkModel>(model_settings);
+  //if(model_settings.GetType() == "FastNetwork")  model = make_shared<FastNetworkModel>(model_settings);
+  //if(model_settings.GetType() == "Network")      model = make_shared<NetworkModel>(model_settings);
   if(model_settings.GetType() == "Multivariate") model = make_shared<MultivariateModel>(model_settings);
 
   /// Initialize the data

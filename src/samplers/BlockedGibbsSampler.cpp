@@ -50,7 +50,7 @@ void BlockedGibbsSampler::Sample(Realizations& reals, AbstractModel& model, cons
   // or the A matrix may have changed because some variables such as V0 or P0 have changed
   model.UpdateModel(reals, -1);
   VectorType log_likelihood = ComputeLogLikelihood(model, obs);
-  UpdateLastLogLikelihood(log_likelihood);
+  UpdateLastLogLikelihood(model, log_likelihood);
   ////////////////////////////////////////
 
 
@@ -83,7 +83,7 @@ void BlockedGibbsSampler::OneBlockSample(int block_num, Realizations& reals,
   double acceptation_ratio = ComputePriorRatioAndUpdateRealizations(reals, model, current_block.second);
 
   /// Compute the previous log likelihood
-  acceptation_ratio -= GetPreviousLogLikelihood();
+  acceptation_ratio -= GetPreviousLogLikelihood(model);
 
   /// Compute the candidate log likelihood
   model.UpdateModel(reals, cur_block_type_, cur_block_params_);
@@ -110,7 +110,7 @@ void BlockedGibbsSampler::OneBlockSample(int block_num, Realizations& reals,
       /// Acceptation : Candidate is accepted
   else
   {
-    UpdateLastLogLikelihood(computed_log_likelihood);
+    UpdateLastLogLikelihood(model, computed_log_likelihood);
   }
 
   /// Adaptative variances for the realizations
@@ -159,37 +159,18 @@ ScalarType BlockedGibbsSampler::ComputePriorRatioAndUpdateRealizations(Realizati
 
 BlockedGibbsSampler::VectorType BlockedGibbsSampler::ComputeLogLikelihood(AbstractModel& model, const Observations& obs)
 {
-
-  if(cur_block_type_ == -1)
-  {
-    VectorType log_likelihood(obs.GetNumberOfSubjects(), 0);
-    int i = 0;
-    for (auto it = log_likelihood.begin(); it != log_likelihood.end(); ++it, ++i)
-    {
-      *it = model.ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i) ,i);
-    }
-    return log_likelihood;
-  }
-  else
-  {
-    return VectorType(1, model.ComputeIndividualLogLikelihood(obs.GetSubjectObservations(cur_block_type_), cur_block_type_));
-  }
+  return model.ComputeLogLikelihood(obs, cur_block_type_);
 }
 
-double BlockedGibbsSampler::GetPreviousLogLikelihood()
+double BlockedGibbsSampler::GetPreviousLogLikelihood(AbstractModel& model)
 {
-  if(cur_block_type_ == -1)
-      return last_likelihood_computed_.sum();
-  else
-      return last_likelihood_computed_(cur_block_type_);
+  return model.GetPreviousLogLikelihood(cur_block_type_);
 }
 
-void BlockedGibbsSampler::UpdateLastLogLikelihood(VectorType& computed_log_likelihood)
+void BlockedGibbsSampler::UpdateLastLogLikelihood(AbstractModel& model, VectorType& computed_log_likelihood)
 {
-  if(cur_block_type_ == -1)
-      last_likelihood_computed_ = computed_log_likelihood;
-  else
-      last_likelihood_computed_(cur_block_type_) = computed_log_likelihood.sum();
+  model.SetPreviousLogLikelihood(computed_log_likelihood, cur_block_type_);
+
 }
 
 

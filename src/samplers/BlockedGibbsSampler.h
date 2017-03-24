@@ -56,10 +56,10 @@ private:
     VectorType ComputeLogLikelihood(AbstractModel& models, const Observations& obs);
 
     /// Get previously computed log likelihood
-    double GetPreviousLogLikelihood();
+    double GetPreviousLogLikelihood(AbstractModel& model);
 
     /// Update the last log likelihood computed
-    void UpdateLastLogLikelihood(VectorType& computed_log_likelihood);
+    void UpdateLastLogLikelihood(AbstractModel& model, VectorType& computed_log_likelihood);
 
         /// Update the random variable
     void UpdateBlockRandomVariable(double acceptance_ratio, const MiniBlock& var);
