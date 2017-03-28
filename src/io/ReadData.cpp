@@ -2,6 +2,7 @@
 
 namespace io {
 
+//TODO(clem): divide and simplify
 Observations ReadData::ReadObservations(DataSettings &ds)
 {
   Observations obs;

@@ -1,55 +1,43 @@
-#include "TestScalarModel.h"
-
-#include <iostream>
-#include <fstream>
-
-#include "Algorithm.h"
-#include "AlgorithmSettings.h"
-#include "BlockedGibbsSampler.h"
-#include "DataSettings.h"
-#include "ModelSettings.h"
-#include "MultivariateModel.h"
-#include "Observations.h"
+#include "TestAlgorithm.h"
 
 namespace test {
-  void TestScalarModel::SetUp() {
-    Test::SetUp();
+
+  void TestAlgorithm::SetUp() {
+    std::string path = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/algorithm_settings.xml";
+    io::AlgorithmSettings algo_settings(&path[0]);
+
+    algo_ = std::make_shared<Algorithm>(algo_settings);
   }
 
-  TEST_F(TestScalarModel, test_execution_of_scalar_models) {
-    //const char * TEST_DATA_DIR = "RiemAlzh/examples/scalar_models/MultivariateModel/";
-    /// Load the XML file arguments
+  TEST_F(TestAlgorithm, test_constructor) {
+    std::string path = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/algorithm_settings.xml";
+    io::AlgorithmSettings algo_settings(&path[0]);
+
+    ASSERT_EQ(algo_->GetMaximumNumberOfIterations(),
+          algo_settings.GetMaximumNumberOfIterations());
+    ASSERT_EQ(algo_->GetNumberOfBurnInIterations(),
+          algo_settings.GetNumberOfBurnInIterations());
+    ASSERT_EQ(algo_->GetOutputDisplayIteration(),
+          algo_settings.GetOutputDisplayIteration());
+    ASSERT_EQ(algo_->GetDataSaveIteration(),
+          algo_settings.GetDataSaveIteration());
+  }
+
+  TEST_F(TestAlgorithm, test_computationMCMCSAEM) {
     const char * p1 = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/model_settings.xml";
-    std::string p2 = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/algorithm_settings.xml";
     const char * p3 = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/data_settings.xml";
 
     io::ModelSettings     model_settings(p1);
-    io::AlgorithmSettings algo_settings(&p2[0]);
     io::DataSettings      data_settings(p3);
 
-    /// Initialize the sampler
-    std::shared_ptr<AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();
-
     /// Initialize the model
-    std::shared_ptr<AbstractModel> model;
-    ASSERT_EQ(model_settings.GetType(), "Multivariate");
-    model = std::make_shared<MultivariateModel>(model_settings);
-
-    /// Initialize the data
-    ASSERT_EQ(data_settings.IsReal(), true);
-    Observations obs;
-    obs = io::ReadData::ReadObservations(data_settings);
+    std::shared_ptr<AbstractModel> model = std::make_shared<MultivariateModel>(model_settings);
+    Observations obs = io::ReadData::ReadObservations(data_settings);
     obs.InitializeGlobalAttributes();
-    ASSERT_FLOAT_EQ(obs.GetNumberOfSubjects(), 248);
-    ASSERT_FLOAT_EQ(obs.GetTotalNumberOfObservations(), 1488);
-    ASSERT_FLOAT_EQ(obs.GetTotalSumOfCognitiveScores(), 688.846);
-    ASSERT_FLOAT_EQ(obs.GetTotalSumOfLandmarks(),0);
 
-    /// Algorithm pipeline
-    auto algo = std::make_shared<Algorithm>(algo_settings);
-    algo->SetModel(model);
-    algo->SetSampler(sampler);
-    algo->ComputeMCMCSAEM(obs);
+    algo_->SetModel(model);
+    algo_->SetSampler(std::make_shared<BlockedGibbsSampler>());
+    algo_->ComputeMCMCSAEM(obs);
 
     std::string result[] =
       {"Iteration n: 0 - noise: 0.34233 - G: 0.11986 - T0: 75.1052 - Var(Tau): 0.183834 - Ksi: 0.130696 - Var(Ksi): 0.000465735",
@@ -64,10 +52,11 @@ namespace test {
       "Iteration n: 900 - noise: 0.0742886 - G: 0.120127 - T0: 80.2902 - Var(Tau): 30.7549 - Ksi: 0.101566 - Var(Ksi): 0.0006735"};
 
     std::string line;
-    std::ifstream is("log_file.txt");
+    std::ifstream is("logfile_algo_ut.txt");
     int iter = 0;
     while(std::getline(is, line), iter++){
       ASSERT_EQ(line, result[iter]);
     }
   }
+
 }

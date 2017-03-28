@@ -1,7 +1,7 @@
 <data-settings>
 
   <!-- Defines if should read real data (true) of simulate data (false) -->
-  <data-type>true</data-type>
+  <data-type>false</data-type>
 
 
   <!-- In case of real data -->

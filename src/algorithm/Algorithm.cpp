@@ -132,8 +132,9 @@ void Algorithm::ComputeAcceptanceRatio(Realizations& prev_real_, int iter)
           *iter_accept_ratio = (*iter_accept_ratio * iter + Change ) / (iter + 1);
       }
   }
-
-    if(iter%output_iter_ == 0) { DisplayAcceptanceRatio(); }
+  if(IsOutputIteration(iter)) {
+    DisplayAcceptanceRatio();
+  }
 }
 
 void Algorithm::ComputeStochasticApproximation(SufficientStatisticsVector& stat_vector, int iter)
@@ -162,10 +163,16 @@ double Algorithm::DecreasingStepSize(int iter)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool Algorithm::IsOutputIteration(int iter){
+  if(output_iter_ == 0) {
+    return false;
+  }
   return (iter%output_iter_ == 0);
 }
 
 bool Algorithm::IsDataSaveIteration(int iter){
+  if(data_save_iter_ == 0) {
+    return false;
+  }
   return (iter%data_save_iter_ == 0);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////

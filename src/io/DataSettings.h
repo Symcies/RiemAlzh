@@ -115,6 +115,8 @@ private:
   /// Load simulated data settings
   void LoadSimulatedDataSettings(const tinyxml2::XMLElement* settings);
 
+  void InitArgsOfOtherType(bool real);
+
   /// Copy constructor, private to prevent copy
   DataSettings(const DataSettings&);
 
