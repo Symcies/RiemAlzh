@@ -42,6 +42,13 @@ public:
     static MatrixType OpenKernel(std::string file_path);
 
 private:
+    static VectorType ExtractObservation(std::ifstream& f_stream, int dimension);
+    static IndividualObservations CreateIndividualObs(
+      DataSettings& ds,
+      ReadData::VectorType& time_points,
+      std::vector<ReadData::VectorType>& landmarks,
+      std::vector<ReadData::VectorType>& cognitive_scores);
+
     /// Copy constructor, private to prevent copy
     ReadData(const ReadData&);
 
