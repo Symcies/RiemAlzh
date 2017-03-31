@@ -41,6 +41,7 @@ void MultivariateModel::Initialize(const Observations& obs)
   /// Initialize the size of some parameters
   deltas_.set_size(manifold_dim_);
   block_.set_size(manifold_dim_);
+  last_loglikelihood_.set_size(subjects_tot_num_);
 
   /// Population variables
   /// (Initialization of the random variable m_Random Variable
@@ -103,12 +104,13 @@ ScalarType MultivariateModel::InitializePropositionDistributionVariance(std::str
     return 0.7;
 }
 
-void MultivariateModel::UpdateModel(const Realizations &reals, int type,
+void MultivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& block_info,
             const std::vector<std::string, std::allocator<std::string>> names)
 {
   /// Given a list of names (which in fact corresponds to the variables that have potentially changed),
   /// the function updates the parameters associated to these names
 
+  int type = std::get<0>(block_info[0]);
 
   /// Possible parameters to update, depending on the name being in "vect<> names"
   bool compute_g = false;
@@ -380,42 +382,42 @@ Observations MultivariateModel::SimulateData(io::DataSettings &data_settings)
 
 }
 
-std::vector<AbstractModel::SamplerBlock> MultivariateModel::GetSamplerBlocks() const
+std::vector<AbstractModel::MiniBlock> MultivariateModel::GetSamplerBlocks() const
 {
   /// It defines the blocks used in the sampler class. A block is defined by a type, and a vector of pairs
   /// Each pair is composed of <name of the random variable, Realization number>
   /// TO IMPROVE : These blocks may change during the iterations or they can be random, ...
 
   int population_type = -1;
-  std::vector<SamplerBlock> blocks;
+  std::vector<MiniBlock> blocks;
 
   /// Block G
   MiniBlock g_block;
-  g_block.push_back(std::make_pair("G", 0));
-  blocks.push_back(std::make_pair(population_type, g_block));
+  g_block.push_back(std::tuple<int, std::string, int>(population_type, "G", 0));
+  blocks.push_back(g_block);
 
   /// Block Delta
   MiniBlock delta_block;
   for(size_t i = 1; i < manifold_dim_; ++i)
-    delta_block.push_back(std::make_pair("Delta#" + std::to_string(i), 0));
-  blocks.push_back(std::make_pair(population_type, delta_block));
+    delta_block.push_back(std::tuple<int, std::string, int>(population_type, "Delta#" + std::to_string(i), 0));
+  blocks.push_back(delta_block);
 
   /// Block beta
   MiniBlock beta_block;
   for(size_t i = 0; i < indep_sources_num_*(manifold_dim_ - 1); ++i)
-    beta_block.push_back(std::make_pair("Beta#" + std::to_string(i), 0));
-  blocks.push_back(std::make_pair(population_type, beta_block));
+    beta_block.push_back(std::tuple<int, std::string, int>(population_type, "Beta#" + std::to_string(i), 0));
+  blocks.push_back(beta_block);
 
   /// Individual variables --> Each block corresponds to one individual with all his/her associated random variables
   for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
     MiniBlock indiv_block;
-    indiv_block.push_back(std::make_pair("Ksi",i));
-    indiv_block.push_back(std::make_pair("Tau",i));
+    indiv_block.push_back(std::tuple<int, std::string, int>(i, "Ksi",i));
+    indiv_block.push_back(std::tuple<int, std::string, int>(i, "Tau",i));
     for(size_t j = 0; j < indep_sources_num_; ++j)
-      indiv_block.push_back(std::make_pair("S#" + std::to_string(j), i));
+      indiv_block.push_back(std::tuple<int, std::string, int>(i, "S#" + std::to_string(j), i));
 
-    blocks.push_back(std::make_pair(i, indiv_block));
+    blocks.push_back(indiv_block);
   }
 
   return blocks;
@@ -427,10 +429,13 @@ std::vector<AbstractModel::SamplerBlock> MultivariateModel::GetSamplerBlocks() c
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-AbstractModel::VectorType MultivariateModel::ComputeLogLikelihood(const Observations &obs, const int type)
+AbstractModel::VectorType MultivariateModel::ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)
 {
   /// It computes the likelihood of the model. For each subject i, it sums its likelihood, namely the distance,
   /// for each time t_ij, between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
+  
+  int type = std::get<0>(block_info[0]);
+  
   if(type == -1) {
     VectorType ok(subjects_tot_num_);
     ScalarType *ok2 = ok.memptr();
@@ -466,7 +471,9 @@ ScalarType MultivariateModel::ComputeIndividualLogLikelihood(const IndividualObs
   return log_likelihood;
 }
 
-ScalarType MultivariateModel::GetPreviousLogLikelihood(const int type) {
+ScalarType MultivariateModel::GetPreviousLogLikelihood(const MiniBlock& block_info) {
+  
+  int type = std::get<0>(block_info[0]);
   
   if (type == -1) {
     return last_loglikelihood_.sum();
@@ -479,7 +486,9 @@ ScalarType MultivariateModel::GetPreviousLogLikelihood(const int type) {
   }
 }
 
-void MultivariateModel::SetPreviousLogLikelihood(VectorType& log_likelihood, const int type) {
+void MultivariateModel::SetPreviousLogLikelihood(VectorType& log_likelihood, const MiniBlock& block_info) {
+  
+  int type = std::get<0>(block_info[0]);
   
   if (type == -1) {
     last_loglikelihood_ = log_likelihood;

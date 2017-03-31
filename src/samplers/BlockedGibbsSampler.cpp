@@ -9,7 +9,7 @@
 BlockedGibbsSampler::BlockedGibbsSampler()
 {
   cur_iter_ = 0;
-  cur_block_type_ = -1;
+  cur_block_info_ = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
   uniform_distrib_ = std::uniform_real_distribution<double>(0.0, 1.0);
 }
 
@@ -19,7 +19,7 @@ BlockedGibbsSampler::BlockedGibbsSampler(unsigned int memoryless_sampling_time, 
   memoryless_sampling_time_ = memoryless_sampling_time;
   expected_acceptance_ratio_ = expected_acceptance_ratio;
   cur_iter_ = 0;
-  cur_block_type_ = -1;
+  cur_block_info_ = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
 }
 
 BlockedGibbsSampler::~BlockedGibbsSampler()
@@ -36,19 +36,20 @@ BlockedGibbsSampler::~BlockedGibbsSampler()
 void BlockedGibbsSampler::InitializeSampler(Realizations& reals, AbstractModel &model)
 {
   candidate_rand_var_.InitializeCandidateRandomVariables(reals, model);
-  cur_block_type_ = -1;
+  
+  cur_block_info_ = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
   blocks_ = model.GetSamplerBlocks();
-
 }
 
 
 void BlockedGibbsSampler::Sample(Realizations& reals, AbstractModel& model, const Observations& obs)
 {
-  cur_block_type_ = -1;
+  
+  cur_block_info_ = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
   ////////////////////////////////////////
   // TODO : Check if the update is needed -> Yes, needed because the orthonormal basis,
   // or the A matrix may have changed because some variables such as V0 or P0 have changed
-  model.UpdateModel(reals, -1);
+  model.UpdateModel(reals, cur_block_info_);
   VectorType log_likelihood = ComputeLogLikelihood(model, obs);
   UpdateLastLogLikelihood(model, log_likelihood);
   ////////////////////////////////////////
@@ -73,20 +74,20 @@ void BlockedGibbsSampler::OneBlockSample(int block_num, Realizations& reals,
   AbstractModel &model, const Observations& obs)
 {
   /// Initialization
-  SamplerBlock current_block = blocks_.at(block_num);
-  cur_block_type_ = current_block.first;
+  cur_block_info_ = blocks_.at(block_num);
   cur_block_params_.clear();
   cur_block_params_bis_.clear();
   recover_params_.clear();
 
+
   /// Loop over the realizations of the block to update the ratio and the realizations
-  double acceptation_ratio = ComputePriorRatioAndUpdateRealizations(reals, model, current_block.second);
+  double acceptation_ratio = ComputePriorRatioAndUpdateRealizations(reals, model);
 
   /// Compute the previous log likelihood
   acceptation_ratio -= GetPreviousLogLikelihood(model);
 
   /// Compute the candidate log likelihood
-  model.UpdateModel(reals, cur_block_type_, cur_block_params_);
+  model.UpdateModel(reals, cur_block_info_, cur_block_params_);
   VectorType computed_log_likelihood = ComputeLogLikelihood(model, obs);
   acceptation_ratio += computed_log_likelihood.sum();
 
@@ -105,7 +106,7 @@ void BlockedGibbsSampler::OneBlockSample(int block_num, Realizations& reals,
       reals.at(name, real_num) = prev_real;
     }
 
-    model.UpdateModel(reals, cur_block_type_, cur_block_params_);
+    model.UpdateModel(reals, cur_block_info_, cur_block_params_);
   }
       /// Acceptation : Candidate is accepted
   else
@@ -114,20 +115,20 @@ void BlockedGibbsSampler::OneBlockSample(int block_num, Realizations& reals,
   }
 
   /// Adaptative variances for the realizations
-  UpdateBlockRandomVariable(acceptation_ratio, current_block .second);
+  UpdateBlockRandomVariable(acceptation_ratio);
 
 }
 
-ScalarType BlockedGibbsSampler::ComputePriorRatioAndUpdateRealizations(Realizations& reals, const AbstractModel& model, const MiniBlock& var)
+ScalarType BlockedGibbsSampler::ComputePriorRatioAndUpdateRealizations(Realizations& reals, const AbstractModel& model)
 {
   double acceptance_ratio = 0;
 
-  for(auto it = var.begin(); it != var.end(); ++it)
+  for(auto it = cur_block_info_.begin(); it != cur_block_info_.end(); ++it)
   {
       /// Initialization
-      std::string name_real = it->first;
+      std::string name_real = std::get<1>(*it);
       int key = reals.ReverseNameToKey(name_real);
-      unsigned int real_num = it->second;
+      unsigned int real_num = std::get<2>(*it);
       cur_block_params_.push_back(name_real);
       cur_block_params_bis_.push_back(key);
 
@@ -159,22 +160,22 @@ ScalarType BlockedGibbsSampler::ComputePriorRatioAndUpdateRealizations(Realizati
 
 BlockedGibbsSampler::VectorType BlockedGibbsSampler::ComputeLogLikelihood(AbstractModel& model, const Observations& obs)
 {
-  return model.ComputeLogLikelihood(obs, cur_block_type_);
+  return model.ComputeLogLikelihood(obs, cur_block_info_);
 }
 
 double BlockedGibbsSampler::GetPreviousLogLikelihood(AbstractModel& model)
 {
-  return model.GetPreviousLogLikelihood(cur_block_type_);
+  return model.GetPreviousLogLikelihood(cur_block_info_);
 }
 
 void BlockedGibbsSampler::UpdateLastLogLikelihood(AbstractModel& model, VectorType& computed_log_likelihood)
 {
-  model.SetPreviousLogLikelihood(computed_log_likelihood, cur_block_type_);
+  model.SetPreviousLogLikelihood(computed_log_likelihood, cur_block_info_);
 
 }
 
 
-void BlockedGibbsSampler::UpdateBlockRandomVariable(double acceptance_ratio, const MiniBlock &var)
+void BlockedGibbsSampler::UpdateBlockRandomVariable(double acceptance_ratio)
 {
   double epsilon = DecreasingStepSize(cur_iter_, memoryless_sampling_time_);
   double denom = expected_acceptance_ratio_;
@@ -182,11 +183,11 @@ void BlockedGibbsSampler::UpdateBlockRandomVariable(double acceptance_ratio, con
   if(acceptance_ratio > expected_acceptance_ratio_)
       denom = 1 - expected_acceptance_ratio_;
 
-  for(auto it = var.begin(); it != var.end(); ++it)
+  for(auto it = cur_block_info_.begin(); it != cur_block_info_.end(); ++it)
   {
       /// Initialize
-      std::string name_real = it->first;
-      unsigned int real_num = it->second;
+      std::string name_real = std::get<1>(*it);
+      unsigned int real_num = std::get<2>(*it);
 
       /// Compute newvariance
       GaussianRandomVariable gaussian_rand_var = candidate_rand_var_.GetRandomVariable(name_real, real_num);

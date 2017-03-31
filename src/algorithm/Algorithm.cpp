@@ -63,7 +63,8 @@ void Algorithm::InitializeModel(const Observations& obs)
   Realizations real = model_->SimulateRealizations();
 
   realizations_ = std::make_shared<Realizations>(real);
-  model_->UpdateModel(real, -1);
+  auto init = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
+  model_->UpdateModel(real, init);
 
   for(auto it = realizations_->begin(); it != realizations_->end(); ++it)
   {

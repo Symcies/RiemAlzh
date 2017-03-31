@@ -5,6 +5,7 @@
 #include <fstream>
 #include <memory>
 #include <unordered_map>
+#include <tuple>
 
 #include "AbstractManifold.h"
 #include "AbstractRandomVariable.h"
@@ -28,8 +29,7 @@ public:
   typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
   typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
   typedef typename std::unordered_map<std::string, int> StringIntHash;
-  typedef std::vector<std::pair<std::string,  unsigned int>> MiniBlock;
-  typedef std::pair<int, MiniBlock> SamplerBlock;
+  typedef std::vector<std::tuple<int, std::string, int>> MiniBlock;
   typedef std::vector<VectorType> SufficientStatisticsVector;
 
 
@@ -59,7 +59,7 @@ public:
 
   /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
   /// This update can depend on the parameter that has changed, provided by the name argument
-  virtual void UpdateModel(const Realizations& real, int type, const std::vector<std::string> names = {"All"}) = 0;
+  virtual void UpdateModel(const Realizations& real, const MiniBlock& block_info, const std::vector<std::string> names = {"All"}) = 0;
 
   /// Update the sufficient statistics according to the model variables / parameters
   virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& real, const Observations& obs) = 0;
@@ -74,27 +74,24 @@ public:
   Realizations SimulateRealizations();
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
-  virtual std::vector<SamplerBlock> GetSamplerBlocks() const = 0;
+  virtual std::vector<MiniBlock> GetSamplerBlocks() const = 0;
 
-  /// PROBABLY TO ERASE
-  /// Compute the parallel curve
-  virtual VectorType ComputeParallelCurve(int subjects_tot_num_, int obs_num) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Log-likelihood related method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   
   /// Compute the log likelihood of the model
-  virtual VectorType ComputeLogLikelihood(const Observations &obs, const int type)= 0;
+  virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)= 0;
 
   /// Compute the log likelihood of the model for a particular individual
   virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_) = 0;
   
   /// Get the previous loglikelihood computed
-  virtual ScalarType GetPreviousLogLikelihood(const int type) = 0;
+  virtual ScalarType GetPreviousLogLikelihood(const MiniBlock& block_info) = 0;
   
   /// Update the previous loglikelihood computed
-  virtual void SetPreviousLogLikelihood(VectorType& log_likelihood, const int type) = 0;
+  virtual void SetPreviousLogLikelihood(VectorType& log_likelihood, const MiniBlock& block_info) = 0;
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   // Outputs

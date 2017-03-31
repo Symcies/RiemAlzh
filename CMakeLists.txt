@@ -59,8 +59,6 @@ file( GLOB_RECURSE EXAMPLES examples/* )
 #Next lines are just to work with one moddel
 file(GLOB to_remove
         ${CMAKE_CURRENT_SOURCE_DIR}/src/models/network/*
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar/UnivariateModel.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar/UnivariateModel.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar/MixedEffectsModel.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar/MixedEffectsModel.h
         )
