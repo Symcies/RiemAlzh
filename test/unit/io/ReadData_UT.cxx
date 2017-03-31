@@ -1,12 +1,12 @@
-#include "TestReadData.h"
+#include "ReadData_UT.h"
 
 namespace test {
-  void TestReadData::SetUp() {
+  void ReadData_UT::SetUp() {
     Test::SetUp();
   }
 
-  TEST_F(TestReadData, read_obs) {
-    const char * p = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/data_settings.xml";
+  TEST_F(ReadData_UT, read_obs) {
+    const char * p = "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/correct_real_data_settings.xml";
     io::DataSettings data_settings(p);
 
     Observations obs = io::ReadData::ReadObservations(data_settings);
@@ -21,7 +21,7 @@ namespace test {
 
   }
 
-  TEST_F(TestReadData, open_kernel) {
+  TEST_F(ReadData_UT, open_kernel) {
     //To write when kernel data available
   }
 

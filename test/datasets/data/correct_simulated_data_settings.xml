@@ -1,0 +1,14 @@
+<data-settings>
+
+  <!-- Defines if should read real data (true) of simulate data (false) -->
+  <data-type>false</data-type>
+
+  <!-- In case of simulated data -->
+  <simulated-data>
+    <number-of-individuals>150</number-of-individuals>
+    <min-number-of-observations>4</min-number-of-observations>
+    <max-number-of-observations>6</max-number-of-observations>
+  </simulated-data>
+
+
+</data-settings>

@@ -27,12 +27,17 @@ Algorithm::~Algorithm() {
 void Algorithm::ComputeMCMCSAEM(const Observations& obs) {
   /// This function is core to the software. It initialize parts of the model and sampler
   /// and runs the MCMC-SAEM algorithm. The class attributes define the properties of the MCMC-SAEM
+  std::cout << "InitializeModel" << std::endl;
   InitializeModel(obs);
+  std::cout << "InitializeSampler" << std::endl;
   InitializeSampler();
+  std::cout << "InitializeStochasticSufficientStatistics" << std::endl;
   InitializeStochasticSufficientStatistics(obs);
+  std::cout << "IterationMCMCSAEM" << std::endl;
 
   for(int iter = 0; iter < max_iter_num_; iter ++)
   {
+    std::cout << "IterationMCMCSAEM " << iter << std::endl;
     IterationMCMCSAEM(obs, iter);
   }
 }
@@ -47,9 +52,13 @@ void Algorithm::InitializeStochasticSufficientStatistics(const Observations& obs
   /// It initialize the stochastic sufficient statistics by copying the one from the model.
   /// Pitfall : it computes the suff stat of the model where only the length is needed
 
+  std::cout << "Get sufficient stats" << std::endl;
   stochastic_sufficient_stats_ = model_->GetSufficientStatistics(*realizations_, obs);
-  for(auto&& it : stochastic_sufficient_stats_)
+
+  std::cout << "stochastic_sufficient_stats_" << std::endl;
+  for(auto&& it : stochastic_sufficient_stats_){
     std::fill(it.begin(), it.end(), 0.0);
+  }
 
 }
 
@@ -59,14 +68,20 @@ void Algorithm::InitializeModel(const Observations& obs)
   /// It initialize the model, draw its respective realizations and initialize the acceptance ratios
   /// which are key to observe the algorithm convergence
 
+  std::cout << "Initialize" << std::endl;
   model_->Initialize(obs);
+  std::cout << "SimulateRealizations" << std::endl;
   Realizations real = model_->SimulateRealizations();
 
+  std::cout << "make_shared" << std::endl;
   realizations_ = std::make_shared<Realizations>(real);
+  std::cout << "UpdateModel" << std::endl;
   model_->UpdateModel(real, -1);
 
+  std::cout << "bef loop" << std::endl;
   for(auto it = realizations_->begin(); it != realizations_->end(); ++it)
   {
+
     VectorType v(it->second.size(), 0);
     acceptance_ratio_[it->first] = v;
   }

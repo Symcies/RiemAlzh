@@ -1,12 +1,12 @@
-#include "TestModelSettings.h"
+#include "ModelSettings_UT.h"
 
 namespace test {
-  void TestModelSettings::SetUp() {
+  void ModelSettings_UT::SetUp() {
     Test::SetUp();
   }
 
-  TEST_F(TestModelSettings, construction) {
-    const char * p1 = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/model_settings.xml";
+  TEST_F(ModelSettings_UT, construction_multivariate_model) {
+    const char * p1 = "/Users/clementine.fourrier/RiemAlzh/test/datasets/models/correct_multivariate_model_settings.xml";
     io::ModelSettings     model_settings(p1);
 
     ASSERT_EQ(model_settings.GetType(), "Multivariate");

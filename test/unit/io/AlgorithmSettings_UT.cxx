@@ -1,12 +1,12 @@
-#include "TestAlgorithmSettings.h"
+#include "AlgorithmSettings_UT.h"
 
 namespace test {
-  void TestAlgorithmSettings::SetUp() {
+  void AlgorithmSettings_UT::SetUp() {
     Test::SetUp();
   }
 
-  TEST_F(TestAlgorithmSettings, construction) {
-    std::string path = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/algorithm_settings.xml";
+  TEST_F(AlgorithmSettings_UT, construction_algorithm) {
+    std::string path = "/Users/clementine.fourrier/RiemAlzh/test/datasets/algorithm/correct_algorithm_settings.xml";
     io::AlgorithmSettings algo_settings(&path[0]);
 
     ASSERT_EQ(algo_settings.GetMaximumNumberOfIterations(), 1000);

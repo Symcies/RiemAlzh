@@ -1,25 +1,25 @@
-#include "TestDataSettings.h"
+#include "DataSettings_UT.h"
 
 namespace test {
-  void TestDataSettings::SetUp() {
+  void DataSettings_UT::SetUp() {
     Test::SetUp();
   }
 
-  TEST_F(TestDataSettings, construction_from_real_data) {
-    const char * p = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/data_settings.xml";
+  TEST_F(DataSettings_UT, construction_from_real_data) {
+    const char * p = "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/correct_real_data_settings.xml";
     io::DataSettings data_settings(p);
 
     ASSERT_EQ(
       data_settings.GetPathToGroup(),
-      "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/data/group.csv"
+      "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/data_files/group.csv"
     );
     ASSERT_EQ(
       data_settings.GetPathToTimepoints(),
-      "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/data/X.csv"
+      "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/data_files/X.csv"
     );
     ASSERT_EQ(
       data_settings.GetPathToCognitiveScores(),
-      "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/data/Y.csv"
+      "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/data_files/Y.csv"
     );
     ASSERT_EQ(
       data_settings.GetCognitiveScoresDimension(),
@@ -63,8 +63,8 @@ namespace test {
     );
   }
 
-  TEST_F(TestDataSettings, construction_from_false_data) {
-    const char * p = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/data_settings0.xml";
+  TEST_F(DataSettings_UT, construction_from_simulated_data) {
+    const char * p = "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/correct_simulated_data_settings.xml";
     io::DataSettings data_settings(p);
 
     ASSERT_EQ(

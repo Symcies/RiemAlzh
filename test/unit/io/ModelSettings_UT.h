@@ -6,7 +6,7 @@
 #include "ModelSettings.h"
 
 namespace test {
-  class TestModelSettings : public ::testing::Test {
+  class ModelSettings_UT : public ::testing::Test {
 
     protected:
       virtual void SetUp();

@@ -76,6 +76,7 @@ void UnivariateModel::UpdateModel(const Realizations &reals, int type, const std
   for(auto it = names.begin(); it != names.end(); ++it)
   {
     std::string name = it->substr(0, it->find_first_of("#"));
+    std::cout << name << std::endl;
     if(name == "None")
     {
       continue;
@@ -91,6 +92,7 @@ void UnivariateModel::UpdateModel(const Realizations &reals, int type, const std
     }
     else if(name == "All")
     {
+      std::cout << "in all" << std::endl;
       ComputeSubjectTimePoint(reals, -1);
       compute_individual = false;
       compute_position = true;
@@ -101,6 +103,8 @@ void UnivariateModel::UpdateModel(const Realizations &reals, int type, const std
     }
   }
 
+
+  std::cout << "ComputeSubjectTimePoint" << std::endl;
   if(compute_individual) {
     ComputeSubjectTimePoint(reals, type);
   }
@@ -115,13 +119,19 @@ AbstractModel::SufficientStatisticsVector UnivariateModel::GetSufficientStatisti
   /// Basically, it is a vector (named s1 to S9) of vectors
 
   /// s1 <- y_ij * eta_ij    &    s2 <- eta_ij * eta_ij
+  std::cout << "stochastic_sufficient_stats_" << std::endl;
+
   VectorType s1(obs_tot_num_), s2(obs_tot_num_);
   auto it_s1 = s1.begin(), it_s2 = s2.begin();
   for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
+
+    std::cout << "subjects_tot_num_" << std::endl;
       for(size_t j = 0; j < obs.GetNumberOfTimePoints(i); ++j)
       {
+          std::cout << i << " "<< j << " " << obs.GetNumberOfTimePoints(i) << std::endl;
           VectorType parallel_curve = ComputeParallelCurve(i, j);
+          std::cout << parallel_curve.size() << " - " << obs.GetSubjectCognitiveScore(i, j).size() << std::endl;
           *it_s1 = dot_product(parallel_curve, obs.GetSubjectCognitiveScore(i, j));
           *it_s2 = parallel_curve.squared_magnitude();
           ++it_s1, ++it_s2;
@@ -387,24 +397,23 @@ void UnivariateModel::InitializeFakeRandomVariables()
 /// Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void UnivariateModel::ComputeSubjectTimePoint(const Realizations &reals, const int subjects_tot_num_)
+void UnivariateModel::ComputeSubjectTimePoint(const Realizations &reals, const int subject_num)
 {
 
   /// The model introduces a time-warp for each subject, namely a time reparametrization
   /// For a given subject i, t_ij becomes alpha_i * ( t_ij - tau_i)
   /// alpha_i is the pace of disease propagation of patient i (Faster/Slower than average)
   /// tau_i is the disease onset of patient i (Beginning of the disease before/after the average time of conversion)
-
+  //std::cout <<"in compute subject time point " << subjects_tot_num_ << std::endl;
   /// If the subject number is -1, then the function recalculates the reparametrization for all the subjects
-  if(subjects_tot_num_ != -1)
+  if(subject_num != -1)
   {
-      double acc_factor = exp(reals.at("Ksi", subjects_tot_num_));
-      double time_shift = reals.at("Tau", subjects_tot_num_);
-      subj_time_points_[subjects_tot_num_] = acc_factor * (individual_obs_date_[subjects_tot_num_] - time_shift);
+      double acc_factor = exp(reals.at("Ksi", subject_num));
+      double time_shift = reals.at("Tau", subject_num);
+      subj_time_points_[subject_num] = acc_factor * (individual_obs_date_[subject_num] - time_shift);
   }
   else
   {
-
       for(size_t i = 0; i < subjects_tot_num_; ++i)
       {
           double acc_factor = exp(reals.at("Ksi")(i));
@@ -417,9 +426,9 @@ void UnivariateModel::ComputeSubjectTimePoint(const Realizations &reals, const i
 
 }
 
-AbstractModel::VectorType UnivariateModel::ComputeParallelCurve(int subjects_tot_num_, int obs_num)
+AbstractModel::VectorType UnivariateModel::ComputeParallelCurve(int subject_num, int obs_num)
 {
-  ScalarType time_point = subj_time_points_[subjects_tot_num_](obs_num);
+  ScalarType time_point = subj_time_points_[subject_num](obs_num);
 
   ScalarType parallel_curve = exp( - time_point / (position_ * (1 - position_)));
   parallel_curve *= (1.0 / position_ - 1);

@@ -3,10 +3,10 @@
 #include "gtest/gtest.h"
 #include <iostream>
 #include <fstream>
-#include "DataSettings.h"
+#include "AlgorithmSettings.h"
 
 namespace test {
-  class TestDataSettings : public ::testing::Test {
+  class AlgorithmSettings_UT : public ::testing::Test {
 
     protected:
       virtual void SetUp();

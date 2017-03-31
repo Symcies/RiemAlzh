@@ -9,7 +9,7 @@
 #include "MultivariateModel.h"
 
 namespace test {
-  class TestAlgorithm : public ::testing::Test {
+  class Algorithm_UT : public ::testing::Test {
 
     protected:
       virtual void SetUp();

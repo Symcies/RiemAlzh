@@ -47,6 +47,14 @@ public:
   std::shared_ptr< AbstractRandomVariable > GetRandomVariable(std::string name) const;
   std::shared_ptr< AbstractRandomVariable > GetRandomVariable(int key) const;
 
+  inline std::shared_ptr< AbstractManifold > GetManifold(){return manifold_;};
+  inline MultiRandomVariables& GetRandomVariable(){return rand_var_;};
+  inline StringIntHash GetAssoTable(){return asso_num_real_per_rand_var_;};
+  inline double GetSumOfObservations(){return sum_obs_;};
+  inline double GetNumberOfObservations(){return obs_tot_num_;};
+  inline int GetNumberOfSubjects(){return subjects_tot_num_;};
+  inline double GetManifoldDimension(){return manifold_dim_;};
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +115,7 @@ public:
 
 
 protected:
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   // Attribute(s)
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +127,6 @@ protected:
   MultiRandomVariables rand_var_;
 
   /// Number of realizations per random variables used in the model
-  //TODO: why StringIntHash
   StringIntHash asso_num_real_per_rand_var_;
 
   /// Output file

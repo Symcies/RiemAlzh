@@ -23,6 +23,8 @@ ModelSettings::ModelSettings(const char *xml_file) {
     LoadNetworkModel(settings);
   } else if (type_ == "Multivariate") {
     LoadMultivariate(settings);
+  }else if (type_ == "Univariate") {
+    LoadUnivariate(settings);
   } else {
     std::cerr << "The model type defined in model_settings.xml should be in {FastNetwork, Meshwork}";
   }
@@ -64,6 +66,10 @@ void ModelSettings::LoadNetworkModel(const tinyxml2::XMLElement *settings) {
 }
 
 void ModelSettings::LoadMultivariate(const tinyxml2::XMLElement *settings) {
+  PrintModelInfo();
+}
+
+void ModelSettings::LoadUnivariate(const tinyxml2::XMLElement *settings) {
   PrintModelInfo();
 }
 
