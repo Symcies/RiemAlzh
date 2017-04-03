@@ -74,6 +74,9 @@ class UnivariateModel : public AbstractModel {
   VectorType ComputeParallelCurve(int subjects_tot_num_, int ObservationNumber);
 
 
+  inline std::vector<VectorType> GetIndObsDate(){return individual_obs_date_;};
+  inline std::vector<VectorType> GetSubjTimePoints(){return subj_time_points_;};
+
 private:
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////

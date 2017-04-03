@@ -9,7 +9,7 @@ namespace io {
 
 DataSettings::DataSettings(const char *xml_file) {
 
-  if (xml_file == NULL || xml_file == ""){
+  if (xml_file == ""){
     std::cerr << "Problem in DataSettings. xml_file name null." << std::endl;
     //TODO: define exit behavior
     return;
@@ -24,9 +24,11 @@ DataSettings::DataSettings(const char *xml_file) {
   std::string real_data = settings->FirstChildElement("data-type")->GetText();
   if (real_data == "true") {
     LoadRealDataSettings(settings->FirstChildElement("real-data"));
+    InitArgsOfOtherType(true);
   }
   else if (real_data == "false") {
     LoadSimulatedDataSettings(settings->FirstChildElement("simulated-data"));
+    InitArgsOfOtherType(false);
   }
   else {
     //TODO: better error message
@@ -61,6 +63,8 @@ void DataSettings::LoadRealDataSettings(const tinyxml2::XMLElement* settings) {
 
   LoadRealCognitiveScores(cog_scores);
   LoadRealLandmarks(landmarks);
+
+
 
 }
 
@@ -111,6 +115,7 @@ void DataSettings::LoadRealLandmarks(const tinyxml2::XMLElement *settings)
   else
   {
     are_landmarks_present_ = false;
+    landmarks_dim_ = -1;
   }
 }
 
@@ -126,8 +131,21 @@ void DataSettings::LoadSimulatedDataSettings(const tinyxml2::XMLElement* setting
   std::cout << "The model is simulating between ";
   std::cout << min_observation_num_ << " and " << max_observation_num_;
   std::cout << " observations for " << subjects_total_num_ << " subjects" << std::endl;
+
 }
 
-
+void DataSettings::InitArgsOfOtherType(bool real){
+  if (real){
+    subjects_total_num_ = -1;
+    min_observation_num_ = -1;
+    max_observation_num_ = -1;
+  }
+  else {
+    are_cog_scores_present_ = false;
+    are_landmarks_present_ = false;
+    cog_scores_dim_ = -1;
+    landmarks_dim_ = -1;
+  }
+}
 
 } //end namespace

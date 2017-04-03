@@ -37,6 +37,11 @@ public:
 
   inline void SetSampler(std::shared_ptr<AbstractSampler> stat_vector) { sampler_ = stat_vector; }
 
+  inline int GetMaximumNumberOfIterations() {return max_iter_num_;}
+  inline int GetNumberOfBurnInIterations() {return burnin_iter_num_;}
+  inline int GetOutputDisplayIteration() {return output_iter_;}
+  inline int GetDataSaveIteration() {return data_save_iter_;}
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Other method(stat_vector) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////

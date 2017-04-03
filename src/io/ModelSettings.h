@@ -85,6 +85,9 @@ private:
   /// Load the multivariate
   void LoadMultivariate(const tinyxml2::XMLElement *settings);
 
+  /// Load the univariate
+  void LoadUnivariate(const tinyxml2::XMLElement *settings);
+
   ///Print the type of the model
   void PrintModelInfo();
 

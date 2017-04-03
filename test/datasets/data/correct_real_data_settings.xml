@@ -6,7 +6,7 @@
 
   <!-- In case of real data -->
   <real-data>
-    <folder-path>/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/data/</folder-path>
+    <folder-path>/Users/clementine.fourrier/RiemAlzh/test/datasets/data/data_files/</folder-path>
     <group-file>group.csv</group-file>
     <timepoints-file>X.csv</timepoints-file>
 
@@ -30,13 +30,5 @@
     </observations>
 
   </real-data>
-
-  <!-- In case of simulated data -->
-  <simulated-data>
-    <number-of-individuals>150</number-of-individuals>
-    <min-number-of-observations>4</min-number-of-observations>
-    <max-number-of-observations>6</max-number-of-observations>
-  </simulated-data>
-
 
 </data-settings>

@@ -520,10 +520,24 @@ void MultivariateModel::DisplayOutputs(const Realizations &AR)
   std::cout << " - Ksi: " << ksi->GetParameter("Mean") << " - Var(Ksi): " << ksi->GetParameter("Variance") << std::endl;
 }
 
-void MultivariateModel::SaveData(unsigned int IterationNumber, const Realizations &reals)
+void MultivariateModel::SaveData(unsigned int iter_num, const Realizations &reals)
 {
   /// It saves the random variables / realizations / whatever model parameters
   /// Mainly needed for post processing
+
+  auto g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
+  auto tau = rand_var_.GetRandomVariable("Tau");
+  auto ksi = rand_var_.GetRandomVariable("Ksi");
+
+  std::ofstream log_file;
+  log_file.open("log_file.txt", std::ofstream::out | std::ofstream::app);
+
+  log_file << "Iteration n: " << iter_num;
+  log_file << " - noise: "  << noise_->GetVariance();
+  log_file << " - G: "   << g;
+  log_file << " - T0: "  << tau->GetParameter("Mean") << " - Var(Tau): " << tau->GetParameter("Variance");
+  log_file << " - Ksi: " << ksi->GetParameter("Mean") << " - Var(Ksi): " << ksi->GetParameter("Variance") << std::endl;
+  log_file.close();
 }
 
 

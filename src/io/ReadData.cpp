@@ -11,8 +11,7 @@ Observations ReadData::ReadObservations(DataSettings &ds)
   std::ifstream landmarks_file(ds.GetPathToLandmarks());
   std::ifstream cognitive_scores_file(ds.GetPathToCognitiveScores());
 
-  std::string group_line, time_points_line,
-              landmarks_line, cognitive_scores_line;
+  std::string group_line, time_points_line;
   unsigned int current_suject_id = -1;
 
   VectorType time_points;
@@ -26,14 +25,11 @@ Observations ReadData::ReadObservations(DataSettings &ds)
       current_suject_id = std::stoi(group_line);
     }
 
-
     unsigned int new_subject_id = std::stoi(group_line);
 
     /// If we changed subject
     if(new_subject_id != current_suject_id) {
-      IndividualObservations individual(time_points);
-      if(ds.LandmarkPresence())        individual.AddLandmarks(landmarks);
-      if(ds.CognitiveScoresPresence()) individual.AddCognitiveScores(cognitive_scores);
+      IndividualObservations individual = CreateIndividualObs(ds, time_points, landmarks, cognitive_scores);
       obs.AddIndividualData(individual);
 
       current_suject_id = new_subject_id;
@@ -46,40 +42,49 @@ Observations ReadData::ReadObservations(DataSettings &ds)
     time_points.push_back(stod(time_points_line));
 
     if(ds.LandmarkPresence()) {
-      std::getline(landmarks_file, landmarks_line);
-      VectorType new_obs(ds.GetLandmarksDimension());
-      int i = 0;
-      std::stringstream line_stream(landmarks_line);
-      std::string cell;
-      while(std::getline(line_stream, cell, ',')) {
-        new_obs(i) = std::stod(cell);
-        ++i;
-      }
+      VectorType new_obs = ExtractObservation(landmarks_file, ds.GetLandmarksDimension());
       landmarks.push_back(new_obs);
     }
 
     if(ds.CognitiveScoresPresence()) {
-      std::getline(cognitive_scores_file, cognitive_scores_line);
-      VectorType new_obs(ds.GetCognitiveScoresDimension());
-      int i = 0;
-      std::stringstream line_stream(cognitive_scores_line);
-      std::string cell;
-      while(std::getline(line_stream, cell, ',')){
-        new_obs(i) = std::stod(cell);
-        ++i;
-      }
+      VectorType new_obs = ExtractObservation(cognitive_scores_file, ds.GetCognitiveScoresDimension());
       cognitive_scores.push_back(new_obs);
     }
   } //end while
-
-  IndividualObservations individual(time_points);
-  if(ds.LandmarkPresence())        individual.AddLandmarks(landmarks);
-  if(ds.CognitiveScoresPresence()) individual.AddCognitiveScores(cognitive_scores);
+  IndividualObservations individual = CreateIndividualObs(ds, time_points, landmarks, cognitive_scores);
   obs.AddIndividualData(individual);
 
   return obs;
 }
 
+IndividualObservations ReadData::CreateIndividualObs(
+  DataSettings& ds,
+  ReadData::VectorType& time_points,
+  std::vector<ReadData::VectorType>& landmarks,
+  std::vector<ReadData::VectorType>& cognitive_scores){
+    IndividualObservations individual(time_points);
+    if(ds.LandmarkPresence()) {
+      individual.AddLandmarks(landmarks);
+    }
+    if(ds.CognitiveScoresPresence()) {
+      individual.AddCognitiveScores(cognitive_scores);
+    }
+    return individual;
+}
+
+ReadData::VectorType ReadData::ExtractObservation(std::ifstream& file_stream, int dimension){
+  std::string line;
+  std::getline(file_stream, line);
+  VectorType new_obs(dimension);
+  int i = 0;
+  std::stringstream line_stream(line);
+  std::string cell;
+  while(std::getline(line_stream, cell, ',')){
+    new_obs(i) = std::stod(cell);
+    ++i;
+  }
+  return new_obs;
+}
 
 ReadData::MatrixType ReadData::OpenKernel(std::string file_path) {
   if(file_path == ""){
