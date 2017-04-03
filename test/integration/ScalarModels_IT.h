@@ -2,16 +2,12 @@
 
 #include "gtest/gtest.h"
 #include <fstream>
+#include "global.h"
 
 namespace test {
   class ScalarModels_IT : public ::testing::Test {
 
     protected:
       virtual void SetUp();
-      std::string TEST_DIR = "/Users/clementine.fourrier/RiemAlzh/test/";
-      std::string DATA_DIR = "datasets/data/";
-      std::string MODEL_DIR = "datasets/models/";
-      std::string ALGO_DIR = "datasets/algorithm/";
-
   };
 }

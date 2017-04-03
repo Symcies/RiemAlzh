@@ -12,6 +12,13 @@
 #include "UnivariateModel.h"
 #include "Observations.h"
 
+
+extern const std::string GV::BUILD_DIR;
+extern const std::string GV::TEST_DIR;
+extern const std::string GV::TEST_DATA_DIR;
+extern const std::string GV::TEST_MODEL_DIR;
+extern const std::string GV::TEST_ALGO_DIR;
+
 namespace test {
   void ScalarModels_IT::SetUp() {
     Test::SetUp();
@@ -19,9 +26,9 @@ namespace test {
 
   // TEST_F(ScalarModels_IT, execution_of_multivariate_model_on_correct_real_dataset) {
     /// Load the file arguments
-  //   io::ModelSettings     model_settings(&(TEST_DIR + MODEL_DIR + "correct_multivariate_model_settings.xml")[0]);
-  //   io::AlgorithmSettings algo_settings(&(TEST_DIR + ALGO_DIR + "correct_algorithm_settings.xml")[0]);
-  //   io::DataSettings      data_settings(&(TEST_DIR + DATA_DIR + "correct_real_data_settings.xml")[0]);
+  //   io::ModelSettings     model_settings(&(GV::TEST_MODEL_DIR + "correct_multivariate_model_settings.xml")[0]);
+  //   io::AlgorithmSettings algo_settings(&(GV::TEST_ALGO_DIR + "correct_algorithm_settings.xml")[0]);
+  //   io::DataSettings      data_settings(&(GV::TEST_DATA_DIR + "correct_real_data_settings.xml")[0]);
   //
   //   /// Initialize the sampler
   //   std::shared_ptr<AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();
@@ -69,9 +76,9 @@ namespace test {
 
   TEST_F(ScalarModels_IT, execution_of_univariate_model_on_correct_real_dataset) {
     /// Load the file arguments
-    io::ModelSettings     model_settings(&(TEST_DIR + MODEL_DIR + "correct_univariate_model_settings.xml")[0]);
-    io::AlgorithmSettings algo_settings(&(TEST_DIR + ALGO_DIR + "correct_algorithm_settings.xml")[0]);
-    io::DataSettings      data_settings(&(TEST_DIR + DATA_DIR + "correct_real_data_settings.xml")[0]);
+    io::ModelSettings     model_settings(&(GV::TEST_MODEL_DIR + "correct_univariate_model_settings.xml")[0]);
+    io::AlgorithmSettings algo_settings(&(GV::TEST_ALGO_DIR + "correct_algorithm_settings.xml")[0]);
+    io::DataSettings      data_settings(&(GV::TEST_DATA_DIR + "correct_real_data_settings.xml")[0]);
 
     /// Initialize the sampler
     std::shared_ptr<AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();
@@ -119,9 +126,9 @@ namespace test {
 
   TEST_F(ScalarModels_IT, execution_of_multivariate_model_on_correct_simulated_dataset) {
     /// Load the file arguments
-    io::ModelSettings     model_settings(&(TEST_DIR + MODEL_DIR + "correct_multivariate_model_settings.xml")[0]);
-    io::AlgorithmSettings algo_settings(&(TEST_DIR + ALGO_DIR + "correct_algorithm_settings.xml")[0]);
-    io::DataSettings      data_settings(&(TEST_DIR + DATA_DIR + "correct_simulated_data_settings.xml")[0]);
+    io::ModelSettings     model_settings(&(GV::TEST_MODEL_DIR + "correct_multivariate_model_settings.xml")[0]);
+    io::AlgorithmSettings algo_settings(&(GV::TEST_ALGO_DIR + "correct_algorithm_settings.xml")[0]);
+    io::DataSettings      data_settings(&(GV::TEST_DATA_DIR + "correct_simulated_data_settings.xml")[0]);
 
     /// Initialize the sampler
     std::shared_ptr<AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();

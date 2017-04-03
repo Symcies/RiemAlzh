@@ -1,13 +1,15 @@
 #include "ReadData_UT.h"
 
+extern const std::string GV::TEST_DATA_DIR;
+
 namespace test {
   void ReadData_UT::SetUp() {
     Test::SetUp();
   }
 
   TEST_F(ReadData_UT, read_obs) {
-    const char * p = "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/correct_real_data_settings.xml";
-    io::DataSettings data_settings(p);
+    std::string p = GV::TEST_DATA_DIR + "correct_real_data_settings.xml";
+    io::DataSettings data_settings(&p[0]);
 
     Observations obs = io::ReadData::ReadObservations(data_settings);
     obs.InitializeGlobalAttributes();

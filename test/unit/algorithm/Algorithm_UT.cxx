@@ -1,16 +1,20 @@
 #include "Algorithm_UT.h"
 
+extern const std::string GV::TEST_DATA_DIR;
+extern const std::string GV::TEST_MODEL_DIR;
+extern const std::string GV::TEST_ALGO_DIR;
+
 namespace test {
 
   void Algorithm_UT::SetUp() {
-    std::string path = "/Users/clementine.fourrier/RiemAlzh/test/datasets/algorithm/correct_algorithm_settings.xml";
+    std::string path = GV::TEST_ALGO_DIR + "correct_algorithm_settings.xml";
     io::AlgorithmSettings algo_settings(&path[0]);
 
     algo_ = std::make_shared<Algorithm>(algo_settings);
   }
 
   TEST_F(Algorithm_UT, test_constructor) {
-    // std::string path = "/Users/clementine.fourrier/RiemAlzh/test/datasets/algorithm/correct_algorithm_settings.xml";
+    // std::string path = GV::TEST_ALGO_DIR + "correct_algorithm_settings.xml";
     // io::AlgorithmSettings algo_settings(&path[0]);
     //
     // ASSERT_EQ(algo_->GetMaximumNumberOfIterations(),
@@ -24,11 +28,11 @@ namespace test {
   }
 
   TEST_F(Algorithm_UT, test_computationMCMCSAEM) {
-    // const char * p1 = "/Users/clementine.fourrier/RiemAlzh/test/datasets/models/correct_multivariate_model_settings.xml";
-    // const char * p3 = "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/correct_real_data_settings.xml";
+    // std::string ms = GV::TEST_MODEL_DIR + "correct_multivariate_model_settings.xml";
+    // std::string ds = GV::TEST_DATA_DIR + "correct_real_data_settings.xml";
     //
-    // io::ModelSettings     model_settings(p1);
-    // io::DataSettings      data_settings(p3);
+    // io::ModelSettings     model_settings(&ms[0]);
+    // io::DataSettings      data_settings(&ds[0]);
     //
     // /// Initialize the model
     // std::shared_ptr<AbstractModel> model = std::make_shared<MultivariateModel>(model_settings);

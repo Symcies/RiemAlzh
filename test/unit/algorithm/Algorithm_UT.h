@@ -8,6 +8,8 @@
 #include "BlockedGibbsSampler.h"
 #include "MultivariateModel.h"
 
+#include "global.h"
+
 namespace test {
   class Algorithm_UT : public ::testing::Test {
 

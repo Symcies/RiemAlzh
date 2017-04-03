@@ -1,25 +1,29 @@
 #include "DataSettings_UT.h"
 
+extern const std::string GV::TEST_DATA_DIR;
+extern const std::string GV::TEST_MODEL_DIR;
+extern const std::string GV::TEST_ALGO_DIR;
+
 namespace test {
   void DataSettings_UT::SetUp() {
     Test::SetUp();
   }
 
   TEST_F(DataSettings_UT, construction_from_real_data) {
-    const char * p = "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/correct_real_data_settings.xml";
-    io::DataSettings data_settings(p);
+    std::string p = GV::TEST_DATA_DIR + "correct_real_data_settings.xml";
+    io::DataSettings data_settings(&p[0]);
 
     ASSERT_EQ(
       data_settings.GetPathToGroup(),
-      "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/data_files/group.csv"
+      GV::TEST_DATA_DIR + "data_files/group.csv"
     );
     ASSERT_EQ(
       data_settings.GetPathToTimepoints(),
-      "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/data_files/X.csv"
+      GV::TEST_DATA_DIR + "data_files/X.csv"
     );
     ASSERT_EQ(
       data_settings.GetPathToCognitiveScores(),
-      "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/data_files/Y.csv"
+      GV::TEST_DATA_DIR + "data_files/Y.csv"
     );
     ASSERT_EQ(
       data_settings.GetCognitiveScoresDimension(),
@@ -64,8 +68,8 @@ namespace test {
   }
 
   TEST_F(DataSettings_UT, construction_from_simulated_data) {
-    const char * p = "/Users/clementine.fourrier/RiemAlzh/test/datasets/data/correct_simulated_data_settings.xml";
-    io::DataSettings data_settings(p);
+    std::string p = GV::TEST_DATA_DIR + "correct_simulated_data_settings.xml";
+    io::DataSettings data_settings(&p[0]);
 
     ASSERT_EQ(
       data_settings.GetPathToGroup(),
