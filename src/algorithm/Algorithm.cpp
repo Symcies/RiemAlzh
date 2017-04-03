@@ -75,8 +75,10 @@ void Algorithm::InitializeModel(const Observations& obs)
 
   std::cout << "make_shared" << std::endl;
   realizations_ = std::make_shared<Realizations>(real);
-  std::cout << "UpdateModel" << std::endl;
-  model_->UpdateModel(real, -1);
+
+  auto init = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
+  model_->UpdateModel(real, init);
+
 
   std::cout << "bef loop" << std::endl;
   for(auto it = realizations_->begin(); it != realizations_->end(); ++it)

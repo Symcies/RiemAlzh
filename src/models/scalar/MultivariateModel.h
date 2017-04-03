@@ -22,26 +22,36 @@ public:
   virtual ScalarType InitializePropositionDistributionVariance(std::string name) const;
 
   /// Update the model parameters != random variables parameters
-  virtual void UpdateModel(const Realizations& reals, int Type, const std::vector<std::string> names = {"All"});
+  virtual void UpdateModel(const Realizations& reals, const MiniBlock& block_info, const std::vector<std::string> names = {"All"});
 
   /// Update the sufficient statistics according to the model variables / parameters
   virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& reals, const Observations& obs);
 
   /// Update the fixed effects thanks to the approximation step of the algorithm
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats);
-
-  /// Compute the log likelihood of the model
-  virtual double ComputeLogLikelihood(const Observations &obs);
-
-  /// Compute the log likelihood of the model for a particular individual
-  virtual double ComputeIndividualLogLikelihood(const IndividualObservations& obs, const int subject_num);
-
+  
   /// Simulate data according to the model
   virtual Observations SimulateData(io::DataSettings& data_settings);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
-  virtual std::vector<SamplerBlock> GetSamplerBlocks() const;
+  virtual std::vector<MiniBlock> GetSamplerBlocks() const;
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Log-likelihood related method(s) :
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Compute the log likelihood of the model
+  virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info);
+
+  /// Compute the log likelihood of the model for a particular individual
+  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_);  
+  
+  /// Get the previous loglikelihood computed
+  virtual ScalarType GetPreviousLogLikelihood(const MiniBlock& block_info);
+  
+  /// Update the previous loglikelihood computed
+  virtual void SetPreviousLogLikelihood(VectorType& log_likelihood, const MiniBlock& block_info);
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Outputs
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,16 +66,16 @@ public:
 
 private:
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
-    virtual void InitializeFakeRandomVariables();
+  /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
+  virtual void InitializeFakeRandomVariables();
 
-    /// Probably to erase
-    /// Compute the parallel curve
-    VectorType ComputeParallelCurve(int subjects_num, int obs_num);
+  /// Probably to erase
+  /// Compute the parallel curve
+  VectorType ComputeParallelCurve(int subjects_num, int obs_num);
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Method(s) :
@@ -125,5 +135,8 @@ private:
 
   /// Block1 corresponds to p0 * exp(Delta)
   VectorType block_;
+  
+  /// Last log-likelihood computed - vector of individual
+  VectorType last_loglikelihood_;
 
 };

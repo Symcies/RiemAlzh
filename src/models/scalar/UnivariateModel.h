@@ -22,7 +22,7 @@ class UnivariateModel : public AbstractModel {
   virtual ScalarType InitializePropositionDistributionVariance(std::string name) const;
 
   /// Update the model parameters != random variables parameters
-  virtual void UpdateModel(const Realizations& reals, int type, const std::vector<std::string> names = {"All"});
+  virtual void UpdateModel(const Realizations& reals, const MiniBlock& block_info, const std::vector<std::string> names = {"All"});
 
   /// Update the sufficient statistics according to the model variables / parameters
   virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& reals, const Observations& obs);
@@ -30,18 +30,29 @@ class UnivariateModel : public AbstractModel {
   /// Update the fixed effects thanks to the approximation step of the algorithm
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats);
 
-  /// Compute the log likelihood of the model
-  virtual ScalarType ComputeLogLikelihood(const Observations &obs);
-
-  /// Compute the log likelihood of the model for a particular individual
-  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs, const int subjects_tot_num_);
-
   /// Simulate data according to the model
   virtual Observations SimulateData(io::DataSettings& data_settings);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
-  virtual std::vector<SamplerBlock> GetSamplerBlocks() const;
+  virtual std::vector<MiniBlock> GetSamplerBlocks() const;
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Log-likelihood related method(s) :
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Compute the log likelihood of the model
+  virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info) = 0;
+
+  /// Compute the log likelihood of the model for a particular individual
+  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_) = 0;
+  
+  /// Get the previous loglikelihood computed
+  virtual ScalarType GetPreviousLogLikelihood(const MiniBlock& block_info) = 0;
+  
+  /// Update the previous loglikelihood computed
+  virtual void SetPreviousLogLikelihood(VectorType& log_likelihood, const MiniBlock& block_info) = 0;
+  
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Outputs
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,6 +104,9 @@ private:
 
   /// Attribute encoding for the position P
   ScalarType position_;
+  
+  /// Last log-likelihood computed - vector of individual
+  VectorType last_loglikelihood_;
 
 
 

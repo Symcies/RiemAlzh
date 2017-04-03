@@ -32,6 +32,7 @@ void UnivariateModel::Initialize(const Observations &obs)
   /// (Initialization of the random variable m_Random Variable
   /// and the associated number of realizations m_RealizationPerRandomVariable)
   noise_ = std::make_shared<GaussianRandomVariable>(0.0, 0.00001);
+  last_loglikelihood_.set_size(subjects_tot_num_);
 
   rand_var_.AddRandomVariable("P", "Gaussian", {0.02, 0.0001*0.0001});
   asso_num_real_per_rand_var_["P"] = 1;
@@ -61,11 +62,12 @@ ScalarType UnivariateModel::InitializePropositionDistributionVariance(std::strin
     return 0.5;
 }
 
-void UnivariateModel::UpdateModel(const Realizations &reals, int type, const std::vector<std::string> names)
+void UnivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& block_info, const std::vector<std::string> names)
 {
   /// Given a list of names (which in fact corresponds to the variables that have potentially changed),
   /// the function updates the parameters associated to these names
 
+  int type = std::get<0>(block_info[0]);
 
   /// Possible parameters to update, depending on the name being in "vect<> names"
   //TODO: init parameters?
@@ -206,55 +208,6 @@ void UnivariateModel::UpdateRandomVariables(const SufficientStatisticsVector &st
   rand_var_.UpdateRandomVariable("P", {{"Mean", stoch_sufficient_stats[6](0)}});
 }
 
-ScalarType UnivariateModel::ComputeLogLikelihood(const Observations &obs)
-{
-  /// It computes the likelihood of the model. For each subject i, it sums its likelihood, namely the distance,
-  /// for each time t_ij, between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
-
-  ScalarType log_likelihood = 0;
-
-  /// For each subject
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-    ScalarType num_time_points = obs.GetNumberOfTimePoints(i);
-
-    /// For each timepoint
-    for(size_t j = 0; j < num_time_points; ++j)
-    {
-      VectorType subject_cog_scores = obs.GetSubjectCognitiveScore(i, j);
-      VectorType parallel_curve = ComputeParallelCurve(i, j);
-      log_likelihood += (subject_cog_scores - parallel_curve).squared_magnitude();
-    }
-  }
-
-  log_likelihood /= -2*noise_->GetVariance();
-  log_likelihood -= obs_tot_num_ * log(sqrt(2 * noise_->GetVariance() * M_PI));
-
-  return log_likelihood;
-}
-
-//TODO(clem): adapt to use in previous func
-ScalarType UnivariateModel::ComputeIndividualLogLikelihood(const IndividualObservations &obs, const int subjects_tot_num_)
-{
-  /// Given a particular subject i, it computes its likelihood, namely the distance, for each observation t_ij,
-  /// between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
-
-  ScalarType log_likelihood = 0;
-  auto num_time_points = obs.GetNumberOfTimePoints();
-
-  /// For each timepoints of the particular subject
-  for(size_t i = 0; i < num_time_points; ++i)
-  {
-    VectorType subject_cog_scores = obs.GetCognitiveScore(i);
-    VectorType parallel_curve = ComputeParallelCurve(subjects_tot_num_, i);
-    log_likelihood += (subject_cog_scores - parallel_curve).squared_magnitude();
-  }
-
-  log_likelihood /= - 2 * noise_->GetVariance();
-  log_likelihood -= num_time_points * log(2 * noise_->GetVariance() * M_PI) / 2.0;
-
-  return log_likelihood;
-}
 
 Observations UnivariateModel::SimulateData(io::DataSettings &data_settings)
 {
@@ -325,26 +278,104 @@ Observations UnivariateModel::SimulateData(io::DataSettings &data_settings)
 
 }
 
-std::vector<AbstractModel::SamplerBlock> UnivariateModel::GetSamplerBlocks() const
+std::vector<AbstractModel::MiniBlock> UnivariateModel::GetSamplerBlocks() const
 {
-  std::vector<SamplerBlock> blocks;
+  std::vector<MiniBlock> blocks;
 
   /// Block P
   MiniBlock block_p;
-  block_p.push_back(std::make_pair("P", 0));
-  blocks.push_back(std::make_pair(-1, block_p));
+  block_p.push_back(std::make_tuple<int, std::string, int>(-1, "P", 0));
+  blocks.push_back(block_p);
 
   /// Individual blocks
   for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
     MiniBlock indiv_block;
-    indiv_block.push_back(std::make_pair("Ksi",i));
-    indiv_block.push_back(std::make_pair("Tau",i));
+    indiv_block.push_back(std::make_tuple<int, std::string, int>(i, "Ksi",i));
+    indiv_block.push_back(std::make_tuple<int, std::string, int>(i, "Tau",i));
 
-    blocks.push_back(std::make_pair(i, indiv_block));
+    blocks.push_back(indiv_block);
   }
 
   return blocks;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Log-likelihood related method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+
+AbstractModel::VectorType UnivariateModel::ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)
+{
+  /// It computes the likelihood of the model. For each subject i, it sums its likelihood, namely the distance,
+  /// for each time t_ij, between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
+
+  int type = std::get<0>(block_info[0]);
+  
+  if(type == -1) {
+    VectorType ok(subjects_tot_num_);
+    ScalarType *ok2 = ok.memptr();
+    for (size_t i = 0; i < subjects_tot_num_; ++i)
+      ok2[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
+
+    return ok;
+  } else {
+    return VectorType(1, ComputeIndividualLogLikelihood(obs.GetSubjectObservations(type), type));
+  }
+}
+
+//TODO(clem): adapt to use in previous func
+ScalarType UnivariateModel::ComputeIndividualLogLikelihood(const IndividualObservations &obs, const int subjects_tot_num_)
+{
+  /// Given a particular subject i, it computes its likelihood, namely the distance, for each observation t_ij,
+  /// between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
+
+  ScalarType log_likelihood = 0;
+  auto num_time_points = obs.GetNumberOfTimePoints();
+
+  /// For each timepoints of the particular subject
+  for(size_t i = 0; i < num_time_points; ++i)
+  {
+    VectorType subject_cog_scores = obs.GetCognitiveScore(i);
+    VectorType parallel_curve = ComputeParallelCurve(subjects_tot_num_, i);
+    log_likelihood += (subject_cog_scores - parallel_curve).squared_magnitude();
+  }
+
+  log_likelihood /= - 2 * noise_->GetVariance();
+  log_likelihood -= num_time_points * log(2 * noise_->GetVariance() * M_PI) / 2.0;
+
+  return log_likelihood;
+}
+
+
+ScalarType UnivariateModel::GetPreviousLogLikelihood(const MiniBlock &block_info) {
+  
+  int type = std::get<0>(block_info[0]);
+  
+  if (type == -1) {
+    return last_loglikelihood_.sum();
+  }
+  else if (type >= 0 && type <= last_loglikelihood_.size()) {
+    return last_loglikelihood_(type);
+  }
+  else {
+    std::cerr << "there is something wrong with the type";
+  }
+}
+
+void UnivariateModel::SetPreviousLogLikelihood(VectorType &log_likelihood,
+                                               const MiniBlock &block_info) {
+  
+  int type = std::get<0>(block_info[0]);
+  
+  if (type == -1) {
+    last_loglikelihood_ = log_likelihood;
+  }  else if (type >= 0 && type <= last_loglikelihood_.size()) {
+    last_loglikelihood_(type) = log_likelihood.sum();
+  }
+  else {
+    std::cerr << "there is something wrong with the type";
+  }
 }
 
 
