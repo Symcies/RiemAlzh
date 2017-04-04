@@ -209,7 +209,7 @@ void UnivariateModel::UpdateRandomVariables(const SufficientStatisticsVector &st
 }
 
 
-Observations UnivariateModel::SimulateData(io::DataSettings &data_settings)
+Observations UnivariateModel::SimulateData(io::DataSettings &data_settings, bool need_data)
 {
   /// This function simulates observations (Patients and their measurements y_ij at different time points t_ij)
   /// according to the model, with a given noise level e_ij, such that y_ij = f(t_ij) + e_ij
@@ -228,6 +228,10 @@ Observations UnivariateModel::SimulateData(io::DataSettings &data_settings)
   /// Initialize the model
   manifold_dim_ = data_settings.GetCognitiveScoresDimension();
   subjects_tot_num_  = data_settings.GetNumberOfSimulatedSubjects();
+
+  if (need_data){
+    InitializeFakeRandomVariables();
+  }
 
   asso_num_real_per_rand_var_["P"] = 1;
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;

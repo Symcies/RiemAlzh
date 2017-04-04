@@ -31,7 +31,7 @@ public:
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats);
   
   /// Simulate data according to the model
-  virtual Observations SimulateData(io::DataSettings& data_settings);
+  virtual Observations SimulateData(io::DataSettings& data_settings, bool init_data = false);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
   virtual std::vector<MiniBlock> GetSamplerBlocks() const;

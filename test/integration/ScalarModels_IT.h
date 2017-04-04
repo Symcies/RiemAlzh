@@ -2,6 +2,7 @@
 
 #include "gtest/gtest.h"
 #include <fstream>
+#include <cstdio>
 #include "global.h"
 
 namespace test {
