@@ -61,6 +61,7 @@ void Algorithm::InitializeStochasticSufficientStatistics(const Observations& obs
 
   stochastic_sufficient_stats_ = model_->GetSufficientStatistics(*realizations_, obs);
 
+
   for(auto&& it : stochastic_sufficient_stats_){
     std::fill(it.begin(), it.end(), 0.0);
   }
@@ -74,7 +75,9 @@ void Algorithm::InitializeModel(const Observations& obs)
   /// which are key to observe the algorithm convergence
 
   model_->Initialize(obs);
+
   Realizations real = model_->SimulateRealizations();
+
 
   realizations_ = std::make_shared<Realizations>(real);
 
@@ -83,7 +86,6 @@ void Algorithm::InitializeModel(const Observations& obs)
 
   for(auto it = realizations_->begin(); it != realizations_->end(); ++it)
   {
-
     VectorType v(it->second.size(), 0);
     acceptance_ratio_[it->first] = v;
   }
@@ -162,8 +164,9 @@ void Algorithm::ComputeStochasticApproximation(SufficientStatisticsVector& stat_
   double step_size = DecreasingStepSize(iter);
   auto it_stoch_s = stochastic_sufficient_stats_.begin();
 
-  for(auto it_s = stat_vector.begin(); it_s != stat_vector.end(); ++it_s, ++it_stoch_s)
-      *it_stoch_s += step_size * (*it_s - *it_stoch_s);
+  for(auto it_s = stat_vector.begin(); it_s != stat_vector.end(); ++it_s, ++it_stoch_s) {
+    *it_stoch_s += step_size * (*it_s - *it_stoch_s);
+  }
 
 }
 
@@ -209,7 +212,7 @@ void Algorithm::DisplayOutputs()
 void Algorithm::DisplayAcceptanceRatio() {
     std::cout << "AcceptRatio: ";
 
-    auto names_to_show = {"Tau", "Ksi", "Beta#1", "Delta#3"};
+    auto names_to_show = {"Tau", "Ksi"};
 
     for(auto it = names_to_show.begin(); it != names_to_show.end(); ++it)
     {

@@ -11,6 +11,7 @@ using namespace std;
 #include "Algorithm.h"
 
 #include "MultivariateModel.h"
+#include "UnivariateModel.h"
 //#include "NetworkModel.h"
 //#include "MeshworkModel.h"
 //#include "FastNetworkModel.h"
@@ -27,7 +28,7 @@ int main(int argc, char* argv[]) {
 
   if(argc != 4)
   {
-      std::cerr << "Usage with real data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings " << "data_settings.xml" << std::endl;
+      std::cerr << "Usage with real data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings.xml " << "data_settings.xml" << std::endl;
   }
 
   /// Load the XML file arguments
@@ -44,6 +45,7 @@ int main(int argc, char* argv[]) {
   //if(model_settings.GetType() == "FastNetwork")  model = make_shared<FastNetworkModel>(model_settings);
   //if(model_settings.GetType() == "Network")      model = make_shared<NetworkModel>(model_settings);
   if(model_settings.GetType() == "Multivariate") model = make_shared<MultivariateModel>(model_settings);
+  if(model_settings.GetType() == "Univariate")   model = make_shared<UnivariateModel>(model_settings);
 
   /// Initialize the data
   Observations obs;

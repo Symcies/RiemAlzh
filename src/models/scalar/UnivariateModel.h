@@ -41,7 +41,7 @@ class UnivariateModel : public AbstractModel {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   
   /// Compute the log likelihood of the model
-  virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info) ;
+  virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info);
 
   /// Compute the log likelihood of the model for a particular individual
   virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_);
@@ -70,9 +70,6 @@ class UnivariateModel : public AbstractModel {
   /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
   virtual void InitializeFakeRandomVariables();
 
-  /// Compute the parallel curve
-  VectorType ComputeParallelCurve(int subjects_tot_num_, int ObservationNumber);
-
 
   inline std::vector<VectorType> GetIndObsDate(){return individual_obs_date_;};
   inline std::vector<VectorType> GetSubjTimePoints(){return subj_time_points_;};
@@ -89,6 +86,9 @@ private:
   /// Compute the subject time points
   void ComputeSubjectTimePoint(const Realizations& reals, const int subjects_tot_num_ = -1);
 
+  /// Compute the parallel curve
+  VectorType ComputeParallelCurve(int subjects_tot_num_, int ObservationNumber);
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Attribute(s)
   ////////////////////////////////////////////////////////////////////////////////////////////////////

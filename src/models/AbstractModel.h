@@ -17,6 +17,7 @@
 #include "Realizations.h"
 #include "ReadData.h"
 #include "UniformRandomVariable.h"
+#include "global.h"
 
 
 class AbstractModel {
