@@ -43,6 +43,12 @@ public:
 
   void Clear();
 
+  inline IntRandomVariableHash::iterator begin() { return rand_var_.begin(); }
+  inline IntRandomVariableHash::iterator   end() { return rand_var_.end(); }
+  
+  inline IntRandomVariableHash::const_iterator begin() const { return rand_var_.begin(); }
+  inline IntRandomVariableHash::const_iterator   end() const { return rand_var_.end(); }
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Other method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////

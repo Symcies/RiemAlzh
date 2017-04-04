@@ -33,11 +33,10 @@ void Algorithm::ComputeMCMCSAEM(const Observations& obs) {
   InitializeSampler();
   std::cout << "InitializeStochasticSufficientStatistics" << std::endl;
   InitializeStochasticSufficientStatistics(obs);
-  std::cout << "IterationMCMCSAEM" << std::endl;
+  
 
   for(int iter = 0; iter < max_iter_num_; iter ++)
   {
-    std::cout << "IterationMCMCSAEM " << iter << std::endl;
     IterationMCMCSAEM(obs, iter);
   }
 }
@@ -52,10 +51,9 @@ void Algorithm::InitializeStochasticSufficientStatistics(const Observations& obs
   /// It initialize the stochastic sufficient statistics by copying the one from the model.
   /// Pitfall : it computes the suff stat of the model where only the length is needed
 
-  std::cout << "Get sufficient stats" << std::endl;
+  
   stochastic_sufficient_stats_ = model_->GetSufficientStatistics(*realizations_, obs);
-
-  std::cout << "stochastic_sufficient_stats_" << std::endl;
+  
   for(auto&& it : stochastic_sufficient_stats_){
     std::fill(it.begin(), it.end(), 0.0);
   }
@@ -70,20 +68,17 @@ void Algorithm::InitializeModel(const Observations& obs)
 
   std::cout << "Initialize" << std::endl;
   model_->Initialize(obs);
-  std::cout << "SimulateRealizations" << std::endl;
+  
   Realizations real = model_->SimulateRealizations();
-
-  std::cout << "make_shared" << std::endl;
   realizations_ = std::make_shared<Realizations>(real);
 
   auto init = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
   model_->UpdateModel(real, init);
 
 
-  std::cout << "bef loop" << std::endl;
+  
   for(auto it = realizations_->begin(); it != realizations_->end(); ++it)
   {
-
     VectorType v(it->second.size(), 0);
     acceptance_ratio_[it->first] = v;
   }
@@ -162,8 +157,9 @@ void Algorithm::ComputeStochasticApproximation(SufficientStatisticsVector& stat_
   double step_size = DecreasingStepSize(iter);
   auto it_stoch_s = stochastic_sufficient_stats_.begin();
 
-  for(auto it_s = stat_vector.begin(); it_s != stat_vector.end(); ++it_s, ++it_stoch_s)
-      *it_stoch_s += step_size * (*it_s - *it_stoch_s);
+  for(auto it_s = stat_vector.begin(); it_s != stat_vector.end(); ++it_s, ++it_stoch_s) {
+    *it_stoch_s += step_size * (*it_s - *it_stoch_s);
+  }
 
 }
 
@@ -209,7 +205,7 @@ void Algorithm::DisplayOutputs()
 void Algorithm::DisplayAcceptanceRatio() {
     std::cout << "AcceptRatio: ";
 
-    auto names_to_show = {"Tau", "Ksi", "Beta#1", "Delta#3"};
+    auto names_to_show = {"Tau", "Ksi"};
 
     for(auto it = names_to_show.begin(); it != names_to_show.end(); ++it)
     {
