@@ -41,16 +41,16 @@ class UnivariateModel : public AbstractModel {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   
   /// Compute the log likelihood of the model
-  virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info) = 0;
+  virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info) ;
 
   /// Compute the log likelihood of the model for a particular individual
-  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_) = 0;
+  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_);
   
   /// Get the previous loglikelihood computed
-  virtual ScalarType GetPreviousLogLikelihood(const MiniBlock& block_info) = 0;
+  virtual ScalarType GetPreviousLogLikelihood(const MiniBlock& block_info);
   
   /// Update the previous loglikelihood computed
-  virtual void SetPreviousLogLikelihood(VectorType& log_likelihood, const MiniBlock& block_info) = 0;
+  virtual void SetPreviousLogLikelihood(VectorType& log_likelihood, const MiniBlock& block_info);
   
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////

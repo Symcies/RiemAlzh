@@ -15,6 +15,18 @@ Algorithm::Algorithm(io::AlgorithmSettings& settings) {
   data_save_iter_   = settings.GetDataSaveIteration();
 }
 
+Algorithm::Algorithm(io::AlgorithmSettings& settings, std::shared_ptr<AbstractModel> model, std::shared_ptr<AbstractSampler> sampler) {
+  /// Initialize the algorithm attributes
+  // TODO : check if it is enough, based on future needs
+  max_iter_num_     = settings.GetMaximumNumberOfIterations();
+  burnin_iter_num_  = settings.GetNumberOfBurnInIterations();
+  output_iter_      = settings.GetOutputDisplayIteration();
+  data_save_iter_   = settings.GetDataSaveIteration();
+
+  SetModel(model);
+  SetSampler(sampler);
+}
+
 
 Algorithm::~Algorithm() {
 }

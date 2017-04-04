@@ -141,17 +141,15 @@ namespace test {
     /// Initialize the data
     ASSERT_EQ(data_settings.IsReal(), false);
     Observations obs;
-    obs = io::ReadData::ReadObservations(data_settings);
-    obs.InitializeGlobalAttributes();
+    model->InitializeFakeRandomVariables();
+    obs = model->SimulateData(data_settings);
     // ASSERT_FLOAT_EQ(obs.GetNumberOfSubjects(), 150);
     // ASSERT_FLOAT_EQ(obs.GetTotalNumberOfObservations(), 1488);
     // ASSERT_FLOAT_EQ(obs.GetTotalSumOfCognitiveScores(), 688.846);
     // ASSERT_FLOAT_EQ(obs.GetTotalSumOfLandmarks(),0);
 
     /// Algorithm pipeline
-    auto algo = std::make_shared<Algorithm>(algo_settings);
-    algo->SetModel(model);
-    algo->SetSampler(sampler);
+    auto algo = std::make_shared<Algorithm>(algo_settings, model, sampler);
     algo->ComputeMCMCSAEM(obs);
 
     std::string result[] =

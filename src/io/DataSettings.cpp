@@ -115,7 +115,7 @@ void DataSettings::LoadRealLandmarks(const tinyxml2::XMLElement *settings)
   else
   {
     are_landmarks_present_ = false;
-    landmarks_dim_ = -1;
+    landmarks_dim_ = 0;
   }
 }
 
@@ -127,6 +127,8 @@ void DataSettings::LoadSimulatedDataSettings(const tinyxml2::XMLElement* setting
   subjects_total_num_  = atoi(settings->FirstChildElement("number-of-individuals")->GetText());
   min_observation_num_ = atoi(settings->FirstChildElement("min-number-of-observations")->GetText());
   max_observation_num_ = atoi(settings->FirstChildElement("max-number-of-observations")->GetText());
+  cog_scores_dim_ = atoi(settings->FirstChildElement("dimension")->GetText());
+
 
   std::cout << "The model is simulating between ";
   std::cout << min_observation_num_ << " and " << max_observation_num_;
@@ -136,15 +138,14 @@ void DataSettings::LoadSimulatedDataSettings(const tinyxml2::XMLElement* setting
 
 void DataSettings::InitArgsOfOtherType(bool real){
   if (real){
-    subjects_total_num_ = -1;
-    min_observation_num_ = -1;
-    max_observation_num_ = -1;
+    subjects_total_num_ = 0;
+    min_observation_num_ = 0;
+    max_observation_num_ = 0;
   }
   else {
     are_cog_scores_present_ = false;
     are_landmarks_present_ = false;
-    cog_scores_dim_ = -1;
-    landmarks_dim_ = -1;
+    landmarks_dim_ = 0;
   }
 }
 
