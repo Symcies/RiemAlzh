@@ -15,6 +15,18 @@ Algorithm::Algorithm(io::AlgorithmSettings& settings) {
   data_save_iter_   = settings.GetDataSaveIteration();
 }
 
+Algorithm::Algorithm(io::AlgorithmSettings& settings, std::shared_ptr<AbstractModel> model, std::shared_ptr<AbstractSampler> sampler) {
+  /// Initialize the algorithm attributes
+  // TODO : check if it is enough, based on future needs
+  max_iter_num_     = settings.GetMaximumNumberOfIterations();
+  burnin_iter_num_  = settings.GetNumberOfBurnInIterations();
+  output_iter_      = settings.GetOutputDisplayIteration();
+  data_save_iter_   = settings.GetDataSaveIteration();
+
+  SetModel(model);
+  SetSampler(sampler);
+}
+
 
 Algorithm::~Algorithm() {
 }
@@ -27,13 +39,9 @@ Algorithm::~Algorithm() {
 void Algorithm::ComputeMCMCSAEM(const Observations& obs) {
   /// This function is core to the software. It initialize parts of the model and sampler
   /// and runs the MCMC-SAEM algorithm. The class attributes define the properties of the MCMC-SAEM
-  std::cout << "InitializeModel" << std::endl;
   InitializeModel(obs);
-  std::cout << "InitializeSampler" << std::endl;
   InitializeSampler();
-  std::cout << "InitializeStochasticSufficientStatistics" << std::endl;
   InitializeStochasticSufficientStatistics(obs);
-  
 
   for(int iter = 0; iter < max_iter_num_; iter ++)
   {
@@ -51,9 +59,9 @@ void Algorithm::InitializeStochasticSufficientStatistics(const Observations& obs
   /// It initialize the stochastic sufficient statistics by copying the one from the model.
   /// Pitfall : it computes the suff stat of the model where only the length is needed
 
-  
   stochastic_sufficient_stats_ = model_->GetSufficientStatistics(*realizations_, obs);
-  
+
+
   for(auto&& it : stochastic_sufficient_stats_){
     std::fill(it.begin(), it.end(), 0.0);
   }
@@ -66,17 +74,16 @@ void Algorithm::InitializeModel(const Observations& obs)
   /// It initialize the model, draw its respective realizations and initialize the acceptance ratios
   /// which are key to observe the algorithm convergence
 
-  std::cout << "Initialize" << std::endl;
   model_->Initialize(obs);
-  
+
   Realizations real = model_->SimulateRealizations();
+
+
   realizations_ = std::make_shared<Realizations>(real);
 
   auto init = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
   model_->UpdateModel(real, init);
 
-
-  
   for(auto it = realizations_->begin(); it != realizations_->end(); ++it)
   {
     VectorType v(it->second.size(), 0);

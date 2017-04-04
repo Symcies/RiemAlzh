@@ -9,7 +9,7 @@
 UniformRandomVariable::UniformRandomVariable(double min, double max)
 {
   // TODO : Verify '>' or '>=' but I guess a "Dirac Uniform distribution" is unknown
-  assert(max_ > min_);
+  assert(max_ >= min_);
   min_ = min;
   max_ = max;
 }

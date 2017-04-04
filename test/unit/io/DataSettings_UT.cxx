@@ -36,7 +36,7 @@ namespace test {
 
     ASSERT_EQ(
       data_settings.GetLandmarksDimension(),
-      -1
+      0
     );
 
     ASSERT_EQ(
@@ -55,15 +55,15 @@ namespace test {
 
     ASSERT_EQ(
       data_settings.GetNumberOfSimulatedSubjects(),
-      -1
+      0
     );
     ASSERT_EQ(
       data_settings.GetMinimumNumberOfObservations(),
-      -1
+      0
     );
     ASSERT_EQ(
       data_settings.GetMaximumNumberOfObservations(),
-      -1
+      0
     );
   }
 
@@ -85,7 +85,7 @@ namespace test {
     );
     ASSERT_EQ(
       data_settings.GetCognitiveScoresDimension(),
-      -1
+      4
     );
     ASSERT_EQ(
       data_settings.GetPathToLandmarks(),
@@ -94,7 +94,7 @@ namespace test {
 
     ASSERT_EQ(
       data_settings.GetLandmarksDimension(),
-      -1
+      0
     );
 
     ASSERT_EQ(

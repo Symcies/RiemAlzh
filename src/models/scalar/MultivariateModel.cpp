@@ -38,6 +38,7 @@ void MultivariateModel::Initialize(const Observations& obs)
   obs_tot_num_            = obs.GetTotalNumberOfObservations();
   sum_obs_                = obs.GetTotalSumOfCognitiveScores();
 
+
   /// Initialize the size of some parameters
   deltas_.set_size(manifold_dim_);
   block_.set_size(manifold_dim_);
@@ -50,6 +51,7 @@ void MultivariateModel::Initialize(const Observations& obs)
 
   rand_var_.AddRandomVariable("G", "Gaussian", {0.12, 0.0001 * 0.0001});
   asso_num_real_per_rand_var_["G"] = 1;
+
 
   for(size_t i = 1; i < manifold_dim_; ++i)
   {
@@ -70,7 +72,6 @@ void MultivariateModel::Initialize(const Observations& obs)
   /// and the associated number of realizations m_RealizationPerRandomVariable)
   rand_var_.AddRandomVariable("Ksi", "Gaussian", {0.13, 0.0004});
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
-
 
   rand_var_.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
   asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
@@ -300,7 +301,7 @@ void MultivariateModel::UpdateRandomVariables(const SufficientStatisticsVector &
 
 }
 
-Observations MultivariateModel::SimulateData(io::DataSettings &data_settings)
+Observations MultivariateModel::SimulateData(io::DataSettings &data_settings, bool need_init)
 {
   /// This function simulates observations (Patients and their measurements y_ij at different time points t_ij)
   /// according to the model, with a given noise level e_ij, such that y_ij = f(t_ij) + e_ij
@@ -313,12 +314,16 @@ Observations MultivariateModel::SimulateData(io::DataSettings &data_settings)
 
   // TODO :
   /// PITFALL  : As for now, only the first option is implemented
-  /// PITFALL2 : Take a closer look at / merge with InitializeFakeRandomVariables
+  /// TODO: PITFALL2 : Take a closer look at / merge with InitializeFakeRandomVariables
 
 
   /// Initialize the model
   manifold_dim_ = data_settings.GetCognitiveScoresDimension();
   subjects_tot_num_  = data_settings.GetNumberOfSimulatedSubjects();
+
+  if (need_init) {
+    InitializeFakeRandomVariables();
+  }
 
   asso_num_real_per_rand_var_["G"] = 1;
 
@@ -362,13 +367,14 @@ Observations MultivariateModel::SimulateData(io::DataSettings &data_settings)
 
     /// Simulate the data base on the time-points
     IndividualObservations indiv_obs(time_points);
-    std::vector<VectorType> landmarks;
+    std::vector<VectorType> cognitive_scores; // ICI
     for(size_t j = 0; j < time_points.size(); ++j)
     {
-      landmarks.push_back(ComputeParallelCurve(i, j) + noise.Samples(manifold_dim_));
+      VectorType parallel_curve = ComputeParallelCurve(i, j);
+      cognitive_scores.push_back(parallel_curve + noise.Samples(manifold_dim_));
     }
 
-    indiv_obs.AddLandmarks(landmarks);
+    indiv_obs.AddCognitiveScores(cognitive_scores);
     obs.AddIndividualData(indiv_obs);
   }
 
@@ -571,6 +577,9 @@ void MultivariateModel::InitializeFakeRandomVariables()
   /// Pitfall : This is not generic for need. Both with the SimulateData function, is has to be redefined / refactored
   /// according to the needs
 
+  deltas_.set_size(manifold_dim_);
+  block_.set_size(manifold_dim_);
+
   /// Population variables
   noise_ = std::make_shared<GaussianRandomVariable>(0.0, 0.0001);
 
@@ -633,8 +642,9 @@ void MultivariateModel::ComputeDeltas(const Realizations &reals)
   deltas_(0) = 0.0;
   ScalarType * d = deltas_.memptr();
 
-  for(size_t i = 1; i < manifold_dim_; ++i)
+  for(size_t i = 1; i < manifold_dim_; ++i) {
     d[i] = reals.at("Delta#" + std::to_string(i), 0);
+  }
 }
 
 //TODO: change names, not clear at all
@@ -689,9 +699,7 @@ void MultivariateModel::ComputeAMatrix(const Realizations &reals)
   a_matrix_ = new_a_matrix;
 }
 
-void
-MultivariateModel
-::ComputeSpaceShifts(const Realizations &reals)
+void MultivariateModel::ComputeSpaceShifts(const Realizations &reals)
 {
   /// It computes the individual space shifts w_i (ref documentation or NIPS paper)
   MatrixType sufficient_stats_vector(indep_sources_num_, subjects_tot_num_);
