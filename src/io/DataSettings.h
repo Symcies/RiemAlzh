@@ -1,12 +1,10 @@
-#ifndef _DataSettings_h
-#define _DataSettings_h
+#pragma once
 
 typedef double ScalarType;
 
-#include <string>
 #include <fstream>
 #include <iostream>
-#include <src/observations/Observations.h>
+#include <string>
 
 #include "tinyxml2.h"
 
@@ -14,14 +12,6 @@ namespace io {
 
 class DataSettings {
 public:
-
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  // typedef :
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,104 +24,104 @@ public:
   /// Encapsulation method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  std::string GetPathToGroup() const { return m_PathToGroup; }
+  std::string GetPathToGroup() const { return group_path_; }
 
-  std::string GetPathToTimepoints() const { return m_PathToTimepoints; }
+  std::string GetPathToTimepoints() const { return timepoints_path_; }
 
-  std::string GetPathToCognitiveScores() const { return m_PathToCognitiveScores; }
-  
-  unsigned int GetCognitiveScoresDimension() const { return m_CognitiveScoresDimension; }
-  
-  std::string GetPathToLandmarks() const { return m_PathToLandmarks; }
+  std::string GetPathToCognitiveScores() const { return cog_scores_path_; }
 
-  unsigned int GetLandmarksDimension() const { return m_LandmarksDimension; }
-  
-  unsigned int GetNumberOfSimulatedSubjects() const { return m_NumberOfSubjects; }
+  unsigned int GetCognitiveScoresDimension() const { return cog_scores_dim_; }
 
-  unsigned int GetMinimumNumberOfObservations() const { return m_MinimumNumberOfObservations; }
+  std::string GetPathToLandmarks() const { return landmarks_path; }
 
-  unsigned int GetMaximumNumberOfObservations() const { return m_MaximumNumberOfObservations; }
+  unsigned int GetLandmarksDimension() const { return landmarks_dim_; }
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Other method(s) :
-  ////////////////////////////////////////////////////////////////////////////////////////////////
+  unsigned int GetNumberOfSimulatedSubjects() const { return subjects_total_num_; }
 
-  bool IsReal() const { return m_RealData; }
-  
-  bool LandmarkPresence() const { return m_LandmarksPresence; }
-  
-  bool CognitiveScoresPresence() const { return m_CognitiveScoresPresence; }
-      
+  unsigned int GetMinimumNumberOfObservations() const { return min_observation_num_; }
+
+  unsigned int GetMaximumNumberOfObservations() const { return max_observation_num_; }
+
+  bool IsReal() const { return is_data_real_; }
+
+  bool LandmarkPresence() const { return are_landmarks_present_; }
+
+  bool CognitiveScoresPresence() const { return are_cog_scores_present_; }
+
 
 private:
 
   /// Read real data if true
-  bool m_RealData;
-  
+  bool is_data_real_;
+
   /// Presence of landmarks
-  bool m_LandmarksPresence;
-  
+  bool are_landmarks_present_;
+
   /// Presence of cognitive scores
-  bool m_CognitiveScoresPresence;
+  bool are_cog_scores_present_;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Attribute(s) for real data :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Path to data
-  std::string m_PathToData;
+  std::string data_path_;
 
   /// Path to group csv
-  std::string m_PathToGroup;
+  std::string group_path_;
 
   /// Path to timepoint csv
-  std::string m_PathToTimepoints;
+  std::string timepoints_path_;
 
   /// Path to cognitive scores (csv file)
-  std::string m_PathToCognitiveScores;
-  
+  std::string cog_scores_path_;
+
   /// Dimension of the cognitive scores
-  unsigned int m_CognitiveScoresDimension;
-  
+  unsigned int cog_scores_dim_;
+
   /// Path to landmarks (csv file)
-  std::string m_PathToLandmarks;
-  
-  /// Dimension of the landmarks 
-  unsigned int m_LandmarksDimension;
-  
+  std::string landmarks_path;
+
+  /// Dimension of the landmarks
+  unsigned int landmarks_dim_;
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Attribute(s) for simulated data :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// NumberOfIndividuals to simulate
-  unsigned int m_NumberOfSubjects;
+  unsigned int subjects_total_num_;
 
   /// Minimum number of observations
-  unsigned int m_MinimumNumberOfObservations;
+  unsigned int min_observation_num_;
 
   /// Maximum number of observations
-  unsigned int m_MaximumNumberOfObservations;
+  unsigned int max_observation_num_;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Load real data settings
-  void LoadRealDataSettings(const tinyxml2::XMLElement* Settings);
+  void LoadRealDataSettings(const tinyxml2::XMLElement* settings);
 
   /// Load the attributes of the cognitive scores
-  void LoadRealCognitiveScores(const tinyxml2::XMLElement* Settings);
-  
-  /// Load the attributes of the landmarks
-  void LoadRealLandmarks(const tinyxml2::XMLElement* Settings);
-  
-  /// Load simulated data settings
-  void LoadSimulatedDataSettings(const tinyxml2::XMLElement* Settings);
-  
+  void LoadRealCognitiveScores(const tinyxml2::XMLElement* settings);
 
+  /// Load the attributes of the landmarks
+  void LoadRealLandmarks(const tinyxml2::XMLElement* settings);
+
+  /// Load simulated data settings
+  void LoadSimulatedDataSettings(const tinyxml2::XMLElement* settings);
+
+  void InitArgsOfOtherType(bool real);
+
+  /// Copy constructor, private to prevent copy
+  DataSettings(const DataSettings&);
+
+  /// Assignment operator, private to prevent copy
+  DataSettings& operator=(const DataSettings&);
 };
 
 }
-
-#endif //_DataSettings_h

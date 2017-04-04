@@ -1,8 +1,6 @@
-#ifndef _AlgorithmSettings_h
-#define _AlgorithmSettings_h
+#pragma once
 
 #include <string>
-#include <iostream>
 
 #include "tinyxml2.h"
 
@@ -13,14 +11,10 @@ class AlgorithmSettings {
 public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    // typedef :
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    AlgorithmSettings(char *XMLFile);
+    AlgorithmSettings(char *xml_file);
 
     ~AlgorithmSettings();
 
@@ -29,16 +23,16 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Get the maximum number of iterations
-    unsigned int GetMaximumNumberOfIterations() { return m_MaximumNumberOfIterations; }
+    unsigned int GetMaximumNumberOfIterations() { return max_num_iter_; }
 
     /// Get the number of burn-in iterations
-    unsigned int GetNumberOfBurnInIterations() { return m_NumberOfBurnInIterations; }
+    unsigned int GetNumberOfBurnInIterations() { return num_burnin_iter_; }
 
     /// Get the number of iterations to wait till newt output display
-    unsigned int GetCounterToDisplayOutputs() { return m_CounterToDisplayOutputs; }
+    unsigned int GetOutputDisplayIteration() { return output_iter_; }
 
     /// Get the number of iteration to wait till next data saving
-    unsigned int GetCounterToSaveData() { return m_CounterToSaveData; }
+    unsigned int GetDataSaveIteration() { return data_save_iter_; }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,31 +46,33 @@ private:
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Maximum number of iteration of the Algorithm
-    unsigned int m_MaximumNumberOfIterations;
+    unsigned int max_num_iter_;
 
     /// Number of Burn-In Iterations
-    unsigned int m_NumberOfBurnInIterations;
+    unsigned int num_burnin_iter_;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Display attribute(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Number of iterations to wait till newt output display
-    unsigned int m_CounterToDisplayOutputs;
+    unsigned int output_iter_;
 
     /// Number of iteration to wait till next data saving
-    unsigned int m_CounterToSaveData;
+    unsigned int data_save_iter_;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// Methods(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /// Convert the max number of iteration from the xml file
+    /// Copy constructor, private to prevent copy
+    AlgorithmSettings(const AlgorithmSettings&);
+
+    /// Assignment operator, private to prevent copy
+    AlgorithmSettings& operator=(const AlgorithmSettings&);
 
 };
 
 
 }
-#endif //_AlgorithmSettings_h
-

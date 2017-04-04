@@ -2,128 +2,133 @@
 
 namespace io {
 
-  
-Observations
-ReadData
-::ReadObservations(DataSettings &DS) 
+Observations ReadData::ReadObservations(DataSettings &ds)
 {
-  Observations Obs;
-  
-  std::ifstream IndivID(DS.GetPathToGroup());
-  std::ifstream TimePointsFile(DS.GetPathToTimepoints());
-  std::ifstream LandmarksFile(DS.GetPathToLandmarks());
-  std::ifstream CognitiveScoresFile(DS.GetPathToCognitiveScores());
-      
-  std::string GroupLine, TimePointsLine, LandmarksLine, CognitiveScoresLine;
-  unsigned int CurrentSubjectID = -1;
-  
-  VectorType TimePoints;
-  std::vector<VectorType> Landmarks;
-  std::vector<VectorType> CognitiveScores;
-  
-  while(getline(IndivID, GroupLine))
+  Observations obs;
+
+  std::ifstream indiv_id(ds.GetPathToGroup());
+  std::ifstream time_points_file(ds.GetPathToTimepoints());
+  std::ifstream landmarks_file(ds.GetPathToLandmarks());
+  std::ifstream cognitive_scores_file(ds.GetPathToCognitiveScores());
+
+  std::string group_line, time_points_line;
+  unsigned int current_suject_id = -1;
+
+  VectorType time_points;
+  std::vector<VectorType> landmarks;
+  std::vector<VectorType> cognitive_scores;
+
+  while(std::getline(indiv_id, group_line))
   {
-    if(CurrentSubjectID == -1) CurrentSubjectID = std::stoi(GroupLine);
-    
-    unsigned int NewSubjectID = std::stoi(GroupLine);
-    getline(TimePointsFile, TimePointsLine);
-    if(DS.LandmarkPresence())        getline(LandmarksFile, LandmarksLine);
-    if(DS.CognitiveScoresPresence()) getline(CognitiveScoresFile, CognitiveScoresLine);
-    
-    /// New subject
-    if(NewSubjectID != CurrentSubjectID)
-    {
-      IndividualObservations Individual(TimePoints);
-      if(DS.LandmarkPresence())        Individual.AddLandmarks(Landmarks);
-      if(DS.CognitiveScoresPresence()) Individual.AddCognitiveScores(CognitiveScores);
-      Obs.AddIndividualData(Individual);
-                  
-      CurrentSubjectID = NewSubjectID;
-      TimePoints.clear();
-      Landmarks.clear();
-      CognitiveScores.clear();
+    //current_suject_id initialization
+    if(current_suject_id == -1) {
+      current_suject_id = std::stoi(group_line);
     }
 
-    TimePoints.push_back(stod(TimePointsLine));
-    if(DS.LandmarkPresence()) 
-    {
-      VectorType NewObs(DS.GetLandmarksDimension());
-      int i = 0;
-      std::stringstream LineStream(LandmarksLine);
-      std::string cell;
-      while(std::getline(LineStream, cell, ','))
-      {
-        NewObs(i) = std::stod(cell);
-        ++i;
-      }
-      
-      Landmarks.push_back(NewObs);
+    unsigned int new_subject_id = std::stoi(group_line);
+
+    /// If we changed subject
+    if(new_subject_id != current_suject_id) {
+      IndividualObservations individual = CreateIndividualObs(ds, time_points, landmarks, cognitive_scores);
+      obs.AddIndividualData(individual);
+
+      current_suject_id = new_subject_id;
+      time_points.clear();
+      landmarks.clear();
+      cognitive_scores.clear();
     }
-    if(DS.CognitiveScoresPresence())
-    {
-        
-      VectorType NewObs(DS.GetCognitiveScoresDimension());
-      int i = 0;
-      std::stringstream LineStream(CognitiveScoresLine);
-      std::string cell;
-      while(std::getline(LineStream, cell, ','))
-      {
-        NewObs(i) = std::stod(cell);
-        ++i;
-      }
-      CognitiveScores.push_back(NewObs);
+
+    std::getline(time_points_file, time_points_line);
+    time_points.push_back(stod(time_points_line));
+
+    if(ds.LandmarkPresence()) {
+      VectorType new_obs = ExtractObservation(landmarks_file, ds.GetLandmarksDimension());
+      landmarks.push_back(new_obs);
     }
-  }
-  
-  IndividualObservations Individual(TimePoints);
-  if(DS.LandmarkPresence())        Individual.AddLandmarks(Landmarks);
-  if(DS.CognitiveScoresPresence()) Individual.AddCognitiveScores(CognitiveScores);
-  Obs.AddIndividualData(Individual);
-  
-  
-  return Obs;
+
+    if(ds.CognitiveScoresPresence()) {
+      VectorType new_obs = ExtractObservation(cognitive_scores_file, ds.GetCognitiveScoresDimension());
+      cognitive_scores.push_back(new_obs);
+    }
+  } //end while
+  IndividualObservations individual = CreateIndividualObs(ds, time_points, landmarks, cognitive_scores);
+  obs.AddIndividualData(individual);
+
+  return obs;
 }
 
+IndividualObservations ReadData::CreateIndividualObs(
+  DataSettings& ds,
+  ReadData::VectorType& time_points,
+  std::vector<ReadData::VectorType>& landmarks,
+  std::vector<ReadData::VectorType>& cognitive_scores){
+    IndividualObservations individual(time_points);
+    if(ds.LandmarkPresence()) {
+      individual.AddLandmarks(landmarks);
+    }
+    if(ds.CognitiveScoresPresence()) {
+      individual.AddCognitiveScores(cognitive_scores);
+    }
+    return individual;
+}
 
-ReadData::MatrixType
-ReadData
-::OpenKernel(std::string FilePath) {
-  std::ifstream file(FilePath);
+ReadData::VectorType ReadData::ExtractObservation(std::ifstream& file_stream, int dimension){
   std::string line;
-  int NbLines = 0;
+  std::getline(file_stream, line);
+  VectorType new_obs(dimension);
+  int i = 0;
+  std::stringstream line_stream(line);
+  std::string cell;
+  while(std::getline(line_stream, cell, ',')){
+    new_obs(i) = std::stod(cell);
+    ++i;
+  }
+  return new_obs;
+}
+
+ReadData::MatrixType ReadData::OpenKernel(std::string file_path) {
+  if(file_path == ""){
+    std::cerr << "Error in OpenKernel. Empty file path" << std::endl;
+    //TODO: change error return
+    return MatrixType(0,0);
+  }
+  std::ifstream file(file_path);
+
+  //Counting the total number of lines in the file
+  int lines_nb = 0;
+  std::string line;
   while (std::getline(file, line)) {
-    ++NbLines;
+    ++lines_nb;
   }
   file.clear();
   file.seekg(00, std::ios::beg);
 
-
-  MatrixType Kernel(NbLines, 1827, 0);
-
+  //Filling the kernel
+  MatrixType kernel(lines_nb, 1827, 0);
 
   if (file.is_open()) {
     std::string line;
     int i = 0;
     while (std::getline(file, line)) {
       int j = 0;
-      std::stringstream LineStream(line);
+      std::stringstream line_stream(line);
       std::string cell;
-      while (std::getline(LineStream, cell, ',')) {
+      while (std::getline(line_stream, cell, ',')) {
         auto a = std::stold(cell);
-        if (fabs(a) < 10e-13) {
-          Kernel(i, j) = 0;
+        if (std::fabs(a) < 10e-13) {
+          kernel(i, j) = 0;
         } else {
-          Kernel(i, j) = std::stold(cell);
+          kernel(i, j) = std::stold(cell);
         }
-
         ++j;
       }
       ++i;
     }
-  } else { std::cout << "Unable to open the kernel located in " + FilePath; }
+  } else {
+    std::cout << "Unable to open the kernel located in " + file_path;
+  }
 
-
-  return Kernel;
+  return kernel;
 }
 
-}
+} //end namespace

@@ -1,25 +1,23 @@
-#ifndef _AbstractModel_h
-#define _AbstractModel_h
+#pragma once
 
-#include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <fstream>
-#include <functional>
-#include <math.h>
 #include <memory>
 #include <unordered_map>
+#include <tuple>
 
-
-#include "Observations.h"
+#include "AbstractManifold.h"
+#include "AbstractRandomVariable.h"
+#include "DataSettings.h"
+#include "LinearAlgebra.h"
 #include "ModelSettings.h"
 #include "MultiRandomVariables.h"
+#include "Observations.h"
 #include "Realizations.h"
 #include "ReadData.h"
-#include "LinearAlgebra.h"
-#include "TestAssert.h"
 #include "UniformRandomVariable.h"
-#include "AbstractRandomVariable.h"
-#include "AbstractManifold.h"
+#include "global.h"
 
 
 class AbstractModel {
@@ -29,12 +27,10 @@ public:
   /// typedef :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      
   typedef typename LinearAlgebra<ScalarType>::MatrixType MatrixType;
   typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
   typedef typename std::unordered_map<std::string, int> StringIntHash;
-  typedef std::vector<std::pair<std::string,  unsigned int>> MiniBlock;
-  typedef std::pair<int, MiniBlock> SamplerBlock;
+  typedef std::vector<std::tuple<int, std::string, int>> MiniBlock;
   typedef std::vector<VectorType> SufficientStatisticsVector;
 
 
@@ -42,65 +38,81 @@ public:
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  AbstractModel(){};
+  virtual ~AbstractModel(){};
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Encapsulation method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   std::shared_ptr< AbstractRandomVariable > GetRandomVariable(std::string name) const;
-  std::shared_ptr< AbstractRandomVariable > GetRandomVariable(int Key) const;
+  std::shared_ptr< AbstractRandomVariable > GetRandomVariable(int key) const;
+
+  inline std::shared_ptr< AbstractManifold > GetManifold(){return manifold_;};
+  inline MultiRandomVariables& GetRandomVariable(){return rand_var_;};
+  inline StringIntHash GetAssoTable(){return asso_num_real_per_rand_var_;};
+  inline double GetSumOfObservations(){return sum_obs_;};
+  inline double GetNumberOfObservations(){return obs_tot_num_;};
+  inline int GetNumberOfSubjects(){return subjects_tot_num_;};
+  inline double GetManifoldDimension(){return manifold_dim_;};
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Other method(s) :
+  /// Method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Initialize the model
-  virtual void Initialize(const Observations& Obs) = 0;
-  
-  /// Initialize the variance of the proposition distribution
-  virtual ScalarType InitializePropositionDistributionVariance(std::string Name) const = 0;
-      
-  /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
-  /// This update can depend on the parameter that has changed, provided by the Name argument
-  virtual void UpdateModel(const Realizations& AR, int Type, const std::vector<std::string> Names = {"All"}) = 0;
+  virtual void Initialize(const Observations& obs) = 0;
 
-  /// Update the sufficient statistics according to the model variables / parameters 
-  virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& AR, const Observations& Obs) = 0;
-  
+  /// Initialize the variance of the proposition distribution
+  virtual ScalarType InitializePropositionDistributionVariance(std::string name) const = 0;
+
+  /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
+  /// This update can depend on the parameter that has changed, provided by the name argument
+  virtual void UpdateModel(const Realizations& real, const MiniBlock& block_info, const std::vector<std::string> names = {"All"}) = 0;
+
+  /// Update the sufficient statistics according to the model variables / parameters
+  virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& real, const Observations& obs) = 0;
+
   /// Update the fixed effects thanks to the approximation step of the algorithm
-  virtual void UpdateRandomVariables(const SufficientStatisticsVector& StochSufficientStatistics) = 0;
-  
-  /// Compute the log likelihood of the model
-  /// Using the log likelihood may have computational reason - for instance when the likelihood is too small
-  virtual double ComputeLogLikelihood(const Observations &Obs)= 0;
-  
-  /// Compute the log likelihood of the model for a particular individual
-  virtual double ComputeIndividualLogLikelihood(const IndividualObservations& Obs ,const int SubjectNumber) = 0;
+  virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats) = 0;
   
   /// Simulate data according to the model
-  virtual Observations SimulateData(io::DataSettings& DS) = 0;
+  virtual Observations SimulateData(io::DataSettings& data_settings) = 0;
 
   /// Simulate some random variable realizations
   Realizations SimulateRealizations();
-  
-  /// Define the sampler block used in the gibbs sampler (should it be here?)
-  virtual std::vector<SamplerBlock> GetSamplerBlocks() const = 0;
 
-  /// PROBABLY TO ERASE
-  /// Compute the parallel curve
-  virtual VectorType ComputeParallelCurve(int SubjectNumber, int ObservationNumber) = 0;
+  /// Define the sampler block used in the gibbs sampler (should it be here?)
+  virtual std::vector<MiniBlock> GetSamplerBlocks() const = 0;
+
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Log-likelihood related method(s) :
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Compute the log likelihood of the model
+  virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)= 0;
+
+  /// Compute the log likelihood of the model for a particular individual
+  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_) = 0;
+  
+  /// Get the previous loglikelihood computed
+  virtual ScalarType GetPreviousLogLikelihood(const MiniBlock& block_info) = 0;
+  
+  /// Update the previous loglikelihood computed
+  virtual void SetPreviousLogLikelihood(VectorType& log_likelihood, const MiniBlock& block_info) = 0;
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   // Outputs
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  
+
   /// Compute Outputs
-  virtual void DisplayOutputs(const Realizations& AR) = 0;
-  
+  virtual void DisplayOutputs(const Realizations& reals) = 0;
+
   /// Save the data into a file
-  virtual void SaveData(unsigned int IterationNumber, const Realizations& R) = 0;
-  
-  
+  virtual void SaveData(unsigned int iter_num, const Realizations& reals) = 0;
+
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,40 +122,37 @@ public:
 
 
 protected:
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Method(s) :
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   // Attribute(s)
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Riemanian manifold
-  std::shared_ptr< AbstractManifold > m_Manifold;
+  std::shared_ptr< AbstractManifold > manifold_;
 
-  /// Random variables 
-  MultiRandomVariables m_RandomVariables;
-  
+  /// Random variables
+  MultiRandomVariables rand_var_;
+
   /// Number of realizations per random variables used in the model
-  StringIntHash m_RealizationsPerRandomVariable;
-  
+  StringIntHash asso_num_real_per_rand_var_;
+
   /// Output file
-  std::ofstream m_OutputParameters;
-  
+  std::ofstream out_params_;
+
   /// Sum of the observations - corresponds to the first sufficient statistic
-  double m_SumObservations;
-  
+  double sum_obs_;
+
   /// Total number of observations throughout all the individuals
-  double m_NbTotalOfObservations;
-  
+  double obs_tot_num_;
+
   /// Total number of subjects
-  unsigned int m_NumberOfSubjects;
-  
+  unsigned int subjects_tot_num_;
+
   /// Dimension of the manifold
-  double m_ManifoldDimension;
+  double manifold_dim_;
+
+private:
+  AbstractModel(const AbstractModel &);
+  AbstractModel& operator=(const AbstractModel &);
 
 };
-
-
-#endif //_AbstractModel_h

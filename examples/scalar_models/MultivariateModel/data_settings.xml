@@ -1,12 +1,12 @@
 <data-settings>
 
   <!-- Defines if should read real data (true) of simulate data (false) -->
-  <data>true</data>
+  <data-type>true</data-type>
 
 
   <!-- In case of real data -->
   <real-data>
-    <folder-path>data/</folder-path>
+    <folder-path>/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/data/</folder-path>
     <group-file>group.csv</group-file>
     <timepoints-file>X.csv</timepoints-file>
 

@@ -2,63 +2,60 @@
 
 #include "AbstractRandomVariable.h"
 
-class UniformRandomVariable : public AbstractRandomVariable { 
+class UniformRandomVariable : public AbstractRandomVariable {
  public:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   // Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  UniformRandomVariable(ScalarType Min, ScalarType Max);
-  ~UniformRandomVariable();
+  UniformRandomVariable(ScalarType min, ScalarType max);
+  virtual ~UniformRandomVariable();
+
+  UniformRandomVariable(const UniformRandomVariable&);
+  virtual UniformRandomVariable& operator=(const UniformRandomVariable&);
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Getter(s) and Setter(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  virtual ScalarType GetParameter(std::string ParameterName) const;
-  virtual ScalarType GetParameter(int ParameterKey) const;
-  
-  inline double GetMin() const { return m_Min; }
+  virtual ScalarType GetParameter(std::string param_name) const;
+  virtual ScalarType GetParameter(int param_key) const;
 
-  inline double GetMax() const { return m_Max; }
+  inline double GetMin() const { return min_; }
 
-  inline void SetMin(double Min) { m_Min = Min; };
+  inline double GetMax() const { return max_; }
 
-  inline void SetMax(double Max) {m_Max = Max; };
+  inline void SetMin(double min) { min_ = min; };
+
+  inline void SetMax(double max) {max_ = max; };
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   // Method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  
+
   /// Draw a sample
   virtual double Sample();
 
   /// Compute the likelihood given a current state
-  virtual double Likelihood(double X);
-  
-  /// Compute the loglikelihood given a current state
-  virtual double LogLikelihood(double X);
-  
-  /// Update the random variable parameters
-  virtual void Update(StringScalarHash Parameters);
-  virtual void Update(IntScalarHash    Parameters);
-  
- protected:
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Method(s) :
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  virtual double Likelihood(double x);
 
+  /// Compute the loglikelihood given a current state
+  virtual double LogLikelihood(double x);
+
+  /// Update the random variable parameters
+  virtual void Update(StringScalarHash params);
+  virtual void Update(IntScalarHash    params);
+
+private:
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   // Attribute(s)
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// Min of the uniform distribution
-  double m_Min;
+  /// min of the uniform distribution
+  double min_;
 
-  /// Max of the uniform distribution
-  double m_Max;
+  /// max of the uniform distribution
+  double max_;
 
 };
-
-
