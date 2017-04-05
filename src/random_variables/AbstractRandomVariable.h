@@ -7,13 +7,12 @@ typedef double ScalarType;
 #include <random>
 #include <unordered_map>
 
+#include "global.h"
 #include "LinearAlgebra.h"
 
 
-//static std::random_device RD;
-//static std::mt19937 generator(RD());
-
-static std::mt19937 generator(1);
+static std::random_device rand_device;
+static std::mt19937 generator( GV::TEST_RUN ? 1 : rand_device());
 
 
 class AbstractRandomVariable {

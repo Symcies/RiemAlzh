@@ -236,8 +236,10 @@ Observations UnivariateModel::SimulateData(io::DataSettings &data_settings, bool
 
 
   /// Simulate the data
+  //Find a way to initialize depending on the test case
   std::random_device rand_device;
-  std::mt19937 rand_num_gen(rand_device()); //TODO(igor): change name to be more explicit
+  std::mt19937 rand_num_gen( GV::TEST_RUN ? 1 : rand_device());
+
   std::uniform_int_distribution<int> uni_distrib(data_settings.GetMinimumNumberOfObservations(), data_settings.GetMaximumNumberOfObservations());
   UniformRandomVariable time_points_num(60, 95);
   GaussianRandomVariable noise(0, noise_->GetVariance());
@@ -305,12 +307,13 @@ AbstractModel::VectorType UnivariateModel::ComputeLogLikelihood(const Observatio
 {
   /// It computes the likelihood of the model. For each subject i, it sums its likelihood, namely the distance,
   /// for each time t_ij, between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
-
   int type = std::get<0>(block_info[0]);
   
   if(type == -1) {
     VectorType ok(subjects_tot_num_);
     ScalarType *ok2 = ok.memptr();
+
+    std::cout << "bef for" << std::endl;
     for (size_t i = 0; i < subjects_tot_num_; ++i)
       ok2[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
 
@@ -328,6 +331,7 @@ ScalarType UnivariateModel::ComputeIndividualLogLikelihood(const IndividualObser
 
   ScalarType log_likelihood = 0;
   auto num_time_points = obs.GetNumberOfTimePoints();
+
 
   /// For each timepoints of the particular subject
   for(size_t i = 0; i < num_time_points; ++i)

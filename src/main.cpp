@@ -56,14 +56,11 @@ int main(int argc, char* argv[]) {
   }
   else
   {
-    model->InitializeFakeRandomVariables();
     obs = model->SimulateData(data_settings);
   }
 
   /// Algorithm pipeline
-  auto algo = make_shared<Algorithm>(algo_settings);
-  algo->SetModel(model);
-  algo->SetSampler(sampler);
+  auto algo = make_shared<Algorithm>(algo_settings, model, sampler);
   algo->ComputeMCMCSAEM(obs);
 
 
