@@ -255,14 +255,14 @@ Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_setti
 
     /// Simulate the data base on the time-points
     IndividualObservations indiv_obs(time_points);
-    std::vector<VectorType> landmarks;
+    std::vector<VectorType> cog_scores;
     for(size_t j = 0; j < time_points.size(); ++j)
     {
       VectorType parallel_curve = ComputeParallelCurve(i, j);
-      landmarks.push_back(parallel_curve + noise.Samples(manifold_dim_));
+      cog_scores.push_back(parallel_curve + noise.Samples(manifold_dim_));
     }
 
-    indiv_obs.AddLandmarks(landmarks);
+    indiv_obs.AddCognitiveScores(cog_scores);
     obs.AddIndividualData(indiv_obs);
   }
 
@@ -312,8 +312,7 @@ AbstractModel::VectorType UnivariateModel::ComputeLogLikelihood(const Observatio
   if(type == -1) {
     VectorType ok(subjects_tot_num_);
     ScalarType *ok2 = ok.memptr();
-
-    std::cout << "bef for" << std::endl;
+    
     for (size_t i = 0; i < subjects_tot_num_; ++i)
       ok2[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
 
