@@ -7,7 +7,7 @@ typedef double ScalarType;
 #include <string>
 
 #include "Observations.h"
-#include "DataSettings.h"
+#include "RealDataSettings.h"
 #include "LinearAlgebra.h"
 
 namespace io {
@@ -36,7 +36,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Open observations
-    static Observations ReadObservations(DataSettings& ds);
+    static Observations ReadObservations(const RealDataSettings& ds);
 
     /// Open network propagation files
     static MatrixType OpenKernel(std::string file_path);
@@ -44,7 +44,7 @@ public:
 private:
     static VectorType ExtractObservation(std::ifstream& f_stream, int dimension);
     static IndividualObservations CreateIndividualObs(
-      DataSettings& ds,
+      const RealDataSettings& ds,
       ReadData::VectorType& time_points,
       std::vector<ReadData::VectorType>& landmarks,
       std::vector<ReadData::VectorType>& cognitive_scores);

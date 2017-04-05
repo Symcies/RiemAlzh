@@ -4,8 +4,12 @@
 typedef double ScalarType;
 using namespace std;
 
-#include "ModelSettings.h"
+#include "Builder.h"
+#include "RealDataSettings.h"
+#include "SimulatedDataSettings.h"
 #include "DataSettings.h"
+
+#include "ModelSettings.h"
 #include "AlgorithmSettings.h"
 
 #include "Algorithm.h"
@@ -34,7 +38,7 @@ int main(int argc, char* argv[]) {
   /// Load the XML file arguments
   io::ModelSettings     model_settings(argv[1]);
   io::AlgorithmSettings algo_settings(argv[2]);
-  io::DataSettings      data_settings(argv[3]);
+  std::shared_ptr<io::DataSettings> data_settings = Builder::BuilderDataSettings(argv[3]);
 
   /// Initialize the sampler
   std::shared_ptr<AbstractSampler> sampler = make_shared<BlockedGibbsSampler>();
@@ -49,15 +53,19 @@ int main(int argc, char* argv[]) {
 
   /// Initialize the data
   Observations obs;
-  if(data_settings.IsReal())
+  if(data_settings->IsReal())
   {
-    obs = io::ReadData::ReadObservations(data_settings);
+    std::shared_ptr<io::RealDataSettings> ds;
+    ds = std::dynamic_pointer_cast<io::RealDataSettings>(data_settings);
+    obs = io::ReadData::ReadObservations(*ds);
     obs.InitializeGlobalAttributes();
   }
   else
   {
+    std::shared_ptr<io::SimulatedDataSettings> ds;
+    ds = std::dynamic_pointer_cast<io::SimulatedDataSettings>(data_settings);
     model->InitializeFakeRandomVariables();
-    obs = model->SimulateData(data_settings);
+    obs = model->SimulateData(*ds);
   }
 
   /// Algorithm pipeline

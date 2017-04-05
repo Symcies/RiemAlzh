@@ -2,7 +2,7 @@
 
 namespace io {
 
-Observations ReadData::ReadObservations(DataSettings &ds)
+Observations ReadData::ReadObservations(const RealDataSettings &ds)
 {
   Observations obs;
 
@@ -58,7 +58,7 @@ Observations ReadData::ReadObservations(DataSettings &ds)
 }
 
 IndividualObservations ReadData::CreateIndividualObs(
-  DataSettings& ds,
+  const RealDataSettings& ds,
   ReadData::VectorType& time_points,
   std::vector<ReadData::VectorType>& landmarks,
   std::vector<ReadData::VectorType>& cognitive_scores){

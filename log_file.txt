@@ -1,4 +1,2 @@
-Iteration n: 0 - noise: 0.340829 - G: 0.11986 - T0: 75.114 - Var(Tau): 0.192725 - Ksi: 0.129827 - Var(Ksi): 0.00043798
-Iteration n: 0 - noise: 0.340829 - G: 0.11986 - T0: 75.114 - Var(Tau): 0.192725 - Ksi: 0.129827 - Var(Ksi): 0.00043798
-Iteration n: 0 - noise: 0.340829 - G: 0.11986 - T0: 75.114 - Var(Tau): 0.192725 - Ksi: 0.129827 - Var(Ksi): 0.00043798
+Iteration n: 0 - noise: 0.34233 - G: 0.11986 - T0: 75.1052 - Var(Tau): 0.183834 - Ksi: 0.130696 - Var(Ksi): 0.000465735
 Iteration n: 0 - noise: 0.34233 - G: 0.11986 - T0: 75.1052 - Var(Tau): 0.183834 - Ksi: 0.130696 - Var(Ksi): 0.000465735

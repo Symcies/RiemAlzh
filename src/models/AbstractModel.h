@@ -9,7 +9,7 @@
 
 #include "AbstractManifold.h"
 #include "AbstractRandomVariable.h"
-#include "DataSettings.h"
+#include "SimulatedDataSettings.h"
 #include "LinearAlgebra.h"
 #include "ModelSettings.h"
 #include "MultiRandomVariables.h"
@@ -77,7 +77,7 @@ public:
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats) = 0;
   
   /// Simulate data according to the model
-  virtual Observations SimulateData(io::DataSettings& data_settings, bool need_init = false) = 0;
+  virtual Observations SimulateData(io::SimulatedDataSettings& data_settings, bool need_init = false) = 0;
 
   /// Simulate some random variable realizations
   Realizations SimulateRealizations();

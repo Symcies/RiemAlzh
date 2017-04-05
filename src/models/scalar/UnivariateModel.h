@@ -31,7 +31,7 @@ class UnivariateModel : public AbstractModel {
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats);
 
   /// Simulate data according to the model
-  virtual Observations SimulateData(io::DataSettings& data_settings, bool need_init = false);
+  virtual Observations SimulateData(io::SimulatedDataSettings& data_settings, bool need_init = false);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
   virtual std::vector<MiniBlock> GetSamplerBlocks() const;

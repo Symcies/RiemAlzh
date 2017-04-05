@@ -69,6 +69,7 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io
         ${CMAKE_CURRENT_SOURCE_DIR}/src/realizations
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io/outputs
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/io/data_settings
         ${CMAKE_CURRENT_SOURCE_DIR}/src/observations
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra
