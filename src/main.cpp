@@ -4,16 +4,21 @@
 typedef double ScalarType;
 using namespace std;
 
-#include "ModelSettings.h"
+#include "Builder.h"
+#include "RealDataSettings.h"
+#include "SimulatedDataSettings.h"
 #include "DataSettings.h"
+
+#include "ModelSettings.h"
 #include "AlgorithmSettings.h"
 
 #include "Algorithm.h"
 
 #include "MultivariateModel.h"
-#include "NetworkModel.h"
-#include "MeshworkModel.h"
-#include "FastNetworkModel.h"
+#include "UnivariateModel.h"
+//#include "NetworkModel.h"
+//#include "MeshworkModel.h"
+//#include "FastNetworkModel.h"
 
 #include "BlockedGibbsSampler.h"
 
@@ -27,45 +32,47 @@ int main(int argc, char* argv[]) {
 
   if(argc != 4)
   {
-      std::cerr << "Usage with real data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings " << "data_settings.xml" << std::endl;
+      std::cerr << "Usage with real data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings.xml " << "data_settings.xml" << std::endl;
   }
 
-  /// Initialize tests
-  TestAssert::Init(false);
-
   /// Load the XML file arguments
-  io::ModelSettings     MS(argv[1]);
-  io::AlgorithmSettings AS(argv[2]);
-  io::DataSettings      DS(argv[3]);
+  io::ModelSettings     model_settings(argv[1]);
+  io::AlgorithmSettings algo_settings(argv[2]);
+  std::shared_ptr<io::DataSettings> data_settings = Builder::BuilderDataSettings(argv[3]);
 
   /// Initialize the sampler
-  std::shared_ptr<AbstractSampler> Sampler = make_shared<BlockedGibbsSampler>();
+  std::shared_ptr<AbstractSampler> sampler = make_shared<BlockedGibbsSampler>();
 
   /// Initialize the model
-  std::shared_ptr<AbstractModel> Model;
-  if(MS.GetType() == "Meshwork")     Model = make_shared<MeshworkModel>(MS);
-  if(MS.GetType() == "FastNetwork")  Model = make_shared<FastNetworkModel>(MS);
-  if(MS.GetType() == "Network")      Model = make_shared<NetworkModel>(MS);
-  if(MS.GetType() == "Multivariate") Model = make_shared<MultivariateModel>(MS);
+  std::shared_ptr<AbstractModel> model;
+  //if(model_settings.GetType() == "Meshwork")     model = make_shared<MeshworkModel>(model_settings);
+  //if(model_settings.GetType() == "FastNetwork")  model = make_shared<FastNetworkModel>(model_settings);
+  //if(model_settings.GetType() == "Network")      model = make_shared<NetworkModel>(model_settings);
+  if(model_settings.GetType() == "Multivariate") model = make_shared<MultivariateModel>(model_settings);
+  if(model_settings.GetType() == "Univariate")   model = make_shared<UnivariateModel>(model_settings);
 
   /// Initialize the data
-  Observations Obs;
-  if(DS.IsReal())
+  Observations obs;
+  if(data_settings->IsReal())
   {
-    Obs = io::ReadData::ReadObservations(DS);
-    Obs.InitializeGlobalAttributes();
+    std::shared_ptr<io::RealDataSettings> ds;
+    ds = std::dynamic_pointer_cast<io::RealDataSettings>(data_settings);
+    obs = io::ReadData::ReadObservations(*ds);
+    obs.InitializeGlobalAttributes();
   }
   else
   {
-    Model->InitializeFakeRandomVariables();
-    Obs = Model->SimulateData(DS);
+    std::shared_ptr<io::SimulatedDataSettings> ds;
+    ds = std::dynamic_pointer_cast<io::SimulatedDataSettings>(data_settings);
+    model->InitializeFakeRandomVariables();
+    obs = model->SimulateData(*ds);
   }
 
   /// Algorithm pipeline
-  auto Algo = make_shared<Algorithm>(AS);
-  Algo->SetModel(Model);
-  Algo->SetSampler(Sampler);
-  Algo->ComputeMCMCSAEM(Obs);
+  auto algo = make_shared<Algorithm>(algo_settings);
+  algo->SetModel(model);
+  algo->SetSampler(sampler);
+  algo->ComputeMCMCSAEM(obs);
 
 
   return 0;
@@ -74,7 +81,7 @@ int main(int argc, char* argv[]) {
   //for(int i = 0; i < 10; ++i)
     //printf("(%d - %d)", i,omp_get_num_threads());
 
-  }
+}
 
 
   //

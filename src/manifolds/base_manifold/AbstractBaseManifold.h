@@ -1,58 +1,38 @@
-#ifndef _AbstractBaseManifold_h
-#define _AbstractBaseManifold_h
+#pragma once
 
-#include <iostream>
 #include <cmath>
 
 class AbstractBaseManifold {
 public:
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // typedef :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    AbstractBaseManifold();
-    ~AbstractBaseManifold();
+    AbstractBaseManifold(){};
+    virtual ~AbstractBaseManifold(){};
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Encapsulation method(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Other method(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /// Compute the geodesic
-    virtual double ComputeGeodesic(double P0, double T0, double V0, double TimePoint) = 0;
-
-    /// Compute the geodesic derivative
-    virtual double ComputeGeodesicDerivative(double P0, double T0, double V0, double TimePoint) = 0;
-    
-    /// Compute the parallel curve
-    virtual double ComputeParallelCurve(double P0, double T0, double V0, double SpaceShift, double TimePoint) = 0;
-
-    /// Compute the scalar product
-    virtual double ComputeScalarProduct(double U, double V, double ApplicationPoint) = 0;
-
-
-
-protected:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /// Compute the geodesic
+    virtual double ComputeGeodesic(double p0, double t0, double v0, double time_point) = 0;
 
+    /// Compute the geodesic derivative
+    virtual double ComputeGeodesicDerivative(double p0, double t0, double v0, double time_point) = 0;
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Attribute(s)
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compute the parallel curve
+    virtual double ComputeParallelCurve(double p0, double t0, double v0, double space_shift, double time_point) = 0;
+
+    /// Compute the scalar product
+    virtual double ComputeScalarProduct(double u, double v, double application_point) = 0;
+
+private:
+    /// Copy constructor, private to prevent copy
+    AbstractBaseManifold(const AbstractBaseManifold &);
+
+    /// Assignment operator, private to prevent copy
+    AbstractBaseManifold& operator=(const AbstractBaseManifold &);
 
 };
-
-
-#endif //_AbstractBaseManifold_h

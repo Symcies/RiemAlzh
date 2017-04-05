@@ -1,48 +1,46 @@
-#ifndef _LinearManifold_h
-#define _LinearManifold_h
+#pragma once
 
 #include "AbstractManifold.h"
 
 class LinearManifold : public AbstractManifold{
 public:
-    
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // typedef :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    LinearManifold(unsigned int NumberOfDimension);
+    LinearManifold(unsigned int dim_num);
     ~LinearManifold();
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Method(s) :
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Encapsulation method(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Other method(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
     /// Compute the parallel curve
-    virtual VectorType ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift, double TimePoint, VectorType& Delta);
-    
+    virtual VectorType ComputeParallelCurve(VectorType& p0, double t0,
+      VectorType& v0, VectorType& space_shift, double time_point, VectorType& delta);
+
     /// Compute the parallel curve  - NULL propagation
-    virtual VectorType ComputeParallelCurve(VectorType& P0, double T0, VectorType& V0, VectorType& SpaceShift, double TimePoint);
-    
-    /// Get V0 transformation  wrt the metric at the application point P0 (used in the householder method)
-    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0, VectorType& Delta);
-    
-    /// Get V0 transformation  wrt the metric at the application point P0 (used in the householder method)  - NULL propagation
-    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& P0, double T0, VectorType& V0);
+    virtual VectorType ComputeParallelCurve(VectorType& p0, double t0,
+      VectorType& v0, VectorType& space_shift, double time_point);
+
+    /// Get v0 transformation  wrt the metric at the application point p0 (used in the householder method)
+    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& p0,
+      double t0, VectorType& v0, VectorType& delta);
+
+    /// Get v0 transformation  wrt the metric at the application point p0 (used in the householder method)  - NULL propagation
+    virtual VectorType GetVelocityTransformToEuclideanSpace(VectorType& p0,
+      double t0, VectorType& v0);
 
     /// Compute the scalar product corresponding to the manifold metric
-    virtual double ComputeScalarProduct(VectorType& U, VectorType& V, VectorType& ApplicationPoint);
+    virtual double ComputeScalarProduct(VectorType& u, VectorType& v,
+      VectorType& application_point);
+
+
+private:
+    /// Copy constructor, private to prevent copy
+    LinearManifold(const LinearManifold &);
+
+    /// Assignment operator, private to prevent copy
+    LinearManifold& operator=(const LinearManifold &);
 };
-
-
-#endif //_LinearManifold_h

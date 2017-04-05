@@ -1,17 +1,13 @@
-#ifndef ReadData_h
-#define ReadData_h
+#pragma once
 
 typedef double ScalarType;
 
-#include <utility>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <ios>
-#include <src/observations/Observations.h>
 
 #include "Observations.h"
-#include "DataSettings.h"
+#include "RealDataSettings.h"
 #include "LinearAlgebra.h"
 
 namespace io {
@@ -32,37 +28,33 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Encapsulation method(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    ReadData();
+    ~ReadData();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Other method(s) :
+    /// Method(s) :
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-  
+
     /// Open observations
-    static Observations ReadObservations(DataSettings& DS);
-    
+    static Observations ReadObservations(const RealDataSettings& ds);
+
     /// Open network propagation files
-    static MatrixType OpenKernel(std::string FilePath);
+    static MatrixType OpenKernel(std::string file_path);
 
+private:
+    static VectorType ExtractObservation(std::ifstream& f_stream, int dimension);
+    static IndividualObservations CreateIndividualObs(
+      const RealDataSettings& ds,
+      ReadData::VectorType& time_points,
+      std::vector<ReadData::VectorType>& landmarks,
+      std::vector<ReadData::VectorType>& cognitive_scores);
 
-protected:
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Method(s) :
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Copy constructor, private to prevent copy
+    ReadData(const ReadData&);
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Attribute(s)
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    /// Assignment operator, private to prevent copy
+    ReadData& operator=(const ReadData&);
 
 };
 
-}
-
-#endif //ReadData_h
+} //end io namespace

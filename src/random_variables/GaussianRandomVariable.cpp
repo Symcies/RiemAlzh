@@ -4,43 +4,50 @@
 // Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-GaussianRandomVariable
-::GaussianRandomVariable(double Mean, double Variance)
+GaussianRandomVariable::GaussianRandomVariable(double mean, double variance)
 {
-  m_Mean = Mean;
-  m_Variance = Variance;
+  mean_ = mean;
+  variance_ = variance;
 }
 
-GaussianRandomVariable
-::~GaussianRandomVariable()
+GaussianRandomVariable::GaussianRandomVariable(const GaussianRandomVariable& gr_var)
+{
+  mean_ = gr_var.mean_;
+  variance_ = gr_var.variance_;
+}
+
+GaussianRandomVariable::~GaussianRandomVariable()
 { }
 
+GaussianRandomVariable& GaussianRandomVariable::operator=(const GaussianRandomVariable& gr_var)
+{
+  mean_ = gr_var.mean_;
+  variance_ = gr_var.variance_;
+
+  return *this;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Getter(s)  and Setter(s):
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ScalarType 
-GaussianRandomVariable
-::GetParameter(std::string ParameterName) const 
+ScalarType GaussianRandomVariable::GetParameter(std::string param_name) const
 {
-  if(ParameterName == "Mean")
-      return m_Mean;
-  else if(ParameterName == "Variance")
-      return m_Variance;
+  if(param_name == "Mean")
+      return mean_;
+  else if(param_name == "Variance")
+      return variance_;
   else
       std::cerr << "This Parameter does not exist";
 }
 
 
-ScalarType 
-GaussianRandomVariable
-::GetParameter(int ParameterKey) const 
+ScalarType GaussianRandomVariable::GetParameter(int param_key) const
 {
-  if(ParameterKey == 0)
-      return m_Mean;
-  else if(ParameterKey == 1)
-      return m_Variance;
+  if(param_key == 0)
+      return mean_;
+  else if(param_key == 1)
+      return variance_;
   else
       std::cerr << "This Parameter does not exist";
 }
@@ -49,79 +56,69 @@ GaussianRandomVariable
 /// Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-double
-GaussianRandomVariable
-::Sample()
+double GaussianRandomVariable::Sample()
 {
   // TODO : Add in the attribute !
-  std::normal_distribution<double> Distribution(m_Mean, sqrt(m_Variance));
+  std::normal_distribution<double> distibution(mean_, sqrt(variance_));
 
-  double Sample =  Distribution(Generator);
-  return Sample;
+  double sample =  distibution(generator);
+  return sample;
 }
 
-double
-GaussianRandomVariable
-::Likelihood(double X)
+double GaussianRandomVariable::Likelihood(double x)
 {
-  double denom =   sqrt(2.0*m_Variance*M_PI);
-  double num = exp( - (X - m_Mean)*(X - m_Mean) / (2.0*m_Variance));
+  double denom =   sqrt(2.0 * variance_ * M_PI);
+  double num = exp( - (x - mean_)*(x - mean_) / (2.0*variance_));
   double result = num/denom;
 
 
-  if(isnan(result)) std::cout << "Mean/Variance : " << m_Mean << "/" << m_Variance << "  -  Num/Denom : "<<  num << "/" << denom << std::endl;
+  if(isnan(result)) std::cout << "mean/variance : " << mean_ << "/" << variance_ << "  -  Num/Denom : "<<  num << "/" << denom << std::endl;
   return result;
 }
 
 
-double 
-GaussianRandomVariable
-::LogLikelihood(double X) 
+double GaussianRandomVariable::LogLikelihood(double x)
 {
-  double LogLikelihood = - 1.0/2.0 * log(2.0*m_Variance*M_PI);
-  LogLikelihood +=  - (X - m_Mean)*(X - m_Mean) / (2.0 * m_Variance);
-  return LogLikelihood;
-  
+  double log_likelihood = - 1.0/2.0 * log(2.0*variance_*M_PI);
+  log_likelihood +=  - (x - mean_)*(x - mean_) / (2.0 * variance_);
+  return log_likelihood;
+
 }
 
-void
-GaussianRandomVariable
-::Update(StringScalarHash Parameters) 
+void GaussianRandomVariable::Update(StringScalarHash params)
 {
-  bool FindAnything = false;
-  
-  if(Parameters.find("Mean") != Parameters.end())
+  bool find_anything = false;
+
+  if(params.find("Mean") != params.end())
   {
-      m_Mean = Parameters.at("Mean");
-      FindAnything = true;
+      mean_ = params.at("Mean");
+      find_anything = true;
   }
-  if(Parameters.find("Variance") != Parameters.end())
+  if(params.find("Variance") != params.end())
   {
-      assert(Parameters.at("Variance") > 0);
-      m_Variance = Parameters.at("Variance");
-      FindAnything = true;
+      assert(params.at("Variance") > 0);
+      variance_ = params.at("Variance");
+      find_anything = true;
   }
-  
-  if(!FindAnything) {std::cerr << "The random variable parameter to update does not exist"; }
+
+  if(!find_anything) {std::cerr << "The random variable parameter to update does not exist"; }
 }
 
-void
-GaussianRandomVariable
-::Update(IntScalarHash Parameters) 
+void GaussianRandomVariable::Update(IntScalarHash params)
 {
-  bool FindAnything = false;
-  
-  if(Parameters.find(0) != Parameters.end())
+  bool find_anything = false;
+
+  if(params.find(0) != params.end())
   {
-      m_Mean = Parameters.at(0);
-      FindAnything = true;
+      mean_ = params.at(0);
+      find_anything = true;
   }
-  if(Parameters.find(1) != Parameters.end())
+  if(params.find(1) != params.end())
   {
-      assert(Parameters.at(1) > 0);
-      m_Variance = Parameters.at(1);
-      FindAnything = true;
+      assert(params.at(1) > 0);
+      variance_ = params.at(1);
+      find_anything = true;
   }
-  
-  if(!FindAnything) {std::cerr << "The random variable parameter to update does not exist"; }
+
+  if(!find_anything) {std::cerr << "The random variable parameter to update does not exist"; }
 }

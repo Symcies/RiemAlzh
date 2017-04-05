@@ -1,5 +1,4 @@
-#ifndef m_ModelSettings_h
-#define m_ModelSettings_h
+#pragma once
 
 typedef double ScalarType;
 
@@ -15,14 +14,10 @@ class ModelSettings {
 public:
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  // typedef :
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////
   // Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  ModelSettings(const char *XMLFile);
+  ModelSettings(const char *xml_file);
 
   ~ModelSettings();
 
@@ -30,13 +25,13 @@ public:
   /// Encapsulation method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  std::string GetType() { return m_Type; }
+  std::string GetType() { return type_; }
 
-  unsigned int GetNumberOfIndependentSources() const { return m_NbIndependentSources; }
+  unsigned int GetIndependentSourcesNumber() const { return independent_sources_nb_; }
 
-  std::string GetInvertKernelPath() const { return m_InvertKernelMatrixPath; }
+  std::string GetInvertKernelPath() const { return invert_kernel_matrix_path_; }
 
-  std::string GetInterpolationKernelPath() const { return m_InterpolationMatrixPath; }
+  std::string GetInterpolationKernelPath() const { return interpolation_matrix_path_; }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Other method(s) :
@@ -49,20 +44,21 @@ private:
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Type of the model
-  std::string m_Type;
+  std::string type_;
 
   /// Name of the output file
-  std::string m_OutputFileName;
-  
+  //TODO: use it somewhere
+  std::string output_file_name_;
+
 
   /// Number of sources
-  unsigned int m_NbIndependentSources;
+  unsigned int independent_sources_nb_;
 
   /// Path to the kernel matrix
-  std::string m_InvertKernelMatrixPath;
+  std::string invert_kernel_matrix_path_;
 
   /// Path to the interpolation matrix
-  std::string m_InterpolationMatrixPath;
+  std::string interpolation_matrix_path_;
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,19 +74,29 @@ private:
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Load the fast network model
-  void LoadFastNetwork(const char *XMLFile);
+  void LoadFastNetwork(const tinyxml2::XMLElement *settings);
 
   /// Load the meshwork model
-  void LoadMeshworkModel(const char *XMLFile);
+  void LoadMeshworkModel(const tinyxml2::XMLElement *settings);
 
   /// Load the network model
-  void LoadNetworkModel(const char *XMLFile);
+  void LoadNetworkModel(const tinyxml2::XMLElement *settings);
 
   /// Load the multivariate
-  void LoadMultivariate(const char *XMLFile);
-  
+  void LoadMultivariate(const tinyxml2::XMLElement *settings);
+
+  /// Load the univariate
+  void LoadUnivariate(const tinyxml2::XMLElement *settings);
+
+  ///Print the type of the model
+  void PrintModelInfo();
+
+  /// Copy constructor, private to prevent copy
+  ModelSettings(const ModelSettings&);
+
+  /// Assignment operator, private to prevent copy
+  ModelSettings& operator=(const ModelSettings&);
+
 };
 
-
-}    
-#endif //m_ModelSettings_h
+}

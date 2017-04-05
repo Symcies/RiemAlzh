@@ -1,0 +1,89 @@
+#pragma once
+
+#include "DataSettings.h"
+
+namespace io {
+
+class RealDataSettings : public DataSettings {
+ public:
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Constructor(s) / Destructor :
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
+  RealDataSettings(const char *xml_file);
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Encapsulation method(s) :
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  std::string GetPathToGroup() const { return group_path_; }
+
+  std::string GetPathToTimepoints() const { return timepoints_path_; }
+
+  std::string GetPathToCognitiveScores() const { return cog_scores_path_; }
+
+  unsigned int GetCognitiveScoresDimension() const { return cog_scores_dim_; }
+
+  std::string GetPathToLandmarks() const { return landmarks_path; }
+
+  unsigned int GetLandmarksDimension() const { return landmarks_dim_; }
+  
+  bool LandmarkPresence() const { return are_landmarks_present_; }
+
+  bool CognitiveScoresPresence() const { return are_cog_scores_present_; }
+  
+ private:
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Method(s) :
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
+  void LoadLandmarks(const tinyxml2::XMLElement* settings);
+  
+  void LoadCognitiveScores(const tinyxml2::XMLElement* settings);
+  
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// General attribute(s) :
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /// General path to data
+  std::string data_path_;
+  
+  /// Path to group csv
+  std::string group_path_;
+
+  /// Path to timepoint csv
+  std::string timepoints_path_;
+  
+  /// Presence of landmarks
+  bool are_landmarks_present_;
+
+  /// Presence of cognitive scores
+  bool are_cog_scores_present_;
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Attribute(s) for cognitive scores :
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Path to cognitive scores (csv file)
+  std::string cog_scores_path_;
+
+  /// Dimension of the cognitive scores
+  unsigned int cog_scores_dim_;
+  
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Attribute(s) for landmarks :
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  
+  /// Path to landmarks (csv file)
+  std::string landmarks_path;
+
+  /// Dimension of the landmarks
+  unsigned int landmarks_dim_;
+  
+  
+};
+
+}

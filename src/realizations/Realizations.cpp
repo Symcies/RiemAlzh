@@ -1,23 +1,26 @@
 #include "Realizations.h"
 
 
-    
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-Realizations
-::Realizations() 
+
+Realizations::Realizations()
 {
-    
+
 }
 
-Realizations
-::~Realizations() 
+Realizations::~Realizations()
 {
-    
-}
 
+}
+Realizations::Realizations(const Realizations& reals)
+{
+    realizations_      = reals.realizations_;
+    string_to_int_key_ = reals.string_to_int_key_;
+    int_to_string_key_ = reals.int_to_string_key_;
+}
 
 
 
@@ -26,11 +29,9 @@ Realizations
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void
-Realizations
-::AddRealizations(std::string Name, int Key, VectorType& Values) 
+void Realizations::AddRealizations(std::string name, int key, VectorType& values)
 {
-    m_StringToIntKey.insert({Name, Key});
-    m_IntToStringKey.insert({Key, Name});
-    m_Realizations.insert({Key, Values});
+    string_to_int_key_.insert({name, key});
+    int_to_string_key_.insert({key, name});
+    realizations_.insert({key, values});
 }

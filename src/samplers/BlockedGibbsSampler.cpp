@@ -6,28 +6,25 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-BlockedGibbsSampler
-::BlockedGibbsSampler() 
+BlockedGibbsSampler::BlockedGibbsSampler()
 {
-  m_CurrentIteration = 0;
-  m_CurrentBlockType = -1;
-  m_UniformDistribution = std::uniform_real_distribution<double>(0.0, 1.0);
+  cur_iter_ = 0;
+  cur_block_info_ = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
+  uniform_distrib_ = std::uniform_real_distribution<double>(0.0, 1.0);
 }
 
-BlockedGibbsSampler
-::BlockedGibbsSampler(unsigned int MemorylessSamplingTime, double ExpectedAcceptanceRatio) 
+BlockedGibbsSampler::BlockedGibbsSampler(unsigned int memoryless_sampling_time, double expected_acceptance_ratio)
 {
-  m_UniformDistribution = std::uniform_real_distribution<double>(0.0, 1.0);
-  m_MemorylessSamplingTime = MemorylessSamplingTime;
-  m_ExpectedAcceptanceRatio = ExpectedAcceptanceRatio;
-  m_CurrentIteration = 0;
-  m_CurrentBlockType = -1;
+  uniform_distrib_ = std::uniform_real_distribution<double>(0.0, 1.0);
+  memoryless_sampling_time_ = memoryless_sampling_time;
+  expected_acceptance_ratio_ = expected_acceptance_ratio;
+  cur_iter_ = 0;
+  cur_block_info_ = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
 }
 
-BlockedGibbsSampler
-::~BlockedGibbsSampler() 
+BlockedGibbsSampler::~BlockedGibbsSampler()
 {
-  
+
 }
 
 
@@ -36,37 +33,34 @@ BlockedGibbsSampler
 /// Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void 
-BlockedGibbsSampler
-::InitializeSampler(Realizations& R, AbstractModel &M) 
+void BlockedGibbsSampler::InitializeSampler(Realizations& reals, AbstractModel &model)
 {
-  m_CandidateRandomVariables.InitializeCandidateRandomVariables(R, M);
-  m_CurrentBlockType = -1;
-  m_Blocks = M.GetSamplerBlocks();
+  candidate_rand_var_.InitializeCandidateRandomVariables(reals, model);
   
+  cur_block_info_ = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
+  blocks_ = model.GetSamplerBlocks();
 }
 
 
-void
-BlockedGibbsSampler
-::Sample(Realizations& R, AbstractModel& M, const Observations& Obs) 
+void BlockedGibbsSampler::Sample(Realizations& reals, AbstractModel& model, const Observations& obs)
 {
-  m_CurrentBlockType = -1;
+  
+  cur_block_info_ = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
   ////////////////////////////////////////
-  // TODO : Check if the update is needed -> Yes, needed because the orthonormal basis, 
+  // TODO : Check if the update is needed -> Yes, needed because the orthonormal basis,
   // or the A matrix may have changed because some variables such as V0 or P0 have changed
-  M.UpdateModel(R, -1);
-  VectorType LL = ComputeLogLikelihood(M, Obs);
-  UpdateLastLogLikelihood(LL);
+  model.UpdateModel(reals, cur_block_info_);
+  VectorType log_likelihood = ComputeLogLikelihood(model, obs);
+  UpdateLastLogLikelihood(model, log_likelihood);
   ////////////////////////////////////////
-  
-  
-  for (int i = 0; i < m_Blocks.size(); ++i) 
+
+
+  for (int i = 0; i < blocks_.size(); ++i)
   {
-    OneBlockSample(i, R, M, Obs);
+    OneBlockSample(i, reals, model, obs);
   }
-      
-  ++m_CurrentIteration;
+
+  ++cur_iter_;
 }
 
 
@@ -76,166 +70,135 @@ BlockedGibbsSampler
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void
-BlockedGibbsSampler
-::OneBlockSample(int BlockNumber, Realizations& R, AbstractModel &M, const Observations& Obs) 
+void BlockedGibbsSampler::OneBlockSample(int block_num, Realizations& reals,
+  AbstractModel &model, const Observations& obs)
 {
   /// Initialization
-  SamplerBlock CurrentBlock = m_Blocks.at(BlockNumber);
-  m_CurrentBlockType = CurrentBlock.first;
-  m_CurrentBlockParameters.clear();
-  m_CurrentBlockParametersBIS.clear();
-  m_RecoverParameters.clear();
-  
+  cur_block_info_ = blocks_.at(block_num);
+  cur_block_params_.clear();
+  cur_block_params_bis_.clear();
+  recover_params_.clear();
+
+
   /// Loop over the realizations of the block to update the ratio and the realizations
-  double AcceptationRatio = ComputePriorRatioAndUpdateRealizations(R, M, CurrentBlock.second);
-  
+  double acceptation_ratio = ComputePriorRatioAndUpdateRealizations(reals, model);
+
   /// Compute the previous log likelihood
-  AcceptationRatio -= GetPreviousLogLikelihood();
-  
+  acceptation_ratio -= GetPreviousLogLikelihood(model);
+
   /// Compute the candidate log likelihood
-  M.UpdateModel(R, m_CurrentBlockType, m_CurrentBlockParameters);
-  VectorType ComputedLogLikelihood = ComputeLogLikelihood(M, Obs);
-  AcceptationRatio += ComputedLogLikelihood.sum();
-  
+  model.UpdateModel(reals, cur_block_info_, cur_block_params_);
+  VectorType computed_log_likelihood = ComputeLogLikelihood(model, obs);
+  acceptation_ratio += computed_log_likelihood.sum();
+
   /// Compute the aceceptance ratio
-  AcceptationRatio = std::min(AcceptationRatio, 0.0);
-  AcceptationRatio = exp(AcceptationRatio);
-      
+  acceptation_ratio = std::min(acceptation_ratio, 0.0);
+  acceptation_ratio = exp(acceptation_ratio);
+
   ///  Rejection : Candidate not accepted
-  if(m_UniformDistribution(Generator) > AcceptationRatio)
+  if(uniform_distrib_(generator) > acceptation_ratio)
   {
-    for(auto it = m_RecoverParameters.begin(); it != m_RecoverParameters.end(); ++it) 
+    for(auto it = recover_params_.begin(); it != recover_params_.end(); ++it)
     {
-      std::string Name = std::get<0>(*it);
-      unsigned int RealizationNumber = std::get<1>(*it);
-      ScalarType PreviousRealization = std::get<2>(*it);
-      R.at(Name, RealizationNumber) = PreviousRealization;
+      std::string name = std::get<0>(*it);
+      unsigned int real_num = std::get<1>(*it);
+      ScalarType prev_real = std::get<2>(*it);
+      reals.at(name, real_num) = prev_real;
     }
-         
-    M.UpdateModel(R, m_CurrentBlockType, m_CurrentBlockParameters);
+
+    model.UpdateModel(reals, cur_block_info_, cur_block_params_);
   }
       /// Acceptation : Candidate is accepted
   else
   {
-    UpdateLastLogLikelihood(ComputedLogLikelihood);
+    UpdateLastLogLikelihood(model, computed_log_likelihood);
   }
-  
+
   /// Adaptative variances for the realizations
-  UpdateBlockRandomVariable(AcceptationRatio, CurrentBlock .second);
-  
+  UpdateBlockRandomVariable(acceptation_ratio);
+
 }
 
-ScalarType 
-BlockedGibbsSampler
-::ComputePriorRatioAndUpdateRealizations(Realizations& R, const AbstractModel& M, const MiniBlock& Variables) 
+ScalarType BlockedGibbsSampler::ComputePriorRatioAndUpdateRealizations(Realizations& reals, const AbstractModel& model)
 {
-  double AcceptanceRatio = 0;
-  
-  for(auto it = Variables.begin(); it != Variables.end(); ++it) 
+  double acceptance_ratio = 0;
+
+  for(auto it = cur_block_info_.begin(); it != cur_block_info_.end(); ++it)
   {
       /// Initialization
-      std::string NameRealization = it->first;
-      int Key = R.ReverseNameToKey(NameRealization);
-      unsigned int RealizationNumber = it->second;
-      m_CurrentBlockParameters.push_back(NameRealization);
-      m_CurrentBlockParametersBIS.push_back(Key);
-      
+      std::string name_real = std::get<1>(*it);
+      int key = reals.ReverseNameToKey(name_real);
+      unsigned int real_num = std::get<2>(*it);
+      cur_block_params_.push_back(name_real);
+      cur_block_params_bis_.push_back(key);
+
       /// Get the current realization and recover it
-      auto CurrentRandomVariable = M.GetRandomVariable(Key);
-      ScalarType CurrentRealization = R.at(Key, RealizationNumber);
-      //m_RecoverParameters[NameRealization] = {RealizationNumber, CurrentRealization};
-      m_RecoverParameters.push_back(std::make_tuple(NameRealization, RealizationNumber, CurrentRealization));
-      
+      auto cur_rand_var = model.GetRandomVariable(key);
+      ScalarType cur_real = reals.at(key, real_num);
+      //recover_params_[name_real] = {real_num, cur_real};
+      recover_params_.push_back(std::make_tuple(name_real, real_num, cur_real));
+
       /// Get a candidate realization
-      auto CandidateRandomVariable = m_CandidateRandomVariables.GetRandomVariable(Key, RealizationNumber);
-      CandidateRandomVariable.SetMean(CurrentRealization);
-      ScalarType CandidateRealization = CandidateRandomVariable.Sample();
-      
+      auto candidate_rand_var = candidate_rand_var_.GetRandomVariable(key, real_num);
+      candidate_rand_var.SetMean(cur_real);
+      ScalarType candidate_real = candidate_rand_var.Sample();
+
       /// Calculate the acceptance ratio
-      AcceptanceRatio += CurrentRandomVariable->LogLikelihood(CandidateRealization);
-      AcceptanceRatio -= CurrentRandomVariable->LogLikelihood(CurrentRealization);
-      
+      acceptance_ratio += cur_rand_var->LogLikelihood(candidate_real);
+      acceptance_ratio -= cur_rand_var->LogLikelihood(cur_real);
+
       /// Update the NewRealizations
-      R.at(NameRealization, RealizationNumber) = CandidateRealization;
-      
+      reals.at(name_real, real_num) = candidate_real;
+
   }
-  
-  return AcceptanceRatio;
-  
+
+  return acceptance_ratio;
+
 }
 
 
 
-BlockedGibbsSampler::VectorType
-BlockedGibbsSampler
-::ComputeLogLikelihood(AbstractModel& M, const Observations& Obs) 
+BlockedGibbsSampler::VectorType BlockedGibbsSampler::ComputeLogLikelihood(AbstractModel& model, const Observations& obs)
 {
-    
-  if(m_CurrentBlockType == -1) 
-  {
-    VectorType LogLikelihood(Obs.GetNumberOfSubjects(), 0);
-    int i = 0;
-    for (auto it = LogLikelihood.begin(); it != LogLikelihood.end(); ++it, ++i) 
-    {
-      *it = M.ComputeIndividualLogLikelihood(Obs.GetSubjectObservations(i) ,i);
-    }
-    return LogLikelihood;
-  }
-  else 
-  {
-    return VectorType(1, M.ComputeIndividualLogLikelihood(Obs.GetSubjectObservations(m_CurrentBlockType), m_CurrentBlockType));
-  }
+  return model.ComputeLogLikelihood(obs, cur_block_info_);
 }
 
-double
-BlockedGibbsSampler
-::GetPreviousLogLikelihood() 
+double BlockedGibbsSampler::GetPreviousLogLikelihood(AbstractModel& model)
 {
-  if(m_CurrentBlockType == -1)
-      return m_LastLikelihoodComputed.sum();
-  else
-      return m_LastLikelihoodComputed(m_CurrentBlockType);
+  return model.GetPreviousLogLikelihood(cur_block_info_);
 }
 
-void 
-BlockedGibbsSampler
-::UpdateLastLogLikelihood(VectorType& ComputedLogLikelihood) 
+void BlockedGibbsSampler::UpdateLastLogLikelihood(AbstractModel& model, VectorType& computed_log_likelihood)
 {
+  model.SetPreviousLogLikelihood(computed_log_likelihood, cur_block_info_);
 
-  if(m_CurrentBlockType == -1)
-      m_LastLikelihoodComputed = ComputedLogLikelihood;
-  else
-      m_LastLikelihoodComputed(m_CurrentBlockType) = ComputedLogLikelihood.sum();
 }
 
 
-void
-BlockedGibbsSampler
-::UpdateBlockRandomVariable(double AcceptanceRatio, const MiniBlock &Variables) 
+void BlockedGibbsSampler::UpdateBlockRandomVariable(double acceptance_ratio)
 {
-  double Epsilon = DecreasingStepSize(m_CurrentIteration, m_MemorylessSamplingTime);
-  double Denom = m_ExpectedAcceptanceRatio;
-  
-  if(AcceptanceRatio > m_ExpectedAcceptanceRatio)
-      Denom = 1 - m_ExpectedAcceptanceRatio;
-  
-  for(auto it = Variables.begin(); it != Variables.end(); ++it)
+  double epsilon = DecreasingStepSize(cur_iter_, memoryless_sampling_time_);
+  double denom = expected_acceptance_ratio_;
+
+  if(acceptance_ratio > expected_acceptance_ratio_)
+      denom = 1 - expected_acceptance_ratio_;
+
+  for(auto it = cur_block_info_.begin(); it != cur_block_info_.end(); ++it)
   {
       /// Initialize
-      std::string NameRealization = it->first;
-      unsigned int RealizationNumber = it->second;
-      
+      std::string name_real = std::get<1>(*it);
+      unsigned int real_num = std::get<2>(*it);
+
       /// Compute newvariance
-      GaussianRandomVariable GRV = m_CandidateRandomVariables.GetRandomVariable(NameRealization, RealizationNumber);
-      double CurrentVariance = GRV.GetVariance();
-      double NewVariance = CurrentVariance * (1 + Epsilon * (AcceptanceRatio - m_ExpectedAcceptanceRatio) / Denom );
-      NewVariance = std::max(NewVariance, 0.0000000000000000000000000000001);
-      NewVariance = std::max(NewVariance, CurrentVariance / 50);
-      NewVariance = std::min(NewVariance, CurrentVariance * 50);
-      
+      GaussianRandomVariable gaussian_rand_var = candidate_rand_var_.GetRandomVariable(name_real, real_num);
+      double cur_variance = gaussian_rand_var.GetVariance();
+      double new_variance = cur_variance * (1 + epsilon * (acceptance_ratio - expected_acceptance_ratio_) / denom );
+      new_variance = std::max(new_variance, 0.0000000000000000000000000000001);
+      new_variance = std::max(new_variance, cur_variance / 50);
+      new_variance = std::min(new_variance, cur_variance * 50);
+
       /// Set new variance
-      //m_CandidateRandomVariables.UpdatePropositionVariableVariance(NameRealization, RealizationNumber, NewVariance);
-      
+      //candidate_rand_var_.UpdatePropositionVariableVariance(name_real, real_num, new_variance);
+
   }
 }

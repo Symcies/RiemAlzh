@@ -6,45 +6,51 @@
 // Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-UniformRandomVariable
-::UniformRandomVariable(double Min, double Max)
+UniformRandomVariable::UniformRandomVariable(double min, double max)
 {
   // TODO : Verify '>' or '>=' but I guess a "Dirac Uniform distribution" is unknown
-  assert(m_Max > m_Min);
-  m_Min = Min;
-  m_Max = Max;
+  assert(max_ >= min_);
+  min_ = min;
+  max_ = max;
 }
 
-UniformRandomVariable
-::~UniformRandomVariable()
+UniformRandomVariable::~UniformRandomVariable()
 { }
 
+UniformRandomVariable::UniformRandomVariable(const UniformRandomVariable& ur_var)
+{
+  min_ = ur_var.min_;
+  max_ = ur_var.max_;
+}
+
+UniformRandomVariable& UniformRandomVariable::operator=(const UniformRandomVariable& ur_var)
+{
+  min_ = ur_var.min_;
+  max_ = ur_var.max_;
+  return *this;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Getter(s)  and Setter(s):
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ScalarType 
-UniformRandomVariable
-::GetParameter(std::string ParameterName) const 
+ScalarType UniformRandomVariable::GetParameter(std::string param_name) const
 {
-  if(ParameterName == "Min")
-      return m_Min;
-  else if(ParameterName == "Max")
-      return m_Max;
+  if(param_name == "min")
+      return min_;
+  else if(param_name == "max")
+      return max_;
   else
       std::cerr << "This Parameter does not exist";
 }
 
 
-ScalarType 
-UniformRandomVariable
-::GetParameter(int ParameterKey) const 
+ScalarType UniformRandomVariable::GetParameter(int param_key) const
 {
-  if(ParameterKey == 0)
-      return m_Min;
-  else if(ParameterKey == 1)
-      return m_Max;
+  if(param_key == 0)
+      return min_;
+  else if(param_key == 1)
+      return max_;
   else
       std::cerr << "This Parameter does not exist";
 }
@@ -53,73 +59,63 @@ UniformRandomVariable
 /// Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-double
-UniformRandomVariable
-::Sample()
+double UniformRandomVariable::Sample()
 {
   // TODO : Add in the attribute
-  std::uniform_real_distribution<double> Distribution(m_Min, m_Max);
+  std::uniform_real_distribution<double> distibution(min_, max_);
 
-  double Sample =  Distribution(Generator);
-  return Sample;
+  double sample =  distibution(generator);
+  return sample;
 }
 
-double
-UniformRandomVariable
-::Likelihood(double X)
+double UniformRandomVariable::Likelihood(double x)
 {
-  return 1./(m_Max - m_Min);
+  return 1./(max_ - min_);
 }
 
 
-double 
-UniformRandomVariable
-::LogLikelihood(double X) 
+double UniformRandomVariable::LogLikelihood(double x)
 {
-  return log(1./(m_Max - m_Min));
-  
+  return log(1./(max_ - min_));
+
 }
 
-void
-UniformRandomVariable
-::Update(StringScalarHash Parameters) 
+void UniformRandomVariable::Update(StringScalarHash params)
 {
-  bool FindAnything = false;
-  
-  if(Parameters.find("Min") != Parameters.end())
+  bool find_anything = false;
+
+  if(params.find("min") != params.end())
   {
-      m_Min = Parameters.at("Min");
-      FindAnything = true;
+      min_ = params.at("min");
+      find_anything = true;
   }
-  if(Parameters.find("Max") != Parameters.end())
+  if(params.find("max") != params.end())
   {
-      m_Max = Parameters.at("Max");
-      FindAnything = true;
+      max_ = params.at("max");
+      find_anything = true;
   }
-  
-  assert(m_Max > m_Min);
-  
-  if(!FindAnything) {std::cerr << "The random variable parameter to update does not exist"; }
+
+  assert(max_ > min_);
+
+  if(!find_anything) {std::cerr << "The random variable parameter to update does not exist"; }
 }
 
-void
-UniformRandomVariable
-::Update(IntScalarHash Parameters) 
+void UniformRandomVariable::Update(IntScalarHash params)
 {
-  bool FindAnything = false;
-  
-  if(Parameters.find(0) != Parameters.end())
+  bool find_anything = false;
+
+  if(params.find(0) != params.end())
   {
-      m_Min = Parameters.at(0);
-      FindAnything = true;
+      min_ = params.at(0);
+      find_anything = true;
   }
-  if(Parameters.find(1) != Parameters.end())
+  if(params.find(1) != params.end())
   {
-      m_Max = Parameters.at(1);
-      FindAnything = true;
+      max_ = params.at(1);
+      find_anything = true;
   }
-  
-  assert(m_Max > m_Min);
-  
-  if(!FindAnything) {std::cerr << "The random variable parameter to update does not exist"; }
+
+  assert(max_ > min_);
+
+  if(!find_anything) {std::cerr << "The random variable parameter to update does not exist"; }
 }
