@@ -301,7 +301,7 @@ void MultivariateModel::UpdateRandomVariables(const SufficientStatisticsVector &
 
 }
 
-Observations MultivariateModel::SimulateData(io::DataSettings &data_settings, bool need_init)
+Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_settings, bool need_init)
 {
   /// This function simulates observations (Patients and their measurements y_ij at different time points t_ij)
   /// according to the model, with a given noise level e_ij, such that y_ij = f(t_ij) + e_ij
@@ -318,10 +318,10 @@ Observations MultivariateModel::SimulateData(io::DataSettings &data_settings, bo
 
 
   /// Initialize the model
-  manifold_dim_ = data_settings.GetCognitiveScoresDimension();
+  manifold_dim_ = data_settings.GetDimensionOfSimulatedObservations();
   subjects_tot_num_  = data_settings.GetNumberOfSimulatedSubjects();
 
-  if (need_init) {
+  if (need_init) { 
     InitializeFakeRandomVariables();
   }
 
