@@ -114,12 +114,12 @@ void MultivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& 
   int type = std::get<0>(block_info[0]);
 
   /// Possible parameters to update, depending on the name being in "vect<> names"
-  bool compute_g = false;
-  bool compute_delta = false;
-  bool compute_basis = false;
-  bool compute_a = false;
+  bool compute_g       = false;
+  bool compute_delta   = false;
+  bool compute_basis   = false;
+  bool compute_a       = false;
   bool compute_space_shift = false;
-  bool compute_block = false;
+  bool compute_block   = false;
   bool individual_only = (type > -1);
 
   /// Parameters to update, depending on the names called
@@ -342,6 +342,7 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
   auto reals = SimulateRealizations();
 
   /// Update the model
+  // NB: Cannot use UpdateModel because the subjectTimePoints cannot be updated yet
   g_ = exp(reals.at("G", 0));
   ComputeDeltas(reals);
   ComputeOrthonormalBasis();
@@ -587,7 +588,7 @@ void MultivariateModel::InitializeFakeRandomVariables()
 
   rand_var_.AddRandomVariable("G", "Gaussian", {0.08, 0.00001* 0.00001});
 
-  for(size_t i = 0; i < manifold_dim_; ++i){
+  for(size_t i = 1; i < manifold_dim_; ++i){
     rand_var_.AddRandomVariable("Delta#" + std::to_string(i), "Gaussian", {0.036, 0.004 * 0.004});
   }
 

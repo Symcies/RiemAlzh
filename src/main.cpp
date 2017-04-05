@@ -62,11 +62,9 @@ int main(int argc, char* argv[]) {
   }
   else
   {
-
     std::shared_ptr<io::SimulatedDataSettings> ds;
     ds = std::dynamic_pointer_cast<io::SimulatedDataSettings>(data_settings);
-    model->InitializeFakeRandomVariables();
-    obs = model->SimulateData(*ds);
+    obs = model->SimulateData(*ds, true);
 
   }
 
