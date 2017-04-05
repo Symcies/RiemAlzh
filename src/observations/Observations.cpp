@@ -68,7 +68,6 @@ void Observations::InitializeGlobalAttributes()
       }
     }
   }
-  
-  std::cout << cog_scores_tot_sum_ << std::endl;
+
   int a = 0;
 }

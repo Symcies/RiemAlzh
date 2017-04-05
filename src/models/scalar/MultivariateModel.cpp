@@ -350,8 +350,9 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
   ComputeBlock(reals);
 
   /// Simulate the data
-  std::random_device random_devices;
-  std::mt19937 rand_num_gen(random_devices());
+  std::random_device rand_device;
+  std::mt19937 rand_num_gen( GV::TEST_RUN ? 1 : rand_device());
+
   std::uniform_int_distribution<int> uni(data_settings.GetMinimumNumberOfObservations(), data_settings.GetMaximumNumberOfObservations());
   UniformRandomVariable ran_time_points_num(60, 95);
   GaussianRandomVariable noise(0, noise_->GetVariance());
@@ -532,9 +533,9 @@ void MultivariateModel::SaveData(unsigned int iter_num, const Realizations &real
   /// Mainly needed for post processing
   
   std::ofstream log_file;
-  log_file.open("log_file.txt", std::ofstream::out | std::ofstream::app);
   
   if(!GV::TEST_RUN) {
+    log_file.open(GV::BUILD_DIR + "log_multivariate_file.txt", std::ofstream::out | std::ofstream::app);
     auto g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
     auto tau = rand_var_.GetRandomVariable("Tau");
     auto ksi = rand_var_.GetRandomVariable("Ksi");
@@ -550,15 +551,16 @@ void MultivariateModel::SaveData(unsigned int iter_num, const Realizations &real
     log_file.close();
   }
   else {
+    log_file.open(GV::TEST_DIR + "log_multivariate_file.txt", std::ofstream::out | std::ofstream::app);
     /// Save all the random variables parameters
     for(auto it = rand_var_.begin(); it != rand_var_.end(); ++it) {
-      log_file << it->second->GetParameter(0) << ", " << it->second->GetParameter(1) << ", ";
+      log_file << it->second->GetParameter(0) << " " << it->second->GetParameter(1) << " ";
     }
     
     /// Save all the realizations
     for(auto it = reals.begin(); it != reals.end(); ++it) {
       for(auto it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
-        log_file << *it2 << ", ";
+        log_file << *it2 << " ";
       }
     }
   }

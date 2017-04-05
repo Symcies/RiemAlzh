@@ -62,16 +62,16 @@ int main(int argc, char* argv[]) {
   }
   else
   {
+
     std::shared_ptr<io::SimulatedDataSettings> ds;
     ds = std::dynamic_pointer_cast<io::SimulatedDataSettings>(data_settings);
     model->InitializeFakeRandomVariables();
     obs = model->SimulateData(*ds);
+
   }
 
   /// Algorithm pipeline
-  auto algo = make_shared<Algorithm>(algo_settings);
-  algo->SetModel(model);
-  algo->SetSampler(sampler);
+  auto algo = make_shared<Algorithm>(algo_settings, model, sampler);
   algo->ComputeMCMCSAEM(obs);
 
 
