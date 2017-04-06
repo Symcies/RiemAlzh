@@ -140,4 +140,39 @@ namespace test {
     std::remove(&(GV::TEST_DIR + "log_multivariate_file.txt")[0]);
   }
 
+  TEST_F(ScalarModels_IT, execution_of_univariate_model_on_correct_simulated_dataset) {
+    /// Load the file arguments
+    io::ModelSettings         model_settings(&(GV::TEST_MODEL_DIR + "correct_univariate_model_settings.xml")[0]);
+    io::AlgorithmSettings     algo_settings(&(GV::TEST_ALGO_DIR + "correct_algorithm_settings.xml")[0]);
+    io::SimulatedDataSettings data_settings(&(GV::TEST_DATA_DIR + "correct_simulated_data_settings.xml")[0]);
+
+    /// Initialize the sampler
+    std::shared_ptr<AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();
+
+    /// Initialize the model
+    std::shared_ptr<AbstractModel> model;
+    ASSERT_EQ(model_settings.GetType(), "Univariate");
+    model = std::make_shared<UnivariateModel>(model_settings);
+
+    /// Initialize the data
+    ASSERT_EQ(data_settings.IsReal(), false);
+    Observations obs;
+    obs = model->SimulateData(data_settings, true);
+    ASSERT_FLOAT_EQ(obs.GetNumberOfSubjects(), 150);
+
+    /// Algorithm pipeline
+    auto algo = std::make_shared<Algorithm>(algo_settings, model, sampler);
+    algo->ComputeMCMCSAEM(obs);
+
+    std::ifstream reference_file(GV::TEST_OUTPUTS_DIR + "ref_log_univariate_simulated_file.txt");
+    std::ifstream generated_file(GV::TEST_DIR + "log_univariate_file.txt");
+    float ref_value, gen_value;
+
+    while(reference_file >> ref_value){
+      generated_file >> gen_value;
+      ASSERT_EQ(ref_value, gen_value);
+    }
+    std::remove(&(GV::TEST_DIR + "log_univariate_file.txt")[0]);
+  }
+
 }
