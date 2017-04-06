@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include "ReadData.h"
+#include "RealDataSettings.h"
 #include "global.h"
 
 namespace test {

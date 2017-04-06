@@ -8,8 +8,8 @@ namespace test {
   }
 
   TEST_F(ReadData_UT, read_obs) {
-    std::string p = GV::TEST_DATA_DIR + "correct_real_data_settings.xml";
-    io::DataSettings data_settings(&p[0]);
+    std::string p = GV::TEST_DATA_DIR + "correct_real_multivariate_data_settings.xml";
+    io::RealDataSettings data_settings(&p[0]);
 
     Observations obs = io::ReadData::ReadObservations(data_settings);
     obs.InitializeGlobalAttributes();
