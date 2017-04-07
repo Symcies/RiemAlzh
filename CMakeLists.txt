@@ -58,6 +58,7 @@ Set(SOURCE_FILES
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/asserts
         ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds
         ${CMAKE_CURRENT_SOURCE_DIR}/src/models
         ${CMAKE_CURRENT_SOURCE_DIR}/src/models/network
@@ -116,7 +117,7 @@ Target_Link_Libraries(riem-lib
 
 #Creation of the executable, linked with the src library
 add_executable(Longitudina
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp src/asserts/InputsAssert.cpp)
 
 Target_Link_Libraries(Longitudina riem-lib)
 
