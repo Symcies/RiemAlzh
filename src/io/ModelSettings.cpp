@@ -7,19 +7,18 @@ namespace io {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 ModelSettings::ModelSettings(std::string xml_file) {
-  if (InputsAssert::IsValidModelXML(xml_file)){
+  InputsAssert::IsValidModelXML(xml_file);
 
-    tinyxml2::XMLDocument parameters;
-    parameters.LoadFile(xml_file.c_str());
+  tinyxml2::XMLDocument parameters;
+  parameters.LoadFile(xml_file.c_str());
 
-    auto settings = parameters.FirstChildElement("model-settings");
+  auto settings = parameters.FirstChildElement("model-settings");
 
-    type_ = settings->FirstChildElement("type")->GetText();
-    independent_sources_nb_ = std::stoi(settings->FirstChildElement("number-of-independent-sources")->GetText());
+  type_ = settings->FirstChildElement("type")->GetText();
+  independent_sources_nb_ = std::stoi(settings->FirstChildElement("number-of-independent-sources")->GetText());
 
-    LoadModel(settings);
+  LoadModel(settings);
 
-  }
 }
 
 ModelSettings::~ModelSettings() {

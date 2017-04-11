@@ -9,16 +9,15 @@ namespace io {
 
 DataSettings::DataSettings(std::string xml_file) {
 
-  if (InputsAssert::IsFileCorrect(xml_file, true)){
+  InputsAssert::IsFileCorrect(xml_file, true);
 
-    tinyxml2::XMLDocument file;
-    file.LoadFile(xml_file.c_str());
+  tinyxml2::XMLDocument file;
+  file.LoadFile(xml_file.c_str());
 
-    auto settings = file.FirstChildElement("data-settings");
+  auto settings = file.FirstChildElement("data-settings");
 
-    std::string real_data = settings->FirstChildElement("data-type")->GetText();
-    is_data_real_ = InputsAssert::StringToBool(real_data);
-  }
+  std::string real_data = settings->FirstChildElement("data-type")->GetText();
+  is_data_real_ = InputsAssert::StringToBool(real_data);
 
 }
 

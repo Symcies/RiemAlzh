@@ -6,12 +6,13 @@ Observations ReadData::ReadObservations(const RealDataSettings &ds)
 {
   Observations obs;
 
-  if (!InputsAssert::IsFileCorrect(ds.GetPathToGroup(), false) ||
-      !InputsAssert::IsFileCorrect(ds.GetPathToTimepoints(), false) ||
-      (ds.LandmarkPresence() && !InputsAssert::IsFileCorrect(ds.GetPathToLandmarks(), false)) ||
-      (ds.CognitiveScoresPresence() && !InputsAssert::IsFileCorrect(ds.GetPathToCognitiveScores(), false))) {
-
-    return obs;
+  InputsAssert::IsFileCorrect(ds.GetPathToGroup(), false);
+  InputsAssert::IsFileCorrect(ds.GetPathToTimepoints(), false);
+  if (ds.LandmarkPresence()){
+    InputsAssert::IsFileCorrect(ds.GetPathToLandmarks(), false);
+  }
+  if (ds.CognitiveScoresPresence()){
+    InputsAssert::IsFileCorrect(ds.GetPathToCognitiveScores(), false);
   }
 
   std::ifstream indiv_id_file(ds.GetPathToGroup());
@@ -90,9 +91,7 @@ ReadData::VectorType ReadData::ExtractObservation(std::ifstream& file_stream, un
 }
 
 ReadData::MatrixType ReadData::OpenKernel(std::string file_path) {
-  if(!InputsAssert::IsFileCorrect(file_path, false)){
-    return MatrixType(0,0);
-  }
+  InputsAssert::IsFileCorrect(file_path, false);
   std::ifstream file(file_path);
 
   //Filling the kernel

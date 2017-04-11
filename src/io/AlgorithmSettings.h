@@ -16,7 +16,7 @@ public:
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    AlgorithmSettings(char *xml_file);
+    AlgorithmSettings(std::string xml_file);
 
     ~AlgorithmSettings();
 
