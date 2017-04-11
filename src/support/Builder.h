@@ -8,6 +8,6 @@
 class Builder {
  public:
   
-  static std::shared_ptr<io::DataSettings> BuilderDataSettings(const char *xml_file);
+  static std::shared_ptr<io::DataSettings> BuilderDataSettings(std::string xml_file);
 };
 

@@ -12,11 +12,21 @@
 
 class InputsAssert {
 public:
-  static bool IsFilePathCorrect(const char* path);
+  /// Basic file assertions
+  static bool IsFileCorrect(std::string path, bool is_xml);
   static bool IsFilePathCorrect(std::string path);
-  static bool IsXMLValid(const char* path);
+  static bool IsFileEmpty(std::string path);
+
+  /// XML files assertions
+  static bool IsXMLValid(std::string path);
+  static bool IsValidModelXML(std::string path);
+  static bool IsValidAlgoXML(std::string path);
+  static bool IsValidDataXML(std::string path);
+
+  /// String modifications
   static std::string ToLowerCase(std::string str);
   static bool StringToBool(std::string str);
+
 
 private:
   InputsAssert();

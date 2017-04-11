@@ -1,7 +1,7 @@
 #include "Builder.h"
 
  
-std::shared_ptr<io::DataSettings> Builder::BuilderDataSettings(const char *xml_file) {
+std::shared_ptr<io::DataSettings> Builder::BuilderDataSettings(std::string xml_file) {
   if (xml_file == ""){
     std::cerr << "Problem in DataSettings. xml_file name null." << std::endl;
     //TODO: define exit behavior
@@ -9,7 +9,7 @@ std::shared_ptr<io::DataSettings> Builder::BuilderDataSettings(const char *xml_f
   }
   
   tinyxml2::XMLDocument file;
-  file.LoadFile(xml_file);
+  file.LoadFile(xml_file.c_str());
   
   auto settings = file.FirstChildElement("data-settings");
   std::string real_data = settings->FirstChildElement("data-type")->GetText();

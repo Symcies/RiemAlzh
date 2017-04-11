@@ -7,12 +7,12 @@ namespace io {
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-DataSettings::DataSettings(const char *xml_file) {
+DataSettings::DataSettings(std::string xml_file) {
 
-  if (InputsAssert::IsFilePathCorrect(xml_file) && InputsAssert::IsXMLValid(xml_file)){
+  if (InputsAssert::IsFileCorrect(xml_file, true)){
 
     tinyxml2::XMLDocument file;
-    file.LoadFile(xml_file);
+    file.LoadFile(xml_file.c_str());
 
     auto settings = file.FirstChildElement("data-settings");
 

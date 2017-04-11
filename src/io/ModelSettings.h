@@ -7,6 +7,8 @@ typedef double ScalarType;
 
 #include "tinyxml2.h"
 
+#include "InputsAssert.h"
+
 namespace io {
 
 class ModelSettings {
@@ -17,7 +19,7 @@ public:
   // Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  ModelSettings(const char *xml_file);
+  ModelSettings(std::string xml_file);
 
   ~ModelSettings();
 
@@ -72,6 +74,9 @@ private:
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Methods(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /// Chooses the right model
+  void LoadModel(const tinyxml2::XMLElement *settings);
 
   /// Load the fast network model
   void LoadFastNetwork(const tinyxml2::XMLElement *settings);

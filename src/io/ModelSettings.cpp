@@ -6,27 +6,19 @@ namespace io {
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-ModelSettings::ModelSettings(const char *xml_file) {
-  tinyxml2::XMLDocument parameters;
-  parameters.LoadFile(xml_file);
+ModelSettings::ModelSettings(std::string xml_file) {
+  if (InputsAssert::IsValidModelXML(xml_file)){
 
-  auto settings = parameters.FirstChildElement("model-settings");
+    tinyxml2::XMLDocument parameters;
+    parameters.LoadFile(xml_file.c_str());
 
-  type_ = settings->FirstChildElement("type")->GetText();
-  independent_sources_nb_ = atoi(settings->FirstChildElement("number-of-independent-sources")->GetText());
+    auto settings = parameters.FirstChildElement("model-settings");
 
-  if (type_ == "FastNetwork") {
-    LoadFastNetwork(settings);
-  } else if (type_ == "Meshwork") {
-    LoadMeshworkModel(settings);
-  } else if (type_ == "Network") {
-    LoadNetworkModel(settings);
-  } else if (type_ == "Multivariate") {
-    LoadMultivariate(settings);
-  }else if (type_ == "Univariate") {
-    LoadUnivariate(settings);
-  } else {
-    std::cerr << "The model type defined in model_settings.xml should be in {FastNetwork, Meshwork}";
+    type_ = settings->FirstChildElement("type")->GetText();
+    independent_sources_nb_ = std::stoi(settings->FirstChildElement("number-of-independent-sources")->GetText());
+
+    LoadModel(settings);
+
   }
 }
 
@@ -42,6 +34,23 @@ ModelSettings::~ModelSettings() {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /// Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////
+
+void ModelSettings::LoadModel(const tinyxml2::XMLElement *settings){
+  if (InputsAssert::ToLowerCase(type_) == "fastnetwork") {
+    LoadFastNetwork(settings);
+  } else if (InputsAssert::ToLowerCase(type_) == "meshwork") {
+    LoadMeshworkModel(settings);
+  } else if (InputsAssert::ToLowerCase(type_) == "network") {
+    LoadNetworkModel(settings);
+  } else if (InputsAssert::ToLowerCase(type_) == "multivariate") {
+    LoadMultivariate(settings);
+  } else if (InputsAssert::ToLowerCase(type_) == "univariate") {
+    LoadUnivariate(settings);
+  } else {
+    std::cerr << "The model type defined in model_settings.xml should be one of the following: "
+            "Univariate, Multivariate, FastNetwork, Meshwork. Here, it was " << type_ << std::endl ;
+  }
+}
 
 void ModelSettings::LoadFastNetwork(const tinyxml2::XMLElement *settings) {
   invert_kernel_matrix_path_ = settings->FirstChildElement("path-to-kernel-invKd")->GetText();

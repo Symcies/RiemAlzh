@@ -4,6 +4,8 @@
 
 #include "tinyxml2.h"
 
+#include "InputsAssert.h"
+
 namespace io {
 
 class AlgorithmSettings {

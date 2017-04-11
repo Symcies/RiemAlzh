@@ -1,23 +1,6 @@
 <model-settings>
 
 <!-- Type of the model : {Univariate, Multivariate, Network, ...} -->
-  <type>Multivariate</type>
-
-  <!-- Name of the outputs files -->
-  <output-name>AwesomeNetwork</output-name>
-
-  <number-of-independent-sources>7</number-of-independent-sources>
-
-  <parameters>
-    <p0>
-      <mean></mean>
-      <variance></variance>
-    </p0>
-
-    <t0>
-    </t0>
-
-  </parameters>
   <!-- Comment -->
 
   <path-to-kernel-Kxd>/Users/igor.koval/Documents/Work/RiemAlzh/development/data/Kxd_16.csv</path-to-kernel-Kxd>

@@ -17,7 +17,7 @@ public:
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  DataSettings(const char *xml_file);
+  DataSettings(std::string xml_file);
 
   ~DataSettings(); 
   
