@@ -1,5 +1,5 @@
-/* This class aims to privde all the function needed to test the validity of the read inputs
- *
+/* This class aims to provide all the function needed
+ * to test the validity of the read inputs
  */
 
 #pragma once
@@ -9,6 +9,8 @@
 #include <string>
 
 #include "tinyxml2.h"
+
+#include "InputException.h"
 
 class InputsAssert {
 public:
