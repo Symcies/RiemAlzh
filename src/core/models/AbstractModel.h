@@ -32,6 +32,7 @@ public:
   typedef typename std::unordered_map<std::string, int> StringIntHash;
   typedef std::vector<std::tuple<int, std::string, int>> MiniBlock;
   typedef std::vector<VectorType> SufficientStatisticsVector;
+  typedef std::unordered_map<std::string, std::pair<std::vector<double>, ScalarType>> InitialRVParameters;
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +56,8 @@ public:
   inline double GetNumberOfObservations(){return obs_tot_num_;};
   inline int GetNumberOfSubjects(){return subjects_tot_num_;};
   inline double GetManifoldDimension(){return manifold_dim_;};
+  
+  inline void SetRandomVariableParameters(const InitialRVParameters& params) { rv_params_ = params; } 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Method(s) :
@@ -62,9 +65,12 @@ public:
 
   /// Initialize the model
   virtual void Initialize(const Observations& obs) = 0;
-
+  
+  /// Initialize the model in case of validation data
+  virtual void InitializeValidationDataParameters(const io::SimulatedDataSettings& data_settings, const io::ModelSettings& model_settings) = 0;
+  
   /// Initialize the variance of the proposition distribution
-  virtual ScalarType InitializePropositionDistributionVariance(std::string name) const = 0;
+  virtual ScalarType InitializePropositionDistributionVariance(std::string name) const;
 
   /// Update parameters ; some model-specifid private members need to be initilize, m_Orthogonal Basis for instance
   /// This update can depend on the parameter that has changed, provided by the name argument
@@ -111,15 +117,7 @@ public:
 
   /// Save the data into a file
   virtual void SaveData(unsigned int iter_num, const Realizations& reals) = 0;
-
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
-  virtual void InitializeFakeRandomVariables() = 0;
-
+  
 
 protected:
 
@@ -132,10 +130,16 @@ protected:
 
   /// Random variables
   MultiRandomVariables rand_var_;
-
+  
   /// Number of realizations per random variables used in the model
   StringIntHash asso_num_real_per_rand_var_;
 
+  /// Random variable proposition distribution
+  std::unordered_map<std::string, ScalarType> proposition_distribution_variance_;
+
+  ///
+  InitialRVParameters rv_params_;
+  
   /// Output file
   std::ofstream out_params_;
 

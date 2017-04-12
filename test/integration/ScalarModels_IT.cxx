@@ -117,7 +117,7 @@ namespace test {
     ASSERT_EQ(data_settings.IsReal(), false);
     Observations obs;
     obs = model->SimulateData(data_settings, true);
-    ASSERT_FLOAT_EQ(obs.GetNumberOfSubjects(), 150);
+    ASSERT_FLOAT_EQ(obs.NumberOfSubjects(), 150);
 
     /// Algorithm pipeline
     auto algo = std::make_shared<Algorithm>(algo_settings, model, sampler);

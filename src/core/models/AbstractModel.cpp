@@ -21,7 +21,10 @@ std::shared_ptr< AbstractRandomVariable > AbstractModel::GetRandomVariable(int k
 // Other method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+ScalarType AbstractModel::InitializePropositionDistributionVariance(std::string name) const {
+  name = name.substr(0, name.find_first_of("#"));
+  return proposition_distribution_variance_.at(name);
+}
 
 Realizations AbstractModel::SimulateRealizations()
 {
