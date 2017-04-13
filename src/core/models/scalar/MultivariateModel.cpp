@@ -128,8 +128,6 @@ void MultivariateModel::InitializeValidationDataParameters(const io::SimulatedDa
   for(size_t i = 0; i < indep_sources_num_; ++i){
     rand_var_.AddRandomVariable("S#" + std::to_string(i), "Gaussian", rv_params_.at("S").first);
   }
-  
-  int a = 0;
 }
 
 void MultivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& block_info,
@@ -406,9 +404,6 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
 
 std::vector<AbstractModel::MiniBlock> MultivariateModel::GetSamplerBlocks() const
 {
-  /// It defines the blocks used in the sampler class. A block is defined by a type, and a vector of pairs
-  /// Each pair is composed of <name of the random variable, Realization number>
-  /// TO IMPROVE : These blocks may change during the iterations or they can be random, ...
 
   int population_type = -1;
   std::vector<MiniBlock> blocks;

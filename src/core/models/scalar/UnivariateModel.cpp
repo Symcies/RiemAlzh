@@ -28,17 +28,37 @@ void UnivariateModel::Initialize(const Observations &obs)
   individual_time_points_ = obs.GetObservations();
   obs_tot_num_         = obs.GetTotalNumberOfObservations();
   sum_obs_             = obs.GetTotalSumOfCognitiveScores();
-
-  /// Population variables
   last_loglikelihood_.set_size(subjects_tot_num_);
+  
+  noise_ = std::make_shared<GaussianRandomVariable>(rv_params_.at("noise").first[0], rv_params_.at("noise").first[1]);
+  
+  /// Population variables
+  rand_var_.AddRandomVariable("P", "Gaussian", rv_params_.at("P").first);
   asso_num_real_per_rand_var_["P"] = 1;
+  proposition_distribution_variance_["P"] = rv_params_.at("P").second;
+  
+  rand_var_.AddRandomVariable("Ksi", "Gaussian", rv_params_.at("Ksi").first);
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
+  proposition_distribution_variance_["Ksi"] = rv_params_.at("Ksi").second;
+  
+
+  rand_var_.AddRandomVariable("Tau", "Gaussian", rv_params_.at("Tau").first);
   asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
+  proposition_distribution_variance_["Tau"] = rv_params_.at("Tau").second;
 }
 
 void UnivariateModel::InitializeValidationDataParameters(const io::SimulatedDataSettings &data_settings,
                                                          const io::ModelSettings &model_settings) {
+  manifold_dim_ = data_settings.GetDimensionOfSimulatedObservations();
   
+  noise_ = std::make_shared<GaussianRandomVariable>(rv_params_.at("noise").first[0], rv_params_.at("noise").first[1]);
+  
+  rand_var_.AddRandomVariable("P", "Gaussian", rv_params_.at("P").first);
+  asso_num_real_per_rand_var_["P"] = 1;
+  
+  /// Individual variables
+  rand_var_.AddRandomVariable("Ksi", "Gaussian", rv_params_.at("Ksi").first);
+  rand_var_.AddRandomVariable("Tau", "Gaussian", rv_params_.at("Tau").first);
 }
 
 void UnivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& block_info, const std::vector<std::string> names)
@@ -196,14 +216,11 @@ Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_setti
 
 
   /// Initialize the model
-  manifold_dim_      = data_settings.GetDimensionOfSimulatedObservations();
-  subjects_tot_num_  = data_settings.GetNumberOfSimulatedSubjects();
   individual_obs_date_.clear();
   individual_time_points_.clear();
   
+  subjects_tot_num_  = data_settings.GetNumberOfSimulatedSubjects();
   
-  
-  asso_num_real_per_rand_var_["P"] = 1;
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
   asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
 
@@ -211,8 +228,7 @@ Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_setti
 
   /// Update the model
   position_ = 1.0 / (1 + exp(-reals.at("P", 0)));
-
-
+  
   /// Simulate the data
   //Find a way to initialize depending on the test case
   std::random_device rand_device;
@@ -270,19 +286,11 @@ std::vector<AbstractModel::MiniBlock> UnivariateModel::GetSamplerBlocks() const
   {
     MiniBlock indiv_block;
     indiv_block.push_back(std::make_tuple<int, std::string, int>(i, "Ksi",i));
-    //indiv_block.push_back(std::make_tuple<int, std::string, int>(i, "Tau",i));
-
-    blocks.push_back(indiv_block);
-  }
-  
-    for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-    MiniBlock indiv_block;
-    //indiv_block.push_back(std::make_tuple<int, std::string, int>(i, "Ksi",i));
     indiv_block.push_back(std::make_tuple<int, std::string, int>(i, "Tau",i));
 
     blocks.push_back(indiv_block);
   }
+  
 
   return blocks;
 }

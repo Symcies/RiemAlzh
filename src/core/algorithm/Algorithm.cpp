@@ -218,7 +218,7 @@ void Algorithm::DisplayOutputs()
 void Algorithm::DisplayAcceptanceRatio() {
     std::cout << "AcceptRatio: ";
 
-    auto names_to_show = {"Tau", "Ksi", "G"};
+    auto names_to_show = {"Tau", "Ksi"};
 
     for(auto it = names_to_show.begin(); it != names_to_show.end(); ++it)
     {

@@ -137,7 +137,7 @@ protected:
   /// Random variable proposition distribution
   std::unordered_map<std::string, ScalarType> proposition_distribution_variance_;
 
-  ///
+  /// Initial Random variable parameters : type of RV, mean, variance, proposition distribution, ...
   InitialRVParameters rv_params_;
   
   /// Output file
