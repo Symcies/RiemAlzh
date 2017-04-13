@@ -3,32 +3,23 @@
 typedef double ScalarType;
 
 #include <string>
-#include <unordered_map>
-#include <tuple>
 #include <iostream>
 
-#include "LinearAlgebra.h"
 #include "tinyxml2.h"
+
+#include "InputsAssert.h"
 
 namespace io {
 
 class ModelSettings {
 
 public:
-  
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-  /// typedef :
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
-  typedef std::unordered_map<std::string, std::pair<std::vector<double>, ScalarType>> InitialRVParameters;
-  
-  
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Constructor(s) / Destructor :
+  // Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  ModelSettings(const char *xml_file);
+  ModelSettings(std::string xml_file);
 
   ~ModelSettings();
 
@@ -43,11 +34,7 @@ public:
   std::string GetInvertKernelPath() const { return invert_kernel_matrix_path_; }
 
   std::string GetInterpolationKernelPath() const { return interpolation_matrix_path_; }
-  
-  InitialRVParameters GetInitialRandomVariables() const { return init_random_variables_; }
 
-  InitialRVParameters GetSecondRandomVariables() const { return second_random_variables_; }
-  
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Other method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,8 +49,10 @@ private:
   std::string type_;
 
   /// Name of the output file
+  //TODO: use it somewhere
   std::string output_file_name_;
-  
+
+
   /// Number of sources
   unsigned int independent_sources_nb_;
 
@@ -72,10 +61,7 @@ private:
 
   /// Path to the interpolation matrix
   std::string interpolation_matrix_path_;
-  
-  /// Initial model random variables
-  InitialRVParameters init_random_variables_;
-  InitialRVParameters second_random_variables_;
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Model specific methods(s) :
@@ -89,12 +75,9 @@ private:
   /// Methods(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// Load the model variables
-  void LoadInitialRandomVariables(const tinyxml2::XMLElement *settings);
-  
-  /// Load the random varianle parameters
-  std::vector<double> LoadRVParameters(const tinyxml2::XMLElement* parameters);
-  
+  /// Chooses the right model
+  void LoadModel(const tinyxml2::XMLElement *settings);
+
   /// Load the fast network model
   void LoadFastNetwork(const tinyxml2::XMLElement *settings);
 

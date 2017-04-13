@@ -57,27 +57,21 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/launch
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/launch/fit
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/launch/validate
-        
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/algorithm
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/manifolds
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/manifolds/base_manifold
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/scalar
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/observations
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/parameters
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/random_variables
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/realizations
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/samplers
-        
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/asserts
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/models
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/network
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds/base_manifold
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/parameters
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/random_variables
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/samplers
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/realizations
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io/outputs
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io/data_settings
-        
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/observations
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra/armadillo
@@ -86,11 +80,14 @@ Set(SOURCE_FILES
 #TODO: Change the recurse and include all files manually
 file( GLOB_RECURSE SRC src/* )
 file( GLOB_RECURSE TEST test/* )
+file( GLOB_RECURSE EXAMPLES examples/* )
 
 ####################################################################################################
 #Next lines are just to work with one moddel
 file(GLOB to_remove
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/*
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/network/*
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar/MixedEffectsModel.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar/MixedEffectsModel.h
         )
 
 list(REMOVE_ITEM SRC ${to_remove})
@@ -120,7 +117,7 @@ Target_Link_Libraries(riem-lib
 
 #Creation of the executable, linked with the src library
 add_executable(Longitudina
-        src/launch/main.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp src/asserts/InputsAssert.cpp)
 
 Target_Link_Libraries(Longitudina riem-lib)
 

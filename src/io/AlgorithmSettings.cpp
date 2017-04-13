@@ -8,18 +8,28 @@ namespace io {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-AlgorithmSettings::AlgorithmSettings(char *xml_file) {
-    tinyxml2::XMLDocument parameters;
-    parameters.LoadFile(xml_file);
+AlgorithmSettings::AlgorithmSettings(std::string xml_file) {
+  InputsAssert::IsValidAlgoXML(xml_file);
 
-    auto settings = parameters.FirstChildElement("algorithm-settings");
+  tinyxml2::XMLDocument parameters;
+  parameters.LoadFile(xml_file.c_str());
 
-    max_num_iter_ = atoi(
-            settings->FirstChildElement("max-iterations")->GetText());
-    num_burnin_iter_ = atoi(settings->FirstChildElement("burn-in")->GetText());
-    output_iter_ = atoi(
-            settings->FirstChildElement("step-size-to-display")->GetText());
-    data_save_iter_ = atoi(settings->FirstChildElement("step-size-to-save")->GetText());
+  auto settings = parameters.FirstChildElement("algorithm-settings");
+
+  int max_num_iter, num_burnin_iter, output_iter, data_save_iter;
+  max_num_iter = std::stoi(settings->FirstChildElement("max-iterations")->GetText());
+  num_burnin_iter = std::stoi(settings->FirstChildElement("burn-in")->GetText());
+  output_iter = std::stoi(settings->FirstChildElement("step-size-to-display")->GetText());
+  data_save_iter = std::stoi(settings->FirstChildElement("step-size-to-save")->GetText());
+
+  if(max_num_iter < 0 || num_burnin_iter < 0 || output_iter < 0 || data_save_iter < 0){
+    throw InputException("All iterations values must be superior or equal to 0.");
+  }
+
+  max_num_iter_ = max_num_iter;
+  num_burnin_iter_ = num_burnin_iter;
+  output_iter_ = output_iter;
+  data_save_iter_ = data_save_iter;
 }
 
 

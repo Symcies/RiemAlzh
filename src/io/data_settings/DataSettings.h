@@ -7,6 +7,7 @@ typedef double ScalarType;
 #include <string>
 
 #include "tinyxml2.h"
+#include "InputsAssert.h"
 
 namespace io {
 
@@ -16,7 +17,7 @@ public:
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  DataSettings(const char *xml_file);
+  DataSettings(std::string xml_file);
 
   ~DataSettings(); 
   
