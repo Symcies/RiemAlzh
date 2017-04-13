@@ -11,7 +11,7 @@ class SimulatedDataSettings : public DataSettings {
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  SimulatedDataSettings(std::string xml_file);
+  SimulatedDataSettings(const char *xml_file);
   
   
   unsigned int GetDimensionOfSimulatedObservations() const { return dimension_; }

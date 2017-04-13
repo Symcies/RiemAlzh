@@ -4,8 +4,6 @@
 
 #include "tinyxml2.h"
 
-#include "InputsAssert.h"
-
 namespace io {
 
 class AlgorithmSettings {
@@ -16,7 +14,7 @@ public:
     // Constructor(s) / Destructor :
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    AlgorithmSettings(std::string xml_file);
+    AlgorithmSettings(char *xml_file);
 
     ~AlgorithmSettings();
 
