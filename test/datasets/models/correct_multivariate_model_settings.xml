@@ -1,6 +1,6 @@
 <model-settings>
 
-<!-- Type of the model : {Univariate, Multivariate, Network, ...} -->
+  <!-- Type of the model : {Univariate, Multivariate, Network, ...} -->
   <type>Multivariate</type>
 
   <!-- Name of the outputs files -->
@@ -21,7 +21,7 @@
   <!-- Comment -->
 
   <path-to-kernel-Kxd>/Users/igor.koval/Documents/Work/RiemAlzh/development/data/Kxd_16.csv</path-to-kernel-Kxd>
-  <path-to-ker nel-invKd>/Users/igor.koval/Documents/Work/RiemAlzh/development/data/invKd_16.csv</path-to-kernel-invKd>
+  <path-to-kernel-invKd>/Users/igor.koval/Documents/Work/RiemAlzh/development/data/invKd_16.csv</path-to-kernel-invKd>
 
 
-<model-settings>
+</model-settings>

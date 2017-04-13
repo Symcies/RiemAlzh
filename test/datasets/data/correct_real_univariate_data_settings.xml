@@ -4,9 +4,9 @@
   <data-type>true</data-type>
 
 
-  <!-- In case of real data -->
+  <!-- REAL DATA TO PROCESS -->
   <real-data>
-    <folder-path>/Users/clementine.fourrier/RiemAlzh/test/datasets/data/data_files_multivariate/</folder-path>
+    <folder-path>/Users/clementine.fourrier/RiemAlzh/test/datasets/data/data_files/</folder-path>
     <group-file>group.csv</group-file>
     <timepoints-file>X.csv</timepoints-file>
 
@@ -17,7 +17,7 @@
       <cognitive-scores>
           <presence>yes</presence>
           <path-to-data>Y.csv</path-to-data>
-          <dimension>4</dimension>
+          <dimension>1</dimension>
       </cognitive-scores>
 
       <!-- Landmarks attributes -->
@@ -30,5 +30,6 @@
     </observations>
 
   </real-data>
+
 
 </data-settings>
