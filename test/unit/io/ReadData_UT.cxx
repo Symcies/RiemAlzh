@@ -1,6 +1,6 @@
 #include "ReadData_UT.h"
 
-extern const std::string GV::TEST_DATA_DIR;
+extern const std::string GVT::TEST_DATA_DIR;
 
 namespace test {
   void ReadData_UT::SetUp() {
@@ -8,8 +8,8 @@ namespace test {
   }
 
   TEST_F(ReadData_UT, read_obs) {
-    std::string p = GV::TEST_DATA_DIR + "correct_real_multivariate_data_settings.xml";
-    io::RealDataSettings data_settings(&p[0]);
+    std::string p = GVT::MULTIVAR_DATA_CORRECT;
+    io::RealDataSettings data_settings(p.c_str());
 
     Observations obs = io::ReadData::ReadObservations(data_settings);
     obs.InitializeGlobalAttributes();

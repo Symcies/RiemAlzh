@@ -16,11 +16,20 @@ AlgorithmSettings::AlgorithmSettings(std::string xml_file) {
 
   auto settings = parameters.FirstChildElement("algorithm-settings");
 
-  max_num_iter_ = std::stoi(settings->FirstChildElement("max-iterations")->GetText());
-  num_burnin_iter_ = std::stoi(settings->FirstChildElement("burn-in")->GetText());
-  output_iter_ = std::stoi(settings->FirstChildElement("step-size-to-display")->GetText());
-  data_save_iter_ = std::stoi(settings->FirstChildElement("step-size-to-save")->GetText());
+  int max_num_iter, num_burnin_iter, output_iter, data_save_iter;
+  max_num_iter = std::stoi(settings->FirstChildElement("max-iterations")->GetText());
+  num_burnin_iter = std::stoi(settings->FirstChildElement("burn-in")->GetText());
+  output_iter = std::stoi(settings->FirstChildElement("step-size-to-display")->GetText());
+  data_save_iter = std::stoi(settings->FirstChildElement("step-size-to-save")->GetText());
 
+  if(max_num_iter < 0 || num_burnin_iter < 0 || output_iter < 0 || data_save_iter < 0){
+    throw InputException("All iterations values must be superior or equal to 0.");
+  }
+
+  max_num_iter_ = max_num_iter;
+  num_burnin_iter_ = num_burnin_iter;
+  output_iter_ = output_iter;
+  data_save_iter_ = data_save_iter;
 }
 
 

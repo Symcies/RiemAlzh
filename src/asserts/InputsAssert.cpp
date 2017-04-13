@@ -6,14 +6,14 @@ void InputsAssert::IsFilePathCorrect(std::string path){
   if (test) {
     return;
   }
-  throw InputException("The file path " + path + " is incorrect.");
+  throw InputException("The file path '" + path + "' is incorrect.");
 }
 
 void InputsAssert::IsFileEmpty(std::string path){
   std::ifstream test(path);
   test.seekg(0, std::ios::end);
   if (test.tellg() == 0){
-    throw InputException("The file path " + path + " is empty.");
+    throw InputException("The file at '" + path + "' is empty.");
   }
   return;
 }
