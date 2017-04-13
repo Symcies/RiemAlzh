@@ -75,6 +75,12 @@ private:
   /// Methods(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
+  /// Load the model variables
+  void LoadInitialRandomVariables(const tinyxml2::XMLElement *settings);
+  
+  /// Load the random varianle parameters
+  std::vector<double> LoadRVParameters(const tinyxml2::XMLElement* parameters);
+  
   /// Chooses the right model
   void LoadModel(const tinyxml2::XMLElement *settings);
 
