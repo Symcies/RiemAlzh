@@ -15,19 +15,6 @@ Algorithm::Algorithm(io::AlgorithmSettings& settings) {
   data_save_iter_   = settings.GetDataSaveIteration();
 }
 
-Algorithm::Algorithm(io::AlgorithmSettings& settings, std::shared_ptr<AbstractModel> model, std::shared_ptr<AbstractSampler> sampler) {
-  /// Initialize the algorithm attributes
-  // TODO : check if it is enough, based on future needs
-  max_iter_num_     = settings.GetMaximumNumberOfIterations();
-  burnin_iter_num_  = settings.GetNumberOfBurnInIterations();
-  output_iter_      = settings.GetOutputDisplayIteration();
-  data_save_iter_   = settings.GetDataSaveIteration();
-
-  SetModel(model);
-  SetSampler(sampler);
-}
-
-
 Algorithm::~Algorithm() {
 }
 
@@ -36,18 +23,32 @@ Algorithm::~Algorithm() {
 // Core method :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void Algorithm::AddSamplers(io::SamplerSettings& settings) {
+  
+  for(size_t i = 0; i < settings.GetNumberOfSamplers(); ++i) {
+    std::string  type = settings.GetSamplerType(i);
+    unsigned int number_of_iterations = settings.GetSamplerNumberOfIterations(i);
+    
+    std::shared_ptr<AbstractSampler> sampler = SamplerFactory::NewSampler(type);
+    samplers_.push_back(sampler);
+    number_of_iterations_per_sampler_.push_back(number_of_iterations);
+  }
+  
+}
+
 void Algorithm::ComputeMCMCSAEM(const Observations& obs) {
   /// This function is core to the software. It initialize parts of the model and sampler
   /// and runs the MCMC-SAEM algorithm. The class attributes define the properties of the MCMC-SAEM
 
   InitializeModel(obs);
-  InitializeSampler();
   InitializeStochasticSufficientStatistics(obs);
+  InitializeSampler();
 
   for(int iter = 0; iter < max_iter_num_; iter ++)
   {
     IterationMCMCSAEM(obs, iter);
   }
+  
 }
 
 
@@ -61,8 +62,7 @@ void Algorithm::InitializeStochasticSufficientStatistics(const Observations& obs
   /// Pitfall : it computes the suff stat of the model where only the length is needed
 
   stochastic_sufficient_stats_ = model_->GetSufficientStatistics(*realizations_, obs);
-
-
+  
   for(auto&& it : stochastic_sufficient_stats_){
     std::fill(it.begin(), it.end(), 0.0);
   }
@@ -78,8 +78,7 @@ void Algorithm::InitializeModel(const Observations& obs)
   model_->Initialize(obs);
 
   Realizations real = model_->SimulateRealizations();
-
-
+  
   realizations_ = std::make_shared<Realizations>(real);
 
   auto init = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
@@ -90,12 +89,17 @@ void Algorithm::InitializeModel(const Observations& obs)
     VectorType v(it->second.size(), 0);
     acceptance_ratio_[it->first] = v;
   }
-
 }
 
 void Algorithm::InitializeSampler()
 {
-  sampler_->InitializeSampler(*realizations_, *model_);
+  
+  candidate_rand_var_ = std::make_shared<CandidateRandomVariables>();
+  candidate_rand_var_->InitializeCandidateRandomVariables(*realizations_, *model_);
+  
+  for(auto it = samplers_.begin(); it != samplers_.end(); ++it) {
+    (*it)->InitializeSampler(candidate_rand_var_, *model_);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,7 +131,8 @@ void Algorithm::ComputeSimulationStep(const Observations& obs, int iter)
   /// The previous realizations are kept to compute the acceptance ratio
 
   Realizations prev_reals = *realizations_;
-  sampler_->Sample(*realizations_, *model_, obs);
+  unsigned int sampler_number = GetSamplerNumber(iter);
+  samplers_[sampler_number]->Sample(*realizations_, *model_, obs);
   ComputeAcceptanceRatio(prev_reals , iter);
 }
 
@@ -256,4 +261,23 @@ void Algorithm::DisplayAcceptanceRatio() {
     std::cout << std::endl;
     */
 
+}
+
+unsigned int Algorithm::GetSamplerNumber(int iter) {
+  
+  assert(number_of_iterations_per_sampler_.size() > 0);
+  assert(samplers_.size() > 0);
+  
+  
+  unsigned int number = 0;
+  
+  for(auto it = number_of_iterations_per_sampler_.begin(); it != number_of_iterations_per_sampler_.end(); ++it) {
+    if(iter < *it) {
+      return number;
+    } else if (it != number_of_iterations_per_sampler_.end() - 1) {
+      ++number;  
+    }
+  }
+  
+  return number;
 }

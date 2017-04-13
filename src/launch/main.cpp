@@ -1,47 +1,31 @@
 #include <iostream>
 #include <fstream>
 
-typedef double ScalarType;
 using namespace std;
 
-#include "Builder.h"
-#include "RealDataSettings.h"
-#include "SimulatedDataSettings.h"
-#include "DataSettings.h"
-
-#include "ModelSettings.h"
-#include "AlgorithmSettings.h"
-
-#include "Algorithm.h"
-
-#include "MultivariateModel.h"
-#include "UnivariateModel.h"
-//#include "NetworkModel.h"
-//#include "MeshworkModel.h"
-//#include "FastNetworkModel.h"
-
-#include "BlockedGibbsSampler.h"
-
-#include "Observations.h"
-
-//#include "omp.h"
-#include "tinyxml2.h"
+#include "validate.cpp"
+#include "fit.cpp"
 
 
 int main(int argc, char* argv[]) {
 
-  if(argc != 4)
+  if(argc != 6)
   {
-      std::cerr << "Usage with real data: " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings.xml " << "data_settings.xml" << std::endl;
+      std::cerr << "Usage with real data: " << "fit OR predict " << " /path/to/executable " << " model_settings.xml " << " algorithm_settings.xml " << "data_settings.xml" << std::endl;
   }
 
-  /// Load the XML file arguments
-  io::ModelSettings     model_settings(argv[1]);
-  io::AlgorithmSettings algo_settings(argv[2]);
-  std::shared_ptr<io::DataSettings> data_settings = Builder::BuilderDataSettings(argv[3]);
+  
+  if(string(argv[1]) == "fit")             fit(argc, argv);
+  else if (string(argv[1]) == "validate")  validate(argc, argv);
+  else std::cerr << "Second argument should be 'fit' or 'predict'" << std::endl;
+  
 
-  /// Initialize the sampler
-  std::shared_ptr<AbstractSampler> sampler = make_shared<BlockedGibbsSampler>();
+  return 0;
+/*
+ /// Load the XML file arguments
+  io::ModelSettings     model_settings(argv[2]);
+  io::AlgorithmSettings algo_settings(argv[3]);
+  std::shared_ptr<io::DataSettings> data_settings = Builder::BuilderDataSettings(argv[4]);
 
   /// Initialize the model
   std::shared_ptr<AbstractModel> model;
@@ -50,35 +34,35 @@ int main(int argc, char* argv[]) {
   //if(model_settings.GetType() == "Network")      model = make_shared<NetworkModel>(model_settings);
   if(model_settings.GetType() == "Multivariate") model = make_shared<MultivariateModel>(model_settings);
   if(model_settings.GetType() == "Univariate")   model = make_shared<UnivariateModel>(model_settings);
-
+  
   /// Initialize the data
   Observations obs;
-  if(data_settings->IsReal())
-  {
+  if (data_settings->IsReal()) {
     std::shared_ptr<io::RealDataSettings> ds;
     ds = std::dynamic_pointer_cast<io::RealDataSettings>(data_settings);
     obs = io::ReadData::ReadObservations(*ds);
     obs.InitializeGlobalAttributes();
-  }
-  else
-  {
+  } else {
     std::shared_ptr<io::SimulatedDataSettings> ds;
     ds = std::dynamic_pointer_cast<io::SimulatedDataSettings>(data_settings);
     obs = model->SimulateData(*ds, true);
-
   }
-
-  /// Algorithm pipeline
-  auto algo = make_shared<Algorithm>(algo_settings, model, sampler);
-  algo->ComputeMCMCSAEM(obs);
-
-
-  return 0;
-
-#pragma omp parallel for
-  //for(int i = 0; i < 10; ++i)
-    //printf("(%d - %d)", i,omp_get_num_threads());
-
+  
+    /// Algorithm pipeline
+  auto algo = make_shared<Algorithm>(algo_settings);
+  
+  algo.SetModel(model);
+  
+  /// Initialize the sampler
+  std::shared_ptr<AbstractSampler> sampler = make_shared<BlockedGibbsSampler>();
+  std::shared_ptr<AbstractSampler> sampler2 = make_shared<BlockedGibbsSampler>();
+  
+  
+  
+  algo.AddSampler(sampler, 25);
+  algo.AddSampler(sampler2, 25);
+ */
+  
 }
 
 

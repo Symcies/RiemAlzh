@@ -1,13 +1,16 @@
 #pragma once
 
 #include <algorithm>
+#include <memory>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 
 #include "AbstractModel.h"
-#include "AbstractSampler.h"
+#include "SamplerSettings.h"
+#include "SamplerFactory.h"
 #include "AlgorithmSettings.h"
+
 #include "Observations.h"
 
 class Algorithm {
@@ -23,40 +26,38 @@ public:
   typedef std::vector<VectorType> SufficientStatisticsVector;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Constructor(stat_vector) / Destructor :
+  // Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   Algorithm(io::AlgorithmSettings& settings);
-  Algorithm(io::AlgorithmSettings& settings, std::shared_ptr<AbstractModel> model, std::shared_ptr<AbstractSampler> sampler);
   ~Algorithm();
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Encapsulation method(stat_vector) :
+  /// Encapsulation method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  inline void SetModel(const std::shared_ptr<AbstractModel>& m ) { model_ = m; }
+  inline void SetModel(std::shared_ptr<AbstractModel>& m ) { model_ = m; }
 
-  inline void SetSampler(std::shared_ptr<AbstractSampler> stat_vector) { sampler_ = stat_vector; }
-
-  inline int GetMaximumNumberOfIterations() {return max_iter_num_;}
-  inline int GetNumberOfBurnInIterations() {return burnin_iter_num_;}
-  inline int GetOutputDisplayIteration() {return output_iter_;}
-  inline int GetDataSaveIteration() {return data_save_iter_;}
+  inline int GetMaximumNumberOfIterations() { return max_iter_num_; }
+  inline int GetNumberOfBurnInIterations()  { return burnin_iter_num_; }
+  inline int GetOutputDisplayIteration()    { return output_iter_; }
+  inline int GetDataSaveIteration()         { return data_save_iter_; }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Other method(stat_vector) :
+  /// Other method :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /// Compute the MCMC SAEM algorithm
-    void ComputeMCMCSAEM(const Observations& obs);
-    /// Compute the MCMC SAEM algorithm
-    void IterationMCMCSAEM(const Observations& obs, int iter);
-
+  
+  /// Compute the MCMC SAEM algorithm
+  void ComputeMCMCSAEM(const Observations& obs);
+  
+  /// Set the samplers 
+  void AddSamplers(io::SamplerSettings& settings);
+  
 private:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Method(stat_vector) of the MCMC SAEM:
+  /// Initialization Method(s):
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-
+  
   /// Initialize the stochastic approximation
   void InitializeStochasticSufficientStatistics(const Observations& obs);
 
@@ -65,7 +66,14 @@ private:
 
   /// Initialize Manifold
   void InitializeModel(const Observations& obs);
-
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Method(s) of the MCMC SAEM:
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Compute the MCMC SAEM algorithm
+  void IterationMCMCSAEM(const Observations& obs, int iter);
+  
   /// Compute the simulation step : Gibbs Sampling
   void ComputeSimulationStep(const Observations& obs, int iter);
 
@@ -75,20 +83,22 @@ private:
   /// Compute the decreasing step size of the approximation step
   double DecreasingStepSize(int iter);
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Output Method(s):
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
   bool IsOutputIteration(int iter);
   bool IsDataSaveIteration(int iter);
-
   void DisplayIterations(int iter);
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Output(stat_vector)
+  /// Output(s)
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Number of iterations to wait till next output display
-  //TODO: should be const?
   unsigned int output_iter_;
 
   /// Number of iterations to wait till next data saving
-  //TODO: should be const?
   unsigned int data_save_iter_;
 
   /// Acceptance ratios
@@ -102,10 +112,27 @@ private:
 
   /// Display Outputs
   void DisplayOutputs();
-
+  
+  
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Attribute(stat_vector)
+  /// Sampler-related Attribute(s)
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Get the sampler number to use based on the current iteration
+  unsigned int GetSamplerNumber(int iter);
+  
+  /// Abstract Samplers - for the MCMC SAEM
+  std::vector<std::shared_ptr<AbstractSampler>> samplers_;
+
+  /// Number of iterations to do for each sampler
+  std::vector<unsigned int> number_of_iterations_per_sampler_;
+  
+  /// Candidate random variables
+  std::shared_ptr<CandidateRandomVariables> candidate_rand_var_;
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Attribute(s)
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Abstract Model
@@ -113,9 +140,6 @@ private:
 
   /// Awesome Rea
   std::shared_ptr<Realizations> realizations_;
-
-  /// Abstract Sampler - for the MCMC SAEM
-  std::shared_ptr<AbstractSampler> sampler_;
 
   /// Stochastic Sufficient Statistics used in the stochastic approximation step
   SufficientStatisticsVector stochastic_sufficient_stats_;
@@ -125,10 +149,7 @@ private:
 
   /// Number of burn-in iterations
   unsigned int burnin_iter_num_;
-
-  /// Number of iterations done by the MCMC-SAEM
-  unsigned int iter_count_ = 0;
-
+  
   Algorithm(const Algorithm&);
   Algorithm& operator=(const Algorithm&);
 };

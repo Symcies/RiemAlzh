@@ -8,31 +8,17 @@ class BlockedGibbsSampler : public AbstractSampler {
 
 public:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // typedef :
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
   // Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-
   BlockedGibbsSampler();
-  BlockedGibbsSampler(unsigned int memoryless_sampling_time, double expected_acceptance_ratio);
-
   virtual ~BlockedGibbsSampler();
-
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Encapsulation method(s) :
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Other method(s) :
+  /// Other method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Initialize the sampler
-  virtual void InitializeSampler(Realizations& reals, AbstractModel &models);
+  virtual void InitializeSampler(std::shared_ptr<CandidateRandomVariables>& candidates, AbstractModel& model);
 
   /// Sample new realizations
   virtual void Sample(Realizations& reals, AbstractModel& models, const Observations& obs);
@@ -50,8 +36,7 @@ private:
 
   /// Compute Prior part of the ratio while updating the realization
   ScalarType ComputePriorRatioAndUpdateRealizations(Realizations& reals, const AbstractModel& models);
-
-
+  
   /// Compute likelihood based on the block type
   VectorType ComputeLogLikelihood(AbstractModel& models, const Observations& obs);
 
@@ -61,11 +46,10 @@ private:
   /// Update the last log likelihood computed
   void UpdateLastLogLikelihood(AbstractModel& model, VectorType& computed_log_likelihood);
 
-      /// Update the random variable
-  void UpdateBlockRandomVariable(double acceptance_ratio);
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Attribute(s)
+  /// Attribute(s)
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Current Block Info
@@ -76,8 +60,6 @@ private:
 
   /// Parameters updated in the block
   std::vector<std::string> cur_block_params_;
-  std::vector<int> cur_block_params_bis_;
-  
 
   /// Parameters to recover back in the realization
   std::vector<std::tuple<std::string, unsigned int, ScalarType >> recover_params_;

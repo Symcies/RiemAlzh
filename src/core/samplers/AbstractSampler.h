@@ -44,7 +44,7 @@ public:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Initialize the sampler
-  virtual void InitializeSampler(Realizations& reals, AbstractModel &model) = 0;
+  virtual void InitializeSampler(std::shared_ptr<CandidateRandomVariables>& candidates, AbstractModel& model) = 0;
 
   /// Sample new realizations of the model random variables
   virtual void Sample(Realizations& reals, AbstractModel& model, const Observations& obs) = 0;
@@ -59,7 +59,7 @@ protected:
   double DecreasingStepSize(int iter, int no_memory_time);
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Attribute(s)
+  /// Attribute(s)
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Blocks of the sampler
@@ -68,11 +68,29 @@ protected:
   /// Sampling time without memory
   unsigned int memoryless_sampling_time_ = 10000;
 
-  /// Acceptation ratio
-  double expected_acceptance_ratio_ = 0.301;
-
   /// Candidates random variables, corresponding to those in the Model
-  CandidateRandomVariables candidate_rand_var_;
+  std::shared_ptr<CandidateRandomVariables> candidate_rand_var_;
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Acceptance-ratio related attribute(s)
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Acceptance ratio bandwidth calculation
+  unsigned int acceptance_ratio_bandwidth_;
+  
+  /// Acceptance ratio on the last 
+  std::unordered_map<std::string, VectorType> acceptance_ratio_;
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Adaptive-sampling related attribute(s)
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Acceptation ratio
+  ScalarType expected_acceptance_ratio_ = 0.301;
+
+  /// Adaptive iteration to update
+  unsigned int acceptance_ratio_update_;
+  
 
 private:
   AbstractSampler(const AbstractSampler &);

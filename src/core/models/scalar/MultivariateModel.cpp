@@ -47,62 +47,87 @@ void MultivariateModel::Initialize(const Observations& obs)
   /// Population variables
   /// (Initialization of the random variable m_Random Variable
   /// and the associated number of realizations m_RealizationPerRandomVariable)
-  noise_ = std::make_shared<GaussianRandomVariable>(0.0, 0.00001);
+  noise_ = std::make_shared<GaussianRandomVariable>(rv_params_.at("noise").first[0], rv_params_.at("noise").first[1]);
 
-  rand_var_.AddRandomVariable("G", "Gaussian", {0.12, 0.0001 * 0.0001});
+  rand_var_.AddRandomVariable("G", "Gaussian", rv_params_.at("G").first);
   asso_num_real_per_rand_var_["G"] = 1;
+  proposition_distribution_variance_["G"] = rv_params_.at("G").second;
 
 
   for(size_t i = 1; i < manifold_dim_; ++i)
   {
     std::string name = "Delta#" + std::to_string(i);
-    rand_var_.AddRandomVariable(name, "Gaussian", {0, 0.003 * 0.003});
+    rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("Delta").first);
+    asso_num_real_per_rand_var_[name] = 1;
+  }
+  proposition_distribution_variance_["Delta"] = rv_params_.at("Delta").second;
+
+  for(int i = 0; i < indep_sources_num_*(manifold_dim_ - 1); ++i)
+  {
+    std::string name = "Beta#" + std::to_string(i);
+    rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("Beta").first);
+    asso_num_real_per_rand_var_[name] = 1;
+  }
+  proposition_distribution_variance_["Beta"] = rv_params_.at("Beta").second;
+
+  /// Individual realizations
+  /// (Initialization of the random variable m_Random Variable
+  /// and the associated number of realizations m_RealizationPerRandomVariable)
+  rand_var_.AddRandomVariable("Ksi", "Gaussian", rv_params_.at("Ksi").first);
+  asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
+  proposition_distribution_variance_["Ksi"] = rv_params_.at("Ksi").second;
+  
+
+  rand_var_.AddRandomVariable("Tau", "Gaussian", rv_params_.at("Tau").first);
+  asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
+  proposition_distribution_variance_["Tau"] = rv_params_.at("Tau").second;
+  
+  
+  for(int i = 0; i < indep_sources_num_; ++i)
+  {
+    std::string name = "S#" + std::to_string(i);
+    rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("S").first);
+    asso_num_real_per_rand_var_[name] = subjects_tot_num_;
+  }
+  proposition_distribution_variance_["S"] = rv_params_.at("S").second;
+}
+
+void MultivariateModel::InitializeValidationDataParameters(const io::SimulatedDataSettings &data_settings,
+                                                           const io::ModelSettings &model_settings) {
+  
+  /// Initialize the model
+  manifold_dim_ = data_settings.GetDimensionOfSimulatedObservations();
+  indep_sources_num_ = model_settings.GetIndependentSourcesNumber();
+  
+  deltas_.set_size(manifold_dim_);
+  block_.set_size(manifold_dim_);
+
+  /// Population variables
+  noise_ = std::make_shared<GaussianRandomVariable>(rv_params_.at("noise").first[0], rv_params_.at("noise").first[1]);
+
+  rand_var_.AddRandomVariable("G", "Gaussian", rv_params_.at("G").first);
+  asso_num_real_per_rand_var_["G"] = 1;
+
+  for(size_t i = 1; i < manifold_dim_; ++i)
+  {
+    std::string name = "Delta#" + std::to_string(i);
+    rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("Delta").first);
     asso_num_real_per_rand_var_[name] = 1;
   }
 
   for(int i = 0; i < indep_sources_num_*(manifold_dim_ - 1); ++i)
   {
     std::string name = "Beta#" + std::to_string(i);
-    rand_var_.AddRandomVariable(name, "Gaussian", {0, 0.001 * 0.001});
+    rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("Beta").first);
     asso_num_real_per_rand_var_[name] = 1;
   }
 
-  /// Individual realizations
-  /// (Initialization of the random variable m_Random Variable
-  /// and the associated number of realizations m_RealizationPerRandomVariable)
-  rand_var_.AddRandomVariable("Ksi", "Gaussian", {0.13, 0.0004});
-  asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
-
-  rand_var_.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
-  asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
-
-  for(int i = 0; i < indep_sources_num_; ++i)
-  {
-    std::string name = "S#" + std::to_string(i);
-    rand_var_.AddRandomVariable(name, "Gaussian", {0, 1});
-    asso_num_real_per_rand_var_[name] = subjects_tot_num_;
+  /// Individual variables
+  rand_var_.AddRandomVariable("Ksi", "Gaussian", rv_params_.at("Ksi").first);
+  rand_var_.AddRandomVariable("Tau", "Gaussian", rv_params_.at("Tau").first);
+  for(size_t i = 0; i < indep_sources_num_; ++i){
+    rand_var_.AddRandomVariable("S#" + std::to_string(i), "Gaussian", rv_params_.at("S").first);
   }
-}
-
-ScalarType MultivariateModel::InitializePropositionDistributionVariance(std::string name) const
-{
-  name = name.substr(0, name.find_first_of("#"));
-
-  /// It returns the variance of the proposition distribution
-  /// of a given random variable of the model
-  //TODO: use switch case?
-  if("G" == name)
-    return 0.00001;
-  if("Delta" == name)
-    return 0.000001;
-  if("Beta" == name)
-    return 0.00001;
-  if("Ksi" == name)
-    return 0.0001;
-  if("Tau" == name)
-    return 0.5;
-  if("S" == name)
-    return 0.7;
 }
 
 void MultivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& block_info,
@@ -315,24 +340,11 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
   // TODO :
   /// PITFALL  : As for now, only the first option is implemented
   /// TODO: PITFALL2 : Take a closer look at / merge with InitializeFakeRandomVariables
-
-
-  /// Initialize the model
-  manifold_dim_ = data_settings.GetDimensionOfSimulatedObservations();
+  
+  individual_obs_date_.clear();
+  individual_time_points_.clear();
+  
   subjects_tot_num_  = data_settings.GetNumberOfSimulatedSubjects();
-
-  if (need_init) { 
-    InitializeFakeRandomVariables();
-  }
-
-  asso_num_real_per_rand_var_["G"] = 1;
-
-  for(size_t i = 1; i < manifold_dim_; ++i)
-    asso_num_real_per_rand_var_["Delta#" + std::to_string(i)] = 1;
-
-  for(size_t i = 0; i <  indep_sources_num_*(manifold_dim_ - 1); ++i)
-    asso_num_real_per_rand_var_["Beta#" + std::to_string(i)] = 1;
-
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
   asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
 
@@ -365,7 +377,9 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
     /// Get a random number of timepoints and sort them
     VectorType time_points = ran_time_points_num.Samples(uni(rand_num_gen));
     time_points.sort();
-    individual_time_points_.push_back(time_points);
+    individual_obs_date_.push_back(time_points);
+    VectorType transformed_time_points = reals.at("Ksi")(i) * (time_points - reals.at("Ksi")(i));
+    individual_time_points_.push_back(transformed_time_points);
 
     /// Simulate the data base on the time-points
     IndividualObservations indiv_obs(time_points);
@@ -373,7 +387,8 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
     for(size_t j = 0; j < time_points.size(); ++j)
     {
       VectorType parallel_curve = ComputeParallelCurve(i, j);
-      cognitive_scores.push_back(parallel_curve + noise.Samples(manifold_dim_));
+      VectorType noise_sample = noise.Samples(manifold_dim_);
+      cognitive_scores.push_back(parallel_curve + noise_sample);
     }
 
     indiv_obs.AddCognitiveScores(cognitive_scores);
@@ -382,9 +397,6 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
 
   /// Initialize the observation and model attributes
   obs.InitializeGlobalAttributes();
-  individual_obs_date_ = obs.GetObservations();
-  sum_obs_             = obs.GetTotalSumOfLandmarks();
-  obs_tot_num_         = obs.GetTotalNumberOfObservations();
 
   return obs;
 
@@ -392,9 +404,6 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
 
 std::vector<AbstractModel::MiniBlock> MultivariateModel::GetSamplerBlocks() const
 {
-  /// It defines the blocks used in the sampler class. A block is defined by a type, and a vector of pairs
-  /// Each pair is composed of <name of the random variable, Realization number>
-  /// TO IMPROVE : These blocks may change during the iterations or they can be random, ...
 
   int population_type = -1;
   std::vector<MiniBlock> blocks;
@@ -564,43 +573,6 @@ void MultivariateModel::SaveData(unsigned int iter_num, const Realizations &real
         log_file << *it2 << " ";
       }
     }
-  }
-}
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-void MultivariateModel::InitializeFakeRandomVariables()
-{
-  /// It initialize the model with particular random variables, mainly needed to simulate data
-  /// Pitfall : This is not generic for need. Both with the SimulateData function, is has to be redefined / refactored
-  /// according to the needs
-
-  deltas_.set_size(manifold_dim_);
-  block_.set_size(manifold_dim_);
-
-  /// Population variables
-  noise_ = std::make_shared<GaussianRandomVariable>(0.0, 0.0001);
-
-  rand_var_.AddRandomVariable("G", "Gaussian", {0.08, 0.00001* 0.00001});
-
-  for(size_t i = 1; i < manifold_dim_; ++i){
-    rand_var_.AddRandomVariable("Delta#" + std::to_string(i), "Gaussian", {0.036, 0.004 * 0.004});
-  }
-
-  for(size_t i = 0; i < indep_sources_num_*(manifold_dim_ - 1); ++i){
-    rand_var_.AddRandomVariable("Beta#" + std::to_string(i), "Gaussian", {0, 0.0001 * 0.0001});
-  }
-
-  /// Individual variables
-  rand_var_.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
-  rand_var_.AddRandomVariable("Tau", "Gaussian", {70, 0.25});
-  for(size_t i = 0; i < indep_sources_num_; ++i){
-    rand_var_.AddRandomVariable("S#" + std::to_string(i), "Gaussian", {0.0, 0.5});
   }
 }
 

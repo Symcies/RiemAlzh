@@ -17,7 +17,6 @@ public:
     typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
 
     /// Key : name of the parameter. Value : Value of the parameter
-    typedef std::map< std::string, std::vector< GaussianRandomVariable >> PropositionDistribution;
     typedef std::unordered_map< int, std::vector<GaussianRandomVariable>> ProposDistrib;
     typedef typename std::unordered_map<std::string, int> StringIntHash;
     typedef typename std::unordered_map<int, std::string> IntStringHash;
@@ -62,7 +61,6 @@ private:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// Proposition laws of the realizations
-    PropositionDistribution proposition_distribution_;
     ProposDistrib new_proposition_distribution_;
 
     /// Key -> name conversion for the random variable names
