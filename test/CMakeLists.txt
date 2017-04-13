@@ -2,6 +2,8 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 file(GLOB test_files
         RunTests.cxx
+        test_global.h
+        test_global.cxx
         integration/*.cxx
         integration/*.h
         unit/algorithm/*.cxx

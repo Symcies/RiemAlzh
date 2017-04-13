@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include "AlgorithmSettings.h"
-#include "global.h"
+#include "test/test_global.h"
 
 namespace test {
   class AlgorithmSettings_UT : public ::testing::Test {

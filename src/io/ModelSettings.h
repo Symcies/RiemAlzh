@@ -10,6 +10,8 @@ typedef double ScalarType;
 #include "LinearAlgebra.h"
 #include "tinyxml2.h"
 
+#include "InputsAssert.h"
+
 namespace io {
 
 class ModelSettings {
@@ -28,7 +30,7 @@ public:
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  ModelSettings(const char *xml_file);
+  ModelSettings(std::string xml_file);
 
   ~ModelSettings();
 
