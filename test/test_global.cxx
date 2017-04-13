@@ -1,11 +1,8 @@
 #include "test_global.h"
 
 namespace GVT {
-  //extern const std::string BUILD_DIR = "/Users/clementine.fourrier/build";
-  //extern const std::string TEST_DIR = "/Users/clementine.fourrier/RiemAlzh/test/";
-
-  extern const std::string BUILD_DIR = "/Users/igor.koval/Documents/Work";
-  extern const std::string TEST_DIR = "/Users/igor.koval/Documents/Work/RiemAlzh/test/";
+  extern const std::string BUILD_DIR = "/Users/clementine.fourrier/build";
+  extern const std::string TEST_DIR = "/Users/clementine.fourrier/RiemAlzh/test/";
 
   extern const std::string TEST_DATA_DIR = TEST_DIR + "datasets/data/";
   extern const std::string TEST_MODEL_DIR = TEST_DIR + "datasets/models/";
@@ -34,8 +31,5 @@ namespace GVT {
   extern const std::string UNIVAR_DATA_CORRECT = TEST_DATA_DIR + "univariate_data_correct_real_settings.xml";
   extern const std::string MULTIVAR_DATA_CORRECT = TEST_DATA_DIR + "multivariate_data_correct_real_settings.xml";
   extern const std::string SIMULATED_DATA_CORRECT = TEST_DATA_DIR + "data_correct_simulated_settings.xml";
-  
-  /// ADDED BY IGOR
-  /// SAMPLER
-  extern const std::string SAMPLER_CORRECT = TEST_DATA_DIR + "sampler_settings.xml"; 
+
 }

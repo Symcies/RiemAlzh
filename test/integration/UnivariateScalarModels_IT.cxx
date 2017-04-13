@@ -8,7 +8,6 @@
 #include "BlockedGibbsSampler.h"
 #include "DataSettings.h"
 #include "ModelSettings.h"
-#include "SamplerSettings.h"
 #include "MultivariateModel.h"
 #include "UnivariateModel.h"
 #include "Observations.h"
@@ -31,12 +30,11 @@ namespace test {
     std::remove((GVT::TEST_DIR + "log_univariate_file.txt").c_str());
   }
 
-  /*TEST_F(UnivariateScalarModels_IT, execution_of_univariate_model_on_correct_real_dataset) {
+  TEST_F(UnivariateScalarModels_IT, execution_of_univariate_model_on_correct_real_dataset) {
     /// Load the file arguments
     io::ModelSettings     model_settings((GVT::UNIVAR_MODEL_CORRECT).c_str());
     io::AlgorithmSettings algo_settings((GVT::ALGORITHM_CORRECT).c_str());
     io::RealDataSettings  data_settings((GVT::UNIVAR_DATA_CORRECT).c_str());
-    io::SamplerSettings   sampler_settings((GVT::SAMPLER_CORRECT).c_str());
 
     /// Initialize the sampler
     std::shared_ptr<AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();
@@ -58,11 +56,9 @@ namespace test {
     ASSERT_FLOAT_EQ(obs.GetTotalSumOfLandmarks(),0);
 
     /// Algorithm pipeline
-    auto algo = std::make_shared<Algorithm>(algo_settings);
-    algo->SetModel(model);
-    algo->AddSamplers(sampler_settings);
+    auto algo = std::make_shared<Algorithm>(algo_settings, model, sampler);
+
     algo->ComputeMCMCSAEM(obs);
-  
     std::ifstream reference_file(GVT::TEST_OUTPUTS_DIR + "ref_log_univariate_real_file.txt");
     std::ifstream generated_file(GVT::TEST_DIR + "log_univariate_file.txt");
     float ref_value, gen_value;
@@ -80,8 +76,9 @@ namespace test {
     io::ModelSettings         model_settings((GVT::UNIVAR_MODEL_CORRECT).c_str());
     io::AlgorithmSettings     algo_settings((GVT::ALGORITHM_CORRECT).c_str());
     io::SimulatedDataSettings data_settings((GVT::SIMULATED_DATA_CORRECT).c_str());
-    io::SamplerSettings   sampler_settings((GVT::SAMPLER_CORRECT).c_str());
-  
+
+    /// Initialize the sampler
+    std::shared_ptr<AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();
 
     /// Initialize the model
     std::shared_ptr<AbstractModel> model;
@@ -95,9 +92,7 @@ namespace test {
     ASSERT_FLOAT_EQ(obs.GetNumberOfSubjects(), 150);
 
     /// Algorithm pipeline
-    auto algo = std::make_shared<Algorithm>(algo_settings);
-    algo->SetModel(model);
-    algo->AddSamplers(sampler_settings);
+    auto algo = std::make_shared<Algorithm>(algo_settings, model, sampler);
     algo->ComputeMCMCSAEM(obs);
 
     std::ifstream reference_file(GVT::TEST_OUTPUTS_DIR + "ref_log_univariate_simulated_file.txt");
@@ -109,6 +104,6 @@ namespace test {
       ASSERT_EQ(ref_value, gen_value);
     }
     std::remove((GVT::TEST_DIR + "log_univariate_file.txt").c_str());
-  }*/
+  }
 
 }

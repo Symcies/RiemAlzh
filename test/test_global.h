@@ -32,6 +32,4 @@ namespace GVT{ //for global variables test
   extern const std::string MULTIVAR_DATA_CORRECT;
   extern const std::string SIMULATED_DATA_CORRECT;
 
-  extern const std::string SAMPLER_CORRECT;
-
 }
