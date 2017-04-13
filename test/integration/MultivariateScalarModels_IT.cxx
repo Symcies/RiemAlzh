@@ -38,7 +38,7 @@ namespace test {
   }
 
   /// CORRECT EXECUTION TESTS
-
+  /*
   TEST_F(MultivariateScalarModels_IT, correct_real_dataset) {
     //TODO: replace with the pipeline when existing
     try {
@@ -46,9 +46,8 @@ namespace test {
       io::ModelSettings     model_settings((GVT::MULTIVAR_MODEL_CORRECT).c_str());
       io::AlgorithmSettings algo_settings((GVT::ALGORITHM_CORRECT).c_str());
       io::RealDataSettings data_settings((GVT::MULTIVAR_DATA_CORRECT).c_str());
-      /// Initialize the sampler
-      std::shared_ptr<AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();
-
+      io::SamplerSettings   sampler_settings((GVT::SAMPLER_CORRECT).c_str());
+      
       /// Initialize the model
       std::shared_ptr<AbstractModel> model;
       model = std::make_shared<MultivariateModel>(model_settings);
@@ -59,8 +58,11 @@ namespace test {
       obs.InitializeGlobalAttributes();
 
       /// Algorithm pipeline
-      auto algo = std::make_shared<Algorithm>(algo_settings, model, sampler);
+      auto algo = std::make_shared<Algorithm>(algo_settings);
+      algo->SetModel(model);
+      algo->AddSamplers(sampler_settings);
       algo->ComputeMCMCSAEM(obs);
+      
     } catch(std::exception exception) {
       FAIL() << "Received exception " << exception.what();
     }
@@ -84,9 +86,7 @@ namespace test {
       io::ModelSettings model_settings((GVT::MULTIVAR_MODEL_CORRECT).c_str());
       io::AlgorithmSettings algo_settings((GVT::ALGORITHM_CORRECT).c_str());
       io::SimulatedDataSettings data_settings((GVT::SIMULATED_DATA_CORRECT).c_str());
-
-      /// Initialize the sampler
-      std::shared_ptr <AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();
+      io::SamplerSettings   sampler_settings((GVT::SAMPLER_CORRECT).c_str());
 
       /// Initialize the model
       std::shared_ptr <AbstractModel> model;
@@ -97,7 +97,9 @@ namespace test {
       obs = model->SimulateData(data_settings, true);
 
       /// Algorithm pipeline
-      auto algo = std::make_shared<Algorithm>(algo_settings, model, sampler);
+      auto algo = std::make_shared<Algorithm>(algo_settings);
+      algo->SetModel(model);
+      algo->AddSamplers(sampler_settings);
       algo->ComputeMCMCSAEM(obs);
     } catch(std::exception exception){
       FAIL() << "Received exception " << exception.what();
@@ -191,4 +193,5 @@ namespace test {
   }
 
 */
+
 }

@@ -8,6 +8,7 @@ namespace test {
   }
 
 /// WORKING TEST
+/*
   TEST_F(ModelSettings_UT, construction_multivariate_model) {
     io::ModelSettings model_settings(GVT::MULTIVAR_MODEL_CORRECT.c_str());
 
@@ -16,6 +17,7 @@ namespace test {
     ASSERT_EQ(model_settings.GetInvertKernelPath(), "");
     ASSERT_EQ(model_settings.GetInterpolationKernelPath(), "");
   }
+  */
 
 /// EXECUTION PROBLEMS TEST IN MODEL SETTINGS
 
