@@ -1,16 +1,16 @@
 #pragma once
 
 #include "gtest/gtest.h"
-#include <iostream>
 #include <fstream>
-#include "ModelSettings.h"
+#include <cstdio>
+#include "global.h"
 #include "test/test_global.h"
 
 namespace test {
-  class ModelSettings_UT : public ::testing::Test {
+  class MultivariateScalarModels_IT : public ::testing::Test {
 
     protected:
       virtual void SetUp();
-
+      virtual void TearDown();
   };
 }

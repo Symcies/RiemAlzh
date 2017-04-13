@@ -4,7 +4,9 @@
 #include <iostream>
 #include <fstream>
 #include "DataSettings.h"
-#include "global.h"
+#include "RealDataSettings.h"
+#include "SimulatedDataSettings.h"
+#include "test/test_global.h"
 
 namespace test {
   class DataSettings_UT : public ::testing::Test {

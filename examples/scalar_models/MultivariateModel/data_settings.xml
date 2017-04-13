@@ -6,7 +6,7 @@
 
   <!-- In case of real data -->
   <real-data>
-    <folder-path>/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/MultivariateModel/data/</folder-path>
+    <folder-path>RiemAlzh/examples/scalar_models/MultivariateModel/data/</folder-path>
     <group-file>group.csv</group-file>
     <timepoints-file>X.csv</timepoints-file>
 

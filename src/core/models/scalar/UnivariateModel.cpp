@@ -397,7 +397,41 @@ void UnivariateModel::DisplayOutputs(const Realizations &AR)
 void UnivariateModel::SaveData(unsigned int iter_num, const Realizations &reals)
 {
   /// It saves the random variables / realizations / whatever model parameters
-  /// Mainly needed for post processing
+  /// Mainly needed for post processingGV::TEST_DIR + "log_univariate_file.txt"
+
+
+  std::ofstream log_file;
+
+  if(!GV::TEST_RUN) {
+    log_file.open(GV::BUILD_DIR + "log_univariate_file.txt", std::ofstream::out | std::ofstream::app);
+    auto g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
+    auto tau = rand_var_.GetRandomVariable("Tau");
+    auto ksi = rand_var_.GetRandomVariable("Ksi");
+
+    // This part should be tuned by a xml file
+    log_file << "Iteration n: " << iter_num;
+    log_file << " - noise: " << noise_->GetVariance();
+    log_file << " - G: " << g;
+    log_file << " - T0: " << tau->GetParameter("Mean") << " - Var(Tau): "
+             << tau->GetParameter("Variance");
+    log_file << " - Ksi: " << ksi->GetParameter("Mean") << " - Var(Ksi): "
+             << ksi->GetParameter("Variance") << std::endl;
+    log_file.close();
+  }
+  else {
+    log_file.open(GV::TEST_DIR + "log_univariate_file.txt", std::ofstream::out | std::ofstream::app);
+    /// Save all the random variables parameters
+    for(auto it = rand_var_.begin(); it != rand_var_.end(); ++it) {
+      log_file << it->second->GetParameter(0) << " " << it->second->GetParameter(1) << " ";
+    }
+
+    /// Save all the realizations
+    for(auto it = reals.begin(); it != reals.end(); ++it) {
+      for(auto it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+        log_file << *it2 << " ";
+      }
+    }
+  }
 }
 
 

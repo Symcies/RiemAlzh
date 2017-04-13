@@ -39,10 +39,5 @@ void validate(int argc, char* argv[]) {
   algo.SetModel(model);
   algo.AddSamplers(sampler_settings);
   algo.ComputeMCMCSAEM(obs);
-  
-  
-  /// Check if it is the same model
-  // To Check if it is the same model
-  
-  
+
 }

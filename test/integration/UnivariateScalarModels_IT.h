@@ -3,12 +3,13 @@
 #include "gtest/gtest.h"
 #include <fstream>
 #include <cstdio>
-#include "global.h"
+#include "test/test_global.h"
 
 namespace test {
-  class ScalarModels_IT : public ::testing::Test {
+  class UnivariateScalarModels_IT : public ::testing::Test {
 
     protected:
       virtual void SetUp();
+      virtual void TearDown();
   };
 }

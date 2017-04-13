@@ -8,21 +8,31 @@ namespace  io {
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-RealDataSettings::RealDataSettings(const char *xml_file) : DataSettings(xml_file) {
-  
+RealDataSettings::RealDataSettings(std::string xml_file) : DataSettings(xml_file) {
+
+  InputsAssert::IsValidDataXML(xml_file);
+
   tinyxml2::XMLDocument file;
-  file.LoadFile(xml_file);
+  file.LoadFile(xml_file.c_str());
   auto settings = file.FirstChildElement("data-settings")->FirstChildElement("real-data");
-  data_path_ = settings->FirstChildElement("folder-path")->GetText();
 
-  group_path_ = data_path_ + settings->FirstChildElement("group-file")->GetText();
-  timepoints_path_ = data_path_ + settings->FirstChildElement("timepoints-file")->GetText();
+  /// Extract paths
+  std::string data_path = settings->FirstChildElement("folder-path")->GetText();
+  InputsAssert::IsFileCorrect(&data_path[0], false);
+  data_path_ = data_path;
 
-  // TODO : For the path to data, path to timepoints and path to group, need to check if it is ok!!!
+  std::string group_path = data_path_ + settings->FirstChildElement("group-file")->GetText();
+  InputsAssert::IsFileCorrect(&group_path[0], false);
+  group_path_ = group_path;
+
+  std::string timepoints_path = data_path_ + settings->FirstChildElement("timepoints-file")->GetText();
+  InputsAssert::IsFileCorrect(&timepoints_path[0], false);
+  timepoints_path_ = timepoints_path;
+
   /// Read the Cognitive scores
-  const tinyxml2::XMLElement* data = settings->FirstChildElement("observations");
-  const tinyxml2::XMLElement* cog_scores = data->FirstChildElement("cognitive-scores");
-  const tinyxml2::XMLElement* landmarks  = data->FirstChildElement("landmarks");
+  const tinyxml2::XMLElement *data = settings->FirstChildElement("observations");
+  const tinyxml2::XMLElement *cog_scores = data->FirstChildElement("cognitive-scores");
+  const tinyxml2::XMLElement *landmarks = data->FirstChildElement("landmarks");
 
   LoadCognitiveScores(cog_scores);
   LoadLandmarks(landmarks);
@@ -34,55 +44,56 @@ RealDataSettings::RealDataSettings(const char *xml_file) : DataSettings(xml_file
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 void RealDataSettings::LoadLandmarks(const tinyxml2::XMLElement *settings) {
-  std::string Presence = settings->FirstChildElement("presence")->GetText();
-  if(Presence == "yes")
+  std::string presence = settings->FirstChildElement("presence")->GetText();
+
+  if(InputsAssert::ToLowerCase(presence) == "yes")
   {
     are_landmarks_present_ = true;
-    landmarks_path = data_path_ + settings->FirstChildElement("path-to-data")->GetText();
 
-    if(!std::ifstream(landmarks_path))
-    {
-      std::cerr << "The file located at " << landmarks_path << " does not exist" << std::endl;
-    }
+    std::string landmarks_path = data_path_ + settings->FirstChildElement("path-to-data")->GetText();
+    InputsAssert::IsFileCorrect(landmarks_path, false);
+    landmarks_path_ = landmarks_path;
 
-    landmarks_dim_ = atoi(settings->FirstChildElement("dimension")->GetText());
+    landmarks_dim_ = std::stoi(settings->FirstChildElement("dimension")->GetText());
 
     std::cout << "The model is reading landmarks located at " << landmarks_path << std::endl;
   }
-  else
+  else if (InputsAssert::ToLowerCase(presence) == "no")
   {
     are_landmarks_present_ = false;
     landmarks_dim_ = 0;
+    std::cout << "No landmarks." << std::endl;
+  }
+  else {
+    std::cerr << "Presence must be 'yes' or 'no' in the DataSettings file. It was " << presence <<std::endl;
   }
 }
     
-void RealDataSettings::LoadCognitiveScores(const tinyxml2::XMLElement *settings) { 
-  std::string Presence = settings->FirstChildElement("presence")->GetText();
-
-  if(Presence == "yes")
+void RealDataSettings::LoadCognitiveScores(const tinyxml2::XMLElement *settings) {
+  std::string presence = settings->FirstChildElement("presence")->GetText();
+  if(InputsAssert::ToLowerCase(presence) == "yes")
   {
     are_cog_scores_present_ = true;
-    cog_scores_path_ = data_path_ + settings->FirstChildElement("path-to-data")->GetText();
 
-    if (!std::ifstream(cog_scores_path_))
-    {
-      std::cerr << "The file located at " << cog_scores_path_ << " does not exist" << std::endl;
-    }
+    std::string cog_scores_path = data_path_ + settings->FirstChildElement("path-to-data")->GetText();
+    InputsAssert::IsFileCorrect(cog_scores_path, false);
+    cog_scores_path_ = cog_scores_path;
 
-    cog_scores_dim_ = atoi(settings->FirstChildElement("dimension")->GetText());
-
+    cog_scores_dim_ = std::stoi(settings->FirstChildElement("dimension")->GetText());
 
     std::cout << "The model is reading cognitive scores located at " << cog_scores_path_ << std::endl;
   }
-  else
+  else if (InputsAssert::ToLowerCase(presence) == "no")
   {
     are_cog_scores_present_ = false;
+    cog_scores_dim_ = 0;
+    std::cout << "No cog scores." << std::endl;
+
+  }
+  else {
+    std::cerr << "Presence must be 'yes' or 'no' in the DataSettings file. It was " << presence <<std::endl;
   }
 }
 
 
 }
-
-
-
-

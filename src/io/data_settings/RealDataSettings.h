@@ -10,7 +10,7 @@ class RealDataSettings : public DataSettings {
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  RealDataSettings(const char *xml_file);
+  RealDataSettings(std::string xml_file);
   
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Encapsulation method(s) :
@@ -24,7 +24,7 @@ class RealDataSettings : public DataSettings {
 
   unsigned int GetCognitiveScoresDimension() const { return cog_scores_dim_; }
 
-  std::string GetPathToLandmarks() const { return landmarks_path; }
+  std::string GetPathToLandmarks() const { return landmarks_path_; }
 
   unsigned int GetLandmarksDimension() const { return landmarks_dim_; }
   
@@ -78,7 +78,7 @@ class RealDataSettings : public DataSettings {
   
   
   /// Path to landmarks (csv file)
-  std::string landmarks_path;
+  std::string landmarks_path_;
 
   /// Dimension of the landmarks
   unsigned int landmarks_dim_;

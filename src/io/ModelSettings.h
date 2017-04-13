@@ -10,6 +10,8 @@ typedef double ScalarType;
 #include "LinearAlgebra.h"
 #include "tinyxml2.h"
 
+#include "InputsAssert.h"
+
 namespace io {
 
 class ModelSettings {
@@ -28,7 +30,7 @@ public:
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  ModelSettings(const char *xml_file);
+  ModelSettings(std::string xml_file);
 
   ~ModelSettings();
 
@@ -95,6 +97,9 @@ private:
   /// Load the random varianle parameters
   std::vector<double> LoadRVParameters(const tinyxml2::XMLElement* parameters);
   
+  /// Chooses the right model
+  void LoadModel(const tinyxml2::XMLElement *settings);
+
   /// Load the fast network model
   void LoadFastNetwork(const tinyxml2::XMLElement *settings);
 

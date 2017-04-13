@@ -57,6 +57,8 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+
+        src/support/asserts
         
         ${CMAKE_CURRENT_SOURCE_DIR}/src/launch
         ${CMAKE_CURRENT_SOURCE_DIR}/src/launch/fit
@@ -66,6 +68,7 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/manifolds
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/manifolds/base_manifold
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/combinaisons
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/scalar
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/observations
@@ -120,7 +123,7 @@ Target_Link_Libraries(riem-lib
 
 #Creation of the executable, linked with the src library
 add_executable(Longitudina
-        src/launch/main.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/launch/main.cpp src/support/asserts/InputsAssert.cpp)
 
 Target_Link_Libraries(Longitudina riem-lib)
 
