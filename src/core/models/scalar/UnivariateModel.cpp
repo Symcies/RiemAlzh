@@ -199,7 +199,7 @@ void UnivariateModel::UpdateRandomVariables(const SufficientStatisticsVector &st
 }
 
 
-Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_settings, bool need_data)
+Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_settings)
 {
   /// This function simulates observations (Patients and their measurements y_ij at different time points t_ij)
   /// according to the model, with a given noise level e_ij, such that y_ij = f(t_ij) + e_ij

@@ -71,21 +71,20 @@ void NetworkModel::Initialize(const Observations& obs)
   }
 }
 
-ScalarType NetworkModel::InitializePropositionDistributionVariance(std::string name) const
-{
-  name = name.substr(0, name.find_first_of("#"));
-
-  if("P" == name)       return 0.000001;
-  if("Nu" == name)      return 0.000000006;
-  if("Beta" == name)    return 0.000008*0.000008;
-  if("Ksi" == name)     return 0.001;
-  if("Tau" == name)     return 0.02 * 0.02;
-  if("S" == name)       return 1;
+void NetworkModel::InitializeValidationDataParameters(const io::SimulatedDataSettings &data_settings,
+                                                      const io::ModelSettings &model_settings) {
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
 }
 
-void NetworkModel::UpdateModel(const Realizations &reals, int type,
-            const std::vector<std::string, std::allocator<std::string>> names)
+void UnivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& block_info, const std::vector<std::string> names)
 {
+  
+  int type = std::get<0>(block_info[0]);  
+  
   bool compute_thickness = false;
   bool compute_nu = false;
   bool compute_block1 = false;
@@ -197,8 +196,7 @@ AbstractModel::SufficientStatisticsVector NetworkModel::GetSufficientStatistics(
 
   /// Sufficient statistic Ksi_i * Ksi_i
   VectorType s8 = reals.at("Ksi") % reals.at("Ksi");
-
-
+  
   /// Sufficient statistic Tau_i and Tau_i * Tau_i
   VectorType s9 = reals.at("Tau");
   VectorType s10 = reals.at("Tau") % reals.at("Tau");
@@ -291,47 +289,6 @@ void NetworkModel::UpdateRandomVariables(const SufficientStatisticsVector &stoch
 
 }
 
-ScalarType NetworkModel::ComputeLogLikelihood(const Observations &obs)
-{
-  double log_likelihood = 0;
-
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-   ScalarType num_time_points = obs.GetNumberOfTimePoints(i);
-
-    for(size_t j = 0; j < num_time_points; ++j)
-    {
-      auto& it = obs.GetSubjectLandmark(i, j);
-      VectorType parallel_curve = ComputeParallelCurve(i, j);
-      log_likelihood += (it - parallel_curve).squared_magnitude();
-    }
-  }
-
-  log_likelihood /= -2*noise_->GetVariance();
-  log_likelihood -= obs_tot_num_*log(sqrt(2 * noise_->GetVariance() * M_PI ));
-
-  return log_likelihood;
-}
-
-ScalarType NetworkModel::ComputeIndividualLogLikelihood( const IndividualObservations& obs, const int indiv_num)
-{
-  /// Get the data
-  double log_likelihood = 0;
-  auto num_time_points = obs.GetNumberOfTimePoints();
-
-#pragma omp parallel for reduction(+:log_likelihood)
-  for(size_t i = 0; i < num_time_points; ++i)
-  {
-    auto& it = obs.GetLandmark(i);
-    VectorType parallel_curve = ComputeParallelCurve(indiv_num, i);
-    log_likelihood += (it - parallel_curve).squared_magnitude();
-  }
-
-  log_likelihood /= -2*noise_->GetVariance();
-  log_likelihood -= num_time_points * log(2 * noise_->GetVariance() * M_PI) / 2.0;
-
-  return log_likelihood;
-}
 
 Observations NetworkModel::SimulateData(io::DataSettings &data_settings)
 {
@@ -394,14 +351,11 @@ Observations NetworkModel::SimulateData(io::DataSettings &data_settings)
 
   /// Initialize the observation and model attributes
   obs.InitializeGlobalAttributes();
-  indiv_obs_date_ = obs.GetObservations();
-  sum_obs_        = obs.GetTotalSumOfLandmarks();
-  obs_tot_num_    = obs.GetTotalNumberOfObservations();
 
   return obs;
 }
 
-std::vector<AbstractModel::SamplerBlock> NetworkModel::GetSamplerBlocks() const
+std::vector<AbstractModel::MiniBlock> NetworkModel::GetSamplerBlocks() const
 {
   int pop_type = -1;
 
@@ -442,7 +396,67 @@ std::vector<AbstractModel::SamplerBlock> NetworkModel::GetSamplerBlocks() const
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// outputs
+/// Log-likelihood related method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+AbstractModel::VectorType NetworkModel::ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)
+{
+  int type = std::get<0>(block_info[0]);
+  
+  if(type == -1) {
+    VectorType loglikelihood(subjects_tot_num_);
+    ScalarType *l_ptr = ok.memptr();
+    for (size_t i = 0; i < subjects_tot_num_; ++i)
+      l_ptr[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
+
+    return loglikelihood;
+  } else {
+    return VectorType(1, ComputeIndividualLogLikelihood(obs.GetSubjectObservations(type), type));
+  }
+}
+
+ScalarType NetworkModel::ComputeIndividualLogLikelihood(const IndividualObservations& obs, const int subject_num)
+{
+  /// Get the data
+  double log_likelihood = 0;
+  auto num_time_points = obs.GetNumberOfTimePoints();
+
+#pragma omp parallel for reduction(+:log_likelihood)
+  for(size_t i = 0; i < num_time_points; ++i)
+  {
+    auto& it = obs.GetLandmark(i);
+    VectorType parallel_curve = ComputeParallelCurve(indiv_num, i);
+    log_likelihood += (it - parallel_curve).squared_magnitude();
+  }
+
+  log_likelihood /= -2*noise_->GetVariance();
+  log_likelihood -= num_time_points * log(2 * noise_->GetVariance() * M_PI) / 2.0;
+
+  return log_likelihood;
+}
+
+ScalarType NetworkModel::GetPreviousLogLikelihood(const MiniBlock &block_info) {
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+}
+
+
+void NetworkModel::SetPreviousLogLikelihood(VectorType &log_likelihood,
+                                            const MiniBlock &block_info) {
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// outputs
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void NetworkModel::DisplayOutputs(const Realizations &reals)
@@ -535,32 +549,6 @@ void NetworkModel::SaveData(unsigned int iter_num, const Realizations &reals)
 
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void NetworkModel::InitializeFakeRandomVariables()
-{
-  /// noise
-  noise_ = std::make_shared<GaussianRandomVariable>( 0.0, 0.00001 );
-
-  /// Population variables
-  rand_var_.AddRandomVariable("P",  "Gaussian", {0.13, 0.00005 * 0.00005});
-  rand_var_.AddRandomVariable("Nu", "Gaussian", {0.04088, 0.001*0.001});
-
-  for(int i = 0; i < indep_components_nb_*(manifold_dim_ - 1); ++i) {
-      rand_var_.AddRandomVariable("Beta#" + std::to_string(i), "Gaussian", {0, 0.001*0.001});
-  }
-
-  /// Individual variables
-  rand_var_.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
-  rand_var_.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
-
-  for(int i = 0; i < indep_components_nb_; ++i) {
-      rand_var_.AddRandomVariable("S#" + std::to_string(i), "Gaussian", {0.0, 1});
-  }
-
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :

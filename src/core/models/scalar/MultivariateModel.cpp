@@ -326,7 +326,7 @@ void MultivariateModel::UpdateRandomVariables(const SufficientStatisticsVector &
 
 }
 
-Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_settings, bool need_init)
+Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_settings)
 {
   /// This function simulates observations (Patients and their measurements y_ij at different time points t_ij)
   /// according to the model, with a given noise level e_ij, such that y_ij = f(t_ij) + e_ij
@@ -454,12 +454,12 @@ AbstractModel::VectorType MultivariateModel::ComputeLogLikelihood(const Observat
   int type = std::get<0>(block_info[0]);
   
   if(type == -1) {
-    VectorType ok(subjects_tot_num_);
-    ScalarType *ok2 = ok.memptr();
+    VectorType loglikelihood(subjects_tot_num_);
+    ScalarType *l_ptr = ok.memptr();
     for (size_t i = 0; i < subjects_tot_num_; ++i)
-      ok2[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
+      l_ptr[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
 
-    return ok;
+    return loglikelihood;
   } else {
     return VectorType(1, ComputeIndividualLogLikelihood(obs.GetSubjectObservations(type), type));
   }

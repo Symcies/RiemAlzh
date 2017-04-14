@@ -17,12 +17,12 @@ public:
 
   /// Initialize the model : random variables, interpolation matrix, parameters
   virtual void Initialize(const Observations& Obs);
-
-  /// Initialize the variance of the proposition distribution
-  virtual ScalarType InitializePropositionDistributionVariance(std::string Name) const;
-
+  
+  /// Initialize the model in case of validation data
+  virtual void InitializeValidationDataParameters(const io::SimulatedDataSettings& data_settings, const io::ModelSettings& model_settings);
+  
   /// Update the model parameters != random variables parameters
-  virtual void UpdateModel(const Realizations& R, int Type, const std::vector<std::string> Names = {"All"});
+  virtual void UpdateModel(const Realizations& reals, const MiniBlock& block_info, const std::vector<std::string> names = {"All"});
 
   /// Get the sufficient statistics of the model
   virtual SufficientStatisticsVector GetSufficientStatistics(const Realizations& R, const Observations& Obs);
@@ -30,20 +30,31 @@ public:
   /// Update the random variables <=> the parameters of the model
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS);
 
-  /// Compute the log likelihood of the model
-  virtual double ComputeLogLikelihood(const Observations &Obs);
-
-  /// Compute the log likelihood of the model for a given subject
-  virtual double ComputeIndividualLogLikelihood(const IndividualObservations& Obs, const int SubjectNumber);
-
   /// Simulate data according to the model and the parameters
   virtual Observations SimulateData(io::DataSettings& DS);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
-  virtual std::vector<SamplerBlock> GetSamplerBlocks() const ;
-
+  virtual std::vector<MiniBlock> GetSamplerBlocks() const;
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Outputs
+  /// Log-likelihood related method(s) :
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Compute the log likelihood of the model
+  virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info);
+
+  /// Compute the log likelihood of the model for a particular individual
+  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_);
+  
+  /// Get the previous loglikelihood computed
+  virtual ScalarType GetPreviousLogLikelihood(const MiniBlock& block_info);
+  
+  /// Update the previous loglikelihood computed
+  virtual void SetPreviousLogLikelihood(VectorType& log_likelihood, const MiniBlock& block_info);
+  
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Outputs
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Compute outputs
@@ -52,12 +63,6 @@ public:
   /// Save the data into a file
   virtual void SaveData(unsigned int IterationNumber, const Realizations& R);
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  /// Initialize the true parameters to simulate data according to it - these parameters are unknown to the algo
-  virtual void InitializeFakeRandomVariables();
 
 protected:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
