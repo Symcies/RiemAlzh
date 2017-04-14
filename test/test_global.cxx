@@ -8,6 +8,7 @@ namespace GVT {
   extern const std::string TEST_MODEL_DIR = TEST_DIR + "datasets/models/";
   extern const std::string TEST_ALGO_DIR = TEST_DIR + "datasets/algorithm/";
   extern const std::string TEST_OUTPUTS_DIR = TEST_DIR + "datasets/outputs/";
+  extern const std::string TEST_SAMPLER_DIR = TEST_DIR + "datasets/sampler/";
 
   /// MODEL
   extern const std::string MULTIVAR_MODEL_CORRECT = TEST_MODEL_DIR + "multivariate_model_correct_settings.xml";
@@ -32,4 +33,6 @@ namespace GVT {
   extern const std::string MULTIVAR_DATA_CORRECT = TEST_DATA_DIR + "multivariate_data_correct_real_settings.xml";
   extern const std::string SIMULATED_DATA_CORRECT = TEST_DATA_DIR + "data_correct_simulated_settings.xml";
 
+  /// SAMPLER
+  extern const std::string SAMPLER_CORRECT = TEST_SAMPLER_DIR + "sampler_correct_settings.xml";
 }

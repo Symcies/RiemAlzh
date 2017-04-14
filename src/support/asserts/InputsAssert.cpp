@@ -48,9 +48,25 @@ void InputsAssert::IsValidModelXML(std::string path){
   auto indep_source_num = settings->FirstChildElement("number-of-independent-sources");
   if (indep_source_num == NULL) {
     throw InputException("The model xml misses the parameter number-of-independent-sources, "
-                                   "child of the parameter model-settings.");
+                                 "child of the parameter model-settings.");
   }
 
+  auto variables = settings->FirstChildElement("variables");
+  if (indep_source_num == NULL) {
+    throw InputException("The model xml misses the parameter variables, "
+                                 "child of the parameter model-settings.");
+  }
+
+  std::string third_order_children[] = {"name", "initial-parameters", "second-parameters", "proposition-variance"};
+  for(auto second_order_child = variables->FirstChildElement(); second_order_child != NULL;
+      second_order_child = second_order_child->NextSiblingElement()) {
+    for (int i = 0; i < 4; i++) {
+      auto child = second_order_child->FirstChildElement(third_order_children[i].c_str());
+      if (child == NULL) {
+        throw InputException("The model xml misses the parameter " + third_order_children[i]);
+      }
+    }
+  }
   return;
 }
 
@@ -71,7 +87,31 @@ void InputsAssert::IsValidAlgoXML(std::string path){
     auto child = settings->FirstChildElement(first_order_children[i].c_str());
     if (child == NULL) {
       throw InputException("The algorithm xml misses the parameter " + first_order_children[i] +
-                                     ", child of the parameter algorithm-settings.");
+                           ", child of the parameter algorithm-settings.");
+    }
+  }
+};
+
+void InputsAssert::IsValidSamplerXML(std::string path){
+  IsFileCorrect(path, true);
+
+  tinyxml2::XMLDocument file;
+  file.LoadFile(path.c_str());
+
+  auto settings = file.FirstChildElement("sampler-settings");
+  if (settings == NULL) {
+    throw InputException("The sampler xml misses the parameter sampler-settings.");
+  }
+
+  std::string third_order_children[] = {"type", "number-of-iterations"};
+  for(auto second_order_child = settings->FirstChildElement(); second_order_child != NULL;
+      second_order_child = second_order_child->NextSiblingElement()) {
+    for (int i = 0; i < 2; i++) {
+      auto child = second_order_child->FirstChildElement(third_order_children[i].c_str());
+      if (child == NULL) {
+        throw InputException("The algorithm xml misses the parameter " + third_order_children[i] +
+                             ", child of the parameter algorithm-settings.");
+      }
     }
   }
 };

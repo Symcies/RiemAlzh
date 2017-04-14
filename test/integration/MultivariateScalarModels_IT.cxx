@@ -1,18 +1,5 @@
 #include "MultivariateScalarModels_IT.h"
 
-#include <iostream>
-#include <fstream>
-
-#include "Algorithm.h"
-#include "AlgorithmSettings.h"
-#include "BlockedGibbsSampler.h"
-#include "DataSettings.h"
-#include "ModelSettings.h"
-#include "MultivariateModel.h"
-#include "UnivariateModel.h"
-#include "Observations.h"
-
-
 extern const std::string GVT::BUILD_DIR;
 extern const std::string GVT::TEST_DIR;
 extern const std::string GVT::TEST_DATA_DIR;
@@ -39,28 +26,14 @@ namespace test {
 
   /// CORRECT EXECUTION TESTS
 
-  TEST_F(MultivariateScalarModels_IT, correct_real_dataset) {
-    //TODO: replace with the pipeline when existing
+  TEST_F(MultivariateScalarModels_IT, correct_real_dataset) {/*
     try {
-      /// Load the file arguments
-      io::ModelSettings     model_settings((GVT::MULTIVAR_MODEL_CORRECT).c_str());
-      io::AlgorithmSettings algo_settings((GVT::ALGORITHM_CORRECT).c_str());
-      io::RealDataSettings data_settings((GVT::MULTIVAR_DATA_CORRECT).c_str());
-      /// Initialize the sampler
-      std::shared_ptr<AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();
-
-      /// Initialize the model
-      std::shared_ptr<AbstractModel> model;
-      model = std::make_shared<MultivariateModel>(model_settings);
-
-      /// Initialize the data
-      Observations obs;
-      obs = io::ReadData::ReadObservations(data_settings);
-      obs.InitializeGlobalAttributes();
-
-      /// Algorithm pipeline
-      auto algo = std::make_shared<Algorithm>(algo_settings, model, sampler);
-      algo->ComputeMCMCSAEM(obs);
+  //TODO: will have to change in order not to use strdup
+      char* params[] = {"Longitudina", "fit", strdup(GVT::MULTIVAR_MODEL_CORRECT.c_str()), strdup(GVT::ALGORITHM_CORRECT.c_str()),
+                        strdup(GVT::MULTIVAR_DATA_CORRECT.c_str()),strdup(GVT::SAMPLER_CORRECT.c_str())};
+      fit(6, params);
+    } catch(InputException exception) {
+      FAIL() << "Received exception " << exception.what();
     } catch(std::exception exception) {
       FAIL() << "Received exception " << exception.what();
     }
@@ -74,32 +47,41 @@ namespace test {
       generated_file >> gen_value;
       ASSERT_EQ(ref_value, gen_value);
     }
-    std::remove((GVT::TEST_DIR + "log_multivariate_file.txt").c_str());
+    std::remove((GVT::TEST_DIR + "log_multivariate_file.txt").c_str());*/
   }
 
   TEST_F(MultivariateScalarModels_IT, correct_simulated_dataset) {
     //TODO: replace with the pipeline when existing
     try {
+      //TODO: will have to change in order not to use strdup
       /// Load the file arguments
       io::ModelSettings model_settings((GVT::MULTIVAR_MODEL_CORRECT).c_str());
       io::AlgorithmSettings algo_settings((GVT::ALGORITHM_CORRECT).c_str());
       io::SimulatedDataSettings data_settings((GVT::SIMULATED_DATA_CORRECT).c_str());
-
-      /// Initialize the sampler
-      std::shared_ptr <AbstractSampler> sampler = std::make_shared<BlockedGibbsSampler>();
+      io::SamplerSettings sampler_settings((GVT::SAMPLER_CORRECT).c_str());
 
       /// Initialize the model
       std::shared_ptr <AbstractModel> model;
       model = std::make_shared<MultivariateModel>(model_settings);
+std::cout << "2" << std::endl;
 
       /// Initialize the data
       Observations obs;
       obs = model->SimulateData(data_settings, true);
+std::cout << "3" << std::endl;
 
       /// Algorithm pipeline
-      auto algo = std::make_shared<Algorithm>(algo_settings, model, sampler);
+      auto algo = std::make_shared<Algorithm>(algo_settings);
+std::cout << "4" << std::endl;
+      algo->SetModel(model);
+std::cout << "5" << std::endl;
+      algo->AddSamplers(sampler_settings);
+std::cout << "6" << std::endl;
       algo->ComputeMCMCSAEM(obs);
-    } catch(std::exception exception){
+std::cout << "7" << std::endl;
+    }  catch(InputException exception) {
+      FAIL() << "Received exception " << exception.what();
+    } catch(std::exception exception) {
       FAIL() << "Received exception " << exception.what();
     }
 

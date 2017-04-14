@@ -10,6 +10,8 @@
 
 #include "Algorithm.h"
 
+#include "fit.h"
+
 void fit(int argc, char* argv[]) {
   
   /// Load the XML file arguments
@@ -36,6 +38,7 @@ void fit(int argc, char* argv[]) {
   /// Eventually simulate data (on option)
   /// Cannot be used ONLy beause the data_settings is reading the parameter <data-type>
   /// Maybe there should be two different
+  /// TODO: yes I believe there should
   //io::SimulatedDataSettings simulated_data_settings(argv[4]);
   //model->SimulateData(simulated_data_settings);
 }

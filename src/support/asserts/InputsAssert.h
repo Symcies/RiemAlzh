@@ -23,6 +23,7 @@ public:
   static void IsXMLValid(std::string path);
   static void IsValidModelXML(std::string path);
   static void IsValidAlgoXML(std::string path);
+  static void IsValidSamplerXML(std::string path);
   static void IsValidDataXML(std::string path);
   static void IsValidSimulatedData(const tinyxml2::XMLElement * settings);
   static void IsValidRealData(const tinyxml2::XMLElement * settings);

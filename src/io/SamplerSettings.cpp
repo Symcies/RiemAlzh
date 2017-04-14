@@ -3,7 +3,8 @@
 namespace io {
 
 SamplerSettings::SamplerSettings(const char *xml_file) {
-  
+  InputsAssert::IsValidSamplerXML(xml_file);
+
   number_of_samplers_ = 0;
   sampler_types_.clear();
   sampler_number_of_iterations_.clear();

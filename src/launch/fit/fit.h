@@ -1,8 +1,3 @@
-//
-// Created by FOURRIER Clementine on 14/04/2017.
-//
+#pragma once
 
-#ifndef LONGITUDINA_FIT_H
-#define LONGITUDINA_FIT_H
-
-#endif //LONGITUDINA_FIT_H
+void fit(int argc, char* argv[]);
