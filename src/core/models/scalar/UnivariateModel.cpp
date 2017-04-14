@@ -25,42 +25,40 @@ void UnivariateModel::Initialize(const Observations &obs)
   manifold_dim_        = obs.GetSubjectObservations(0).GetCognitiveScore(0).size();
   subjects_tot_num_    = obs.GetNumberOfSubjects();
   individual_obs_date_ = obs.GetObservations();
-  subj_time_points_    = obs.GetObservations();
+  individual_time_points_ = obs.GetObservations();
   obs_tot_num_         = obs.GetTotalNumberOfObservations();
   sum_obs_             = obs.GetTotalSumOfCognitiveScores();
-
-  /// Population variables
-  /// (Initialization of the random variable m_Random Variable
-  /// and the associated number of realizations m_RealizationPerRandomVariable)
-  noise_ = std::make_shared<GaussianRandomVariable>(0.0, 0.00001);
   last_loglikelihood_.set_size(subjects_tot_num_);
-
-  rand_var_.AddRandomVariable("P", "Gaussian", {0.02, 0.0001*0.0001});
+  
+  noise_ = std::make_shared<GaussianRandomVariable>(rv_params_.at("noise").first[0], rv_params_.at("noise").first[1]);
+  
+  /// Population variables
+  rand_var_.AddRandomVariable("P", "Gaussian", rv_params_.at("P").first);
   asso_num_real_per_rand_var_["P"] = 1;
-
-  /// Individual realizations
-  /// (Initialization of the random variable m_Random Variable
-  /// and the associated number of realizations m_RealizationPerRandomVariable)
-  rand_var_.AddRandomVariable("Ksi", "Gaussian", {0.13, 0.0004});
+  proposition_distribution_variance_["P"] = rv_params_.at("P").second;
+  
+  rand_var_.AddRandomVariable("Ksi", "Gaussian", rv_params_.at("Ksi").first);
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
+  proposition_distribution_variance_["Ksi"] = rv_params_.at("Ksi").second;
+  
 
-  rand_var_.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
+  rand_var_.AddRandomVariable("Tau", "Gaussian", rv_params_.at("Tau").first);
   asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
+  proposition_distribution_variance_["Tau"] = rv_params_.at("Tau").second;
 }
 
-
-ScalarType UnivariateModel::InitializePropositionDistributionVariance(std::string name) const
-{
-  name = name.substr(0, name.find_first_of("#"));
-
-  /// It returns the variance of the proposition distribution
-  /// of a given random variable of the model
-  if("P" == name)
-    return 0.00001;
-  if("Ksi" == name)
-    return 0.0001;
-  if("Tau" == name)
-    return 0.5;
+void UnivariateModel::InitializeValidationDataParameters(const io::SimulatedDataSettings &data_settings,
+                                                         const io::ModelSettings &model_settings) {
+  manifold_dim_ = data_settings.GetDimensionOfSimulatedObservations();
+  
+  noise_ = std::make_shared<GaussianRandomVariable>(rv_params_.at("noise").first[0], rv_params_.at("noise").first[1]);
+  
+  rand_var_.AddRandomVariable("P", "Gaussian", rv_params_.at("P").first);
+  asso_num_real_per_rand_var_["P"] = 1;
+  
+  /// Individual variables
+  rand_var_.AddRandomVariable("Ksi", "Gaussian", rv_params_.at("Ksi").first);
+  rand_var_.AddRandomVariable("Tau", "Gaussian", rv_params_.at("Tau").first);
 }
 
 void UnivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& block_info, const std::vector<std::string> names)
@@ -218,14 +216,11 @@ Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_setti
 
 
   /// Initialize the model
-  manifold_dim_ = data_settings.GetDimensionOfSimulatedObservations();
+  individual_obs_date_.clear();
+  individual_time_points_.clear();
+  
   subjects_tot_num_  = data_settings.GetNumberOfSimulatedSubjects();
-
-  if (need_data){
-    InitializeFakeRandomVariables();
-  }
-
-  asso_num_real_per_rand_var_["P"] = 1;
+  
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
   asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
 
@@ -233,8 +228,7 @@ Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_setti
 
   /// Update the model
   position_ = 1.0 / (1 + exp(-reals.at("P", 0)));
-
-
+  
   /// Simulate the data
   //Find a way to initialize depending on the test case
   std::random_device rand_device;
@@ -251,7 +245,9 @@ Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_setti
     /// Get a random number of timepoints and sort them
     VectorType time_points = time_points_num.Samples(uni_distrib(rand_num_gen));
     time_points.sort();
-    subj_time_points_.push_back(time_points);
+    individual_obs_date_.push_back(time_points);
+    VectorType transformed_time_points = reals.at("Ksi")(i) * (time_points - reals.at("Ksi")(i));
+    individual_time_points_.push_back(transformed_time_points);
 
     /// Simulate the data base on the time-points
     IndividualObservations indiv_obs(time_points);
@@ -294,6 +290,7 @@ std::vector<AbstractModel::MiniBlock> UnivariateModel::GetSamplerBlocks() const
 
     blocks.push_back(indiv_block);
   }
+  
 
   return blocks;
 }
@@ -437,25 +434,6 @@ void UnivariateModel::SaveData(unsigned int iter_num, const Realizations &reals)
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Debugging Method(s)  - should not be used in production, maybe in unit function but better erased:
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void UnivariateModel::InitializeFakeRandomVariables()
-{
-  /// It initialize the model with particular random variables, mainly needed to simulate data
-  /// Pitfall : This is not generic for need. Both with the SimulateData function, is has to be redefined / refactored
-  /// according to the needs
-
-  /// Population variables
-  noise_ = std::make_shared<GaussianRandomVariable>(0.0, 0.0001);
-  rand_var_.AddRandomVariable("P", "Gaussian", {0.02, 0.00001* 0.00001});
-
-  /// Individual variables
-  rand_var_.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
-  rand_var_.AddRandomVariable("Tau", "Gaussian", {70, 0.25});
-
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Method(s) :
@@ -473,14 +451,14 @@ void UnivariateModel::ComputeSubjectTimePoint(const Realizations &reals, const i
   if(subject_num != -1) {
     double acc_factor = exp(reals.at("Ksi", subject_num));
     double time_shift = reals.at("Tau", subject_num);
-    subj_time_points_[subject_num] = acc_factor * (individual_obs_date_[subject_num] - time_shift);
+    individual_time_points_[subject_num] = acc_factor * (individual_obs_date_[subject_num] - time_shift);
   }
   else {
     for(size_t i = 0; i < subjects_tot_num_; ++i) {
       double acc_factor = exp(reals.at("Ksi")(i));
       double time_shift = reals.at("Tau")(i);
       
-      subj_time_points_[i] = acc_factor * (individual_obs_date_[i] - time_shift);
+      individual_time_points_[i] = acc_factor * (individual_obs_date_[i] - time_shift);
     }
   }
 
@@ -489,7 +467,7 @@ void UnivariateModel::ComputeSubjectTimePoint(const Realizations &reals, const i
 
 AbstractModel::VectorType UnivariateModel::ComputeParallelCurve(int subject_num, int obs_num)
 {
-  ScalarType time_point = subj_time_points_[subject_num](obs_num);
+  ScalarType time_point = individual_time_points_[subject_num](obs_num);
 
   ScalarType parallel_curve = exp( - time_point );
   parallel_curve *= (1.0 / position_ - 1);
