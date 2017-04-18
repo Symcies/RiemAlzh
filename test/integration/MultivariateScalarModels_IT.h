@@ -10,6 +10,7 @@
 #include "test/test_global.h"
 
 #include "fit.h"
+#include "validate.h"
 
 #include "Algorithm.h"
 #include "AlgorithmSettings.h"

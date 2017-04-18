@@ -29,18 +29,17 @@ void UnivariateModel::Initialize(const Observations &obs)
   obs_tot_num_         = obs.GetTotalNumberOfObservations();
   sum_obs_             = obs.GetTotalSumOfCognitiveScores();
   last_loglikelihood_.set_size(subjects_tot_num_);
-  
+
   noise_ = std::make_shared<GaussianRandomVariable>(rv_params_.at("noise").first[0], rv_params_.at("noise").first[1]);
-  
+
   /// Population variables
   rand_var_.AddRandomVariable("P", "Gaussian", rv_params_.at("P").first);
   asso_num_real_per_rand_var_["P"] = 1;
   proposition_distribution_variance_["P"] = rv_params_.at("P").second;
-  
+
   rand_var_.AddRandomVariable("Ksi", "Gaussian", rv_params_.at("Ksi").first);
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
   proposition_distribution_variance_["Ksi"] = rv_params_.at("Ksi").second;
-  
 
   rand_var_.AddRandomVariable("Tau", "Gaussian", rv_params_.at("Tau").first);
   asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;

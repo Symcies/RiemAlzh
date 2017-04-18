@@ -39,7 +39,6 @@ void Algorithm::AddSamplers(io::SamplerSettings& settings) {
 void Algorithm::ComputeMCMCSAEM(const Observations& obs) {
   /// This function is core to the software. It initialize parts of the model and sampler
   /// and runs the MCMC-SAEM algorithm. The class attributes define the properties of the MCMC-SAEM
-
   InitializeModel(obs);
   InitializeStochasticSufficientStatistics(obs);
   InitializeSampler();

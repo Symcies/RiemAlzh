@@ -19,7 +19,6 @@ void fit(int argc, char* argv[]) {
   io::AlgorithmSettings  algo_settings(argv[3]);
   io::RealDataSettings   data_settings(argv[4]);
   io::SamplerSettings sampler_settings(argv[5]);
-  
   /// Observations
   Observations obs = io::ReadData::ReadObservations(data_settings);
   obs.InitializeGlobalAttributes();

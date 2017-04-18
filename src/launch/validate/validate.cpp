@@ -10,6 +10,8 @@
 
 #include "Algorithm.h"
 
+#include "validate.h"
+
 void validate(int argc, char* argv[]) {
 
   /// Load the XML file arguments

@@ -31,14 +31,13 @@ namespace test {
       generated_file >> gen_value;
       ASSERT_EQ(ref_value, gen_value);
     }
-    std::remove((GVT::TEST_DIR + "log_univariate_file.txt").c_str());
 
   }
 
   TEST_F(UnivariateScalarModels_IT, execution_of_univariate_model_on_correct_simulated_dataset) {
-    char* params[] = {"Longitudina", "fit", strdup(GVT::UNIVAR_MODEL_CORRECT.c_str()), strdup(GVT::ALGORITHM_CORRECT.c_str()),
+    char* params[] = {"Longitudina", "validate", strdup(GVT::UNIVAR_MODEL_CORRECT.c_str()), strdup(GVT::ALGORITHM_CORRECT.c_str()),
                   strdup(GVT::SIMULATED_DATA_CORRECT.c_str()),strdup(GVT::SAMPLER_CORRECT.c_str())};
-    fit(6, params);
+    validate(6, params);
 
     std::ifstream reference_file(GVT::TEST_OUTPUTS_DIR + "ref_log_univariate_simulated_file.txt");
     std::ifstream generated_file(GVT::TEST_DIR + "log_univariate_file.txt");
@@ -48,7 +47,6 @@ namespace test {
       generated_file >> gen_value;
       ASSERT_EQ(ref_value, gen_value);
     }
-    std::remove((GVT::TEST_DIR + "log_univariate_file.txt").c_str());
   }
 
 }

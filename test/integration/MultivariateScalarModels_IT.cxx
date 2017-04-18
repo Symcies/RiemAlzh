@@ -26,7 +26,7 @@ namespace test {
 
   /// CORRECT EXECUTION TESTS
 
-  TEST_F(MultivariateScalarModels_IT, correct_real_dataset) {/*
+  TEST_F(MultivariateScalarModels_IT, correct_real_dataset) {
     try {
   //TODO: will have to change in order not to use strdup
       char* params[] = {"Longitudina", "fit", strdup(GVT::MULTIVAR_MODEL_CORRECT.c_str()), strdup(GVT::ALGORITHM_CORRECT.c_str()),
@@ -47,42 +47,18 @@ namespace test {
       generated_file >> gen_value;
       ASSERT_EQ(ref_value, gen_value);
     }
-    std::remove((GVT::TEST_DIR + "log_multivariate_file.txt").c_str());*/
   }
 
   TEST_F(MultivariateScalarModels_IT, correct_simulated_dataset) {
-    //TODO: replace with the pipeline when existing
     try {
       //TODO: will have to change in order not to use strdup
       /// Load the file arguments
-      io::ModelSettings model_settings((GVT::MULTIVAR_MODEL_CORRECT).c_str());
-      io::AlgorithmSettings algo_settings((GVT::ALGORITHM_CORRECT).c_str());
-      io::SimulatedDataSettings data_settings((GVT::SIMULATED_DATA_CORRECT).c_str());
-      io::SamplerSettings sampler_settings((GVT::SAMPLER_CORRECT).c_str());
-
-      /// Initialize the model
-      std::shared_ptr <AbstractModel> model;
-      model = std::make_shared<MultivariateModel>(model_settings);
-std::cout << "2" << std::endl;
-
-      /// Initialize the data
-      Observations obs;
-      obs = model->SimulateData(data_settings, true);
-std::cout << "3" << std::endl;
-
-      /// Algorithm pipeline
-      auto algo = std::make_shared<Algorithm>(algo_settings);
-std::cout << "4" << std::endl;
-      algo->SetModel(model);
-std::cout << "5" << std::endl;
-      algo->AddSamplers(sampler_settings);
-std::cout << "6" << std::endl;
-      algo->ComputeMCMCSAEM(obs);
-std::cout << "7" << std::endl;
-    }  catch(InputException exception) {
-      FAIL() << "Received exception " << exception.what();
-    } catch(std::exception exception) {
-      FAIL() << "Received exception " << exception.what();
+      char* params[] = {"Longitudina", "validate", strdup(GVT::MULTIVAR_MODEL_CORRECT.c_str()),
+                        strdup(GVT::ALGORITHM_CORRECT.c_str()),
+                        strdup(GVT::SIMULATED_DATA_CORRECT.c_str()),strdup(GVT::SAMPLER_CORRECT.c_str())};
+      validate(6, params);
+    } catch(std::exception exception){
+      FAIL() << "Exception thrown : " << exception.what();
     }
 
     std::ifstream reference_file((GVT::TEST_OUTPUTS_DIR + "ref_log_multivariate_simulated_file.txt").c_str());
@@ -94,7 +70,6 @@ std::cout << "7" << std::endl;
       generated_file >> gen_value;
       ASSERT_EQ(ref_value, gen_value);
     }
-    std::remove((GVT::TEST_DIR + "log_multivariate_file.txt").c_str());
   }
 
 /* This area might be redundant with the unit failre tests

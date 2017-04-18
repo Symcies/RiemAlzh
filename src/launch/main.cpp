@@ -3,8 +3,8 @@
 
 using namespace std;
 
-#include "validate.cpp"
-#include "fit.cpp"
+#include "validate.h"
+#include "fit.h"
 
 
 int main(int argc, char* argv[]) {

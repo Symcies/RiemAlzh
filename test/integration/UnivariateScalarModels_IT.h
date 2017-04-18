@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "fit.h"
+#include "validate.h"
 
 #include "test/test_global.h"
 

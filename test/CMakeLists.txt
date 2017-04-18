@@ -1,5 +1,7 @@
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
+SET(CMAKE_BUILD_TYPE DEBUG)
+
 file(GLOB test_files
         RunTests.cxx
         test_global.h

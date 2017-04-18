@@ -345,6 +345,7 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
   individual_time_points_.clear();
   
   subjects_tot_num_  = data_settings.GetNumberOfSimulatedSubjects();
+
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
   asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
 

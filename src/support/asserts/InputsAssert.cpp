@@ -52,7 +52,7 @@ void InputsAssert::IsValidModelXML(std::string path){
   }
 
   auto variables = settings->FirstChildElement("variables");
-  if (indep_source_num == NULL) {
+  if (variables == NULL) {
     throw InputException("The model xml misses the parameter variables, "
                                  "child of the parameter model-settings.");
   }
