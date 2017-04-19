@@ -13,6 +13,8 @@ namespace GVT{ //for global variables test
   extern const std::string MULTIVAR_MODEL_CORRECT;
   extern const std::string MULTIVAR_MODEL_UNPARSABLE_XML;
   extern const std::string MULTIVAR_MODEL_MISSING_PARAM;
+  extern const std::string MULTIVAR_MODEL_MISSING_VAR;
+  extern const std::string MULTIVAR_MODEL_INCORRECT_PARAM_TYPE;
 
   extern const std::string UNIVAR_MODEL_CORRECT;
   extern const std::string UNIVAR_MODEL_UNPARSABLE_XML;
@@ -30,6 +32,9 @@ namespace GVT{ //for global variables test
 
   extern const std::string UNIVAR_DATA_CORRECT;
   extern const std::string MULTIVAR_DATA_CORRECT;
+  extern const std::string MULTIVAR_DATA_UNPARSABLE_XML;
+  extern const std::string MULTIVAR_DATA_MISSING_PARAM;
+  extern const std::string MULTIVAR_DATA_INCORRECT_PARAM_TYPE;
   extern const std::string SIMULATED_DATA_CORRECT;
 
   extern const std::string SAMPLER_CORRECT;

@@ -1,0 +1,99 @@
+<model-settings>
+
+<!-- Type of the model : {Univariate, Multivariate, Network, ...} -->
+  <type>Multivariate</type>
+
+  <!-- Name of the outputs files -->
+  <output-name>AwesomeNetwork</output-name>
+
+  <number-of-independent-sources>7</number-of-independent-sources>
+
+
+  <variables>
+    <G>
+      <name>G</name>
+      <initial-parameters>
+        <mean>0.12</mean>
+        <variance>0.00000001</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.10</mean>
+        <variance>0.00001</variance>
+      </second-parameters>
+      <proposition-variance>0.00001</proposition-variance>
+    </G>
+
+    <Delta>
+      <name>Delta</name>
+      <initial-parameters>
+        <mean>0</mean>
+        <variance>0.000009</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.0002</mean>
+        <variance>0.001</variance>
+      </second-parameters>
+      <proposition-variance>0.0001</proposition-variance>
+    </Delta>
+
+    <Beta>
+      <name>Beta</name>
+      <initial-parameters>
+        <mean>0</mean>
+        <variance>0.000001</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.0001</mean>
+        <variance>0.001</variance>
+      </second-parameters>
+      <proposition-variance>0.0001</proposition-variance>
+    </Beta>
+
+
+    <Ksi>
+      <name>Ksi</name>
+      <initial-parameters>
+        <mean>0.13</mean>
+        <variance>0.0004</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.10</mean>
+        <variance>0.000004</variance>
+      </second-parameters>
+      <proposition-variance>0.0001</proposition-variance>
+    </Ksi>
+
+    <Tau>
+      <name>Tau</name>
+      <initial-parameters>
+        <mean>75</mean>
+        <variance>0.025</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>70</mean>
+        <variance>25</variance>
+      </second-parameters>
+      <proposition-variance>0.5</proposition-variance>
+    </Tau>
+
+
+    <S>
+      <name>S</name>
+      <initial-parameters>
+        <mean>0</mean>
+        <variance>1</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>85</mean>
+        <variance>25</variance>
+      </second-parameters>
+      <proposition-variance>0.7</proposition-variance>
+    </S>
+
+  </variables>
+
+  <path-to-kernel-Kxd>/Users/igor.koval/Documents/Work/RiemAlzh/development/data/Kxd_16.csv</path-to-kernel-Kxd>
+  <path-to-kernel-invKd>/Users/igor.koval/Documents/Work/RiemAlzh/development/data/invKd_16.csv</path-to-kernel-invKd>
+
+
+</model-settings>

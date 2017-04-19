@@ -14,6 +14,8 @@ namespace GVT {
   extern const std::string MULTIVAR_MODEL_CORRECT = TEST_MODEL_DIR + "multivariate_model_correct_settings.xml";
   extern const std::string MULTIVAR_MODEL_UNPARSABLE_XML = TEST_MODEL_DIR + "multivariate_model_wrong_settings_unparsable_xml.xml";
   extern const std::string MULTIVAR_MODEL_MISSING_PARAM = TEST_MODEL_DIR + "multivariate_model_wrong_settings_missing_param.xml";
+  extern const std::string MULTIVAR_MODEL_MISSING_VAR = TEST_MODEL_DIR + "multivariate_model_wrong_settings_missing_variable.xml";
+  extern const std::string MULTIVAR_MODEL_INCORRECT_PARAM_TYPE = TEST_MODEL_DIR + "multivariate_model_wrong_settings_wrong_type.xml";
 
   extern const std::string UNIVAR_MODEL_CORRECT = TEST_MODEL_DIR + "univariate_model_correct_settings.xml";
   extern const std::string UNIVAR_MODEL_UNPARSABLE_XML = TEST_MODEL_DIR + "univariate_model_wrong_settings_unparsable_xml.xml";
@@ -30,7 +32,12 @@ namespace GVT {
 
   /// DATA
   extern const std::string UNIVAR_DATA_CORRECT = TEST_DATA_DIR + "univariate_data_correct_real_settings.xml";
+
   extern const std::string MULTIVAR_DATA_CORRECT = TEST_DATA_DIR + "multivariate_data_correct_real_settings.xml";
+  extern const std::string MULTIVAR_DATA_UNPARSABLE_XML = TEST_DATA_DIR + "multivariate_data_wrong_settings_unparsable_xml.xml";
+  extern const std::string MULTIVAR_DATA_MISSING_PARAM = TEST_DATA_DIR + "multivariate_data_wrong_settings_missing_param.xml";
+  extern const std::string MULTIVAR_DATA_INCORRECT_PARAM_TYPE = TEST_DATA_DIR + "multivariate_data_wrong_settings_wrong_type.xml";
+
   extern const std::string SIMULATED_DATA_CORRECT = TEST_DATA_DIR + "data_correct_simulated_settings.xml";
 
   /// SAMPLER

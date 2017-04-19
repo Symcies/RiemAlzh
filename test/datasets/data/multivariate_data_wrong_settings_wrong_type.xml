@@ -1,0 +1,34 @@
+<data-settings>
+
+  <!-- Defines if should read real data (true) of simulate data (false) -->
+  <data-type>test</data-type>
+
+
+  <!-- In case of real data -->
+  <real-data>
+    <folder-path>/Users/clementine.fourrier/RiemAlzh/test/datasets/data/data_files_multivariate/</folder-path>
+    <group-file>group.csv</group-file>
+    <timepoints-file>X.csv</timepoints-file>
+
+    <!-- Type of data to read : if nothing, then the file is not read -->
+    <observations>
+
+      <!-- Cognitive Scores attributes -->
+      <cognitive-scores>
+          <presence>yes</presence>
+          <path-to-data>Y.csv</path-to-data>
+          <dimension>4</dimension>
+      </cognitive-scores>
+
+      <!-- Landmarks attributes -->
+      <landmarks>
+          <presence>no</presence>
+          <path-to-data>Y.csv</path-to-data>
+          <dimension>1827</dimension>
+      </landmarks>
+
+    </observations>
+
+  </real-data>
+
+</data-settings>
