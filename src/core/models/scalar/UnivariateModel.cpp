@@ -7,6 +7,7 @@
 //TODO(igor): why empty and param?
 UnivariateModel::UnivariateModel(io::ModelSettings &model_settings)
 {
+  output_file_name_ = model_settings.GetOutputFileName();
 }
 
 UnivariateModel::~UnivariateModel()

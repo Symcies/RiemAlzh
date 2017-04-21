@@ -5,6 +5,7 @@ using namespace std;
 
 #include "validate.h"
 #include "fit.h"
+#include "PythonUtils.h"
 
 
 int main(int argc, char* argv[]) {
@@ -18,7 +19,9 @@ int main(int argc, char* argv[]) {
   if(string(argv[1]) == "fit")             fit(argc, argv);
   else if (string(argv[1]) == "validate")  validate(argc, argv);
   else std::cerr << "Second argument should be 'fit' or 'predict'" << std::endl;
-  
+
+  PythonUtils utils = PythonUtils(argv);
+  utils.CallPythonScript();
 
   return 0;
 /*

@@ -246,7 +246,7 @@ void InputsAssert::IsValidRealData(const tinyxml2::XMLElement * settings){
   std::string second_order_children[] =
           {"group-file", "timepoints-file"};
   for (int i = 0; i < 2; i++){
-    auto child = real->FirstChildElement(second_order_children[i].c_str()); 
+    auto child = real->FirstChildElement(second_order_children[i].c_str());
     if (child == NULL) {
       throw InputException("The data xml misses the parameter " + second_order_children[i] +
                              ", child of the parameter real-data.");

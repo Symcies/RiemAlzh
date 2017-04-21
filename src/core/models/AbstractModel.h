@@ -141,7 +141,7 @@ protected:
   InitialRVParameters rv_params_;
   
   /// Output file
-  std::ofstream out_params_;
+  std::string output_file_name_;
 
   /// Sum of the observations - corresponds to the first sufficient statistic
   double sum_obs_;

@@ -44,6 +44,8 @@ public:
 
   std::string GetInvertKernelPath() const { return invert_kernel_matrix_path_; }
 
+  std::string GetOutputFileName() const { return output_file_name_; }
+
   std::string GetInterpolationKernelPath() const { return interpolation_matrix_path_; }
   
   InitialRVParameters GetInitialRandomVariables() const { return init_random_variables_; }

@@ -18,6 +18,7 @@ ModelSettings::ModelSettings(std::string xml_file) {
   independent_sources_nb_ = std::stoi(settings->FirstChildElement("number-of-independent-sources")->GetText());
   LoadInitialRandomVariables(settings->FirstChildElement("variables"));
 
+  output_file_name_ = settings->FirstChildElement("output-name")->GetText();
   LoadModel(settings);
 
 }
