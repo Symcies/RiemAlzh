@@ -36,7 +36,9 @@ void BlockedGibbsSampler::Sample(Realizations& reals, AbstractModel& model, cons
   /// Initialization of the sampler and the model
   cur_block_info_ = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
   model.UpdateModel(reals, cur_block_info_);
+  //std::cout << " 1. " << std::endl;
   VectorType log_likelihood = ComputeLogLikelihood(model, obs);
+  //std::cout << "ok --> " << log_likelihood.sum() << std::endl;
   UpdateLastLogLikelihood(model, log_likelihood);
 
   for (int i = 0; i < blocks_.size(); ++i) {
@@ -73,6 +75,10 @@ void BlockedGibbsSampler::OneBlockSample(int block_num, Realizations& reals,
   VectorType computed_log_likelihood = ComputeLogLikelihood(model, obs);
   acceptation_ratio += computed_log_likelihood.sum();
 
+  
+  // TODO : TO ERASE
+  //std::cout << "   -  LL : " << computed_log_likelihood.sum() << " - " << GetPreviousLogLikelihood(model)  << std::endl;
+  
   /// Compute the aceceptance ratio
   acceptation_ratio = exp(std::min(acceptation_ratio, 0.0));
 
@@ -86,10 +92,12 @@ void BlockedGibbsSampler::OneBlockSample(int block_num, Realizations& reals,
       reals.at(name, real_num) = prev_real;
     }
 
+    //std::cout << "     -  REJECT -  likelihood : " << GetPreviousLogLikelihood(model) << std::endl; 
     model.UpdateModel(reals, cur_block_info_, cur_block_params_);
   }
       /// Acceptation : Candidate is accepted
   else {
+    //std::cout << "     -  ACCEPT -  likelihood : " << computed_log_likelihood.sum() << std::endl; 
     UpdateLastLogLikelihood(model, computed_log_likelihood);
   }
   
@@ -100,28 +108,37 @@ ScalarType BlockedGibbsSampler::ComputePriorRatioAndUpdateRealizations(Realizati
   double acceptance_ratio = 0;
 
   for (auto it = cur_block_info_.begin(); it != cur_block_info_.end(); ++it) {
-      /// Initialization
-      std::string name_real = std::get<1>(*it);
-      int key = reals.ReverseNameToKey(name_real);
-      unsigned int real_num = std::get<2>(*it);
-      cur_block_params_.push_back(name_real);
+    /// Initialization
+    std::string name_real = std::get<1>(*it);
+    int key = reals.ReverseNameToKey(name_real);
+    unsigned int real_num = std::get<2>(*it);
+    cur_block_params_.push_back(name_real);
 
-      /// Get the current realization and recover it
-      auto cur_rand_var = model.GetRandomVariable(key);
-      ScalarType cur_real = reals.at(key, real_num);
-      recover_params_.push_back(std::make_tuple(name_real, real_num, cur_real));
+    /// Get the current realization and recover it
+    auto cur_rand_var = model.GetRandomVariable(key);
+    ScalarType cur_real = reals.at(key, real_num);
+    recover_params_.push_back(std::make_tuple(name_real, real_num, cur_real));
 
-      /// Get a candidate realization
-      auto candidate_rand_var = candidate_rand_var_->GetRandomVariable(key, real_num);
-      candidate_rand_var.SetMean(cur_real);
-      ScalarType candidate_real = candidate_rand_var.Sample();
+    /// Get a candidate realization
+    auto candidate_rand_var = candidate_rand_var_->GetRandomVariable(key, real_num);
+    candidate_rand_var.SetMean(cur_real);
+    ScalarType candidate_real = candidate_rand_var.Sample();
 
-      /// Calculate the acceptance ratio
-      acceptance_ratio += cur_rand_var->LogLikelihood(candidate_real);
-      acceptance_ratio -= cur_rand_var->LogLikelihood(cur_real);
-
-      /// Update the NewRealizations
-      reals.at(name_real, real_num) = candidate_real;
+    /// Calculate the acceptance ratio
+    /*
+    acceptance_ratio += cur_rand_var->LogLikelihood(candidate_real);
+    acceptance_ratio -= cur_rand_var->LogLikelihood(cur_real);
+    */
+    ScalarType ok1 = cur_rand_var->LogLikelihood(candidate_real);
+    ScalarType ok2 = cur_rand_var->LogLikelihood(cur_real);
+    acceptance_ratio += ok1 - ok2;
+    //std::cout << "Prior : " << ok1 << " - " << ok2;
+     
+    /// Update the NewRealizations
+    reals.at(name_real, real_num) = candidate_real;
+    
+    
+    //std::cout << "if " << cur_real - candidate_real << " > 0, then  "; 
   }
 
   return acceptance_ratio;

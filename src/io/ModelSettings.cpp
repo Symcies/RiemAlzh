@@ -48,6 +48,8 @@ void ModelSettings::LoadModel(const tinyxml2::XMLElement *settings){
     LoadMultivariate(settings);
   } else if (InputsAssert::ToLowerCase(type_) == "univariate") {
     LoadUnivariate(settings);
+  } else if (InputsAssert::ToLowerCase(type_) == "gaussian") {
+    LoadGaussian(settings);
   } else {
     std::cerr << "The model type defined in model_settings.xml should be one of the following: "
             "Univariate, Multivariate, FastNetwork, Meshwork. Here, it was " << type_ << std::endl ;
@@ -105,6 +107,10 @@ void ModelSettings::LoadMultivariate(const tinyxml2::XMLElement *settings) {
 }
 
 void ModelSettings::LoadUnivariate(const tinyxml2::XMLElement *settings) {
+  PrintModelInfo();
+}
+
+void ModelSettings::LoadGaussian(const tinyxml2::XMLElement *settings) {
   PrintModelInfo();
 }
 

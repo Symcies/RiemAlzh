@@ -45,7 +45,7 @@ public:
   virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info);
 
   /// Compute the log likelihood of the model for a particular individual
-  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_);
+  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subject_num);
   
   /// Get the previous loglikelihood computed
   virtual ScalarType GetPreviousLogLikelihood(const MiniBlock& block_info);
@@ -63,5 +63,33 @@ public:
 
   /// Save the data into a file
   virtual void SaveData(unsigned int IterationNumber, const Realizations& reals);
+
+ private:
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Method(s) :
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Compute the parallel curve
+  VectorType ComputeParallelCurve(int subjects_num, int obs_num);
+  
+  /// Get the type of the block info
+  int GetType(const MiniBlock& block_info);
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Attribute(s)
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /// Noise model
+  std::shared_ptr< GaussianRandomVariable > noise_;
+  
+  /// gaussian realizations
+  VectorType GaussianRealizations;
+  
+  /// Real time of observation of each individual
+  std::vector<VectorType> individual_obs_date_;
+  
+  /// Last log-likelihood computed - vector of individual
+  VectorType last_loglikelihood_;
   
 };

@@ -5,6 +5,7 @@
 #include "AbstractModel.h"
 #include "UnivariateModel.h"
 #include "MultivariateModel.h"
+#include "GaussianModel.h"
 
 class ModelFactory {
  public:

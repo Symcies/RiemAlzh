@@ -128,7 +128,7 @@ void Algorithm::IterationMCMCSAEM(const Observations& obs, int iter){
 void Algorithm::ComputeSimulationStep(const Observations& obs, int iter)
 {
   /// It compute the simulate step to draw new realizations based on the previous one.
-  /// The previous realizations are kept to compute the acceptance ratio
+  /// The previous realizations are keupt to compute the acceptance ratio
 
   Realizations prev_reals = *realizations_;
   unsigned int sampler_number = GetSamplerNumber(iter);
@@ -218,8 +218,10 @@ void Algorithm::DisplayOutputs()
 void Algorithm::DisplayAcceptanceRatio() {
     std::cout << "AcceptRatio: ";
 
-    auto names_to_show = {"Tau", "Ksi"};
-
+   
+    //auto names_to_show = {"Tau", "Ksi"};
+    auto names_to_show = {"Gaussian"};
+  
     for(auto it = names_to_show.begin(); it != names_to_show.end(); ++it)
     {
         std::string name = *it;

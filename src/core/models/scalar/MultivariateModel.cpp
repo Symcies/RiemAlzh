@@ -136,7 +136,7 @@ void MultivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& 
   /// Given a list of names (which in fact corresponds to the variables that have potentially changed),
   /// the function updates the parameters associated to these names
 
-  int type = std::get<0>(block_info[0]);
+  int type = GetType(block_info);
 
   /// Possible parameters to update, depending on the name being in "vect<> names"
   bool compute_g       = false;
@@ -282,8 +282,7 @@ void MultivariateModel::UpdateRandomVariables(const SufficientStatisticsVector &
   const ScalarType * it_s3 = sufficient_stats_vector[2].memptr();
   const ScalarType * it_s4 = sufficient_stats_vector[3].memptr();
 
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
+  for(size_t i = 0; i < subjects_tot_num_; ++i) {
     ksi_mean     += it_s3[i];
     ksi_variance += it_s4[i];
   }
@@ -383,7 +382,7 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
 
     /// Simulate the data base on the time-points
     IndividualObservations indiv_obs(time_points);
-    std::vector<VectorType> cognitive_scores; // ICI
+    std::vector<VectorType> cognitive_scores;
     for(size_t j = 0; j < time_points.size(); ++j)
     {
       VectorType parallel_curve = ComputeParallelCurve(i, j);
@@ -451,11 +450,11 @@ AbstractModel::VectorType MultivariateModel::ComputeLogLikelihood(const Observat
   /// It computes the likelihood of the model. For each subject i, it sums its likelihood, namely the distance,
   /// for each time t_ij, between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
   
-  int type = std::get<0>(block_info[0]);
+  int type = GetType(block_info);
   
   if(type == -1) {
     VectorType loglikelihood(subjects_tot_num_);
-    ScalarType *l_ptr = ok.memptr();
+    ScalarType *l_ptr = loglikelihood.memptr();
     for (size_t i = 0; i < subjects_tot_num_; ++i)
       l_ptr[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
 
@@ -490,7 +489,7 @@ ScalarType MultivariateModel::ComputeIndividualLogLikelihood(const IndividualObs
 
 ScalarType MultivariateModel::GetPreviousLogLikelihood(const MiniBlock& block_info) {
   
-  int type = std::get<0>(block_info[0]);
+  int type = GetType(block_info);
   
   if (type == -1) {
     return last_loglikelihood_.sum();
@@ -505,7 +504,7 @@ ScalarType MultivariateModel::GetPreviousLogLikelihood(const MiniBlock& block_in
 
 void MultivariateModel::SetPreviousLogLikelihood(VectorType& log_likelihood, const MiniBlock& block_info) {
   
-  int type = std::get<0>(block_info[0]);
+  int type = GetType(block_info);
   
   if (type == -1) {
     last_loglikelihood_ = log_likelihood;
@@ -698,6 +697,28 @@ void MultivariateModel::ComputeBlock(const Realizations &reals)
     b[i] = (q + 1) * (q + 1) / q;
   }
 }
+
+
+int MultivariateModel::GetType(const MiniBlock &block_info) {
+  
+  int type = std::get<0>(block_info[0]);
+  
+  for(auto it = block_info.begin(); it != block_info.end(); ++it) {
+    int class_number = std::get<0>(*it);
+    std::string real_name = std::get<1>(*it);
+    int real_number = std::get<2>(*it);
+    
+    if(real_name == "G" || real_name == "Delta" || real_name == "Beta") {
+      return -1;
+    }
+    if(type != real_number) {
+      return -1;
+    }
+  }
+  
+  return type;
+}
+
 
 AbstractModel::VectorType MultivariateModel::ComputeParallelCurve(int subject_num, int obs_num)
 {

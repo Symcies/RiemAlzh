@@ -406,7 +406,7 @@ AbstractModel::VectorType NetworkModel::ComputeLogLikelihood(const Observations 
   
   if(type == -1) {
     VectorType loglikelihood(subjects_tot_num_);
-    ScalarType *l_ptr = ok.memptr();
+    ScalarType *l_ptr = loglikelihood.memptr();
     for (size_t i = 0; i < subjects_tot_num_; ++i)
       l_ptr[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
 

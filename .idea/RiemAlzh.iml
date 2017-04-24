@@ -34,6 +34,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/core/parameters/CandidateRandomVariables.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/ModelFactory.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/ModelFactory.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/models/prototypes/GaussianModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/models/prototypes/GaussianModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/AbstractModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/AbstractModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/scalar/UnivariateModel.h" isTestSource="false" />
@@ -71,11 +73,11 @@
       <sourceFolder url="file://$MODULE_DIR$/src/core/observations/IndividualObservations.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/observations/IndividualObservations.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/LinearAlgebra.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloLinearAlgebra.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloMatrixWrapper.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloMatrixWrapper_friend.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloVectorWrapper_friend.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloVectorWrapper.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloMatrixWrapper.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloLinearAlgebra.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloVectorWrapper_friend.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloMatrixWrapper_friend.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/asserts/InputsAssert.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/asserts/InputsAssert.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/asserts/InputException.h" isTestSource="false" />

@@ -7,6 +7,8 @@ std::shared_ptr<AbstractModel> ModelFactory::NewModel(io::ModelSettings &setting
     return std::make_shared<UnivariateModel>(settings);
   else if (settings.GetType() == "Multivariate")
     return std::make_shared<MultivariateModel>(settings);
+  else if (settings.GetType() == "Gaussian")
+    return std::make_shared<GaussianModel>(settings);
   else 
     std::cerr << "The model " << settings.GetType() << " does not belong to the possible models" << std::endl;
   

@@ -19,35 +19,169 @@ GaussianModel::~GaussianModel() {
 
 void GaussianModel::Initialize(const Observations &obs) {
   
+  /// Data-related attributes
+  manifold_dim_           = obs.GetSubjectObservations(0).GetCognitiveScore(0).size();
+  subjects_tot_num_       = obs.GetNumberOfSubjects();
+  individual_obs_date_    = obs.GetObservations();
+  obs_tot_num_            = obs.GetTotalNumberOfObservations();
+  sum_obs_                = obs.GetTotalSumOfCognitiveScores();
+  
+  last_loglikelihood_.set_size(subjects_tot_num_);
+  
+  /// Population variables
+  noise_ = std::make_shared<GaussianRandomVariable>(rv_params_.at("noise").first[0], rv_params_.at("noise").first[1]);
+  
+  rand_var_.AddRandomVariable("Gaussian", "Gaussian", rv_params_.at("Gaussian").first);
+  asso_num_real_per_rand_var_["Gaussian"] = subjects_tot_num_;
+  proposition_distribution_variance_["Gaussian"] = rv_params_.at("Gaussian").second;
 }
 
 void GaussianModel::InitializeValidationDataParameters(const io::SimulatedDataSettings &data_settings,
                                                        const io::ModelSettings &model_settings) {
   
+  /// Initialize the model
+  manifold_dim_ = data_settings.GetDimensionOfSimulatedObservations();
+  
+  /// Population variables
+  noise_ = std::make_shared<GaussianRandomVariable>(rv_params_.at("noise").first[0], rv_params_.at("noise").first[1]);
+  
+  rand_var_.AddRandomVariable("Gaussian", "Gaussian", rv_params_.at("Gaussian").first);
 }
 
 void GaussianModel::UpdateModel(const Realizations &reals,
                                 const MiniBlock &block_info,
-                                const std::vector<std::string,
-                                                  std::allocator<std::string>> names) {
+                                const std::vector<std::string, std::allocator<std::string>> names) {
+  
+  int type = GetType(block_info);
+  
+  if(type == -1) {
+    for(size_t i = 0; i < subjects_tot_num_; ++i) {
+      GaussianRealizations(i) = reals.at("Gaussian")(i);
+    }
+  } else {
+    GaussianRealizations(type) = reals.at("Gaussian")(type);
+  }
   
 }
 
 AbstractModel::SufficientStatisticsVector GaussianModel::GetSufficientStatistics(const Realizations &reals,
                                                                                  const Observations &obs) {
+  /// s1 <- y_ij * eta_ij    &    s2 <- eta_ij * eta_ij
+  VectorType s1(obs_tot_num_), s2(obs_tot_num_);
+  auto it_s1 = s1.begin(), it_s2 = s2.begin();
+  for(size_t i = 0; i < subjects_tot_num_; ++i)
+  {
+      for(size_t j = 0; j < obs.GetNumberOfTimePoints(i); ++j)
+      {
+          VectorType parallel_curve = ComputeParallelCurve(i, j);
+          *it_s1 = dot_product(parallel_curve, obs.GetSubjectCognitiveScore(i, j));
+          *it_s2 = parallel_curve.squared_magnitude();
+          ++it_s1, ++it_s2;
+      }
+  }
   
+  /// s3 <- mu_i    &    s4 <- mu_i * mu_i
+  VectorType s3 = reals.at("Gaussian");
+  VectorType s4 = reals.at("Gaussian") % reals.at("Gaussian");
+  
+  return { s1, s2, s3, s4 };
 }
 
 void GaussianModel::UpdateRandomVariables(const SufficientStatisticsVector &stoch_sufficient_stats) {
+  /// Update the noise variance, sigma
+  ScalarType noise_variance = sum_obs_;
+  const ScalarType * it_s1 = stoch_sufficient_stats[0].memptr();
+  const ScalarType * it_s2 = stoch_sufficient_stats[1].memptr();
+  for(size_t i = 0; i < stoch_sufficient_stats[0].size(); ++i)
+      noise_variance += - 2 * it_s1[i] + it_s2[i];
+
+  noise_variance /= obs_tot_num_ * manifold_dim_;
+  noise_->SetVariance(noise_variance);
   
+  /// Update gaussian
+  ScalarType gaussian_mean = 0.0, gaussian_variance = 0.0;
+  const ScalarType * it_s3 = stoch_sufficient_stats[2].memptr();
+  const ScalarType * it_s4 = stoch_sufficient_stats[3].memptr();
+  
+  for(size_t i = 0; i < subjects_tot_num_; ++i) {
+    gaussian_mean     += it_s3[i];
+    gaussian_variance += it_s4[i];
+  }
+  
+  gaussian_mean     /= subjects_tot_num_;
+  gaussian_variance -= subjects_tot_num_ * gaussian_mean * gaussian_mean;
+  gaussian_variance /= subjects_tot_num_;
+  
+  rand_var_.UpdateRandomVariable("Gaussian", {{"Mean", gaussian_mean}, {"Variance", gaussian_variance}});
 }
 
 Observations GaussianModel::SimulateData(io::SimulatedDataSettings &data_settings) {
+  individual_obs_date_.clear();
+  
+  subjects_tot_num_ = data_settings.GetNumberOfSimulatedSubjects();
+  asso_num_real_per_rand_var_["Gaussian"] = subjects_tot_num_;
+  
+  auto reals = SimulateRealizations();
+  GaussianRealizations = reals.at("Gaussian");
+  
+  
+  ScalarType mean = GaussianRealizations.sum() / subjects_tot_num_;
+  ScalarType var = 0;
+  for(size_t i = 0; i < subjects_tot_num_; ++i) {
+    var += (GaussianRealizations(i) - mean) * (GaussianRealizations(i) - mean);
+  }
+  var /= subjects_tot_num_;
+  std::cout << mean << " & " << var << std::endl;
+  
+   
+  /// Simulate the data
+  std::random_device rand_device;
+  std::mt19937 rand_num_gen( GV::TEST_RUN ? 1 : rand_device());
+  
+  std::uniform_int_distribution<int> uni(data_settings.GetMinimumNumberOfObservations(), data_settings.GetMaximumNumberOfObservations());
+  UniformRandomVariable ran_time_points_num(60, 95);
+  GaussianRandomVariable noise(0, noise_->GetVariance());
+  
+  /// Simulate the data
+  Observations obs;
+  for(size_t i = 0; i < subjects_tot_num_; ++i) {
+  
+    VectorType time_points = ran_time_points_num.Samples(uni(rand_num_gen));
+    time_points.sort();
+    individual_obs_date_.push_back(time_points);
+    
+    IndividualObservations indiv_obs(time_points);
+    std::vector<VectorType> cognitive_scores; 
+    
+    for(size_t j = 0; j < time_points.size(); ++j) {
+      VectorType parallel_curve = ComputeParallelCurve(i, j);
+      VectorType noise_sample = noise.Samples(manifold_dim_);
+      cognitive_scores.push_back(parallel_curve + noise_sample);
+    }
+    
+    indiv_obs.AddCognitiveScores(cognitive_scores);
+    obs.AddIndividualData(indiv_obs);
+  }
+  
+  /// Initialize the observation and model attributes
+  obs.InitializeGlobalAttributes();
+
+  return obs;
   
 }
 
 std::vector<AbstractModel::MiniBlock> GaussianModel::GetSamplerBlocks() const {
+  std::vector<MiniBlock> blocks;
   
+  /// Blocks
+  for(size_t i = 0; i < subjects_tot_num_; ++i) {
+    MiniBlock indiv_block;
+    indiv_block.push_back(std::tuple<int, std::string, int>(0, "Gaussian", i));
+    
+    blocks.push_back(indiv_block);
+  }
+  
+  return blocks;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,21 +191,72 @@ std::vector<AbstractModel::MiniBlock> GaussianModel::GetSamplerBlocks() const {
 
 AbstractModel::VectorType GaussianModel::ComputeLogLikelihood(const Observations &obs,
                                                               const MiniBlock &block_info) {
+    /// It computes the likelihood of the model. For each subject i, it sums its likelihood, namely the distance,
+  /// for each time t_ij, between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
   
+  int type = GetType(block_info);
+  
+  if(type == -1) {
+    VectorType loglikelihood(subjects_tot_num_);
+    ScalarType *l_ptr = loglikelihood.memptr();
+    for (size_t i = 0; i < subjects_tot_num_; ++i)
+      l_ptr[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
+
+    return loglikelihood;
+  } else {
+    return VectorType(1, ComputeIndividualLogLikelihood(obs.GetSubjectObservations(type), type));
+  }
 }
 
 ScalarType GaussianModel::ComputeIndividualLogLikelihood(const IndividualObservations &obs,
-                                                         const int subjects_tot_num_) {
-  
+                                                         const int subject_num) {
+    /// Given a particular subject i, it computes its likelihood, namely the distance, for each observation t_ij,
+  /// between the observation y_ij and the prediction f(t_ij) = ComputeParallelCurve
+
+  ScalarType log_likelihood = 0;
+  auto time_points = obs.GetNumberOfTimePoints();
+
+  /// For each timepoints of the particular subject
+  for(size_t i = 0; i < time_points; ++i)
+  {
+    auto& indiv_cog_scores = obs.GetCognitiveScore(i);
+    VectorType parallel_curve = ComputeParallelCurve(subject_num, i);
+    log_likelihood += (indiv_cog_scores - parallel_curve).squared_magnitude();
+    //std::cout << indiv_cog_scores(0) << " - " << parallel_curve(0) << " = " << indiv_cog_scores(0) - parallel_curve(0) << std::endl;
+  }
+
+  log_likelihood /= - 2 * noise_->GetVariance();
+  log_likelihood -= time_points * log(2 * noise_->GetVariance() * M_PI) / 2.0;
+
+  return log_likelihood;
 }
 
 ScalarType  GaussianModel::GetPreviousLogLikelihood(const MiniBlock &block_info) {
+  int type = GetType(block_info);
   
+  if (type == -1) {
+    return last_loglikelihood_.sum();
+  }
+  else if (type >= 0 && type <= last_loglikelihood_.size()) {
+    return last_loglikelihood_(type);
+  }
+  else {
+    std::cerr << "there is something wrong with the type";
+  }
 }
 
 void GaussianModel::SetPreviousLogLikelihood(VectorType &log_likelihood,
                                              const MiniBlock &block_info) {
+  int type = GetType(block_info);
   
+  if (type == -1) {
+    last_loglikelihood_ = log_likelihood;
+  }  else if (type >= 0 && type <= last_loglikelihood_.size()) {
+    last_loglikelihood_(type) = log_likelihood.sum();
+  }
+  else {
+    std::cerr << "there is something wrong with the type";
+  }
 }
 
 
@@ -81,9 +266,66 @@ void GaussianModel::SetPreviousLogLikelihood(VectorType &log_likelihood,
 
 
 void GaussianModel::DisplayOutputs(const Realizations &reals) {
+  auto gaussian = rand_var_.GetRandomVariable("Gaussian");
+  
+  std::cout << "noise: " << noise_->GetVariance();
+  std::cout << " - Gaussian mean: " << gaussian->GetParameter("Mean");
+  std::cout << " - Gaussian variance: " << gaussian->GetParameter("Variance") << std::endl;
+  
+  
+  ScalarType mean = GaussianRealizations.sum() / subjects_tot_num_;
+  ScalarType var = 0;
+  for(size_t i = 0; i < subjects_tot_num_; ++i) {
+    var += (GaussianRealizations(i) - mean) * (GaussianRealizations(i) - mean);
+  }
+  var /= subjects_tot_num_;
+  //std::cout << mean << " & " << var << std::endl;
   
 }
 
+
+
 void GaussianModel::SaveData(unsigned int IterationNumber, const Realizations &reals) {
+  // TODO TODO TODO TODO TODO TODO 
+  // We'll see later on what we need
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+AbstractModel::VectorType GaussianModel::ComputeParallelCurve(int subjects_num, int obs_num) {
   
+  VectorType parallel_curve(manifold_dim_);
+  ScalarType * p = parallel_curve.memptr();
+  ScalarType time = individual_obs_date_[subjects_num](obs_num);
+  ScalarType individual_variable = GaussianRealizations(subjects_num); 
+  
+  for(size_t i = 0; i < manifold_dim_; ++i) {
+    p[i] = individual_variable * time;
+  }
+  
+  return parallel_curve;
+}
+
+
+int GaussianModel::GetType(const MiniBlock &block_info) {
+  int type = std::get<2>(block_info[0]);
+  
+  for(auto it = block_info.begin(); it != block_info.end(); ++it) {
+    int class_number = std::get<0>(*it);
+    std::string real_name = std::get<1>(*it);
+    int real_number = std::get<2>(*it);
+    
+    if(real_name != "Gaussian" && real_name != "All") {
+      std::cerr << "What is going on in Gaussian Model? > GetType method with realization : " << real_name <<  std::endl;
+    }
+    if(real_name == "All") 
+      return -1;
+    if(type != real_number) {
+      return -1;
+    }
+  }
+  
+  return type;
 }

@@ -57,8 +57,6 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-
-        src/support/asserts
         
         ${CMAKE_CURRENT_SOURCE_DIR}/src/launch
         ${CMAKE_CURRENT_SOURCE_DIR}/src/launch/fit
@@ -68,6 +66,7 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/manifolds
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/manifolds/base_manifold
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/prototypes
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/combinaisons
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/scalar
@@ -82,6 +81,7 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io/data_settings
         
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/support/asserts
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra/armadillo
         )
