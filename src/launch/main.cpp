@@ -20,8 +20,6 @@ int main(int argc, char* argv[]) {
   else if (string(argv[1]) == "validate")  validate(argc, argv);
   else std::cerr << "Second argument should be 'fit' or 'predict'" << std::endl;
 
-  PythonUtils utils = PythonUtils(argv);
-  utils.CallPythonScript();
 
   return 0;
 /*

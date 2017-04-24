@@ -11,6 +11,7 @@
 
 #include "Algorithm.h"
 
+#include "PythonUtils.h"
 #include <ctime>
 
 void fit(int argc, char* argv[]);

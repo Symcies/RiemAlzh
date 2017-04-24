@@ -1,27 +1,32 @@
-import numpy as np
+import sys
+
+#print sys.path
+print sys.version
+
 import matplotlib.pyplot as plt
 
-def Plot():
+def Plot(filename):
+    print "in plot()"
     # To simplify loog at Plot Once
-    filename = "/Users/clementine.fourrier/build/AwesomeNetwork"
+    #filename = "/Users/clementine.fourrier/build/AwesomeNetwork"
 
-    x_vec        =np.array([])
-    noise        =np.array([])
-    g_vec        =np.array([])
-    tau_var_vec  =np.array([])
-    tau_mean_vec =np.array([])
-    ksi_var_vec  =np.array([])
-    ksi_mean_vec =np.array([])
+    x_vec        = []
+    noise        = []
+    g_vec        = []
+    tau_var_vec  = []
+    tau_mean_vec = []
+    ksi_var_vec  = []
+    ksi_mean_vec = []
 
     for line in open(filename, 'r'):
         line_vec = line.split()
-        x_vec = np.append(x_vec, line_vec[0])
-        noise = np.append(noise, line_vec[1])
-        g_vec = np.append(g_vec, line_vec[2])
-        tau_mean_vec = np.append(tau_mean_vec, line_vec[3])
-        tau_var_vec = np.append(tau_var_vec, line_vec[4])
-        ksi_mean_vec = np.append(ksi_mean_vec, line_vec[5])
-        ksi_var_vec = np.append(ksi_var_vec, line_vec[6])
+        x_vec.append(line_vec[0])
+        noise.append(line_vec[1])
+        g_vec.append(line_vec[2])
+        tau_mean_vec.append(line_vec[3])
+        tau_var_vec.append(line_vec[4])
+        ksi_mean_vec.append(line_vec[5])
+        ksi_var_vec.append(line_vec[6])
 
     plt.figure(1)
     plt.subplot(211)

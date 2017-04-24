@@ -29,6 +29,10 @@ void fit(int argc, char* argv[]) {
   std::cout << "Initialisation duration: " << init_comp - start << std::endl;
   std::cout << "MCMCSAEM computations duration: " << end_comp - init_comp << std::endl;
 
+
+  PythonUtils utils = PythonUtils(argv);
+  utils.CallPythonScript(model_settings.GetOutputFileName());
+
   /// Eventually simulate data (on option)
   /// Cannot be used ONLy beause the data_settings is reading the parameter <data-type>
   /// Maybe there should be two different

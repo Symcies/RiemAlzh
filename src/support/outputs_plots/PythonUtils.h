@@ -5,12 +5,13 @@
 #include "stdio.h"
 #include <string>
 #include <Python.h>
+#include "global.h"
 
 class PythonUtils {
 public:
   PythonUtils(char ** argv);
   ~PythonUtils();
 
-  void CallPythonScript();
+  void CallPythonScript(std::string output_file_name);
 
 };
