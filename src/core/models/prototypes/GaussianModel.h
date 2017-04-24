@@ -70,6 +70,9 @@ public:
   /// Method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   
+  /// Update the gaussian realizations used in the model
+  void ComputeGaussianRealizations(const Realizations& reals, const int type);
+  
   /// Compute the parallel curve
   VectorType ComputeParallelCurve(int subjects_num, int obs_num);
   
@@ -84,7 +87,7 @@ public:
   std::shared_ptr< GaussianRandomVariable > noise_;
   
   /// gaussian realizations
-  VectorType GaussianRealizations;
+  std::vector<VectorType> GaussianRealizations;
   
   /// Real time of observation of each individual
   std::vector<VectorType> individual_obs_date_;

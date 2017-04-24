@@ -220,7 +220,7 @@ void Algorithm::DisplayAcceptanceRatio() {
 
    
     //auto names_to_show = {"Tau", "Ksi"};
-    auto names_to_show = {"Gaussian"};
+    auto names_to_show = {"Gaussian#0"};
   
     for(auto it = names_to_show.begin(); it != names_to_show.end(); ++it)
     {

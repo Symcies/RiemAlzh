@@ -28,22 +28,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="03e71383-5091-4290-9195-e722e3a9d4e8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/RiemAlzh.iml" afterPath="$PROJECT_DIR$/.idea/RiemAlzh.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CMakeLists.txt" afterPath="$PROJECT_DIR$/CMakeLists.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/algorithm/Algorithm.cpp" afterPath="$PROJECT_DIR$/src/core/algorithm/Algorithm.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/models/ModelFactory.cpp" afterPath="$PROJECT_DIR$/src/core/models/ModelFactory.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/models/ModelFactory.h" afterPath="$PROJECT_DIR$/src/core/models/ModelFactory.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/models/network/MeshworkModel.cpp" afterPath="$PROJECT_DIR$/src/core/models/network/MeshworkModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/models/network/NetworkModel.cpp" afterPath="$PROJECT_DIR$/src/core/models/network/NetworkModel.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.cpp" afterPath="$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.h" afterPath="$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/models/scalar/MultivariateModel.cpp" afterPath="$PROJECT_DIR$/src/core/models/scalar/MultivariateModel.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/models/scalar/MultivariateModel.h" afterPath="$PROJECT_DIR$/src/core/models/scalar/MultivariateModel.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/samplers/BlockedGibbsSampler.cpp" afterPath="$PROJECT_DIR$/src/core/samplers/BlockedGibbsSampler.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/global.cpp" afterPath="$PROJECT_DIR$/src/global.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/ModelSettings.cpp" afterPath="$PROJECT_DIR$/src/io/ModelSettings.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/ModelSettings.h" afterPath="$PROJECT_DIR$/src/io/ModelSettings.h" />
     </list>
     <ignored path="RiemAlzh.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -65,34 +52,54 @@
     <splitter split-orientation="horizontal" split-proportion="0.56962025">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="validate.cpp" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/launch/validate/validate.cpp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="480">
-                  <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="Algorithm.cpp" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/core/algorithm/Algorithm.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="81">
-                  <caret line="111" column="28" selection-start-line="111" selection-start-column="28" selection-end-line="111" selection-end-column="28" />
+                <state relative-caret-position="2">
+                  <caret line="220" column="3" selection-start-line="220" selection-start-column="3" selection-end-line="220" selection-end-column="3" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="GaussianModel.cpp" pinned="false" current-in-tab="false">
+          <file leaf-file-name="validate.cpp" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/launch/validate/validate.cpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="448">
+                  <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Realizations.h" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/core/realizations/Realizations.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="203">
+                  <caret line="59" column="0" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="GaussianModel.cpp" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="336">
-                  <caret line="52" column="100" selection-start-line="52" selection-start-column="100" selection-end-line="52" selection-end-column="100" />
+                <state relative-caret-position="258">
+                  <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
                   <folding>
-                    <element signature="e#10546#10708#0" expanded="false" />
+                    <element signature="e#11232#11394#0" expanded="false" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="ArmadilloVectorWrapper.h" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/support/linear_algebra/armadillo/ArmadilloVectorWrapper.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="203">
+                  <caret line="69" column="0" selection-start-line="69" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -114,8 +121,8 @@
           <file leaf-file-name="MultivariateModel.cpp" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/core/models/scalar/MultivariateModel.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1793">
-                  <caret line="718" column="14" selection-start-line="718" selection-start-column="14" selection-end-line="718" selection-end-column="14" />
+                <state relative-caret-position="3056">
+                  <caret line="327" column="42" selection-start-line="327" selection-start-column="32" selection-end-line="327" selection-end-column="42" />
                   <folding />
                 </state>
               </provider>
@@ -144,8 +151,8 @@
           <file leaf-file-name="GaussianModel.h" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.h">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="796">
-                  <caret line="90" column="2" selection-start-line="90" selection-start-column="2" selection-end-line="90" selection-end-column="2" />
+                <state relative-caret-position="-414">
+                  <caret line="40" column="11" selection-start-line="40" selection-start-column="11" selection-end-line="40" selection-end-column="11" />
                   <folding />
                 </state>
               </provider>
@@ -208,10 +215,10 @@
         <option value="$PROJECT_DIR$/src/io/ModelSettings.h" />
         <option value="$PROJECT_DIR$/src/io/ModelSettings.cpp" />
         <option value="$PROJECT_DIR$/src/global.cpp" />
-        <option value="$PROJECT_DIR$/src/core/algorithm/Algorithm.cpp" />
         <option value="$PROJECT_DIR$/src/core/samplers/BlockedGibbsSampler.cpp" />
         <option value="$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.h" />
         <option value="$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.cpp" />
+        <option value="$PROJECT_DIR$/src/core/algorithm/Algorithm.cpp" />
       </list>
     </option>
   </component>
@@ -300,7 +307,24 @@
     </navigator>
     <panes>
       <pane id="ProjectPane">
-        <subPane />
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RiemAlzh" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
       </pane>
     </panes>
   </component>
@@ -713,18 +737,18 @@
       <workItem from="1492616763996" duration="867000" />
       <workItem from="1492675840957" duration="147000" />
       <workItem from="1492762329473" duration="1219000" />
-      <workItem from="1493022794612" duration="3007000" />
+      <workItem from="1493022794612" duration="6370000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1299917000" />
+    <option name="totallyTimeSpent" value="1303280000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16395418" sideWeight="0.49609375" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16395418" sideWeight="0.49609375" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.343" sideWeight="0.5858951" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.314" sideWeight="0.47860157" order="10" side_tool="false" content_ui="tabs" />
@@ -734,7 +758,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23294118" sideWeight="0.5701198" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1672619" sideWeight="0.50390625" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.362" sideWeight="0.63002115" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.362" sideWeight="0.63002115" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -810,39 +834,11 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="1299" />
+      <option name="time" value="1312" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/core/algorithm/Algorithm.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="31" column="7" selection-start-line="31" selection-start-column="7" selection-end-line="31" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/integration/ScalarModels_IT.cxx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="110" column="28" selection-start-line="110" selection-start-column="28" selection-end-line="110" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/parameters/CandidateRandomVariables.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="54" column="36" selection-start-line="54" selection-start-column="36" selection-end-line="54" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/io/SamplerSettings.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="19" column="1" selection-start-line="19" selection-start-column="1" selection-end-line="19" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/core/models/AbstractModel.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -1083,13 +1079,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/Cellar/llvm/3.9.0/include/c++/v1/unordered_map">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="1446" column="23" selection-start-line="1445" selection-start-column="32" selection-end-line="1446" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/core/models/AbstractModel.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1584">
@@ -1130,45 +1119,85 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.h">
+    <entry file="file:///usr/local/include/armadillo_bits/Mat_meat.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="796">
-          <caret line="90" column="2" selection-start-line="90" selection-start-column="2" selection-end-line="90" selection-end-column="2" />
+        <state relative-caret-position="16">
+          <caret line="230" column="0" selection-start-line="230" selection-start-column="0" selection-end-line="230" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/algorithm/Algorithm.cpp">
+    <entry file="file:///usr/local/include/armadillo_bits/Col_meat.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="111" column="28" selection-start-line="111" selection-start-column="28" selection-end-line="111" selection-end-column="28" />
+        <state relative-caret-position="203">
+          <caret line="370" column="0" selection-start-line="370" selection-start-column="0" selection-end-line="370" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-414">
+          <caret line="40" column="11" selection-start-line="40" selection-start-column="11" selection-end-line="40" selection-end-column="11" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/core/models/scalar/MultivariateModel.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1793">
-          <caret line="718" column="14" selection-start-line="718" selection-start-column="14" selection-end-line="718" selection-end-column="14" />
+        <state relative-caret-position="3056">
+          <caret line="327" column="42" selection-start-line="327" selection-start-column="32" selection-end-line="327" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/support/linear_algebra/armadillo/ArmadilloVectorWrapper.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="69" column="0" selection-start-line="69" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/Cellar/llvm/3.9.0/include/c++/v1/unordered_map">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="1456" column="0" selection-start-line="1456" selection-start-column="0" selection-end-line="1456" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/realizations/Realizations.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="59" column="0" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/algorithm/Algorithm.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2">
+          <caret line="220" column="3" selection-start-line="220" selection-start-column="3" selection-end-line="220" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/launch/validate/validate.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/core/models/prototypes/GaussianModel.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="52" column="100" selection-start-line="52" selection-start-column="100" selection-end-line="52" selection-end-column="100" />
+        <state relative-caret-position="258">
+          <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
           <folding>
-            <element signature="e#10546#10708#0" expanded="false" />
+            <element signature="e#11232#11394#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/launch/validate/validate.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
