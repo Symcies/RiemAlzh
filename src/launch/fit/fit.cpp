@@ -1,4 +1,5 @@
 #include "fit.h"
+#include <thread>
 
 void fit(int argc, char* argv[]) {
   time_t start, init_comp, end_comp;
@@ -23,15 +24,29 @@ void fit(int argc, char* argv[]) {
   algo.SetModel(model);
   algo.AddSamplers(sampler_settings);
   init_comp = time(0);
-  algo.ComputeMCMCSAEM(obs);
-  end_comp = time(0);
+
+
+//  algo.ComputeMCMCSAEM(obs);
+  std::thread graph_thread(
+          [&] (Algorithm * algo) {
+            algo->ComputeMCMCSAEM(obs);
+            sleep(5);
+            std::rename((GV::BUILD_DIR + model_settings.GetOutputFileName() ).c_str(),
+                        (GV::BUILD_DIR + "OutputFileFor" + model_settings.GetOutputFileName() ).c_str()
+            );
+            end_comp = time(0);
+          },
+          &algo
+  );
+
+  PythonUtils utils = PythonUtils(argv);
+  utils.PlotOutputWhileComputing(model_settings.GetOutputFileName(), model_settings.GetType());
+  utils.PlotFinalOutput(model_settings.GetType());
 
   std::cout << "Initialisation duration: " << init_comp - start << std::endl;
   std::cout << "MCMCSAEM computations duration: " << end_comp - init_comp << std::endl;
 
-
-  PythonUtils utils = PythonUtils(argv);
-  utils.CallPythonScript(model_settings.GetOutputFileName());
+  graph_thread.join();
 
   /// Eventually simulate data (on option)
   /// Cannot be used ONLy beause the data_settings is reading the parameter <data-type>

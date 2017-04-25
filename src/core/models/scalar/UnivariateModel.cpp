@@ -403,20 +403,36 @@ void UnivariateModel::SaveData(unsigned int iter_num, const Realizations &reals)
   std::ofstream log_file;
 
   if(!GV::TEST_RUN) {
-    log_file.open(GV::BUILD_DIR + "log_univariate_file.txt", std::ofstream::out | std::ofstream::app);
-    auto g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
+    log_file.open(GV::BUILD_DIR + output_file_name_ , std::ofstream::out | std::ofstream::app);
+
+    auto block_p = rand_var_.GetRandomVariable("P")->GetParameter("Mean");
     auto tau = rand_var_.GetRandomVariable("Tau");
     auto ksi = rand_var_.GetRandomVariable("Ksi");
-
     // This part should be tuned by a xml file
-    log_file << "Iteration n: " << iter_num;
-    log_file << " - noise: " << noise_->GetVariance();
-    log_file << " - G: " << g;
-    log_file << " - T0: " << tau->GetParameter("Mean") << " - Var(Tau): "
-             << tau->GetParameter("Variance");
-    log_file << " - Ksi: " << ksi->GetParameter("Mean") << " - Var(Ksi): "
+    log_file << iter_num << " " << noise_->GetVariance() << " "
+             << block_p << " " << tau->GetParameter("Mean") << " "
+             << tau->GetParameter("Variance") << " "
+             << ksi->GetParameter("Mean") << " "
              << ksi->GetParameter("Variance") << std::endl;
     log_file.close();
+    if (iter_num == GV::MAX_ITER -1){
+      log_file.open(GV::BUILD_DIR + output_file_name_ + "2", std::ofstream::out | std::ofstream::app);
+
+      auto block_p = rand_var_.GetRandomVariable("P")->GetParameter("Mean");
+      auto tau = rand_var_.GetRandomVariable("Tau");
+      auto ksi = rand_var_.GetRandomVariable("Ksi");
+      // This part should be tuned by a xml file
+      log_file << iter_num << " " << noise_->GetVariance() << " "
+               << block_p << " " << tau->GetParameter("Mean") << " "
+               << tau->GetParameter("Variance") << " "
+               << ksi->GetParameter("Mean") << " "
+               << ksi->GetParameter("Variance");
+      //A ajuster
+      for(auto i=reals.begin(); i !=reals.end(); i++){
+        //log_file << i;
+      }
+      log_file.close();
+    }
   }
   else {
     log_file.open(GV::TEST_DIR + "log_univariate_file.txt", std::ofstream::out | std::ofstream::app);

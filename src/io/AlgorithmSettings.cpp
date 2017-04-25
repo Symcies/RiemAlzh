@@ -1,3 +1,4 @@
+#include <src/global.h>
 #include "AlgorithmSettings.h"
 
 namespace io {
@@ -30,6 +31,7 @@ AlgorithmSettings::AlgorithmSettings(std::string xml_file) {
   num_burnin_iter_ = num_burnin_iter;
   output_iter_ = output_iter;
   data_save_iter_ = data_save_iter;
+  GV::MAX_ITER = max_num_iter;
 }
 
 

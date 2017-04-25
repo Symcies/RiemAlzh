@@ -12,6 +12,7 @@ public:
   PythonUtils(char ** argv);
   ~PythonUtils();
 
-  void CallPythonScript(std::string output_file_name);
+  void PlotFinalOutput(std::string type);
+  void PlotOutputWhileComputing(std::string output_file_name, std::string type);
 
 };
