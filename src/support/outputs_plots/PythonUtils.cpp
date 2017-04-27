@@ -16,6 +16,8 @@ PythonUtils::PythonUtils(char ** argv) {
 
   PySys_SetArgv(0, argv);
 
+  module_name_ = "PlotGraphs";
+
 }
 
 PythonUtils::~PythonUtils() {
@@ -23,14 +25,11 @@ PythonUtils::~PythonUtils() {
 
 }
 
-void PythonUtils::PlotFinalOutput(std::string type) {
+void PythonUtils::PlotFinalOutput(std::string output_file_name, std::string type) {
   PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg, *output_path;
 
-  // Nom du module
-  std::string name = "PlotGraphs";
-
   // Convert the file name to a Python string.
-  module_name = PyString_FromString(name.c_str());
+  module_name = PyString_FromString(module_name_.c_str());
 
   // Import the file as a Python module.
   module_obj = PyImport_Import(module_name);
@@ -59,21 +58,60 @@ void PythonUtils::PlotFinalOutput(std::string type) {
   }
 
   // Create a Python tuple to hold the arguments to the method (None, in this case).
-  module_arg = PyTuple_New(0);
+  module_arg = PyTuple_New(1);
+  std::string output = GV::BUILD_DIR + output_file_name;
+  output_path = PyString_FromString(output.c_str());
+  PyTuple_SetItem(module_arg, 0, output_path);
 
   // Call the function with the arguments.
   PyObject_CallObject(module_func, module_arg);
 
 }
 
-void PythonUtils::PlotOutputWhileComputing(std::string output_file_name, std::string type) {
+void PythonUtils::PlotOutputWhileComputing(std::string output_file_name, int max_num_iter) {
   PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg, *output_path;
 
-  // Nom du module
-  std::string name = "PlotGraphs";
+  // Convert the file name to a Python string.
+  module_name = PyString_FromString(module_name_.c_str());
+
+  // Import the file as a Python module.
+  module_obj = PyImport_Import(module_name);
+  if (module_obj == nullptr) {
+    PyErr_Print();
+    std::cerr << "Fails to import the module.\n";
+  }
+
+  // Create a dictionary for the contents of the module.
+  module_contents_dict = PyModule_GetDict(module_obj);
+  if (module_contents_dict == nullptr) {
+    PyErr_Print();
+    std::cerr << "Fails with module dictionnary.\n";
+  }
+
+  module_func = PyDict_GetItemString(module_contents_dict, "PlotOutputWhileComputing");
+  if (module_func == nullptr) {
+    PyErr_Print();
+    std::cerr << "Fails to import the function from the module.\n";
+  }
+
+  // Create a Python tuple to hold the arguments to the method
+  module_arg = PyTuple_New(1);
+  std::string output = GV::BUILD_DIR + output_file_name;
+  output_path = PyString_FromString(output.c_str());
+  PyTuple_SetItem(module_arg, 0, output_path);
+
+  // Call the function with the arguments.
+  PyObject_CallObject(module_func, module_arg);
+
+}
+
+
+void PythonUtils::PlotAllFinalOutputWithPatientData(std::string output_file_name, std::string type, Observations obs){
+  PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg;
+  PyObject *obs_list, *observations, *key, *item;
 
   // Convert the file name to a Python string.
-  module_name = PyString_FromString(name.c_str());
+  module_name = PyString_FromString(module_name_.c_str());
 
   // Import the file as a Python module.
   module_obj = PyImport_Import(module_name);
@@ -90,24 +128,32 @@ void PythonUtils::PlotOutputWhileComputing(std::string output_file_name, std::st
   }
 
   // Get the plot function from the dictionary.
-  if (type == "Multivariate") {
-    module_func = PyDict_GetItemString(module_contents_dict, "PlotMultivarOutputWhileComputing");
-  }
-  else if (type == "Univariate"){
-    module_func = PyDict_GetItemString(module_contents_dict, "PlotUnivarOutputWhileComputing");
-  }
+  module_func = PyDict_GetItemString(module_contents_dict, "PlotAndSelectPatientCurvesWithData");
   if (module_func == nullptr) {
     PyErr_Print();
     std::cerr << "Fails to import the function from the module.\n";
   }
 
-  // Create a Python tuple to hold the arguments to the method (None, in this case).
-  module_arg = PyTuple_New(1);
+  // Observations management
+  obs_list = PyList_New(0);
+  for(int i = 0; i< obs.GetNumberOfSubjects(); i++){
+    observations = PyDict_New();
+    for(int j = 0; j <obs.GetSubjectObservations(i).GetNumberOfTimePoints(); j++){
+      key = PyFloat_FromDouble(obs.GetSubjectObservations(i).GetTimePoint(j));
+      item = PyFloat_FromDouble(obs.GetSubjectObservations(i).GetCognitiveScore(j)[0]);
+      PyDict_SetItem(observations, key, item);
+    }
+    PyList_Append(obs_list, observations);
+  }
+
+  // Create a Python tuple to hold the arguments to the method.
+  module_arg = PyTuple_New(3);
   std::string output = GV::BUILD_DIR + output_file_name;
-  output_path = PyString_FromString(output.c_str());
-  PyTuple_SetItem(module_arg, 0, output_path);
+  PyTuple_SetItem(module_arg, 0, PyString_FromString(output.c_str()));
+  PyTuple_SetItem(module_arg, 1, obs_list);
+  PyTuple_SetItem(module_arg, 2, PyString_FromString(type.c_str()));
 
   // Call the function with the arguments.
   PyObject_CallObject(module_func, module_arg);
 
-}
+};

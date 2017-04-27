@@ -40,8 +40,9 @@ void fit(int argc, char* argv[]) {
   );
 
   PythonUtils utils = PythonUtils(argv);
-  utils.PlotOutputWhileComputing(model_settings.GetOutputFileName(), model_settings.GetType());
-  utils.PlotFinalOutput(model_settings.GetType());
+  utils.PlotOutputWhileComputing(model_settings.GetOutputFileName(), 0);
+  utils.PlotFinalOutput("LastRealizationOf" + model_settings.GetOutputFileName(), model_settings.GetType());
+  utils.PlotAllFinalOutputWithPatientData("LastRealizationOf" + model_settings.GetOutputFileName(), model_settings.GetType(), obs);
 
   std::cout << "Initialisation duration: " << init_comp - start << std::endl;
   std::cout << "MCMCSAEM computations duration: " << end_comp - init_comp << std::endl;

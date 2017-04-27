@@ -12,6 +12,7 @@ MultivariateModel::MultivariateModel(io::ModelSettings &model_settings)
   indep_sources_num_ = model_settings.GetIndependentSourcesNumber();
   output_file_name_ = model_settings.GetOutputFileName();
   std::remove((GV::BUILD_DIR + output_file_name_ ).c_str());
+  std::remove((GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ ).c_str());
 }
 
 MultivariateModel::~MultivariateModel()

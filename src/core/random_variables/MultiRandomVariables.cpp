@@ -168,8 +168,8 @@ Realizations MultiRandomVariables::SimulateRealizations(StringIntHash num_of_rea
     else
     {
      */
-      VectorType real_vec = rand_var_.at(key)->Samples(reals_num);
-      realizations.AddRealizations(name, key, real_vec);
+    VectorType real_vec = rand_var_.at(key)->Samples(reals_num);
+    realizations.AddRealizations(name, key, real_vec);
     /*
     }
     */

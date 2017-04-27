@@ -8,6 +8,8 @@
 UnivariateModel::UnivariateModel(io::ModelSettings &model_settings)
 {
   output_file_name_ = model_settings.GetOutputFileName();
+  std::remove((GV::BUILD_DIR + output_file_name_ ).c_str());
+  std::remove((GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ ).c_str());
 }
 
 UnivariateModel::~UnivariateModel()
@@ -409,6 +411,9 @@ void UnivariateModel::SaveData(unsigned int iter_num, const Realizations &reals)
     auto tau = rand_var_.GetRandomVariable("Tau");
     auto ksi = rand_var_.GetRandomVariable("Ksi");
     // This part should be tuned by a xml file
+    if (iter_num == 0){
+      log_file << "iter Noise P TauMean TauVar KsiMean KsiVar" << std::endl;
+    }
     log_file << iter_num << " " << noise_->GetVariance() << " "
              << block_p << " " << tau->GetParameter("Mean") << " "
              << tau->GetParameter("Variance") << " "
@@ -416,21 +421,40 @@ void UnivariateModel::SaveData(unsigned int iter_num, const Realizations &reals)
              << ksi->GetParameter("Variance") << std::endl;
     log_file.close();
     if (iter_num == GV::MAX_ITER -1){
-      log_file.open(GV::BUILD_DIR + output_file_name_ + "2", std::ofstream::out | std::ofstream::app);
+      log_file.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ , std::ofstream::out | std::ofstream::app);
 
       auto block_p = rand_var_.GetRandomVariable("P")->GetParameter("Mean");
       auto tau = rand_var_.GetRandomVariable("Tau");
       auto ksi = rand_var_.GetRandomVariable("Ksi");
-      // This part should be tuned by a xml file
+      log_file << "iter Noise P TauMean TauVar KsiMean KsiVar" << std::endl;
       log_file << iter_num << " " << noise_->GetVariance() << " "
                << block_p << " " << tau->GetParameter("Mean") << " "
                << tau->GetParameter("Variance") << " "
                << ksi->GetParameter("Mean") << " "
-               << ksi->GetParameter("Variance");
-      //A ajuster
-      for(auto i=reals.begin(); i !=reals.end(); i++){
-        //log_file << i;
+               << ksi->GetParameter("Variance") << std::endl;
+
+      // In order to avoid creating arrays of vectors, we will have to manage number and vector results in two loops
+      std::vector<std::string> number_values = {"Tau", "Ksi"};
+
+      int num_col = number_values.size();
+      int num_row = reals.at(number_values[0]).size();
+      double realisations[num_row][num_col];
+      for(int i = 0; i < 2; i++) {
+        std::string var = number_values[i];
+        log_file << var << " ";
+        for(int j = 0; j < reals.at(var).size(); j++){
+          realisations[j][i] = reals.at(var)[j];
+        }
       }
+      log_file << std::endl;
+
+      for(int i = 0; i<num_row; i++){
+        for(int j = 0; j < num_col; j++){
+          log_file << realisations[i][j] << " ";
+        }
+        log_file << std::endl;
+      }
+
       log_file.close();
     }
   }
