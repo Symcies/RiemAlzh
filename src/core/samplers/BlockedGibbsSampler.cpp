@@ -36,9 +36,9 @@ void BlockedGibbsSampler::Sample(Realizations& reals, AbstractModel& model, cons
   /// Initialization of the sampler and the model
   cur_block_info_ = {std::make_tuple<int, std::string, int>(-1, "All", 0)};
   model.UpdateModel(reals, cur_block_info_);
-  //std::cout << " 1. " << std::endl;
+  
   VectorType log_likelihood = ComputeLogLikelihood(model, obs);
-  //std::cout << "ok --> " << log_likelihood.sum() << std::endl;
+  
   UpdateLastLogLikelihood(model, log_likelihood);
 
   for (int i = 0; i < blocks_.size(); ++i) {

@@ -34,6 +34,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/core/parameters/CandidateRandomVariables.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/ModelFactory.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/ModelFactory.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/models/combinaisons/GaussianMixtureModel.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/models/combinaisons/GaussianMixtureModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/prototypes/GaussianModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/prototypes/GaussianModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/AbstractModel.cpp" isTestSource="false" />
@@ -84,14 +86,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/io/ModelSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/ModelSettings.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/AlgorithmSettings.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/SamplerSettings.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/RealDataSettings.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/DataSettings.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/RealDataSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/DataSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/SimulatedDataSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/SimulatedDataSettings.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/SamplerSettings.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/SamplerSettings.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/AlgorithmSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.cpp" isTestSource="false" />

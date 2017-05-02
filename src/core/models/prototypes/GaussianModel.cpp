@@ -8,6 +8,10 @@ GaussianModel::GaussianModel(io::ModelSettings &model_settings) {
   
 }
 
+GaussianModel::GaussianModel(const GaussianModel &) {
+  
+}
+
 GaussianModel::~GaussianModel() {
   
 }
@@ -20,11 +24,11 @@ GaussianModel::~GaussianModel() {
 void GaussianModel::Initialize(const Observations &obs) {
   
   /// Data-related attributes
-  manifold_dim_           = obs.GetSubjectObservations(0).GetCognitiveScore(0).size();
-  subjects_tot_num_       = obs.GetNumberOfSubjects();
-  individual_obs_date_    = obs.GetObservations();
-  obs_tot_num_            = obs.GetTotalNumberOfObservations();
-  sum_obs_                = obs.GetTotalSumOfCognitiveScores();
+  manifold_dim_        = obs.GetSubjectObservations(0).GetCognitiveScore(0).size();
+  subjects_tot_num_    = obs.GetNumberOfSubjects();
+  individual_obs_date_ = obs.GetObservations();
+  obs_tot_num_         = obs.GetTotalNumberOfObservations();
+  sum_obs_             = obs.GetTotalSumOfCognitiveScores();
   
   last_loglikelihood_.set_size(subjects_tot_num_);
   

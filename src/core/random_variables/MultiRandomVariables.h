@@ -42,6 +42,9 @@ public:
   std::unique_ptr<AbstractRandomVariable> GetRandomVariable(int key) const;
 
   void Clear();
+  
+  void SetKeyCount(int key_count) { key_count_ = key_count; } // WARNING -> Be careful. This function is to be used essentially with the mixture model
+  inline int GetKeyCount() const { return key_count_; }
 
   inline IntRandomVariableHash::iterator begin() { return rand_var_.begin(); }
   inline IntRandomVariableHash::iterator   end() { return rand_var_.end(); }

@@ -1,16 +1,18 @@
 #pragma once
 
-#include "AbstractModel.h"
+#include <utility>
 
-class GaussianModel : public AbstractModel {
+#include "AbstractModel.h"
+#include "GaussianModel.h"
+
+class GaussianMixtureModel: public AbstractModel {
 public:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  GaussianModel(io::ModelSettings& model_settings);
-  GaussianModel(const GaussianModel &); // Instead of making it public, maybe make it a friend of Guassian mixture
-  ~GaussianModel();
+  GaussianMixtureModel(io::ModelSettings& model_settings);
+  ~GaussianMixtureModel();
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Other method(s) :
@@ -22,6 +24,8 @@ public:
   /// Initialize the model in case of validation data
   virtual void InitializeValidationDataParameters(const io::SimulatedDataSettings& data_settings, const io::ModelSettings& model_settings);
   
+  /// Initialize the variance of the proposition distribution
+  //virtual ScalarType InitializePropositionDistributionVariance(std::string name) const;
   
   /// Update the model parameters != random variables parameters
   virtual void UpdateModel(const Realizations& reals, const MiniBlock& block_info, const std::vector<std::string> names = {"All"});
@@ -64,36 +68,44 @@ public:
 
   /// Save the data into a file
   virtual void SaveData(unsigned int IterationNumber, const Realizations& reals);
+  
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Overwriten method(s):
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  virtual Realizations SimulateRealizations();
+  
+  
  private:
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   
-  /// Update the gaussian realizations used in the model
-  void ComputeGaussianRealizations(const Realizations& reals, const int type);
+  /// Based on the block_info, get the class of the block --> There should be only one class per block
+  int GetClassNumber(const MiniBlock& block_info);
   
-  /// Compute the parallel curve
-  VectorType ComputeParallelCurve(int subjects_num, int obs_num);
-  
-  /// Get the type of the block info
-  int GetType(const MiniBlock& block_info);
+  /// Get the realizations of a specific class
+  Realizations GetClassRealizations(const unsigned int class_number, const Realizations& reals);
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Attribute(s)
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// Noise model
-  std::shared_ptr< GaussianRandomVariable > noise_;
+  /// Number of classes / sub-populations
+  unsigned int number_of_classes_;
   
-  /// gaussian realizations
-  std::vector<VectorType> GaussianRealizations;
+  /// Pointers to all the classes
+  std::vector<GaussianModel> models_;
   
-  /// Real time of observation of each individual
-  std::vector<VectorType> individual_obs_date_;
+  /// Probabilities for each class
+  VectorType class_probabilities;
   
-  /// Last log-likelihood computed - vector of individual
-  VectorType last_loglikelihood_;
+  /// vector of sufficient statistics size
+  std::vector<unsigned int> suff_stat_sizes_;
   
+  /// Matrix of log-likelihoods : row -> class ; column -> individual
+  MatrixType last_loglikelihood_;
 };
+

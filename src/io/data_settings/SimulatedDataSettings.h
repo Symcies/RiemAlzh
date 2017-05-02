@@ -22,6 +22,8 @@ class SimulatedDataSettings : public DataSettings {
 
   unsigned int GetMaximumNumberOfObservations() const { return max_observation_num_; }
   
+  void SetNumberOfSimulatedSubjects( const unsigned int number_of_subjects ) { subjects_total_num_ = number_of_subjects; }
+  
   
  private:
   

@@ -46,6 +46,8 @@ public:
 
   std::string GetInterpolationKernelPath() const { return interpolation_matrix_path_; }
   
+  unsigned int GetNumberOfClasses() const { return number_of_classes_; }
+  
   InitialRVParameters GetInitialRandomVariables() const { return init_random_variables_; }
 
   InitialRVParameters GetSecondRandomVariables() const { return second_random_variables_; }
@@ -74,6 +76,9 @@ private:
 
   /// Path to the interpolation matrix
   std::string interpolation_matrix_path_;
+  
+  /// Number of classes for a mixture model
+  unsigned int number_of_classes_;
   
   /// Initial model random variables
   InitialRVParameters init_random_variables_;
@@ -117,6 +122,9 @@ private:
   
   /// Load the gaussian model
   void LoadGaussian(const tinyxml2::XMLElement *settings);
+  
+  /// Load the gaussian mixture model
+  void LoadGaussianMixture(const tinyxml2::XMLElement * settings);
 
   ///Print the type of the model
   void PrintModelInfo();

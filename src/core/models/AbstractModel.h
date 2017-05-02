@@ -86,7 +86,7 @@ public:
   virtual Observations SimulateData(io::SimulatedDataSettings& data_settings) = 0;
 
   /// Simulate some random variable realizations
-  Realizations SimulateRealizations();
+  virtual Realizations SimulateRealizations();
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
   virtual std::vector<MiniBlock> GetSamplerBlocks() const = 0;

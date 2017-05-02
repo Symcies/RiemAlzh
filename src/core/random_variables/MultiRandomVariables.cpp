@@ -146,34 +146,9 @@ Realizations MultiRandomVariables::SimulateRealizations(StringIntHash num_of_rea
     std::string name = it->first;
     int key = string_to_int_key_.at(name);
     int reals_num = it->second;
-    /*
-    if(name == "P")
-    {
-        /// This is intended to start with good initialization
-        std::ifstream MeanThickness("/Users/igor.koval/Documents/Work/RiemAlzh/data/UnnormalizedThickness/MCIconvertAD/mean_thickness.csv");
-        if(MeanThickness.is_open())
-        {
-            std::string line;
-            VectorType real_vec(reals_num);
-            int i = 0;
-            while(getline(MeanThickness, line))
-            {
-                real_vec(i) = log(stod(line));
-                ++i;
-            }
-            realizations.AddRealizations(name, key, real_vec);
-        }
-        else { std::cerr << "mean thickness is not found" << std::endl; }
-    }
-    else
-    {
-     */
-      VectorType real_vec = rand_var_.at(key)->Samples(reals_num);
-      realizations.AddRealizations(name, key, real_vec);
-    /*
-    }
-    */
 
+    VectorType real_vec = rand_var_.at(key)->Samples(reals_num);
+    realizations.AddRealizations(name, key, real_vec);
   }
 
 
