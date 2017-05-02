@@ -26,7 +26,7 @@ PythonUtils::~PythonUtils() {
 }
 
 void PythonUtils::PlotFinalOutput(std::string output_file_name, std::string type) {
-  PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg, *output_path;
+  PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg;
 
   // Convert the file name to a Python string.
   module_name = PyString_FromString(module_name_.c_str());
@@ -46,22 +46,17 @@ void PythonUtils::PlotFinalOutput(std::string output_file_name, std::string type
   }
 
   // Get the plot function from the dictionary.
-  if (type == "Multivariate") {
-    module_func = PyDict_GetItemString(module_contents_dict, "PlotFinalOutputMultivariate");
-  }
-  else if (type == "Univariate"){
-    module_func = PyDict_GetItemString(module_contents_dict, "PlotFinalOutputUnivariate");
-  }
+  module_func = PyDict_GetItemString(module_contents_dict, "PlotFinalOutput");
   if (module_func == nullptr) {
     PyErr_Print();
     std::cerr << "Fails to import the function from the module.\n";
   }
 
   // Create a Python tuple to hold the arguments to the method (None, in this case).
-  module_arg = PyTuple_New(1);
+  module_arg = PyTuple_New(2);
   std::string output = GV::BUILD_DIR + output_file_name;
-  output_path = PyString_FromString(output.c_str());
-  PyTuple_SetItem(module_arg, 0, output_path);
+  PyTuple_SetItem(module_arg, 0, PyString_FromString(output.c_str()));
+  PyTuple_SetItem(module_arg, 1, PyString_FromString(type.c_str()));
 
   // Call the function with the arguments.
   PyObject_CallObject(module_func, module_arg);
@@ -69,7 +64,7 @@ void PythonUtils::PlotFinalOutput(std::string output_file_name, std::string type
 }
 
 void PythonUtils::PlotOutputWhileComputing(std::string output_file_name, int max_num_iter) {
-  PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg, *output_path;
+  PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg;
 
   // Convert the file name to a Python string.
   module_name = PyString_FromString(module_name_.c_str());
@@ -97,8 +92,7 @@ void PythonUtils::PlotOutputWhileComputing(std::string output_file_name, int max
   // Create a Python tuple to hold the arguments to the method
   module_arg = PyTuple_New(1);
   std::string output = GV::BUILD_DIR + output_file_name;
-  output_path = PyString_FromString(output.c_str());
-  PyTuple_SetItem(module_arg, 0, output_path);
+  PyTuple_SetItem(module_arg, 0, PyString_FromString(output.c_str()));
 
   // Call the function with the arguments.
   PyObject_CallObject(module_func, module_arg);

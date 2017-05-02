@@ -552,6 +552,9 @@ void MultivariateModel::SaveData(unsigned int iter_num, const Realizations &real
     auto g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
     auto tau = rand_var_.GetRandomVariable("Tau");
     auto ksi = rand_var_.GetRandomVariable("Ksi");
+    if (iter_num == 0){
+      log_file << "iter Noise G TauMean TauVar KsiMean KsiVar" << std::endl;
+    }
     // This part should be tuned by a xml file
     log_file << iter_num << " " << noise_->GetVariance() << " "
              << g << " " << tau->GetParameter("Mean") << " "
@@ -559,6 +562,58 @@ void MultivariateModel::SaveData(unsigned int iter_num, const Realizations &real
              << ksi->GetParameter("Mean") << " "
              << ksi->GetParameter("Variance") << std::endl;
     log_file.close();
+    if (iter_num == GV::MAX_ITER -1) {
+      log_file.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_, std::ofstream::out | std::ofstream::app);
+
+      auto block_g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
+      auto tau = rand_var_.GetRandomVariable("Tau");
+      auto ksi = rand_var_.GetRandomVariable("Ksi");
+      log_file << "iter Noise G TauMean KsiMean NumReal ";
+      for (int i = 0; i<deltas_.size(); i++){
+        log_file << "Delta" << i << " ";
+      }
+      log_file << std::endl;
+      log_file << iter_num << " " << noise_->GetVariance() << " "
+               << block_g << " " << tau->GetParameter("Mean") << " "
+               << ksi->GetParameter("Mean") << " "
+               << space_shifts_.get_column(0).size() << " ";
+      for (int i = 0; i<deltas_.size(); i++){
+        log_file << deltas_[i] << " ";
+      }
+      log_file << std::endl;
+
+      // In order to avoid creating arrays of vectors, we will have to manage number and vector results in two loops
+      std::vector<std::string> number_values = {"Tau", "Ksi"};
+
+      int num_col = number_values.size() + deltas_.size();
+      int num_row = reals.at(number_values[0]).size();
+      double realisations[num_row][num_col];
+      for (int i = 0; i < num_col - deltas_.size(); i++) {
+        std::string var = number_values[i];
+        log_file << var << " "; //Labels management
+        for (int j = 0; j < reals.at(var).size(); j++) {
+          realisations[j][i] = reals.at(var)[j];
+        }
+      }
+      // We add the space shifts
+      for (int i = 0; i < deltas_.size(); i++) {
+        log_file << "W" << i << " "; //Labels management
+        for (int j = 0; j < space_shifts_.get_row(i).size(); j++) {
+          realisations[j][2 + i] = space_shifts_(i, j);
+        }
+      }
+
+      log_file << std::endl; //Labels management
+      //Inversion
+      for (int i = 0; i < num_row; i++) {
+        for (int j = 0; j < num_col; j++) {
+          log_file << realisations[i][j] << " ";
+        }
+        log_file << std::endl;
+      }
+
+      log_file.close();
+    }
   }
   else {
     log_file.open(GV::TEST_DIR + "log_multivariate_file.txt", std::ofstream::out | std::ofstream::app);
