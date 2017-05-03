@@ -1,6 +1,20 @@
 #include "InputsAssert.h"
 
+/**
+ *  @file    InputsAssert.cpp
+ *  @date    2017/05/03
+ *
+ *  @brief Utils file to assert input validity, in terms of path, arguments type, ...
+ */
 
+/**
+ * @brief Checks is the file path leads to an openable file
+ *
+ * @param path: the path to check
+ * @throw InputException if the file is not openable
+ *
+ * @TODO check for permissions
+ */
 void InputsAssert::IsFilePathCorrect(std::string path){
   std::ifstream test(path);
   if (test) {
@@ -9,6 +23,12 @@ void InputsAssert::IsFilePathCorrect(std::string path){
   throw InputException("The file path '" + path + "' is incorrect.");
 }
 
+/**
+ * @brief Checks is the file path leads to an empty file
+ *
+ * @param path: the path to check
+ * @throw InputException if the file is empty
+ */
 void InputsAssert::IsFileEmpty(std::string path){
   std::ifstream test(path);
   test.seekg(0, std::ios::end);
@@ -18,6 +38,12 @@ void InputsAssert::IsFileEmpty(std::string path){
   return;
 }
 
+/**
+ * @brief Checks is the file has a valid XML syntax
+ *
+ * @param path: the path of the file to check
+ * @throw InputException if the XML syntax is wrong
+ */
 void InputsAssert::IsXMLValid(std::string path){
   IsXMLFilePath(path);
 
@@ -29,7 +55,12 @@ void InputsAssert::IsXMLValid(std::string path){
   }
 }
 
-
+/**
+ * @brief Checks is the file has a correct XML for model settings
+ *
+ * @param path: the path to check
+ * @throw InputException if parameters of the XML are missing
+ */
 void InputsAssert::IsValidModelXML(std::string path){
   IsFileCorrect(path, true);
 
@@ -105,6 +136,9 @@ void InputsAssert::IsValidModelXML(std::string path){
   return;
 }
 
+/**
+ *
+ */
 void InputsAssert::AllVariablesPresentInModelXML(std::string type, std::unordered_set<std::string> names){
   if(ToLowerCase(type) == "univariate"){
     std::string univ_names[] = {"noise", "P", "Ksi", "Tau"};
@@ -125,6 +159,12 @@ void InputsAssert::AllVariablesPresentInModelXML(std::string type, std::unordere
   }
 }
 
+/**
+ * @brief Checks is the file has a correct XML for algorithm settings
+ *
+ * @param path: the path to check
+ * @throw InputException if parameters of the XML are missing
+ */
 void InputsAssert::IsValidAlgoXML(std::string path){
   IsFileCorrect(path, true);
 
@@ -148,6 +188,12 @@ void InputsAssert::IsValidAlgoXML(std::string path){
   }
 };
 
+/**
+ * @brief Checks is the file has a correct XML for sampler settings
+ *
+ * @param path: the path to check
+ * @throw InputException if parameters of the XML are missing
+ */
 void InputsAssert::IsValidSamplerXML(std::string path){
   IsFileCorrect(path, true);
 
@@ -186,7 +232,12 @@ void InputsAssert::IsValidSamplerXML(std::string path){
 
 };
 
-
+/**
+ * @brief Checks is the file has a correct XML for data settings
+ *
+ * @param path: the path to check
+ * @throw InputException if parameters of the XML are missing
+ */
 void InputsAssert::IsValidDataXML(std::string path){
   IsFileCorrect(path, true);
 
@@ -213,6 +264,12 @@ void InputsAssert::IsValidDataXML(std::string path){
 
 };
 
+/**
+ * @brief Checks is the XMLElement has a correct shape for simulated data settings
+ *
+ * @param settings: the XMLElement to check
+ * @throw InputException if parameters of the XML are missing
+ */
 void InputsAssert::IsValidSimulatedData(const tinyxml2::XMLElement * settings){
 
   auto simulated = settings->FirstChildElement("simulated-data");
@@ -231,6 +288,12 @@ void InputsAssert::IsValidSimulatedData(const tinyxml2::XMLElement * settings){
   }
 }
 
+/**
+ * @brief Checks is the XMLElement has a correct shape for real data settings
+ *
+ * @param settings: the XMLElement to check
+ * @throw InputException if parameters of the XML are missing
+ */
 void InputsAssert::IsValidRealData(const tinyxml2::XMLElement * settings){
   auto real = settings->FirstChildElement("real-data");
   if (real == NULL) {
@@ -289,6 +352,13 @@ void InputsAssert::IsValidRealData(const tinyxml2::XMLElement * settings){
 
 }
 
+/**
+ * @brief Checks is the file is correct (exists, is not empty, and has a correct XML shape)
+ *
+ * @param path: the path of the file to check
+ * @param is_xml: Boolean, which should be true if the file is an xml and false otherwise
+ * @throw InputException if the file is incorrect (not existing, empty, or with an incorrect shape)
+ */
 void InputsAssert::IsFileCorrect(std::string path, bool is_xml){
   IsFilePathCorrect(path);
   IsFileEmpty(path);
@@ -297,32 +367,63 @@ void InputsAssert::IsFileCorrect(std::string path, bool is_xml){
   }
 }
 
+/**
+ * @brief Checks is the path has the correct shape and ends with csv (with regex)
+ *
+ * @param path: the path of the file to check
+ * @throw InputException if the path doesn't have the right shape
+ */
 void InputsAssert::IsCsvFilePath(std::string path){
   if (!std::regex_match(path, std::regex("([\\w\\/\\.]+)\\.csv"))){
     throw InputException("The data xml provides wrong csv file name: " + path);
   }
 }
 
+/**
+ * @brief Checks is the path has the correct shape and ends with xml (with regex)
+ *
+ * @param path: the path of the file to check
+ * @throw InputException if the path doesn't have the right shape
+ */
 void InputsAssert::IsXMLFilePath(std::string path){
   if (!std::regex_match(path, std::regex("([\\w\\/\\.]+)\\.xml"))){
     throw InputException("Incorrect path format: " + path);
   }
 }
 
+/**
+ * @brief Util function to transform a string to lower case
+ *
+ * @param data: string to convert to lower case
+ * @return data string in lower case
+ */
 std::string InputsAssert::ToLowerCase(std::string data){
   std::transform(data.begin(), data.end(), data.begin(), ::tolower);
   return data;
 }
 
+/**
+ * @brief Util function to transform a string to a boolean
+ *
+ * @param data: string to convert to a boolean (can be true, True, t, T or false, False, f, F)
+ * @return data in boolean form
+ * @throw InputException if the string cannot be converted
+ */
 bool InputsAssert::StringToBool(std::string data){
-  if (ToLowerCase(data) == "true") {
+  if (ToLowerCase(data) == "true" || ToLowerCase(data) == "t") {
     return true;
-  } else if (ToLowerCase(data) == "false") {
+  } else if (ToLowerCase(data) == "false" || ToLowerCase(data) == "f") {
     return false;
   }
   throw InputException(data + " should be 'true' or 'false'.");
 }
 
+/**
+ * @brief Util function which checks if an XMLElement is an integer
+ *
+ * @param elem: XMLElement to check
+ * @throw InputException if the XMLElement is not an integer, or not a leaf
+ */
 void InputsAssert::CheckElemContentIsInt(const tinyxml2::XMLElement* elem){
   if (elem->FirstChild()->ToText() != NULL) {
     try {
@@ -338,6 +439,12 @@ void InputsAssert::CheckElemContentIsInt(const tinyxml2::XMLElement* elem){
   }
 }
 
+/**
+ * @brief Util function which checks if an XMLElement is a double
+ *
+ * @param elem: XMLElement to check
+ * @throw InputException if the XMLElement is not a double, or not a leaf
+ */
 void InputsAssert::CheckElemContentIsDouble(const tinyxml2::XMLElement* elem){
   if (elem->FirstChild()->ToText() != NULL) {
     try {
@@ -353,6 +460,12 @@ void InputsAssert::CheckElemContentIsDouble(const tinyxml2::XMLElement* elem){
   }
 }
 
+/**
+ * @brief Util function which checks if an XMLElement is a string
+ *
+ * @param elem: XMLElement to check
+ * @throw InputException if the XMLElement is not a string, or not a leaf
+ */
 void InputsAssert::CheckElemContentIsString(const tinyxml2::XMLElement* elem){
   if (elem->FirstChild()->ToText() != NULL) {
     try {
@@ -368,6 +481,12 @@ void InputsAssert::CheckElemContentIsString(const tinyxml2::XMLElement* elem){
   }
 }
 
+/**
+ * @brief Util function which checks if an XMLElement is a boolean
+ *
+ * @param elem: XMLElement to check
+ * @throw InputException if the XMLElement is not a boolean, or not a leaf
+ */
 void InputsAssert::CheckElemContentIsBool(const tinyxml2::XMLElement* elem){
   if (elem->FirstChild()->ToText() != NULL) {
     try {
