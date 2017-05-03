@@ -9,7 +9,7 @@ import time
 import math
 
 def PlotFinalOutput(filename, type):
-    lines = PlotPatientCurves(filename, [], type, False, False)
+    lines = PlotPatientCurves(filename, type, False, False, [])
 
     plt.show(block = True)
     # for line in lines:
@@ -17,10 +17,11 @@ def PlotFinalOutput(filename, type):
     #     line.set_width(0.3)
     #     plt.pause(0.0001)
 
-def PlotAndSelectPatientCurvesWithData(filename, map_list, type):
-    values = PlotPatientCurves(filename, map_list, type, False, True)
+def PlotAndSelectPatientCurvesWithData(filename, type, map_list):
+    values = PlotPatientCurves(filename, type, False, True, map_list)
 
     def update(patient_id):
+        plt.ion()
         if type == "Multivariate":
             for i in range(4):
                 values[0][patient_id][i].set_visible(not values[0][patient_id][i].get_visible())
@@ -31,17 +32,17 @@ def PlotAndSelectPatientCurvesWithData(filename, map_list, type):
 
         values[1][patient_id].set_visible(not values[1][patient_id].get_visible())
         plt.pause(0.0001)
+        plt.ioff()
 
     while True:
-        value = input("Get patient?")
-        try:
-            int(str(value), 10) + 1 #TODO: fix problem with octal numbers + add error management
-        except Error:
-            print "This is not a number, exiting the program."
-            return
-        update(int(value))
+        value = raw_input("Get patient?")
+        if IsInt(value):
+            update(int(value))
+        else:
+            if UserMessages(str(value)):
+                break
 
-    plt.ioff()
+    plt.plot(block = True)
 
 
 def PlotOutputWhileComputing(filename):
@@ -84,13 +85,13 @@ def PlotOutputWhileComputing(filename):
 
     return
 
-def PlotPatientCurves(filename, map_list, type, isVisible, hasObservations):
+def PlotPatientCurves(filename, type, isVisible, hasObservations, map_list):
     if type == "Univariate":
-        return PlotPatientCurvesUnivariate(filename, map_list, isVisible, hasObservations)
+        return PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, map_list)
     elif type == "Multivariate":
-        return PlotPatientCurvesMultivariate(filename, map_list, isVisible, hasObservations)
+        return PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, map_list)
 
-def PlotPatientCurvesUnivariate(filename, observationsMap, isVisible, hasObservations):
+def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observationsMap):
     plt.ion()
     # Extraction of variables
     f = open(filename, 'r')
@@ -143,7 +144,7 @@ def PlotPatientCurvesUnivariate(filename, observationsMap, isVisible, hasObserva
         return [list_lines, list_points]
     return list_lines
 
-def PlotPatientCurvesMultivariate(filename, observationsMap, isVisible, hasObservations):
+def PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, observationsMap):
     plt.ion()
     # Extraction of variables
     f = open(filename, 'r')
@@ -161,7 +162,7 @@ def PlotPatientCurvesMultivariate(filename, observationsMap, isVisible, hasObser
             w_lines[i].append(float(l[2+i]))
 
     # Creation of X values
-    X = numpy.linspace(60,90,60)
+    X = numpy.linspace(50,110,90)
     fig = plt.figure()
     splot = fig.add_subplot(111)
 
@@ -172,7 +173,6 @@ def PlotPatientCurvesMultivariate(filename, observationsMap, isVisible, hasObser
     deltas = []
     for i in range(int(aver_line[5])):
         deltas.append(float(aver_line[6 + i]))
-    print deltas
 
     # Mean
     aver_Y = [[] for _ in xrange(int(aver_line[5]))]
@@ -189,10 +189,11 @@ def PlotPatientCurvesMultivariate(filename, observationsMap, isVisible, hasObser
         t0 = tau_line[i] #TauMean
         v0 = math.exp(ksi_line[i]) #exp(KsiMean)
         lines = []
+        color = numpy.random.rand(3,1)
         for k in range(len(Y)):
             for x in X:
                 Y[k].append(fMultivariate(x, g, deltas[k], w_lines[k][i], v0, t0))
-            line, = splot.plot(X, Y[k], color = line.get_color(), linewidth=0.5, visible = isVisible)
+            line, = splot.plot(X, Y[k], color = color, linewidth=0.5, visible = isVisible)
             lines.append(line)
         list_lines.append(lines)
 
@@ -200,7 +201,7 @@ def PlotPatientCurvesMultivariate(filename, observationsMap, isVisible, hasObser
             map = observationsMap[i]
             real_X = map.keys()
             real_Y = map.values()
-            points, = splot.plot(real_X, real_Y, color = line.get_color(), linestyle = ' ', marker = '+', visible = isVisible)
+            points, = splot.plot(real_X, real_Y, color = color, linestyle = ' ', marker = '+', visible = isVisible)
             list_points.append(points)
 
     if hasObservations:
@@ -214,3 +215,20 @@ def fUnivariate(t, p, v0, t0):
 
 def fMultivariate(t, g, delta, w, v0, t0):
     return 1 / (1 + g*math.exp((-w*math.pow(g*math.exp(-delta)+1,2)/g*math.exp(-delta)) - delta - v0*(t - t0)))
+
+def UserMessages(value):
+    if value == "hold" or value == "h" or value == "pause" or value == "p":
+        duration = input("How long do you want to hold the display (in sec)?")
+        if IsInt(duration):
+            plt.pause(int(duration))
+        return False
+    if value == "exit" or value == "quit" or value == "q":
+        return True
+    return False
+
+def IsInt(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False

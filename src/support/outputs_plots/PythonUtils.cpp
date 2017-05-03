@@ -1,7 +1,20 @@
 #include "PythonUtils.h"
+
+/**
+ *  @file    PythonUtils.cpp
+ *  @date    2017/05/03
+ *
+ *  @brief Utils file to launch Python for output display
+ */
+
 extern const std::string GV::SRC_DIR;
 extern const std::string GV::PYTHON27_DIR;
 
+/**
+ * @brief Initializes the path necessary for the python modules to work properly
+ *
+ * @param argv: we need to pass the program argv to the python
+ */
 PythonUtils::PythonUtils(char ** argv) {
   Py_SetPythonHome(strdup(GV::PYTHON27_DIR.c_str()));
   Py_SetProgramName("LongitudinaPython");
@@ -20,11 +33,20 @@ PythonUtils::PythonUtils(char ** argv) {
 
 }
 
+/**
+ * @brief Manages the destruction of the python objects
+ */
 PythonUtils::~PythonUtils() {
   Py_Finalize();
 
 }
 
+/**
+ * @brief Launches Python to plot the final average realization
+ *
+ * @param output_file_name is the name of the file which contains the data for the final realization
+ * @param type is the type of the model (Multivariate, Univariate, ...)
+ */
 void PythonUtils::PlotFinalOutput(std::string output_file_name, std::string type) {
   PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg;
 
@@ -63,6 +85,13 @@ void PythonUtils::PlotFinalOutput(std::string output_file_name, std::string type
 
 }
 
+/**
+ * @brief Launches Python to plot the evolution of the different parameters in real time
+ *
+ * @param output_file_name: name of the file to read the parameters from. The file is being written to during
+ *          the execution of ths code
+ * @param max_num_iter: not used yet. Will be adjust the scale display.
+ */
 void PythonUtils::PlotOutputWhileComputing(std::string output_file_name, int max_num_iter) {
   PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg;
 
@@ -99,7 +128,13 @@ void PythonUtils::PlotOutputWhileComputing(std::string output_file_name, int max
 
 }
 
-
+/**
+ * @brief Launches Python to plot the final f and compare them with the associated observations
+ *
+ * @param output_file_name: File to read the final parameters from
+ * @param type: type of the model ("Univariate", "Multivariate", ...)
+ * @param obs: observations for each patient (data points)
+ */
 void PythonUtils::PlotAllFinalOutputWithPatientData(std::string output_file_name, std::string type, Observations obs){
   PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg;
   PyObject *obs_list, *observations, *key, *item;
@@ -144,8 +179,8 @@ void PythonUtils::PlotAllFinalOutputWithPatientData(std::string output_file_name
   module_arg = PyTuple_New(3);
   std::string output = GV::BUILD_DIR + output_file_name;
   PyTuple_SetItem(module_arg, 0, PyString_FromString(output.c_str()));
-  PyTuple_SetItem(module_arg, 1, obs_list);
-  PyTuple_SetItem(module_arg, 2, PyString_FromString(type.c_str()));
+  PyTuple_SetItem(module_arg, 1, PyString_FromString(type.c_str()));
+  PyTuple_SetItem(module_arg, 2, obs_list);
 
   // Call the function with the arguments.
   PyObject_CallObject(module_func, module_arg);
