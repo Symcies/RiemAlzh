@@ -1,0 +1,51 @@
+<model-settings>
+
+  <!-- Type of the model : {Univariate, Multivariate, FastNetwork, MixedEffect} -->
+  <type>Gaussian</type>
+
+  <!-- Name of the outputs files -->
+  <output-name>AwesomeNetwork</output-name>
+
+  <number-of-independent-sources>3</number-of-independent-sources>
+
+  <!-- Only for the mixed effect model -->
+  <number-of-classes>6</number-of-classes>
+
+  <!-- Only for the network models -->
+  <path-to-kernel-Kxd>/Users/igor.koval/Documents/Work/RiemAlzh/development/data/Kxd_16.csv</path-to-kernel-Kxd>
+  <path-to-kernel-invKd>/Users/igor.koval/Documents/Work/RiemAlzh/development/data/invKd_16.csv</path-to-kernel-invKd>
+
+
+  <variables>
+    <noise>
+      <name>noise</name>
+      <initial-parameters>
+        <mean>0.0</mean>
+        <variance>0.0001</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.0</mean>
+        <variance>0.001</variance>
+      </second-parameters>
+      <proposition-variance>5</proposition-variance>
+    </noise>
+
+    <G>
+      <name>Gaussian</name>
+      <initial-parameters>
+        <mean>10</mean>
+        <variance>2</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>15</mean>
+        <variance>0.2</variance>
+      </second-parameters>
+      <proposition-variance>0.005</proposition-variance>
+    </G>
+
+
+
+
+  </variables>
+
+</model-settings>

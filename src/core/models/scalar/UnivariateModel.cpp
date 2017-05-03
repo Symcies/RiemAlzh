@@ -10,6 +10,7 @@ UnivariateModel::UnivariateModel(io::ModelSettings &model_settings)
   output_file_name_ = model_settings.GetOutputFileName();
   std::remove((GV::BUILD_DIR + output_file_name_ ).c_str());
   std::remove((GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ ).c_str());
+  acceptance_ratio_to_display_ = model_settings.GetAcceptanceRatioToDisplay();
 }
 
 UnivariateModel::~UnivariateModel()
@@ -201,7 +202,7 @@ void UnivariateModel::UpdateRandomVariables(const SufficientStatisticsVector &st
 }
 
 
-Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_settings, bool need_data)
+Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_settings)
 {
   /// This function simulates observations (Patients and their measurements y_ij at different time points t_ij)
   /// according to the model, with a given noise level e_ij, such that y_ij = f(t_ij) + e_ij
@@ -301,6 +302,13 @@ std::vector<AbstractModel::MiniBlock> UnivariateModel::GetSamplerBlocks() const
 /// Log-likelihood related method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
  
+void UnivariateModel::InitializeLogLikelihood(const Observations &obs) {
+  last_loglikelihood_.set_size(subjects_tot_num_);
+  ScalarType * l = last_loglikelihood_.memptr();
+  
+  for(size_t i = 0; i < subjects_tot_num_; ++i) 
+    l[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
+}
 
 AbstractModel::VectorType UnivariateModel::ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)
 {

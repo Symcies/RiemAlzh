@@ -17,6 +17,7 @@ ModelSettings::ModelSettings(std::string xml_file) {
   type_ = settings->FirstChildElement("type")->GetText();
   independent_sources_nb_ = std::stoi(settings->FirstChildElement("number-of-independent-sources")->GetText());
   LoadInitialRandomVariables(settings->FirstChildElement("variables"));
+  LoadAcceptanceRatioToDisplay(settings->FirstChildElement("acceptance-ratio-to-display"));
 
   output_file_name_ = settings->FirstChildElement("output-name")->GetText();
   LoadModel(settings);
@@ -36,6 +37,14 @@ ModelSettings::~ModelSettings() {
 /// Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+void ModelSettings::LoadAcceptanceRatioToDisplay(const tinyxml2::XMLElement *settings) {
+  for(auto child = settings->FirstChildElement(); child != NULL; child = child->NextSiblingElement()) {
+    
+    std::string name = child->GetText();
+    acceptance_ratio_to_display_.push_back(name);
+    
+  }
+}
 
 
 void ModelSettings::LoadModel(const tinyxml2::XMLElement *settings){
@@ -49,6 +58,10 @@ void ModelSettings::LoadModel(const tinyxml2::XMLElement *settings){
     LoadMultivariate(settings);
   } else if (InputsAssert::ToLowerCase(type_) == "univariate") {
     LoadUnivariate(settings);
+  } else if (InputsAssert::ToLowerCase(type_) == "gaussian") {
+    LoadGaussian(settings);
+  } else if (InputsAssert::ToLowerCase(type_) == "gaussianmixture"){
+    LoadGaussianMixture(settings);
   } else {
     std::cerr << "The model type defined in model_settings.xml should be one of the following: "
             "Univariate, Multivariate, FastNetwork, Meshwork. Here, it was " << type_ << std::endl ;
@@ -106,6 +119,16 @@ void ModelSettings::LoadMultivariate(const tinyxml2::XMLElement *settings) {
 }
 
 void ModelSettings::LoadUnivariate(const tinyxml2::XMLElement *settings) {
+  PrintModelInfo();
+}
+
+void ModelSettings::LoadGaussian(const tinyxml2::XMLElement *settings) {
+  PrintModelInfo();
+}
+
+void ModelSettings::LoadGaussianMixture(const tinyxml2::XMLElement *settings) {
+  number_of_classes_ = std::stoi(settings->FirstChildElement("number-of-classes")->GetText());
+  
   PrintModelInfo();
 }
 

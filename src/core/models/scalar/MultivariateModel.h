@@ -31,7 +31,7 @@ public:
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats);
   
   /// Simulate data according to the model
-  virtual Observations SimulateData(io::SimulatedDataSettings& data_settings, bool init_data = false);
+  virtual Observations SimulateData(io::SimulatedDataSettings& data_settings);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
   virtual std::vector<MiniBlock> GetSamplerBlocks() const;
@@ -40,11 +40,14 @@ public:
   /// Log-likelihood related method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   
+  /// Initialize the loglikelihood vector of the model
+  virtual void InitializeLogLikelihood(const Observations& obs);
+  
   /// Compute the log likelihood of the model
   virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info);
 
   /// Compute the log likelihood of the model for a particular individual
-  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_);  
+  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subject_num_);  
   
   /// Get the previous loglikelihood computed
   virtual ScalarType GetPreviousLogLikelihood(const MiniBlock& block_info);
@@ -66,10 +69,6 @@ public:
 
 private:
   
-  /// Probably to erase
-  /// Compute the parallel curve
-  VectorType ComputeParallelCurve(int subjects_num, int obs_num);
-
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,6 +92,12 @@ private:
 
   /// Compute block 1 (1/p0 -1)
   void ComputeBlock(const Realizations& reals);
+  
+  /// Get the type of a sampler block
+  int GetType(const MiniBlock& block_info);
+
+  /// Compute the parallel curve
+  VectorType ComputeParallelCurve(int subjects_num, int obs_num);
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
