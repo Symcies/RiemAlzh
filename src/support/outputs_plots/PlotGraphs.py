@@ -128,16 +128,17 @@ def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observatio
         Y = []
         t0 = float(tau_line[i]) #TauMean
         v0 = math.exp(float(ksi_line[i])) #exp(KsiMean)
+        color = numpy.random.rand(3,1)
         for x in X:
             Y.append(fUnivariate(x, p, v0, t0))
-        line, = splot.plot(X, Y, linewidth=0.5, visible = isVisible)
+        line, = splot.plot(X, Y, linewidth=0.5, visible = isVisible, color = color)
         list_lines.append(line)
 
         if hasObservations:
             map = observationsMap[i]
             real_X = map.keys()
             real_Y = map.values()
-            points, = splot.plot(real_X, real_Y, color = line.get_color(), linestyle = ' ', marker = '+', visible = isVisible)
+            points, = splot.plot(real_X, real_Y, color = color, linestyle = ' ', marker = '+', visible = isVisible)
             list_points.append(points)
 
     if hasObservations:

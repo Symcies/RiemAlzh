@@ -10,6 +10,6 @@
   <step-size-to-display>25</step-size-to-display>
 
   <!-- Comment -->
-  <step-size-to-save>500</step-size-to-save>
+  <step-size-to-save>10</step-size-to-save>
 
 </algorithm-settings>

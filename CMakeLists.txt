@@ -1,6 +1,7 @@
 ### PROJECT
 
 cmake_minimum_required(VERSION 3.2)
+
 project(Longitudina CXX)
 
 option(BUILD_TESTS "Build the tests ?" ON)
@@ -50,6 +51,8 @@ if (NOT ARMADILLO_VERSION_MAJOR OR "${ARMADILLO_VERSION_MAJOR}" LESS 6)
     Message(FATAL_ERROR "ARMADILLO version must be great or equal to version 6.0")
 endif()
 
+find_package(PythonLibs REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
 
 ### Set new project folders / files
 
@@ -57,25 +60,30 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/asserts
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/models
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/network
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/manifolds/base_manifold
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/parameters
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/random_variables
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/samplers
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/algorithm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/manifolds
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/manifolds/base_manifold
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/scalar
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/combinaisons
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/prototypes
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/observations
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/parameters
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/random_variables
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/realizations
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/samplers
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/realizations
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/io/outputs
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io/data_settings
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/observations
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/launch
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/launch/fit
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/launch/validate
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/asserts
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra/armadillo
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/support/outputs_plots
         )
 
 #TODO: Change the recurse and include all files manually
@@ -114,13 +122,14 @@ Add_Library(riem-lib
   ${SRC})
 Target_Link_Libraries(riem-lib
   ${ARMADILLO_LIBRARIES}
-  tinyxml2)
+  tinyxml2
+  ${PYTHON_LIBRARIES})
 
 ### EXECUTABLE
 
 #Creation of the executable, linked with the src library
 add_executable(Longitudina
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp src/asserts/InputsAssert.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/launch/main.cpp )
 
 Target_Link_Libraries(Longitudina riem-lib)
 

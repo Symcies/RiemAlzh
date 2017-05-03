@@ -18,7 +18,7 @@ RealDataSettings::RealDataSettings(std::string xml_file) : DataSettings(xml_file
 
   /// Extract paths
   std::string data_path = settings->FirstChildElement("folder-path")->GetText();
-  InputsAssert::IsFileCorrect(&data_path[0], false);
+  //InputsAssert::IsFileCorrect(&data_path[0], false);
   data_path_ = data_path;
 
   std::string group_path = data_path_ + settings->FirstChildElement("group-file")->GetText();
