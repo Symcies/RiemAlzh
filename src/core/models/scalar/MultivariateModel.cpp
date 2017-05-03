@@ -382,7 +382,7 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
     VectorType time_points = ran_time_points_num.Samples(uni(rand_num_gen));
     time_points.sort();
     individual_obs_date_.push_back(time_points);
-    VectorType transformed_time_points = reals.at("Ksi")(i) * (time_points - reals.at("Ksi")(i));
+    VectorType transformed_time_points = exp(reals.at("Ksi")(i)) * (time_points - reals.at("Tau")(i));
     individual_time_points_.push_back(transformed_time_points);
 
     /// Simulate the data base on the time-points
