@@ -41,8 +41,16 @@ Observations& Observations::operator=(const Observations & obs){
 
 void Observations::AddIndividualData(IndividualObservations& indiv_obs)
 {
+  // TODO : Redundant?
   data_.push_back(indiv_obs);
   indiv_obs_.push_back(indiv_obs.GetTimePoints());
+}
+
+void Observations::AddObservations(Observations &obs) {
+  for(size_t i = 0; i < obs.GetNumberOfSubjects(); ++i) {
+    data_.push_back(obs.GetSubjectObservations(i));
+    indiv_obs_.push_back(obs.GetSubjectTimePoints(i));
+  }
 }
 
 

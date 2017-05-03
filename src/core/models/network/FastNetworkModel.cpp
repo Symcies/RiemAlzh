@@ -1,6 +1,4 @@
 #include "FastNetworkModel.h"
-#include <armadillo>
-#include <src/random_variables/UniformRandomVariable.h>
 
 FastNetworkModel::FastNetworkModel(io::ModelSettings &MS)
 {
@@ -78,29 +76,17 @@ void FastNetworkModel::Initialize(const Observations& obs)
 
 }
 
-
-
-ScalarType FastNetworkModel::InitializePropositionDistributionVariance(std::string name) const
-{
-  name = name.substr(0, name.find_first_of("#"));
-  if("P" == name)
-    return 0.000001;
-  if("Delta" == name)
-    return 0.00000001;
-  if("Nu" == name)
-    return 0.00001;
-  if("Beta" == name)
-    return 0.00001*0.00001;
-  if("Ksi" == name)
-    return 0.0008;
-  if("Tau" == name)
-    return 0.02 * 0.02;
-  if("S" == name)
-    return 0.7;
+void FastNetworkModel::InitializeValidationDataParameters(const io::SimulatedDataSettings &data_settings,
+                                                          const io::ModelSettings &model_settings) {
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
 }
 
-void FastNetworkModel::UpdateModel(const Realizations& reals, int type,
-            const std::vector<std::string> names)
+
+void UnivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& block_info, const std::vector<std::string> names)
 {
 
   bool compute_position = false;
@@ -277,50 +263,6 @@ Observations FastNetworkModel::SimulateData(io::DataSettings& data_settings)
 
 }
 
-
-double FastNetworkModel::ComputeLogLikelihood(const Observations &obs)
-{
-
-  double log_likelihood = 0;
-
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-     ScalarType time_points_num = obs.GetNumberOfTimePoints(i);
-
-      for(size_t j = 0; j < time_points_num; ++j)
-      {
-          auto& it = obs.GetSubjectLandmark(i, j);
-          VectorType parallel_curve = ComputeParallelCurve(i, j);
-          log_likelihood += (it - parallel_curve).squared_magnitude();
-      }
-  }
-
-  log_likelihood  /= -2*noise_->GetVariance();
-  log_likelihood -= obs_tot_num_*log(sqrt(2 * noise_->GetVariance() * M_PI ));
-
-  return log_likelihood;
-}
-
-double FastNetworkModel::ComputeIndividualLogLikelihood(const IndividualObservations& obs, const int indiv_num)
-{
-  /// Get the data
-  double log_likelihood = 0;
-  auto time_points_num = obs.GetNumberOfTimePoints();
-
-#pragma omp parallel for reduction(+:log_likelihood)
-  for(size_t i = 0; i < time_points_num; ++i)
-  {
-      auto& it = obs.GetLandmark(i);
-      VectorType parallel_curve2 = ComputeParallelCurve(indiv_num, i);
-      log_likelihood += (it - parallel_curve2).squared_magnitude();
-  }
-
-  log_likelihood /= -2*noise_->GetVariance();
-  log_likelihood -= time_points_num * log(2 * noise_->GetVariance() * M_PI) / 2.0;
-
-  return log_likelihood;
-}
-
 FastNetworkModel::SufficientStatisticsVector FastNetworkModel::GetSufficientStatistics(const Realizations& simulated_real,  const Observations& obs)
 {
 
@@ -452,7 +394,7 @@ void FastNetworkModel::UpdateRandomVariables(const SufficientStatisticsVector &s
 }
 
 
-std::vector<AbstractModel::SamplerBlock> FastNetworkModel::GetSamplerBlocks() const
+std::vector<AbstractModel::MiniBlock> FastNetworkModel::GetSamplerBlocks() const
 {
   int population_type = -1;
   int nb_beta = 1;
@@ -551,9 +493,72 @@ std::vector<AbstractModel::SamplerBlock> FastNetworkModel::GetSamplerBlocks() co
   return blocks;
 }
 
-void
-FastNetworkModel
-::DisplayOutputs(const Realizations& simulated_real)
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Log-likelihood related method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+AbstractModel::VectorType FastNetworkModel::ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)
+{
+  int type = std::get<0>(block_info[0]);
+  
+  if(type == -1) {
+    VectorType loglikelihood(subjects_tot_num_);
+    ScalarType *l_ptr = loglikelihood.memptr();
+    for (size_t i = 0; i < subjects_tot_num_; ++i)
+      l_ptr[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
+
+    return loglikelihood;
+  } else {
+    return VectorType(1, ComputeIndividualLogLikelihood(obs.GetSubjectObservations(type), type));
+  }
+}
+
+ScalarType FastNetworkModel::ComputeIndividualLogLikelihood(const IndividualObservations& obs, const int subject_num)
+{
+  /// Get the data
+  double log_likelihood = 0;
+  auto time_points_num = obs.GetNumberOfTimePoints();
+
+#pragma omp parallel for reduction(+:log_likelihood)
+  for(size_t i = 0; i < time_points_num; ++i)
+  {
+      auto& it = obs.GetLandmark(i);
+      VectorType parallel_curve2 = ComputeParallelCurve(indiv_num, i);
+      log_likelihood += (it - parallel_curve2).squared_magnitude();
+  }
+
+  log_likelihood /= -2*noise_->GetVariance();
+  log_likelihood -= time_points_num * log(2 * noise_->GetVariance() * M_PI) / 2.0;
+
+  return log_likelihood;
+}
+
+ScalarType FastNetworkModel::GetPreviousLogLikelihood(const MiniBlock &block_info) {
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+}
+
+
+void FastNetworkModel::SetPreviousLogLikelihood(VectorType &log_likelihood,
+                                            const MiniBlock &block_info) {
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Outputs
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FastNetworkModel::DisplayOutputs(const Realizations& simulated_real)
 {
   auto p0 = rand_var_.GetRandomVariable("P")->GetParameter("Mean");
   auto tau = rand_var_.GetRandomVariable("Tau");
@@ -580,7 +585,6 @@ FastNetworkModel
   std::cout << " - MaxDelta: " << delta_max << " - MinDelta: " << delta_min << std::endl;
 
 }
-
 
 void FastNetworkModel::SaveData(unsigned int iter_num, const Realizations& simulated_real)
 {
@@ -690,33 +694,6 @@ void FastNetworkModel::SaveData(unsigned int iter_num, const Realizations& simul
 
 }
 
-
-void FastNetworkModel::InitializeFakeRandomVariables()
-{
-
-   /// Population variables
-  noise_ = std::make_shared<GaussianRandomVariable>( 0.0, 0.1 );
-
-  rand_var_.AddRandomVariable("P", "Gaussian", {0.08, 0.00001 * 0.00001});
-
-  for(int i = 1; i < control_points_nb_; ++i)
-    rand_var_.AddRandomVariable("Delta#" + std::to_string(i), "Gaussian", {0.5, 0.0001 * 0.0001});
-
-  rand_var_.AddRandomVariable("Nu", "Gaussian", {0.036, 0.004*0.004});
-
-  for(int i = 0; i < indep_components_nb_*(manifold_dim_ - 1); ++i)
-    rand_var_.AddRandomVariable("Beta#" + std::to_string(i), "Gaussian", {0, 0.0001 * 0.0001});
-
-
-  /// Individual variables
-  rand_var_.AddRandomVariable("Ksi", "Gaussian", {0, 0.000000004});
-
-  rand_var_.AddRandomVariable("Tau", "Gaussian", {70, 0.25});
-
-  for(int i = 0; i < indep_components_nb_; ++i)
-    rand_var_.AddRandomVariable("S#" + std::to_string(i), "Gaussian", {0.0, 0.5});
-
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :

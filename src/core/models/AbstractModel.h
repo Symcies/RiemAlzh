@@ -46,8 +46,8 @@ public:
   /// Encapsulation method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  std::shared_ptr< AbstractRandomVariable > GetRandomVariable(std::string name) const;
-  std::shared_ptr< AbstractRandomVariable > GetRandomVariable(int key) const;
+  virtual std::shared_ptr< AbstractRandomVariable > GetRandomVariable(std::string name) const;
+  virtual std::shared_ptr< AbstractRandomVariable > GetRandomVariable(int key) const;
 
   inline std::shared_ptr< AbstractManifold > GetManifold(){return manifold_;};
   inline MultiRandomVariables& GetRandomVariable(){return rand_var_;};
@@ -56,6 +56,7 @@ public:
   inline double GetNumberOfObservations(){return obs_tot_num_;};
   inline int GetNumberOfSubjects(){return subjects_tot_num_;};
   inline double GetManifoldDimension(){return manifold_dim_;};
+  inline std::vector<std::string> GetAcceptanceRatioToDisplay() { return acceptance_ratio_to_display_; }
   
   inline void SetRandomVariableParameters(const InitialRVParameters& params) { rv_params_ = params; } 
 
@@ -83,10 +84,10 @@ public:
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats) = 0;
   
   /// Simulate data according to the model
-  virtual Observations SimulateData(io::SimulatedDataSettings& data_settings, bool need_init = false) = 0;
+  virtual Observations SimulateData(io::SimulatedDataSettings& data_settings) = 0;
 
   /// Simulate some random variable realizations
-  Realizations SimulateRealizations();
+  virtual Realizations SimulateRealizations();
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
   virtual std::vector<MiniBlock> GetSamplerBlocks() const = 0;
@@ -96,11 +97,14 @@ public:
   /// Log-likelihood related method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   
+  /// Initialize the loglikelihood vector of the model
+  virtual void InitializeLogLikelihood(const Observations& obs) = 0;
+  
   /// Compute the log likelihood of the model
   virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)= 0;
 
   /// Compute the log likelihood of the model for a particular individual
-  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs ,const int subjects_tot_num_) = 0;
+  virtual ScalarType ComputeIndividualLogLikelihood(const IndividualObservations& obs, const int subjects_tot_num_) = 0;
   
   /// Get the previous loglikelihood computed
   virtual ScalarType GetPreviousLogLikelihood(const MiniBlock& block_info) = 0;
@@ -154,6 +158,9 @@ protected:
 
   /// Dimension of the manifold
   double manifold_dim_;
+  
+  /// Name of the random variable acceptance ratio to displau
+  std::vector<std::string> acceptance_ratio_to_display_;
 
 private:
   AbstractModel(const AbstractModel &);

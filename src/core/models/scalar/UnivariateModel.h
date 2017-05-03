@@ -21,7 +21,6 @@ class UnivariateModel : public AbstractModel {
   /// Initialize the model in case of validation data
   virtual void InitializeValidationDataParameters(const io::SimulatedDataSettings& data_settings, const io::ModelSettings& model_settings);
   
-  
   /// Update the model parameters != random variables parameters
   virtual void UpdateModel(const Realizations& reals, const MiniBlock& block_info, const std::vector<std::string> names = {"All"});
 
@@ -32,7 +31,7 @@ class UnivariateModel : public AbstractModel {
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats);
 
   /// Simulate data according to the model
-  virtual Observations SimulateData(io::SimulatedDataSettings& data_settings, bool need_init = false);
+  virtual Observations SimulateData(io::SimulatedDataSettings& data_settings);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
   virtual std::vector<MiniBlock> GetSamplerBlocks() const;
@@ -40,6 +39,9 @@ class UnivariateModel : public AbstractModel {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Log-likelihood related method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Initialize the loglikelihood vector of the model
+  virtual void InitializeLogLikelihood(const Observations& obs);
   
   /// Compute the log likelihood of the model
   virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info);

@@ -1,6 +1,7 @@
 # Ignore the datasets
 src/io/outputs/
 development/
+bin/
 
 
 # Ignore the results

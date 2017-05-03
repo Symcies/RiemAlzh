@@ -103,6 +103,9 @@ private:
 
   /// Acceptance ratios
   IntVectorHash acceptance_ratio_;
+  
+  /// Random variable whose acceptance ratio are displayed
+  std::vector<std::string> acceptance_ratio_to_display_;
 
   /// Compute the acceptance ratio for each random variable
   void ComputeAcceptanceRatio(Realizations& prev_real_, int iter);

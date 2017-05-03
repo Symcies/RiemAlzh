@@ -73,6 +73,7 @@ Set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/io/data_settings
         ${CMAKE_CURRENT_SOURCE_DIR}/src/observations
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/support/asserts
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra
         ${CMAKE_CURRENT_SOURCE_DIR}/src/support/linear_algebra/armadillo
         )
@@ -85,9 +86,11 @@ file( GLOB_RECURSE EXAMPLES examples/* )
 ####################################################################################################
 #Next lines are just to work with one moddel
 file(GLOB to_remove
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/network/*
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar/MixedEffectsModel.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/models/scalar/MixedEffectsModel.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/NetworkModel.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/NetworkModel.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/MeshworkModel.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/MeshworkModel.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/*
         )
 
 list(REMOVE_ITEM SRC ${to_remove})

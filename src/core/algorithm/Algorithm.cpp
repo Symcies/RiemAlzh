@@ -42,6 +42,7 @@ void Algorithm::ComputeMCMCSAEM(const Observations& obs) {
   InitializeModel(obs);
   InitializeStochasticSufficientStatistics(obs);
   InitializeSampler();
+  acceptance_ratio_to_display_ = model_->GetAcceptanceRatioToDisplay();
 
   for(int iter = 0; iter < max_iter_num_; iter ++)
   {
@@ -127,7 +128,7 @@ void Algorithm::IterationMCMCSAEM(const Observations& obs, int iter){
 void Algorithm::ComputeSimulationStep(const Observations& obs, int iter)
 {
   /// It compute the simulate step to draw new realizations based on the previous one.
-  /// The previous realizations are kept to compute the acceptance ratio
+  /// The previous realizations are keupt to compute the acceptance ratio
 
   Realizations prev_reals = *realizations_;
   unsigned int sampler_number = GetSamplerNumber(iter);
@@ -217,9 +218,9 @@ void Algorithm::DisplayOutputs()
 void Algorithm::DisplayAcceptanceRatio() {
     std::cout << "AcceptRatio: ";
 
-    auto names_to_show = {"Tau", "Ksi"};
-
-    for(auto it = names_to_show.begin(); it != names_to_show.end(); ++it)
+   
+    //auto names_to_show = {"Tau", "Ksi"};
+    for(auto it = acceptance_ratio_to_display_.begin(); it != acceptance_ratio_to_display_.end(); ++it)
     {
         std::string name = *it;
         int key = realizations_->ReverseNameToKey(name);
