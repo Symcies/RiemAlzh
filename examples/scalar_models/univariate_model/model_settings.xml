@@ -1,0 +1,73 @@
+<model-settings>
+
+  <!-- Type of the model : {Univariate, Multivariate, FastNetwork, MixedEffect} -->
+  <type>Univariate</type>
+
+  <!-- Name of the outputs files -->
+  <output-name>AwesomeNetwork</output-name>
+
+  <number-of-independent-sources>3</number-of-independent-sources>
+
+  <variables>
+    <noise>
+      <name>noise</name>
+      <initial-parameters>
+        <mean>0.0</mean>
+        <variance>0.00001</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.0</mean>
+        <variance>0.0001</variance>
+      </second-parameters>
+      <proposition-variance>0</proposition-variance>
+    </noise>
+
+    <P>
+      <name>P</name>
+      <initial-parameters>
+        <mean>0.009</mean>
+        <variance>0.00000001</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.012</mean>
+        <variance>0.0001</variance>
+      </second-parameters>
+      <proposition-variance>0.00001</proposition-variance>
+    </P>
+
+    <Ksi>
+      <name>Ksi</name>
+      <initial-parameters>
+        <mean>-1.3</mean>
+        <variance>0.0004</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>-1.1</mean>
+        <variance>0.000004</variance>
+      </second-parameters>
+      <proposition-variance>0.0001</proposition-variance>
+    </Ksi>
+
+    <Tau>
+      <name>Tau</name>
+      <initial-parameters>
+        <mean>85</mean>
+        <variance>0.025</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>80</mean>
+        <variance>10</variance>
+      </second-parameters>
+      <proposition-variance>0.5</proposition-variance>
+    </Tau>
+
+
+  </variables>
+
+  <acceptance-ratio-to-display>
+    <p>P</p>
+    <ksi>Ksi</ksi>
+    <tau>Tau</tau>
+  </acceptance-ratio-to-display>
+
+</model-settings>

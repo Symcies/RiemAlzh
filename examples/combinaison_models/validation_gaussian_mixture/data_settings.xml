@@ -1,12 +1,12 @@
 <data-settings>
 
   <!-- Defines if should read real data (true) of simulate data (false) -->
-  <data-type>true</data-type>
+  <data-type>false</data-type>
 
 
-  <!-- In case of real data -->
+  <!-- REAL DATA TO PROCESS -->
   <real-data>
-    <folder-path>RiemAlzh/examples/scalar_models/MultivariateModel/data/</folder-path>
+    <folder-path>/Users/igor.koval/Documents/Work/RiemAlzh/development/data/CognitiveScores/MCI/</folder-path>
     <group-file>group.csv</group-file>
     <timepoints-file>X.csv</timepoints-file>
 
@@ -31,11 +31,19 @@
 
   </real-data>
 
-  <!-- In case of simulated data -->
+
+
+
+
+
+
+  <!-- SIMULATE DATA -->
+
   <simulated-data>
-    <number-of-individuals>150</number-of-individuals>
+    <number-of-individuals>200</number-of-individuals>
     <min-number-of-observations>4</min-number-of-observations>
     <max-number-of-observations>6</max-number-of-observations>
+    <dimension>3</dimension>
   </simulated-data>
 
 

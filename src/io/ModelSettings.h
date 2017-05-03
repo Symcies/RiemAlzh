@@ -52,6 +52,8 @@ public:
 
   InitialRVParameters GetSecondRandomVariables() const { return second_random_variables_; }
   
+  std::vector<std::string> GetAcceptanceRatioToDisplay() const { return acceptance_ratio_to_display_; }
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Other method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,6 +85,9 @@ private:
   /// Initial model random variables
   InitialRVParameters init_random_variables_;
   InitialRVParameters second_random_variables_;
+  
+  /// Name of the random variable acceptance ratio to displau
+  std::vector<std::string> acceptance_ratio_to_display_;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Model specific methods(s) :
@@ -101,6 +106,9 @@ private:
   
   /// Load the random varianle parameters
   std::vector<double> LoadRVParameters(const tinyxml2::XMLElement* parameters);
+  
+  /// Load the name of the random variables whose acceptance ratio are going to be displayed
+  void LoadAcceptanceRatioToDisplay(const tinyxml2::XMLElement* settings);
   
   /// Chooses the right model
   void LoadModel(const tinyxml2::XMLElement *settings);

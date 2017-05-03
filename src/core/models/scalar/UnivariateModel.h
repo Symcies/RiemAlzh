@@ -40,6 +40,9 @@ class UnivariateModel : public AbstractModel {
   /// Log-likelihood related method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   
+  /// Initialize the loglikelihood vector of the model
+  virtual void InitializeLogLikelihood(const Observations& obs);
+  
   /// Compute the log likelihood of the model
   virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info);
 

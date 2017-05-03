@@ -7,6 +7,7 @@
 //TODO(igor): why empty and param?
 UnivariateModel::UnivariateModel(io::ModelSettings &model_settings)
 {
+  acceptance_ratio_to_display_ = model_settings.GetAcceptanceRatioToDisplay();
 }
 
 UnivariateModel::~UnivariateModel()
@@ -299,6 +300,13 @@ std::vector<AbstractModel::MiniBlock> UnivariateModel::GetSamplerBlocks() const
 /// Log-likelihood related method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
  
+void UnivariateModel::InitializeLogLikelihood(const Observations &obs) {
+  last_loglikelihood_.set_size(subjects_tot_num_);
+  ScalarType * l = last_loglikelihood_.memptr();
+  
+  for(size_t i = 0; i < subjects_tot_num_; ++i) 
+    l[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
+}
 
 AbstractModel::VectorType UnivariateModel::ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)
 {
@@ -404,14 +412,14 @@ void UnivariateModel::SaveData(unsigned int iter_num, const Realizations &reals)
 
   if(!GV::TEST_RUN) {
     log_file.open(GV::BUILD_DIR + "log_univariate_file.txt", std::ofstream::out | std::ofstream::app);
-    auto g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
+    auto block_p = rand_var_.GetRandomVariable("P")->GetParameter("Mean");
     auto tau = rand_var_.GetRandomVariable("Tau");
     auto ksi = rand_var_.GetRandomVariable("Ksi");
 
     // This part should be tuned by a xml file
     log_file << "Iteration n: " << iter_num;
     log_file << " - noise: " << noise_->GetVariance();
-    log_file << " - G: " << g;
+    log_file << " - P: " << block_p;
     log_file << " - T0: " << tau->GetParameter("Mean") << " - Var(Tau): "
              << tau->GetParameter("Variance");
     log_file << " - Ksi: " << ksi->GetParameter("Mean") << " - Var(Ksi): "

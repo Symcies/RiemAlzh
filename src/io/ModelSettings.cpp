@@ -17,7 +17,7 @@ ModelSettings::ModelSettings(std::string xml_file) {
   type_ = settings->FirstChildElement("type")->GetText();
   independent_sources_nb_ = std::stoi(settings->FirstChildElement("number-of-independent-sources")->GetText());
   LoadInitialRandomVariables(settings->FirstChildElement("variables"));
-
+  LoadAcceptanceRatioToDisplay(settings->FirstChildElement("acceptance-ratio-to-display"));
   LoadModel(settings);
 
 }
@@ -35,6 +35,14 @@ ModelSettings::~ModelSettings() {
 /// Method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+void ModelSettings::LoadAcceptanceRatioToDisplay(const tinyxml2::XMLElement *settings) {
+  for(auto child = settings->FirstChildElement(); child != NULL; child = child->NextSiblingElement()) {
+    
+    std::string name = child->GetText();
+    acceptance_ratio_to_display_.push_back(name);
+    
+  }
+}
 
 
 void ModelSettings::LoadModel(const tinyxml2::XMLElement *settings){

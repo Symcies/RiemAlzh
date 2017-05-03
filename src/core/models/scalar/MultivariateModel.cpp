@@ -10,6 +10,7 @@ MultivariateModel::MultivariateModel(io::ModelSettings &model_settings)
 {
   /// Initialize the data dimension and the number of sources
   indep_sources_num_ = model_settings.GetIndependentSourcesNumber();
+  acceptance_ratio_to_display_ = model_settings.GetAcceptanceRatioToDisplay();
 }
 
 MultivariateModel::~MultivariateModel()
@@ -443,6 +444,14 @@ std::vector<AbstractModel::MiniBlock> MultivariateModel::GetSamplerBlocks() cons
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Log-likelihood related method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MultivariateModel::InitializeLogLikelihood(const Observations &obs) {
+  last_loglikelihood_.set_size(subjects_tot_num_);
+  ScalarType * l = last_loglikelihood_.memptr();
+  
+  for(size_t i = 0; i < subjects_tot_num_; ++i) 
+    l[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
+}
 
 
 AbstractModel::VectorType MultivariateModel::ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)

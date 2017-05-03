@@ -1,6 +1,4 @@
 #include "FastNetworkModel.h"
-#include <armadillo>
-#include <src/random_variables/UniformRandomVariable.h>
 
 FastNetworkModel::FastNetworkModel(io::ModelSettings &MS)
 {

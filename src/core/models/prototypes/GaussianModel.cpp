@@ -217,6 +217,14 @@ std::vector<AbstractModel::MiniBlock> GaussianModel::GetSamplerBlocks() const {
 /// Log-likelihood related method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void GaussianModel::InitializeLogLikelihood(const Observations &obs) {
+  last_loglikelihood_.set_size(subjects_tot_num_);
+  ScalarType * l = last_loglikelihood_.memptr();
+  
+  for(size_t i = 0; i < subjects_tot_num_; ++i) 
+    l[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
+}
+
 
 AbstractModel::VectorType GaussianModel::ComputeLogLikelihood(const Observations &obs,
                                                               const MiniBlock &block_info) {

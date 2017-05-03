@@ -93,6 +93,10 @@ file( GLOB_RECURSE TEST test/* )
 ####################################################################################################
 #Next lines are just to work with one moddel
 file(GLOB to_remove
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/NetworkModel.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/NetworkModel.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/MeshworkModel.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/MeshworkModel.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/core/models/network/*
         )
 

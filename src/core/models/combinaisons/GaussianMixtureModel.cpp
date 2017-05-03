@@ -2,6 +2,17 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Encapsulation method(s) :
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+std::shared_ptr<AbstractRandomVariable> GaussianMixtureModel::GetRandomVariable(int key) const {
+  int class_number = key_to_class_.at(key);
+  
+  return models_[class_number].GetRandomVariable(key);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -54,7 +65,7 @@ void GaussianMixtureModel::Initialize(const Observations &obs) {
     models_[i].Initialize(obs);
   }
   
-  proposition_distribution_variance_["Gaussian"] = 1;
+  proposition_distribution_variance_["Gaussian"] = 0.001;
 }
 
 void GaussianMixtureModel::InitializeValidationDataParameters(const io::SimulatedDataSettings &data_settings,
@@ -75,7 +86,12 @@ void GaussianMixtureModel::InitializeValidationDataParameters(const io::Simulate
     models_[i].SetRandomVariableParameters(class_rv_params);
     models_[i].GetRandomVariable().SetKeyCount(key_count);
     models_[i].InitializeValidationDataParameters(data_settings, model_settings);
+    
+    for(size_t j = key_count; j < models_[i].GetRandomVariable().GetKeyCount() ; ++j)
+      key_to_class_[j] = i;
+    
     key_count = models_[i].GetRandomVariable().GetKeyCount() + 1; // The 1 is not useful but it prevents to go from class to another!
+    
   }
 }
 
@@ -166,7 +182,7 @@ std::vector<AbstractModel::MiniBlock> GaussianMixtureModel::GetSamplerBlocks() c
     for(size_t j = 0; j < subjects_tot_num_; ++j) {
       MiniBlock indiv_block;
       for(size_t k = 0; k < manifold_dim_; ++k) {
-        indiv_block.push_back(std::tuple<int, std::string, int>(0, "Gaussian#" + std::to_string(k), j));
+        indiv_block.push_back(std::tuple<int, std::string, int>(0, "Gaussian#" + std::to_string(k) + "#" + std::to_string(i), j));
       }
       blocks.push_back(indiv_block);
     }
@@ -180,13 +196,15 @@ std::vector<AbstractModel::MiniBlock> GaussianMixtureModel::GetSamplerBlocks() c
 /// Log-likelihood related method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void GaussianMixtureModel::InitializeLogLikelihood(const Observations &obs) {
+  
+}
+
 AbstractModel::VectorType GaussianMixtureModel::ComputeLogLikelihood(const Observations &obs,
                                                                      const MiniBlock &block_info) {
   // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
   // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
   int class_number = GetClassNumber(block_info);
-  
-  if(class_number == -1)
   
   return models_[class_number].ComputeLogLikelihood(obs, block_info);
 }
@@ -273,6 +291,10 @@ int GaussianMixtureModel::GetClassNumber(const MiniBlock &block_info) {
     else
       std::cerr << " Whoua ! Either allow only the same class within each miniblock; otherwise think how to do it. GAussianMixtureModel > UpdateModel";
       
+  }
+  
+  if(class_number == -1) {
+    int a = 0;
   }
   
   return class_number;

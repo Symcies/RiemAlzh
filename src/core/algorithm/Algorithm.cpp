@@ -43,6 +43,7 @@ void Algorithm::ComputeMCMCSAEM(const Observations& obs) {
   InitializeModel(obs);
   InitializeStochasticSufficientStatistics(obs);
   InitializeSampler();
+  acceptance_ratio_to_display_ = model_->GetAcceptanceRatioToDisplay();
 
   for(int iter = 0; iter < max_iter_num_; iter ++)
   {
@@ -220,9 +221,7 @@ void Algorithm::DisplayAcceptanceRatio() {
 
    
     //auto names_to_show = {"Tau", "Ksi"};
-    auto names_to_show = {"Gaussian#0"};
-  
-    for(auto it = names_to_show.begin(); it != names_to_show.end(); ++it)
+    for(auto it = acceptance_ratio_to_display_.begin(); it != acceptance_ratio_to_display_.end(); ++it)
     {
         std::string name = *it;
         int key = realizations_->ReverseNameToKey(name);
