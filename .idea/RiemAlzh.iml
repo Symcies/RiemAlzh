@@ -40,6 +40,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/ModelFactory.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/combinaisons/GaussianMixtureModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/combinaisons/GaussianMixtureModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/models/network/FastNetworkModel.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/models/network/FastNetworkModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/prototypes/GaussianModel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/prototypes/GaussianModel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/models/AbstractModel.cpp" isTestSource="false" />
@@ -54,9 +56,9 @@
       <sourceFolder url="file://$MODULE_DIR$/src/core/algorithm/Algorithm.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/PropagationManifold.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/ExponentialCurveManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/AbstractManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/PropagationManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/AbstractManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/AbstractManifold.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/LinearManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/base_manifold/ExponentialBaseManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/base_manifold/AbstractBaseManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/base_manifold/ExponentialBaseManifold.cpp" isTestSource="false" />
@@ -64,15 +66,15 @@
       <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/base_manifold/LogisticBaseManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/base_manifold/LogisticBaseManifold.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/LinearManifold.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/LinearManifold.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/ExponentialCurveManifold.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/GaussianRandomVariable.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/manifolds/PropagationManifold.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/AbstractRandomVariable.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/GaussianRandomVariable.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/MultiRandomVariables.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/UniformRandomVariable.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/AbstractRandomVariable.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/AbstractRandomVariable.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/MultiRandomVariables.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/AbstractRandomVariable.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/GaussianRandomVariable.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/random_variables/UniformRandomVariable.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/observations/Observations.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/core/observations/Observations.cpp" isTestSource="false" />
@@ -84,24 +86,24 @@
       <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloMatrixWrapper.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloMatrixWrapper_friend.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/linear_algebra/armadillo/ArmadilloVectorWrapper_friend.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/support/asserts/InputsAssert.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/support/asserts/InputsAssert.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/support/asserts/InputException.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/outputs_plots/PlotGraphs.pyc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/outputs_plots/PlotGraphs.py" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/outputs_plots/PythonUtils.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/support/outputs_plots/PythonUtils.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/support/asserts/InputsAssert.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/support/asserts/InputsAssert.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/support/asserts/InputException.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/ModelSettings.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/SamplerSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/ModelSettings.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/AlgorithmSettings.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/RealDataSettings.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/DataSettings.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/RealDataSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/DataSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/SimulatedDataSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/data_settings/SimulatedDataSettings.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/SamplerSettings.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/SamplerSettings.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/AlgorithmSettings.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/io/ReadData.cpp" isTestSource="false" />
@@ -296,6 +298,7 @@
           <root url="file:///System/Library/Frameworks/Accelerate.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Accelerate.framework/Frameworks/vImage.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Accelerate.framework/Frameworks/vecLib.framework/Headers" />
+          <root url="file://$USER_HOME$/anaconda/include/python2.7" />
           <root url="file:///Library/Frameworks/iTunesLibrary.framework/Headers" />
           <root url="file:///usr/include" />
           <root url="file:///usr/local/include" />
@@ -473,6 +476,7 @@
           <root url="file:///System/Library/Frameworks/Accelerate.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Accelerate.framework/Frameworks/vImage.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Accelerate.framework/Frameworks/vecLib.framework/Headers" />
+          <root url="file://$USER_HOME$/anaconda/include/python2.7" />
           <root url="file:///Library/Frameworks/iTunesLibrary.framework/Headers" />
           <root url="file:///usr/include" />
           <root url="file:///usr/local/include" />

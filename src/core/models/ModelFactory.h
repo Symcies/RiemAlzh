@@ -5,6 +5,7 @@
 #include "AbstractModel.h"
 #include "UnivariateModel.h"
 #include "MultivariateModel.h"
+#include "FastNetworkModel.h"
 #include "GaussianModel.h"
 #include "GaussianMixtureModel.h"
 

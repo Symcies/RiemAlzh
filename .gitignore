@@ -2,6 +2,7 @@
 src/io/outputs/
 development/
 bin/
+examples/
 
 
 # Ignore the results
