@@ -136,7 +136,7 @@ void PythonUtils::PlotOutputWhileComputing(std::string output_file_name, int max
  * @param obs: observations for each patient (data points)
  */
 void PythonUtils::PlotAllFinalOutputWithPatientData(std::string output_file_name, std::string type, Observations obs){
-  PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg;
+  PyObject *module_name, *module_obj, *module_contents_dict, *module_func, *module_arg, *list;
   PyObject *obs_list, *observations, *key, *item;
 
   // Convert the file name to a Python string.
@@ -169,8 +169,12 @@ void PythonUtils::PlotAllFinalOutputWithPatientData(std::string output_file_name
     observations = PyDict_New();
     for(int j = 0; j <obs.GetSubjectObservations(i).GetNumberOfTimePoints(); j++){
       key = PyFloat_FromDouble(obs.GetSubjectObservations(i).GetTimePoint(j));
-      item = PyFloat_FromDouble(obs.GetSubjectObservations(i).GetCognitiveScore(j)[0]);
-      PyDict_SetItem(observations, key, item);
+      list = PyList_New(0);
+      for(int numCogScore = 0; numCogScore<obs.GetSubjectObservations(i).GetCognitiveScore(j).size(); numCogScore ++){
+        item = PyFloat_FromDouble(obs.GetSubjectObservations(i).GetCognitiveScore(j)[numCogScore]);
+        PyList_Append(list, item);
+      }
+      PyDict_SetItem(observations, key, list);
     }
     PyList_Append(obs_list, observations);
   }

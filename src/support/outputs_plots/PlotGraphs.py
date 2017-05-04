@@ -26,12 +26,13 @@ def PlotAndSelectPatientCurvesWithData(filename, type, map_list):
         if type == "Multivariate":
             for i in range(4):
                 values[0][patient_id][i].set_visible(not values[0][patient_id][i].get_visible())
+                values[1][patient_id][i].set_visible(not values[1][patient_id][i].get_visible())
                 plt.pause(0.0001)
         elif type == "Univariate":
             values[0][patient_id].set_visible(not values[0][patient_id].get_visible())
+            values[1][patient_id].set_visible(not values[1][patient_id].get_visible())
             plt.pause(0.0001)
 
-        values[1][patient_id].set_visible(not values[1][patient_id].get_visible())
         plt.pause(0.0001)
         plt.ioff()
 
@@ -114,6 +115,9 @@ def PlotPatientCurves(filename, type, isVisible, hasObservations, map_list):
         return PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, map_list)
 
 def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observationsMap):
+    if hasObservations:
+        print observationsMap
+
     plt.ion()
     # Extraction of variables
     f = open(filename, 'r')
@@ -143,6 +147,7 @@ def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observatio
         aver_Y.append(fUnivariate(x, p, aver_v0, aver_t0))
     splot.plot(X, aver_Y, 'r', linewidth=1, visible = True)
 
+    print "Before indiv reals"
     list_lines = []
     list_points = []
     for i in range(len(tau_line)):
@@ -159,7 +164,9 @@ def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observatio
         if hasObservations:
             map = observationsMap[i]
             real_X = map.keys()
-            real_Y = map.values()
+            real_Y = []
+            for val in map.values():
+                real_Y.append(val[0])
             points, = splot.plot(real_X, real_Y, color = color, linestyle = ' ', marker = '+', visible = isVisible)
             list_points.append(points)
 
@@ -168,6 +175,9 @@ def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observatio
     return list_lines
 
 def PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, observationsMap):
+    if hasObservations:
+        print observationsMap
+
     plt.ion()
     # Extraction of variables
     f = open(filename, 'r')
@@ -212,20 +222,30 @@ def PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, observat
         t0 = tau_line[i] #TauMean
         v0 = math.exp(ksi_line[i]) #exp(KsiMean)
         lines = []
-        color = numpy.random.rand(3,1)
-        for k in range(len(Y)):
-            for x in X:
-                Y[k].append(fMultivariate(x, g, deltas[k], w_lines[k][i], v0, t0))
-            line, = splot.plot(X, Y[k], color = color, linewidth=0.5, visible = isVisible)
-            lines.append(line)
-        list_lines.append(lines)
+        points = []
+        colors = []
 
         if hasObservations:
             map = observationsMap[i]
             real_X = map.keys()
-            real_Y = map.values()
-            points, = splot.plot(real_X, real_Y, color = color, linestyle = ' ', marker = '+', visible = isVisible)
-            list_points.append(points)
+            real_Y = [[] for _ in xrange(len(map.values()[0]))]
+            for k in xrange(len(map.values()[0])):
+                for val in map.values():
+                    real_Y[k].append(val[k])
+
+        for k in range(len(Y)):
+            colors.append(numpy.random.rand(3,1))
+            for x in X:
+                Y[k].append(fMultivariate(x, g, deltas[k], w_lines[k][i], v0, t0))
+            line, = splot.plot(X, Y[k], color = colors[k], linewidth=0.5, visible = isVisible)
+            lines.append(line)
+
+            if hasObservations:
+                point, = splot.plot(real_X, real_Y[k], color = colors[k], linestyle = ' ', marker = '+', visible = isVisible)
+                points.append(point)
+        list_lines.append(lines)
+        list_points.append(points)
+
 
     if hasObservations:
         return [list_lines, list_points]
