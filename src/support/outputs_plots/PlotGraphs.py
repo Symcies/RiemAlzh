@@ -35,6 +35,19 @@ def PlotAndSelectPatientCurvesWithData(filename, type, map_list):
         plt.pause(0.0001)
         plt.ioff()
 
+    def updateAll(boolean):
+        plt.ion()
+        if type == "Multivariate":
+            for i in range(len(values[0])):
+                for j in range(4):
+                    values[0][i][j].set_visible(boolean)
+        elif type == "Univariate":
+            for i in range(len(values[0])):
+                values[0][i].set_visible(boolean)
+
+        plt.pause(0.0001)
+        plt.ioff()
+
     while True:
         value = raw_input("Get patient?")
         if IsInt(value):
@@ -43,8 +56,13 @@ def PlotAndSelectPatientCurvesWithData(filename, type, map_list):
             else:
                 print "The number of patient are in [0," + str(len(values[0])-1) + "], and you entered " + value
         else:
-            if UserMessages(str(value)):
+            code = UserMessages(str(value))
+            if code == 0:
                 break
+            elif code == 2: #all
+                updateAll(True)
+            elif code == 3: #none
+                updateAll(False)
 
     plt.plot(block = True)
 
@@ -213,8 +231,6 @@ def PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, observat
         return [list_lines, list_points]
     return list_lines
 
-
-
 def fUnivariate(t, p, v0, t0):
     return 1/(1+(math.exp(-p))*math.exp(-v0*(t-t0)))
 
@@ -226,9 +242,13 @@ def UserMessages(value):
         duration = input("How long do you want to hold the display (in sec)?")
         if IsInt(duration):
             plt.pause(int(duration))
-        return False
+        return 1
     if value == "exit" or value == "quit" or value == "q":
-        return True
+        return 0
+    if value == "all":
+        return 2
+    if value == "none":
+        return 3
     return False
 
 def IsInt(s):
