@@ -19,6 +19,7 @@ def PlotFinalOutput(filename, type):
 
 def PlotAndSelectPatientCurvesWithData(filename, type, map_list):
     values = PlotPatientCurves(filename, type, False, True, map_list)
+    plt.pause(3)
 
     def update(patient_id):
         plt.ion()
@@ -37,7 +38,10 @@ def PlotAndSelectPatientCurvesWithData(filename, type, map_list):
     while True:
         value = raw_input("Get patient?")
         if IsInt(value):
-            update(int(value))
+            if int(value) < len(values[0]):
+                update(int(value))
+            else:
+                print "The number of patient are in [0," + str(len(values[0])-1) + "], and you entered " + value
         else:
             if UserMessages(str(value)):
                 break
