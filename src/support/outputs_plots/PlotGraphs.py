@@ -42,9 +42,11 @@ def PlotAndSelectPatientCurvesWithData(filename, type, map_list):
             for i in range(len(values[0])):
                 for j in range(4):
                     values[0][i][j].set_visible(boolean)
+                    values[1][i][j].set_visible(False)
         elif type == "Univariate":
             for i in range(len(values[0])):
                 values[0][i].set_visible(boolean)
+                values[1][i].set_visible(False)
 
         plt.pause(0.0001)
         plt.ioff()
@@ -118,7 +120,7 @@ def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observatio
     plt.ion()
     # Extraction of variables
     f = open(filename, 'r')
-    f.readline().split() #Unused at the moment
+    labels = f.readline().split() #Unused at the moment
     aver_line = f.readline().split()
     f.readline().split() #Unused at the moment
     tau_line = []
@@ -134,17 +136,16 @@ def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observatio
     splot = fig.add_subplot(111)
 
     # Average variables
-    p  = float(aver_line[2]) #P
-    aver_t0 = float(aver_line[3]) #TauMean
-    aver_v0 = math.exp(float(aver_line[5])) #exp(KsiMean)
+    aver = {}
+    for i in range(len(labels)):
+        aver[labels[i]] = float(aver_line[i])
 
     # Mean
     aver_Y = []
     for x in X:
-        aver_Y.append(fUnivariate(x, p, aver_v0, aver_t0))
+        aver_Y.append(fUnivariate(x, aver["P"], math.exp(aver["KsiMean"]), aver["TauMean"]))
     splot.plot(X, aver_Y, 'r', linewidth=1, visible = True)
 
-    print "Before indiv reals"
     list_lines = []
     list_points = []
     for i in range(len(tau_line)):
@@ -154,7 +155,7 @@ def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observatio
         v0 = math.exp(float(ksi_line[i])) #exp(KsiMean)
         color = numpy.random.rand(3,1)
         for x in X:
-            Y.append(fUnivariate(x, p, v0, t0))
+            Y.append(fUnivariate(x, aver["P"], v0, t0))
         line, = splot.plot(X, Y, linewidth=0.5, visible = isVisible, color = color)
         list_lines.append(line)
 
@@ -175,7 +176,7 @@ def PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, observat
     plt.ion()
     # Extraction of variables
     f = open(filename, 'r')
-    f.readline().split() #Unused at the moment
+    labels = f.readline().split() #Unused at the moment
     aver_line = f.readline().split()
     f.readline().split() #Unused at the moment
     tau_line = []
@@ -194,21 +195,17 @@ def PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, observat
     splot = fig.add_subplot(111)
 
     # Average variables
-    g  = float(aver_line[2]) #P
-    aver_t0 = float(aver_line[3]) #TauMean
-    aver_v0 = math.exp(float(aver_line[4])) #exp(KsiMean)
-    num_obs = int(aver_line[5])
-    deltas = []
-    for i in range(num_obs):
-        deltas.append(float(aver_line[6 + i]))
+    aver = {}
+    for i in range(len(labels)):
+        aver[labels[i]] = float(aver_line[i])
 
     # Mean
-    aver_Y = [[] for _ in xrange(num_obs)]
+    aver_Y = [[] for _ in xrange(int(aver["NumReal"]))]
     colors = []
-    for k in range(len(aver_Y)):
+    for k in range(int(aver["NumReal"])):
         colors.append(numpy.random.rand(3,1))
         for x in X:
-            aver_Y[k].append(fMultivariate(x, g, deltas[k], 0, aver_v0, aver_t0))
+            aver_Y[k].append(fMultivariate(x, aver["G"], aver["Delta" + str(k)], 0, math.exp(aver["KsiMean"]), aver["TauMean"]))
         splot.plot(X, aver_Y[k], color = colors[k], linewidth=1, visible = True)
 
     # Individual curves
@@ -224,10 +221,10 @@ def PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, observat
         if hasObservations:
             real_X = observationsMap[i].keys()
 
-        for k in range(num_obs): #For curve k
+        for k in range(int(aver["NumReal"])): #For curve k
             Y = []
             for x in X:
-                Y.append(fMultivariate(x, g, deltas[k], w_lines[k][i], v0, t0))
+                Y.append(fMultivariate(x, aver["G"], aver["Delta" + str(k)], w_lines[k][i], v0, t0))
             line, = splot.plot(X, Y, color = colors[k], linewidth=0.5, visible = isVisible)
             lines.append(line)
 
