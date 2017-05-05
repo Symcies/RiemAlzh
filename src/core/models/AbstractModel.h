@@ -113,15 +113,17 @@ public:
   virtual void SetPreviousLogLikelihood(VectorType& log_likelihood, const MiniBlock& block_info) = 0;
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Outputs
+  /// Outputs
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Compute Outputs
   virtual void DisplayOutputs(const Realizations& reals) = 0;
 
-  /// Save the data into a file
-  virtual void SaveData(unsigned int iter_num, const Realizations& reals) = 0;
+  /// Save the current parameters and realizations into a file
+  virtual void SaveCurrentState(unsigned int iter_num, const Realizations& reals) = 0;
   
+  /// Save the final parameters and realizations into a file
+  virtual void SaveFinalState(const Realizations& reals) = 0;
 
 protected:
 

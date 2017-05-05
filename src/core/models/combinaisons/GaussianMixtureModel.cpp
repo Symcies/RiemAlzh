@@ -241,9 +241,14 @@ void GaussianMixtureModel::DisplayOutputs(const Realizations &reals) {
   
 }
 
-void GaussianMixtureModel::SaveData(unsigned int IterationNumber, const Realizations &reals) {
+void GaussianMixtureModel::SaveCurrentState(unsigned int IterationNumber, const Realizations &reals) {
   
 }
+
+void GaussianMixtureModel::SaveFinalState(const Realizations &reals) {
+  
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Overwriten method(s):

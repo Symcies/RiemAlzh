@@ -64,8 +64,10 @@ public:
   virtual void DisplayOutputs(const Realizations& R);
 
   /// Save the data into a file
-  virtual void SaveData(unsigned int IterationNumber, const Realizations& R);
+  virtual void SaveCurrentState(unsigned int IterationNumber, const Realizations& R);
 
+  /// Save the final parameters and realizations into a file
+  virtual void SaveFinalState(const Realizations& reals);
 
 protected:
   ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -3,7 +3,8 @@
 FastNetworkModel::FastNetworkModel(io::ModelSettings &MS)
 {
   indep_components_nb_ = MS.GetIndependentSourcesNumber();
-
+  acceptance_ratio_to_display_ = MS.GetAcceptanceRatioToDisplay();
+  
   std::string kernel_matrix_path = MS.GetInvertKernelPath();
   std::string interp_matrix_path = MS.GetInterpolationKernelPath();
 
@@ -579,7 +580,7 @@ void FastNetworkModel::DisplayOutputs(const Realizations& simulated_real)
 
 }
 
-void FastNetworkModel::SaveData(unsigned int iter_num, const Realizations& simulated_real)
+void FastNetworkModel::SaveCurrentState(unsigned int iter_num, const Realizations& simulated_real)
 {
   /*
   unsigned int indiv_tot_num = simulated_real.at("Tau").size();
@@ -685,6 +686,10 @@ void FastNetworkModel::SaveData(unsigned int iter_num, const Realizations& simul
       outputs << std::endl;
   }
   */
+}
+
+void FastNetworkModel::SaveFinalState(const Realizations &reals) {
+  
 }
 
 

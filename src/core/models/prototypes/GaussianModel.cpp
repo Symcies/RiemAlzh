@@ -322,10 +322,17 @@ void GaussianModel::DisplayOutputs(const Realizations &reals) {
 
 
 
-void GaussianModel::SaveData(unsigned int IterationNumber, const Realizations &reals) {
+void GaussianModel::SaveCurrentState(unsigned int IterationNumber, const Realizations &reals) {
   // TODO TODO TODO TODO TODO TODO 
   // We'll see later on what we need
 }
+
+void GaussianModel::SaveFinalState(const Realizations &reals) {
+  
+}
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Method(s) :

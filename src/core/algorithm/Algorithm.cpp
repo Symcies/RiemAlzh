@@ -49,6 +49,9 @@ void Algorithm::ComputeMCMCSAEM(const Observations& obs) {
     IterationMCMCSAEM(obs, iter);
   }
   
+  /// Save the final state that we use for the post-process
+  model_->SaveFinalState(*realizations_);
+  
 }
 
 
@@ -121,7 +124,7 @@ void Algorithm::IterationMCMCSAEM(const Observations& obs, int iter){
     DisplayOutputs();
   }
   if( IsDataSaveIteration(iter)) {
-    model_->SaveData(iter, *realizations_);
+    model_->SaveCurrentState(iter, *realizations_);
   }
 }
 
