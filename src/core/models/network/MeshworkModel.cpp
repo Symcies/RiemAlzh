@@ -8,6 +8,7 @@
 MeshworkModel::MeshworkModel(io::ModelSettings &model_settings)
 {
   indep_components_nb_= model_settings.GetIndependentSourcesNumber();
+  acceptance_ratio_to_display_ = model_settings.GetAcceptanceRatioToDisplay();
 
   std::string kernel_mat_path = model_settings.GetInvertKernelPath();
   std::string interp_mat_path = model_settings.GetInterpolationKernelPath();
@@ -46,51 +47,87 @@ void MeshworkModel::Initialize(const Observations& obs)
   /// Population variables
   noise_ = std::make_shared<GaussianRandomVariable>( 0.0, 0.01 );
 
-  rand_var_.AddRandomVariable("P", "Gaussian", {0.13, 0.00005 * 0.00005});
+  rand_var_.AddRandomVariable("P", "Gaussian", rv_params_.at("P").first);
   asso_num_real_per_rand_var_["P"] = control_points_nb_;
+  proposition_distribution_variance_["P"] = rv_params_.at("P").second;
 
-  for(size_t i = 1; i < control_points_nb_; ++i)
-  {
+  for(size_t i = 1; i < control_points_nb_; ++i) {
       std::string name = "Delta#" + std::to_string(i);
-      rand_var_.AddRandomVariable(name, "Gaussian", {0, 0.003 * 0.003});
+      rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("Delta").first);
       asso_num_real_per_rand_var_[name] = 1;
   }
+  proposition_distribution_variance_["Delta"] = rv_params_.at("Delta").second;
 
-  for(size_t i = 0; i < indep_components_nb_*(manifold_dim_ - 1); ++i)
-  {
+  for(size_t i = 0; i < indep_components_nb_*(manifold_dim_ - 1); ++i) {
       std::string name = "Beta#" + std::to_string(i);
-      rand_var_.AddRandomVariable(name, "Gaussian", {0, 0.001 * 0.001});
+      rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("Beta").first);
       asso_num_real_per_rand_var_[name] = 1;
   }
+  proposition_distribution_variance_["Beta"] = rv_params_.at("Beta").second;
 
   /// Individual variables
-  rand_var_.AddRandomVariable("Ksi", "Gaussian", {-3.1971, 0.000000004});
+  rand_var_.AddRandomVariable("Ksi", "Gaussian", rv_params_.at("Ksi").first);
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
+  proposition_distribution_variance_["Ksi"] = rv_params_.at("Ksi").second;
 
-  rand_var_.AddRandomVariable("Tau", "Gaussian", {75, 0.025});
+  rand_var_.AddRandomVariable("Tau", "Gaussian", rv_params_.at("Tau").first);
   asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
+  proposition_distribution_variance_["Tau"] = rv_params_.at("Tau").second;
 
   for(int i = 0; i < indep_components_nb_; ++i)
   {
       std::string name = "S#" + std::to_string(i);
-      rand_var_.AddRandomVariable(name, "Gaussian", {0.0, 1});
+      rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("S").first);
       asso_num_real_per_rand_var_[name] =  subjects_tot_num_;
   }
+  proposition_distribution_variance_["S"] = rv_params_.at("S").second;
 
 }
 
 void MeshworkModel::InitializeValidationDataParameters(const io::SimulatedDataSettings &data_settings,
                                                        const io::ModelSettings &model_settings) {
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+
+  
+    // TODO : Check which one has to be updated --> Some (a lot) are initialized in the constructor
+  // DO AN ASSERT : manifold_dim_ = data_settings.GetDimensionOfSimulatedObservations();
+  indep_components_nb_ = model_settings.GetIndependentSourcesNumber();
+  last_loglikelihood_.set_size(subjects_tot_num_);
+  
+  /// Population variables
+  rand_var_.AddRandomVariable("P", "Gaussian", rv_params_.at("P").first);
+  asso_num_real_per_rand_var_["P"] = 1;
+
+  for(int i = 1; i < control_points_nb_; ++i)
+  {
+    std::string name = "Delta#" + std::to_string(i);
+    rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("Delta").first);
+    asso_num_real_per_rand_var_[name] = 1;
+  }
+  
+  for(int i = 0; i < indep_components_nb_*(manifold_dim_ - 1); ++i)
+  {
+    std::string name = "Beta#" + std::to_string(i);
+    rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("Beta").first);
+    asso_num_real_per_rand_var_[name] = 1;
+  }
+  
+
+  /// Individual variables
+  rand_var_.AddRandomVariable("Ksi", "Gaussian", rv_params_.at("Ksi").first);
+  rand_var_.AddRandomVariable("Tau", "Gaussian", rv_params_.at("Tau").first); 
+  
+  for(int i = 0; i < indep_components_nb_; ++i) {
+    std::string name = "S#" + std::to_string(i);
+    rand_var_.AddRandomVariable(name, "Gaussian", rv_params_.at("S").first);
+  }
 }
 
 
-void UnivariateModel::UpdateModel(const Realizations &reals, const MiniBlock& block_info, const std::vector<std::string> names)
+void MeshworkModel::UpdateModel(const Realizations &reals, const MiniBlock& block_info, const std::vector<std::string> names)
 {
+  
+  int type = GetType(block_info);
+  
   bool compute_thickness = false;
   bool compute_delta = false;
   bool compute_basis = false;
@@ -234,39 +271,37 @@ void MeshworkModel::UpdateRandomVariables(const SufficientStatisticsVector &stoc
   noise_->SetVariance(noise_var);
 
   /// Update Ksi : Mean and Variance
-  ScalarType ksi_mean = 0.0, ksi_var = 0.0;
+  ScalarType ksi_mean = 0.0, ksi_variance = 0.0;
   const ScalarType * itS3 = stoch_sufficient_stats[2].memptr();
   const ScalarType * itS4 = stoch_sufficient_stats[3].memptr();
 
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
+  for(size_t i = 0; i < subjects_tot_num_; ++i) {
       ksi_mean     += itS3[i];
-      ksi_var += itS4[i];
+      ksi_variance += itS4[i];
   }
 
   ksi_mean     /= subjects_tot_num_;
-  ksi_var -= subjects_tot_num_ * ksi_mean * ksi_mean;
-  ksi_var /= subjects_tot_num_;
+  ksi_variance -= subjects_tot_num_ * ksi_mean * ksi_mean;
+  ksi_variance /= subjects_tot_num_;
 
-  rand_var_.UpdateRandomVariable("Ksi", {{"Mean", ksi_mean}, {"Variance", ksi_var}});
+  rand_var_.UpdateRandomVariable("Ksi", {{"Mean", ksi_mean}, {"Variance", ksi_variance}});
 
 
   /// Update Tau : Mean and Variance
-  ScalarType tau_mean = 0.0, tau_var = 0.0;
+  ScalarType tau_mean = 0.0, tau_variance = 0.0;
   const ScalarType * itS5 = stoch_sufficient_stats[4].memptr();
   const ScalarType * itS6 = stoch_sufficient_stats[5].memptr();
 
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
+  for(size_t i = 0; i < subjects_tot_num_; ++i) {
       tau_mean     += itS5[i];
-      tau_var += itS6[i];
+      tau_variance += itS6[i];
   }
 
   tau_mean     /= subjects_tot_num_;
-  tau_var -= subjects_tot_num_ * tau_mean * tau_mean;
-  tau_var /= subjects_tot_num_;
+  tau_variance -= subjects_tot_num_ * tau_mean * tau_mean;
+  tau_variance /= subjects_tot_num_;
 
-  rand_var_.UpdateRandomVariable("Tau", {{"Mean", tau_mean}, {"Variance", tau_var}});
+  rand_var_.UpdateRandomVariable("Tau", {{"Mean", tau_mean}, {"Variance", tau_variance}});
 
 
   /// Update Beta_k : Mean
@@ -276,21 +311,20 @@ void MeshworkModel::UpdateRandomVariables(const SufficientStatisticsVector &stoc
   }
 
   /// Update P_k : Mean and Var
-  ScalarType p_mean = 0.0, p_var = 0.0;
+  ScalarType p_mean = 0.0, p_variance = 0.0;
   const ScalarType * iter_s8 = stoch_sufficient_stats[7].memptr();
   const ScalarType * iter_s9 = stoch_sufficient_stats[8].memptr();
 
-  for(size_t i = 0; i < control_points_nb_; ++i)
-  {
+  for(size_t i = 0; i < control_points_nb_; ++i) {
       p_mean     += iter_s8[i];
-      p_var += iter_s9[i];
+      p_variance += iter_s9[i];
   }
 
   p_mean     /= control_points_nb_;
-  p_var -= control_points_nb_ * p_mean * p_mean;
-  p_var /= control_points_nb_;
+  p_variance -= control_points_nb_ * p_mean * p_mean;
+  p_variance /= control_points_nb_;
 
-  rand_var_.UpdateRandomVariable("P", {{"Mean", p_mean}, {"Variance", p_var}});
+  rand_var_.UpdateRandomVariable("P", {{"Mean", p_mean}, {"Variance", p_variance}});
 
   /// Update Delta_k : Mean
   const ScalarType * iter_s10 = stoch_sufficient_stats[9].memptr();
@@ -299,22 +333,14 @@ void MeshworkModel::UpdateRandomVariables(const SufficientStatisticsVector &stoc
   }
 }
 
-Observations MeshworkModel::SimulateData(io::DataSettings &data_settings)
+Observations MeshworkModel::SimulateData(io::SimulatedDataSettings &data_settings)
 {
-  typedef std::vector< std::pair< VectorType, double> > IndividualData;
-
+  
+  individual_obs_date_.clear();
+  individual_time_points_.clear();
+  
   subjects_tot_num_ = data_settings.GetNumberOfSimulatedSubjects();
-
-  /// Initialize the realizations and simulate them
-  asso_num_real_per_rand_var_["P"] = control_points_nb_;
-
-  for(int i = 1; i < control_points_nb_; ++i)
-      asso_num_real_per_rand_var_["Delta#" + std::to_string(i)] = 1;
-
-
-  for(size_t i = 0; i <  indep_components_nb_*(manifold_dim_ - 1); ++i)
-      asso_num_real_per_rand_var_["Beta#" + std::to_string(i)] = 1;
-
+  
   asso_num_real_per_rand_var_["Ksi"] = subjects_tot_num_;
   asso_num_real_per_rand_var_["Tau"] = subjects_tot_num_;
 
@@ -329,7 +355,6 @@ Observations MeshworkModel::SimulateData(io::DataSettings &data_settings)
   ComputeOrthonormalBasis();
   ComputeAMatrix(reals);
   ComputeSpaceShifts(reals);
-
   ComputeBlock();
 
   /// Simulate the data
@@ -444,6 +469,14 @@ const
 /// Log-likelihood related method(s) :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
   
+void MeshworkModel::InitializeLogLikelihood(const Observations &obs) {
+    // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+}
+
 
 AbstractModel::VectorType MeshworkModel::ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)
 {
@@ -532,7 +565,7 @@ void MeshworkModel::DisplayOutputs(const Realizations &reals)
 }
 
 
-void MeshworkModel::SaveData(unsigned int iter_num, const Realizations &reals)
+void MeshworkModel::SaveCurrentState(unsigned int iter_num, const Realizations &reals)
 {
 
   std::ofstream outputs;
@@ -601,6 +634,12 @@ void MeshworkModel::SaveData(unsigned int iter_num, const Realizations &reals)
       outputs << std::endl;
   }
 
+}
+
+voir MeshworkModel::SaveFinalState(const Realizations &reals) {
+  // TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO 
+  // TODO TODO TODO TODO TODO 
 }
 
 
@@ -727,6 +766,10 @@ void MeshworkModel::ComputeBlock()
   for(size_t i = 0; i < manifold_dim_; ++i){
       b[i] = 1 / (t[i] * exp(d[i]));
   }
+}
+
+int MeshworkModel::GetType(const MiniBlock &block_info) {
+  
 }
 
 
