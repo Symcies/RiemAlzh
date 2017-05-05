@@ -58,7 +58,7 @@ def PlotAndSelectPatientCurvesWithData(filename, type, map_list):
                 print "The number of patient are in [0," + str(len(values[0])-1) + "], and you entered " + value
         else:
             code = UserMessages(str(value))
-            if code == 0:
+            if code == 0: #quit
                 break
             elif code == 2: #all
                 updateAll(True)
@@ -115,9 +115,6 @@ def PlotPatientCurves(filename, type, isVisible, hasObservations, map_list):
         return PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, map_list)
 
 def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observationsMap):
-    if hasObservations:
-        print observationsMap
-
     plt.ion()
     # Extraction of variables
     f = open(filename, 'r')
@@ -175,9 +172,6 @@ def PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, observatio
     return list_lines
 
 def PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, observationsMap):
-    if hasObservations:
-        print observationsMap
-
     plt.ion()
     # Extraction of variables
     f = open(filename, 'r')
@@ -203,46 +197,48 @@ def PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, observat
     g  = float(aver_line[2]) #P
     aver_t0 = float(aver_line[3]) #TauMean
     aver_v0 = math.exp(float(aver_line[4])) #exp(KsiMean)
+    num_obs = int(aver_line[5])
     deltas = []
-    for i in range(int(aver_line[5])):
+    for i in range(num_obs):
         deltas.append(float(aver_line[6 + i]))
 
     # Mean
-    aver_Y = [[] for _ in xrange(int(aver_line[5]))]
+    aver_Y = [[] for _ in xrange(num_obs)]
+    colors = []
     for k in range(len(aver_Y)):
+        colors.append(numpy.random.rand(3,1))
         for x in X:
             aver_Y[k].append(fMultivariate(x, g, deltas[k], 0, aver_v0, aver_t0))
-        splot.plot(X, aver_Y[k], 'r', linewidth=1, visible = True)
+        splot.plot(X, aver_Y[k], color = colors[k], linewidth=1, visible = True)
 
+    # Individual curves
     list_lines = []
     list_points = []
-    for i in range(len(tau_line)):
+    for i in range(len(tau_line)): #For patient i
         # Individual reals
-        Y = [[] for _ in xrange(int(aver_line[5]))]
         t0 = tau_line[i] #TauMean
         v0 = math.exp(ksi_line[i]) #exp(KsiMean)
         lines = []
         points = []
-        colors = []
 
         if hasObservations:
-            map = observationsMap[i]
-            real_X = map.keys()
-            real_Y = [[] for _ in xrange(len(map.values()[0]))]
-            for k in xrange(len(map.values()[0])):
-                for val in map.values():
-                    real_Y[k].append(val[k])
+            real_X = observationsMap[i].keys()
 
-        for k in range(len(Y)):
-            colors.append(numpy.random.rand(3,1))
+        for k in range(num_obs): #For curve k
+            Y = []
             for x in X:
-                Y[k].append(fMultivariate(x, g, deltas[k], w_lines[k][i], v0, t0))
-            line, = splot.plot(X, Y[k], color = colors[k], linewidth=0.5, visible = isVisible)
+                Y.append(fMultivariate(x, g, deltas[k], w_lines[k][i], v0, t0))
+            line, = splot.plot(X, Y, color = colors[k], linewidth=0.5, visible = isVisible)
             lines.append(line)
 
+
             if hasObservations:
-                point, = splot.plot(real_X, real_Y[k], color = colors[k], linestyle = ' ', marker = '+', visible = isVisible)
+                real_Y_k = []
+                for val in observationsMap[i].values():
+                    real_Y_k.append(val[k])
+                point, = splot.plot(real_X, real_Y_k, color = colors[k], linestyle = ' ', marker = '+', visible = isVisible)
                 points.append(point)
+
         list_lines.append(lines)
         list_points.append(points)
 

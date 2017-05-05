@@ -165,18 +165,25 @@ void PythonUtils::PlotAllFinalOutputWithPatientData(std::string output_file_name
 
   // Observations management
   obs_list = PyList_New(0);
-  for(int i = 0; i< obs.GetNumberOfSubjects(); i++){
-    observations = PyDict_New();
-    for(int j = 0; j <obs.GetSubjectObservations(i).GetNumberOfTimePoints(); j++){
-      key = PyFloat_FromDouble(obs.GetSubjectObservations(i).GetTimePoint(j));
-      list = PyList_New(0);
-      for(int numCogScore = 0; numCogScore<obs.GetSubjectObservations(i).GetCognitiveScore(j).size(); numCogScore ++){
-        item = PyFloat_FromDouble(obs.GetSubjectObservations(i).GetCognitiveScore(j)[numCogScore]);
-        PyList_Append(list, item);
+  if(type == "Multivariate" || type == "Univariate") {
+    for (int i = 0; i < obs.GetNumberOfSubjects(); i++) {
+      observations = PyDict_New();
+      for (int j = 0; j < obs.GetSubjectObservations(i).GetNumberOfTimePoints(); j++) {
+        key = PyFloat_FromDouble(obs.GetSubjectObservations(i).GetTimePoint(j));
+        list = PyList_New(0);
+        for (int numCogScore = 0;
+             numCogScore < obs.GetSubjectObservations(i).GetCognitiveScore(j).size(); numCogScore++) {
+          item = PyFloat_FromDouble(obs.GetSubjectObservations(i).GetCognitiveScore(j)[numCogScore]);
+          PyList_Append(list, item);
+        }
+        PyDict_SetItem(observations, key, list);
       }
-      PyDict_SetItem(observations, key, list);
+      PyList_Append(obs_list, observations);
     }
-    PyList_Append(obs_list, observations);
+  }
+  else {
+    std::cerr << "Your model is not supported at the moment.";
+    exit(1);
   }
 
   // Create a Python tuple to hold the arguments to the method.
