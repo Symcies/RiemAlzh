@@ -6,7 +6,7 @@
 
   <!-- REAL DATA TO PROCESS -->
   <real-data>
-    <folder-path>RiemAlzh/examples/scalar_models/MultivariateModel/data/</folder-path>
+    <folder-path>/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/univariate_model/data/CognitiveScores/MCI_Univar/</folder-path>
     <group-file>group.csv</group-file>
     <timepoints-file>X.csv</timepoints-file>
 
