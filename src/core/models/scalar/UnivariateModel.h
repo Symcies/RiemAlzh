@@ -11,6 +11,11 @@ class UnivariateModel : public AbstractModel {
   UnivariateModel(io::ModelSettings& model_settings);
   ~UnivariateModel();
 
+  
+  
+  inline std::vector<VectorType> GetIndObsDate(){return individual_obs_date_;};
+  inline std::vector<VectorType> GetSubjTimePoints(){return individual_time_points_;};
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Other method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,10 +69,11 @@ class UnivariateModel : public AbstractModel {
   virtual void DisplayOutputs(const Realizations& reals);
 
   /// Save the data into a file
-  virtual void SaveData(unsigned int IterationNumber, const Realizations& reals);
+  virtual void SaveCurrentState(unsigned int IterationNumber, const Realizations& reals);
   
-  inline std::vector<VectorType> GetIndObsDate(){return individual_obs_date_;};
-  inline std::vector<VectorType> GetSubjTimePoints(){return individual_time_points_;};
+  /// Save the final parameters and realizations into a file
+  virtual void SaveFinalState(const Realizations& reals);
+  
 
 private:
 

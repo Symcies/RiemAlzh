@@ -35,19 +35,24 @@ void fit(int argc, char* argv[]) {
                         (GV::BUILD_DIR + "OutputFileFor" + model_settings.GetOutputFileName() ).c_str()
             );
             end_comp = time(0);
+            std::cout << "Initialisation duration: " << init_comp - start << std::endl;
+            std::cout << "MCMCSAEM computations duration: " << end_comp - init_comp << std::endl;
+
           },
           &algo
+          
   );
 
   PythonUtils utils = PythonUtils(argv);
   utils.PlotOutputWhileComputing(model_settings.GetOutputFileName(), 0);
+  
+  graph_thread.join();
+  
 //  utils.PlotFinalOutput("LastRealizationOf" + model_settings.GetOutputFileName(), model_settings.GetType());
   utils.PlotAllFinalOutputWithPatientData("LastRealizationOf" + model_settings.GetOutputFileName(), model_settings.GetType(), obs);
 
-  std::cout << "Initialisation duration: " << init_comp - start << std::endl;
-  std::cout << "MCMCSAEM computations duration: " << end_comp - init_comp << std::endl;
 
-  graph_thread.join();
+  
 
   /// Eventually simulate data (on option)
   /// Cannot be used ONLy beause the data_settings is reading the parameter <data-type>

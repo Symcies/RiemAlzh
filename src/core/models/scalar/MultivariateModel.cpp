@@ -548,7 +548,7 @@ void MultivariateModel::DisplayOutputs(const Realizations &AR)
   std::cout << " - Ksi: " << ksi->GetParameter("Mean") << " - Var(Ksi): " << ksi->GetParameter("Variance") << std::endl;
 }
 
-void MultivariateModel::SaveData(unsigned int iter_num, const Realizations &reals)
+void MultivariateModel::SaveCurrentState(unsigned int iter_num, const Realizations &reals)
 {
   /// It saves the random variables / realizations / whatever model parameters
   /// Mainly needed for post processing
@@ -637,6 +637,11 @@ void MultivariateModel::SaveData(unsigned int iter_num, const Realizations &real
       }
     }
   }
+}
+
+void MultivariateModel::SaveFinalState(const Realizations &reals) {
+  
+  
 }
 
 

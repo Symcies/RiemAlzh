@@ -404,7 +404,7 @@ void UnivariateModel::DisplayOutputs(const Realizations &AR)
 
 }
 
-void UnivariateModel::SaveData(unsigned int iter_num, const Realizations &reals)
+void UnivariateModel::SaveCurrentState(unsigned int iter_num, const Realizations &reals)
 {
   /// It saves the random variables / realizations / whatever model parameters
   /// Mainly needed for post processingGV::TEST_DIR + "log_univariate_file.txt"
@@ -480,6 +480,11 @@ void UnivariateModel::SaveData(unsigned int iter_num, const Realizations &reals)
       }
     }
   }
+}
+
+
+void UnivariateModel::SaveFinalState(const Realizations &reals) {
+  
 }
 
 

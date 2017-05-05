@@ -31,7 +31,7 @@ public:
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& SS);
 
   /// Simulate data according to the model and the parameters
-  virtual Observations SimulateData(io::DataSettings& DS);
+  virtual Observations SimulateData(io::SimulatedDataSettings& DS);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
   virtual std::vector<MiniBlock> GetSamplerBlocks() const;
@@ -39,6 +39,9 @@ public:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Log-likelihood related method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Initialize the loglikelihood vector of the model
+  virtual void InitializeLogLikelihood(const Observations& obs);
   
   /// Compute the log likelihood of the model
   virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info);
@@ -61,8 +64,10 @@ public:
   virtual void DisplayOutputs(const Realizations& R);
 
   /// Save the data into a file
-  virtual void SaveData(unsigned int IterationNumber, const Realizations& R);
+  virtual void SaveCurrentState(unsigned int IterationNumber, const Realizations& R);
 
+  /// Save the final parameters and realizations into a file
+  virtual void SaveFinalState(const Realizations& reals);
 
 protected:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,6 +97,9 @@ protected:
 
   /// Compute the block nu_k / p0
   void ComputeBlock2();
+  
+  /// Get the type of the sampler block
+  int GetType(const MiniBlock& block_info);
 
   /// Compute the parallel curve
   VectorType ComputeParallelCurve(int SubjectNumber, int ObservationNumber);
@@ -135,16 +143,19 @@ protected:
   MatrixType space_shifts_;
 
   /// Real time of observation of each individual
-  std::vector<VectorType> indiv_obs_date_;
+  std::vector<VectorType> individual_obs_date_;
 
   /// Time reparametrization of each individual
-  std::vector<VectorType> indiv_time_points_;
+  std::vector<VectorType> individual_time_points_;
 
   /// Block1 corresponds to p0 * exp(Delta)
   VectorType block1_;
 
   /// Block2 corresponds to vu_k / p0
   VectorType block2_;
+  
+  /// Last log-likelihood computed - vector of individual
+  VectorType last_loglikelihood_;
 
 
 private:
