@@ -1,0 +1,1 @@
+/usr/bin/g++    -std=gnu++1z  -DDEBUG -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib CMakeFiles/xmltest.dir/xmltest.cpp.o  -o xmltest -Wl,-rpath,/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2  libtinyxml2.4.0.1.dylib 

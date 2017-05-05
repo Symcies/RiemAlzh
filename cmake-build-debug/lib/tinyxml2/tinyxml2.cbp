@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="tinyxml2"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\lib\;CMake Files\lib\tinyxml2\;CMake Files\lib\googletest\;CMake Files\lib\googletest\googlemock\;CMake Files\lib\googletest\googletest\;CMake Files\lib\googletest\googletest\cmake\;CMake Files\test\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="DATA_COPY">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 DATA_COPY"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="xmltest">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/xmltest" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 xmltest"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="xmltest/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/xmltest" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 xmltest/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tinyxml2">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/libtinyxml2.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DTINYXML2_EXPORT"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 tinyxml2"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tinyxml2/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/libtinyxml2.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DTINYXML2_EXPORT"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 tinyxml2/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="uninstall">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 uninstall"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/tinyxml2.cpp">
+			<Option target="tinyxml2"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/tinyxml2.h">
+			<Option target="tinyxml2"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/xmltest.cpp">
+			<Option target="xmltest"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/tinyxml2.pc.in">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/cmake_uninstall.cmake.in">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/tinyxml2.pc.in">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/cmake_uninstall.cmake.in">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googlemock\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googlemock\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googlemock\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\test\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

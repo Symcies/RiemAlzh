@@ -1,0 +1,1341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="Longitudina"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\lib\;CMake Files\lib\tinyxml2\;CMake Files\lib\googletest\;CMake Files\lib\googletest\googlemock\;CMake Files\lib\googletest\googletest\;CMake Files\lib\googletest\googletest\cmake\;CMake Files\test\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 test"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Longitudina">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Longitudina" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 Longitudina"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Longitudina/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Longitudina" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 Longitudina/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="riem-lib">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/libriem-lib.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 riem-lib"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="riem-lib/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/libriem-lib.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 riem-lib/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="DATA_COPY">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 DATA_COPY"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="xmltest">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/xmltest" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 xmltest"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="xmltest/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/xmltest" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 xmltest/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tinyxml2">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/libtinyxml2.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DTINYXML2_EXPORT"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 tinyxml2"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tinyxml2/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/libtinyxml2.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DTINYXML2_EXPORT"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 tinyxml2/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="uninstall">
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 uninstall"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/tinyxml2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/libgmock.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGTEST_CREATE_SHARED_LIBRARY=1"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 gmock"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/libgmock.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGTEST_CREATE_SHARED_LIBRARY=1"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 gmock/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock_main">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/libgmock_main.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGTEST_CREATE_SHARED_LIBRARY=1"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 gmock_main"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock_main/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/libgmock_main.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGTEST_CREATE_SHARED_LIBRARY=1"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 gmock_main/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest_main">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/libgtest_main.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGTEST_CREATE_SHARED_LIBRARY=1"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 gtest_main"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest_main/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/libgtest_main.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGTEST_CREATE_SHARED_LIBRARY=1"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 gtest_main/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/libgtest.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGTEST_CREATE_SHARED_LIBRARY=1"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 gtest"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/libgtest.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGTEST_CREATE_SHARED_LIBRARY=1"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 gtest/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/lib/googletest/googlemock/gtest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="RunUnitTests">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test/RunUnitTests" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 RunUnitTests"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="RunUnitTests/fast">
+				<Option output="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test/RunUnitTests" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/network"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/observations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/parameters"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/realizations"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/core/samplers"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/fit"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/launch/validate"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/asserts"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/include"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest"/>
+					<Add directory="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/."/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 RunUnitTests/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/clementine.fourrier/RiemAlzh/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/src/gmock-all.cc">
+			<Option target="gmock"/>
+			<Option target="gmock_main"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/src/gmock_main.cc">
+			<Option target="gmock_main"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/src/gtest-all.cc">
+			<Option target="gmock"/>
+			<Option target="gmock_main"/>
+			<Option target="gtest"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/src/gtest_main.cc">
+			<Option target="gtest_main"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/tinyxml2.cpp">
+			<Option target="tinyxml2"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/tinyxml2.h">
+			<Option target="tinyxml2"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/xmltest.cpp">
+			<Option target="xmltest"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/.DS_Store">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm/Algorithm.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/algorithm/Algorithm.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/AbstractManifold.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/AbstractManifold.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/ExponentialCurveManifold.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/ExponentialCurveManifold.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/LinearManifold.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/LinearManifold.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/PropagationManifold.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/PropagationManifold.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold/AbstractBaseManifold.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold/AbstractBaseManifold.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold/ExponentialBaseManifold.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold/ExponentialBaseManifold.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold/LogisticBaseManifold.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/manifolds/base_manifold/LogisticBaseManifold.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/AbstractModel.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/AbstractModel.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/ModelFactory.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/ModelFactory.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons/GaussianMixtureModel.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/combinaisons/GaussianMixtureModel.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/network/FastNetworkModel.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/network/FastNetworkModel.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes/GaussianModel.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/prototypes/GaussianModel.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar/MultivariateModel.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar/MultivariateModel.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar/UnivariateModel.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/models/scalar/UnivariateModel.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/observations/IndividualObservations.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/observations/IndividualObservations.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/observations/Observations.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/observations/Observations.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/parameters/CandidateRandomVariables.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/parameters/CandidateRandomVariables.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables/AbstractRandomVariable.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables/AbstractRandomVariable.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables/GaussianRandomVariable.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables/GaussianRandomVariable.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables/MultiRandomVariables.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables/MultiRandomVariables.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables/UniformRandomVariable.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/random_variables/UniformRandomVariable.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/realizations/Realizations.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/realizations/Realizations.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/samplers/AbstractSampler.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/samplers/AbstractSampler.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/samplers/BlockedGibbsSampler.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/samplers/BlockedGibbsSampler.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/samplers/MHwGSampler.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/samplers/MHwGSampler.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/samplers/SamplerFactory.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/core/samplers/SamplerFactory.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/global.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/global.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/AlgorithmSettings.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/AlgorithmSettings.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/ModelSettings.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/ModelSettings.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/ReadData.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/ReadData.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/SamplerSettings.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/SamplerSettings.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings/DataSettings.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings/DataSettings.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings/RealDataSettings.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings/RealDataSettings.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings/SimulatedDataSettings.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/io/data_settings/SimulatedDataSettings.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/launch/.DS_Store">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/launch/fit/fit.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/launch/fit/fit.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/launch/main.cpp">
+			<Option target="Longitudina"/>
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/launch/validate/validate.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/launch/validate/validate.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/asserts/InputException.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/asserts/InputsAssert.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/asserts/InputsAssert.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/LinearAlgebra.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo/ArmadilloLinearAlgebra.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo/ArmadilloMatrixWrapper.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo/ArmadilloMatrixWrapper_friend.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo/ArmadilloVectorWrapper.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/linear_algebra/armadillo/ArmadilloVectorWrapper_friend.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots/PlotGraphs.py">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots/PlotGraphs.pyc">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots/PythonUtils.cpp">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/src/support/outputs_plots/PythonUtils.h">
+			<Option target="riem-lib"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/RunTests.cxx">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/integration/MultivariateScalarModels_IT.cxx">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/integration/MultivariateScalarModels_IT.h">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/integration/UnivariateScalarModels_IT.cxx">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/integration/UnivariateScalarModels_IT.h">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/test_global.cxx">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/test_global.h">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/unit/io/AlgorithmSettings_UT.cxx">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/unit/io/AlgorithmSettings_UT.h">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/unit/io/DataSettings_UT.cxx">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/unit/io/DataSettings_UT.h">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/unit/io/ModelSettings_UT.cxx">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/unit/io/ModelSettings_UT.h">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/unit/io/ReadData_UT.cxx">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/unit/io/ReadData_UT.h">
+			<Option target="RunUnitTests"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/tinyxml2.pc.in">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/cmake_uninstall.cmake.in">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/tinyxml2.pc.in">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/tinyxml2/cmake_uninstall.cmake.in">
+			<Option virtualFolder="CMake Files\lib\tinyxml2\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googlemock\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googlemock\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googlemock/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googlemock\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/lib/googletest/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\lib\googletest\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/clementine.fourrier/RiemAlzh/test/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\test\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

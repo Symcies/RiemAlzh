@@ -1,0 +1,1 @@
+/usr/bin/g++   -std=gnu++1z -dynamiclib -Wl,-headerpad_max_install_names -L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib -o libgmock_main.dylib -install_name @rpath/libgmock_main.dylib CMakeFiles/gmock_main.dir/__/googletest/src/gtest-all.cc.o CMakeFiles/gmock_main.dir/src/gmock-all.cc.o CMakeFiles/gmock_main.dir/src/gmock_main.cc.o 

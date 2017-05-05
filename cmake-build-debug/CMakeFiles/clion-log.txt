@@ -1,0 +1,29 @@
+/Applications/CLion.app/Contents/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -D CMAKE_C_COMPILER=/usr/bin/gcc -D CMAKE_CXX_COMPILER=/usr/bin/g++ -G "CodeBlocks - Unix Makefiles" /Users/clementine.fourrier/RiemAlzh
+-- The CXX compiler identification is AppleClang 8.0.0.8000042
+-- Check for working CXX compiler: /usr/bin/g++
+-- Check for working CXX compiler: /usr/bin/g++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test COMPILER_HAS_CXX_FLAG_gnuxx1z
+-- Performing Test COMPILER_HAS_CXX_FLAG_gnuxx1z - Success
+-- Found Armadillo: /usr/local/lib/libarmadillo.dylib (found version "7.700.0") 
+-- Found PythonLibs: /usr/lib/libpython2.7.dylib (found version "2.7.10") 
+-- The C compiler identification is AppleClang 8.0.0.8000042
+-- Check for working C compiler: /usr/bin/gcc
+-- Check for working C compiler: /usr/bin/gcc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found PythonInterp: /Users/clementine.fourrier/miniconda2/bin/python2.7 (found version "2.7.13") 
+-- Looking for pthread.h
+-- Looking for pthread.h - found
+-- Looking for pthread_create
+-- Looking for pthread_create - found
+-- Found Threads: TRUE  
+test f /Users/clementine.fourrier/RiemAlzh/test/RunTests.cxx/Users/clementine.fourrier/RiemAlzh/test/test_global.h/Users/clementine.fourrier/RiemAlzh/test/test_global.cxx/Users/clementine.fourrier/RiemAlzh/test/integration/MultivariateScalarModels_IT.cxx/Users/clementine.fourrier/RiemAlzh/test/integration/UnivariateScalarModels_IT.cxx/Users/clementine.fourrier/RiemAlzh/test/integration/MultivariateScalarModels_IT.h/Users/clementine.fourrier/RiemAlzh/test/integration/UnivariateScalarModels_IT.h/Users/clementine.fourrier/RiemAlzh/test/unit/io/AlgorithmSettings_UT.cxx/Users/clementine.fourrier/RiemAlzh/test/unit/io/DataSettings_UT.cxx/Users/clementine.fourrier/RiemAlzh/test/unit/io/ModelSettings_UT.cxx/Users/clementine.fourrier/RiemAlzh/test/unit/io/ReadData_UT.cxx/Users/clementine.fourrier/RiemAlzh/test/unit/io/AlgorithmSettings_UT.h/Users/clementine.fourrier/RiemAlzh/test/unit/io/DataSettings_UT.h/Users/clementine.fourrier/RiemAlzh/test/unit/io/ModelSettings_UT.h/Users/clementine.fourrier/RiemAlzh/test/unit/io/ReadData_UT.h
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/clementine.fourrier/RiemAlzh/cmake-build-debug

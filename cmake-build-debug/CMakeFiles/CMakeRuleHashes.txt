@@ -1,0 +1,7 @@
+# Hashes of file build rules.
+d5f131671d83ff01bcfb683900086480 lib/tinyxml2/CMakeFiles/DATA_COPY
+f1c338db82438843381e942ed2218a87 lib/tinyxml2/CMakeFiles/uninstall
+03eb4d993b9202a56f6cc0b5efe05c82 lib/tinyxml2/resources/dream.xml
+d6a09031b1812c7b05d24f5517ecae8e lib/tinyxml2/resources/empty.xml
+e52c1ca3b68b6a649783107c4af42a6a lib/tinyxml2/resources/utf8test.xml
+53bbde308168f7e59f9d50d7b854d91a lib/tinyxml2/resources/utf8testverify.xml
