@@ -409,7 +409,6 @@ void UnivariateModel::SaveCurrentState(unsigned int iter_num, const Realizations
   /// It saves the random variables / realizations / whatever model parameters
   /// Mainly needed for post processingGV::TEST_DIR + "log_univariate_file.txt"
 
-
   std::ofstream log_file;
 
   if(!GV::TEST_RUN) {
@@ -428,43 +427,6 @@ void UnivariateModel::SaveCurrentState(unsigned int iter_num, const Realizations
              << ksi->GetParameter("Mean") << " "
              << ksi->GetParameter("Variance") << std::endl;
     log_file.close();
-    if (iter_num == GV::MAX_ITER -1){
-      log_file.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ , std::ofstream::out | std::ofstream::app);
-
-      auto block_p = rand_var_.GetRandomVariable("P")->GetParameter("Mean");
-      auto tau = rand_var_.GetRandomVariable("Tau");
-      auto ksi = rand_var_.GetRandomVariable("Ksi");
-      log_file << "iter Noise P TauMean TauVar KsiMean KsiVar" << std::endl;
-      log_file << iter_num << " " << noise_->GetVariance() << " "
-               << block_p << " " << tau->GetParameter("Mean") << " "
-               << tau->GetParameter("Variance") << " "
-               << ksi->GetParameter("Mean") << " "
-               << ksi->GetParameter("Variance") << std::endl;
-
-      // In order to avoid creating arrays of vectors, we will have to manage number and vector results in two loops
-      std::vector<std::string> number_values = {"Tau", "Ksi"};
-
-      int num_col = number_values.size();
-      int num_row = reals.at(number_values[0]).size();
-      double realisations[num_row][num_col];
-      for(int i = 0; i < 2; i++) {
-        std::string var = number_values[i];
-        log_file << var << " ";
-        for(int j = 0; j < reals.at(var).size(); j++){
-          realisations[j][i] = reals.at(var)[j];
-        }
-      }
-      log_file << std::endl;
-
-      for(int i = 0; i<num_row; i++){
-        for(int j = 0; j < num_col; j++){
-          log_file << realisations[i][j] << " ";
-        }
-        log_file << std::endl;
-      }
-
-      log_file.close();
-    }
   }
   else {
     log_file.open(GV::TEST_DIR + "log_univariate_file.txt", std::ofstream::out | std::ofstream::app);
@@ -484,7 +446,43 @@ void UnivariateModel::SaveCurrentState(unsigned int iter_num, const Realizations
 
 
 void UnivariateModel::SaveFinalState(const Realizations &reals) {
-  
+  std::ofstream log_file;
+
+  log_file.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ , std::ofstream::out | std::ofstream::app);
+
+  auto block_p = rand_var_.GetRandomVariable("P")->GetParameter("Mean");
+  auto tau = rand_var_.GetRandomVariable("Tau");
+  auto ksi = rand_var_.GetRandomVariable("Ksi");
+  log_file << "Noise P TauMean TauVar KsiMean KsiVar" << std::endl;
+  log_file << noise_->GetVariance() << " "
+           << block_p << " " << tau->GetParameter("Mean") << " "
+           << tau->GetParameter("Variance") << " "
+           << ksi->GetParameter("Mean") << " "
+           << ksi->GetParameter("Variance") << std::endl;
+
+  // In order to avoid creating arrays of vectors, we will have to manage number and vector results in two loops
+  std::vector<std::string> number_values = {"Tau", "Ksi"};
+
+  int num_col = number_values.size();
+  int num_row = reals.at(number_values[0]).size();
+  double realisations[num_row][num_col];
+  for(int i = 0; i < 2; i++) {
+    std::string var = number_values[i];
+    log_file << var << " ";
+    for(int j = 0; j < reals.at(var).size(); j++){
+      realisations[j][i] = reals.at(var)[j];
+    }
+  }
+  log_file << std::endl;
+
+  for(int i = 0; i<num_row; i++){
+    for(int j = 0; j < num_col; j++){
+      log_file << realisations[i][j] << " ";
+    }
+    log_file << std::endl;
+  }
+
+  log_file.close();
 }
 
 
