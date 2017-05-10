@@ -30,6 +30,8 @@ public:
 
   unsigned int GetNumberOfTimePoints() const { return time_points_num_; }
 
+  unsigned int GetId() const { return id_; }
+
   ScalarType GetTimePoint(unsigned int time_points_num) const { return time_points_(time_points_num); }
 
   VectorType GetTimePoints() const { return time_points_; }

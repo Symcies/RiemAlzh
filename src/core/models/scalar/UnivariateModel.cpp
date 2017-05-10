@@ -445,7 +445,7 @@ void UnivariateModel::SaveCurrentState(unsigned int iter_num, const Realizations
 }
 
 
-void UnivariateModel::SaveFinalState(const Realizations &reals) {
+void UnivariateModel::SaveFinalState(const Realizations &reals, const Observations &obs) {
   std::ofstream log_file;
 
   log_file.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ , std::ofstream::out | std::ofstream::app);
@@ -466,11 +466,17 @@ void UnivariateModel::SaveFinalState(const Realizations &reals) {
   int num_col = number_values.size();
   int num_row = reals.at(number_values[0]).size();
   double realisations[num_row][num_col];
-  for(int i = 0; i < 2; i++) {
+
+  log_file << "id "; //Labels management
+  for (int j = 0; j < obs.GetIds().size(); j++){
+    realisations[j][0] = obs.GetId(j);
+  }
+
+  for(int i = 0; i < number_values.size(); i++) {
     std::string var = number_values[i];
     log_file << var << " ";
     for(int j = 0; j < reals.at(var).size(); j++){
-      realisations[j][i] = reals.at(var)[j];
+      realisations[j][1 + i] = reals.at(var)[j];
     }
   }
   log_file << std::endl;

@@ -327,7 +327,7 @@ void GaussianModel::SaveCurrentState(unsigned int IterationNumber, const Realiza
   // We'll see later on what we need
 }
 
-void GaussianModel::SaveFinalState(const Realizations &reals) {
+void GaussianModel::SaveFinalState(const Realizations &reals, const Observations& obs) {
   
 }
 

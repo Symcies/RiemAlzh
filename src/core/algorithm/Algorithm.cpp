@@ -50,7 +50,7 @@ void Algorithm::ComputeMCMCSAEM(const Observations& obs) {
   }
   
   /// Save the final state that we use for the post-process
-  model_->SaveFinalState(*realizations_);
+  model_->SaveFinalState(*realizations_, obs);
   
 }
 

@@ -688,7 +688,7 @@ void FastNetworkModel::SaveCurrentState(unsigned int iter_num, const Realization
   */
 }
 
-void FastNetworkModel::SaveFinalState(const Realizations &reals) {
+void FastNetworkModel::SaveFinalState(const Realizations &reals, const Observations& obs) {
   
 }
 

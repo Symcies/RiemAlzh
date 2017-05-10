@@ -21,7 +21,7 @@ PythonUtils::PythonUtils(char ** argv) {
 
   Py_Initialize();
   PyRun_SimpleString("import sys");
-  PyRun_SimpleString(("sys.path.append('" + GV::SRC_DIR + "support/outputs_plots/')").c_str());
+  PyRun_SimpleString(("sys.path.append('" + GV::SRC_DIR + "utils/outputs_plots/')").c_str());
   PyRun_SimpleString(("sys.path.append('"  + GV::PYTHON27_DIR + "lib-tk/')").c_str());
   PyRun_SimpleString(("sys.path.append('" + GV::PYTHON27_DIR + "site-packages/matplotlib/')").c_str());
   PyRun_SimpleString(("sys.path.append('" + GV::PYTHON27_DIR + "site-packages/')").c_str());

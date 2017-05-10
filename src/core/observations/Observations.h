@@ -56,6 +56,10 @@ public:
 
   const IndividualObservations& GetSubjectObservations(unsigned int indiv_num) const { return data_.at(indiv_num); }
 
+  const int GetId(unsigned int indiv_num) const { return ids_.at(indiv_num); }
+
+  const std::vector<int> GetIds() const {return ids_;}
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Other method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,6 +84,9 @@ private:
 
   /// Individual time points
   std::vector<VectorType> indiv_obs_;
+
+  /// Individual ids
+  std::vector<int> ids_;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Cross-subject attribute(s)

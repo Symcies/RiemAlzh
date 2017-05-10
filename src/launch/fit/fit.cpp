@@ -49,7 +49,7 @@ void fit(int argc, char* argv[]) {
   graph_thread.join();
   
 //  utils.PlotFinalOutput("LastRealizationOf" + model_settings.GetOutputFileName(), model_settings.GetType());
-  utils.PlotAllFinalOutputWithPatientData("LastRealizationOf" + model_settings.GetOutputFileName(), model_settings.GetType(), obs);
+//  utils.PlotAllFinalOutputWithPatientData("LastRealizationOf" + model_settings.GetOutputFileName(), model_settings.GetType(), obs);
 
 
   

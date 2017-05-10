@@ -245,7 +245,7 @@ void GaussianMixtureModel::SaveCurrentState(unsigned int IterationNumber, const 
   
 }
 
-void GaussianMixtureModel::SaveFinalState(const Realizations &reals) {
+void GaussianMixtureModel::SaveFinalState(const Realizations &reals, const Observations& obs) {
   
 }
 

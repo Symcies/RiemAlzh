@@ -587,9 +587,12 @@ void MultivariateModel::SaveCurrentState(unsigned int iter_num, const Realizatio
   }
 }
 
-void MultivariateModel::SaveFinalState(const Realizations &reals) {
+void MultivariateModel::SaveFinalState(const Realizations &reals, const Observations &obs) {
   std::ofstream log_file;
 
+  for(auto i = obs.GetIds().begin(); i!= obs.GetIds().end(); i++){
+    std::cout << *i << " ";
+  }
   log_file.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_, std::ofstream::out | std::ofstream::app);
 
   auto block_g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
@@ -612,21 +615,27 @@ void MultivariateModel::SaveFinalState(const Realizations &reals) {
   // In order to avoid creating arrays of vectors, we will have to manage number and vector results in two loops
   std::vector<std::string> number_values = {"Tau", "Ksi"};
 
-  int num_col = number_values.size() + deltas_.size();
+  int num_col = number_values.size() + deltas_.size() + 1;
   int num_row = reals.at(number_values[0]).size();
   double realisations[num_row][num_col];
+
+  log_file << "id "; //Labels management
+  for (int j = 0; j < obs.GetIds().size(); j++){
+    realisations[j][0] = obs.GetId(j);
+  }
+
   for (int i = 0; i < num_col - deltas_.size(); i++) {
     std::string var = number_values[i];
     log_file << var << " "; //Labels management
     for (int j = 0; j < reals.at(var).size(); j++) {
-      realisations[j][i] = reals.at(var)[j];
+      realisations[j][1 + i] = reals.at(var)[j];
     }
   }
   // We add the space shifts
   for (int i = 0; i < deltas_.size(); i++) {
     log_file << "W" << i << " "; //Labels management
     for (int j = 0; j < space_shifts_.get_row(i).size(); j++) {
-      realisations[j][2 + i] = space_shifts_(i, j);
+      realisations[j][1 + number_values.size() + i] = space_shifts_(i, j);
     }
   }
 

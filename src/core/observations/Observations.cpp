@@ -17,6 +17,7 @@ Observations::Observations(const Observations& obs)
   tot_obs_num_        = obs.tot_obs_num_;
   cog_scores_tot_sum_ = obs.cog_scores_tot_sum_;
   landmarks_tot_sum_  = obs.landmarks_tot_sum_;
+  ids_                = obs.ids_;
 }
 
 Observations::~Observations()
@@ -25,13 +26,14 @@ Observations::~Observations()
 }
 
 Observations& Observations::operator=(const Observations & obs){
-    data_               = obs.data_;
-    indiv_obs_          = obs.indiv_obs_;
-    tot_indiv_num_      = obs.tot_indiv_num_;
-    tot_obs_num_        = obs.tot_obs_num_;
-    cog_scores_tot_sum_ = obs.cog_scores_tot_sum_;
-    landmarks_tot_sum_  = obs.landmarks_tot_sum_;
-    return *this ;
+  data_               = obs.data_;
+  indiv_obs_          = obs.indiv_obs_;
+  tot_indiv_num_      = obs.tot_indiv_num_;
+  tot_obs_num_        = obs.tot_obs_num_;
+  cog_scores_tot_sum_ = obs.cog_scores_tot_sum_;
+  landmarks_tot_sum_  = obs.landmarks_tot_sum_;
+  ids_                = obs.ids_;
+  return *this ;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,12 +46,14 @@ void Observations::AddIndividualData(IndividualObservations& indiv_obs)
   // TODO : Redundant?
   data_.push_back(indiv_obs);
   indiv_obs_.push_back(indiv_obs.GetTimePoints());
+  ids_.push_back(indiv_obs.GetId());
 }
 
 void Observations::AddObservations(Observations &obs) {
   for(size_t i = 0; i < obs.GetNumberOfSubjects(); ++i) {
     data_.push_back(obs.GetSubjectObservations(i));
     indiv_obs_.push_back(obs.GetSubjectTimePoints(i));
+    ids_.push_back(obs.GetId(i));
   }
 }
 
