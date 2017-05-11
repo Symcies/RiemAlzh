@@ -44,7 +44,7 @@ public:
 
 private:
   static VectorType ExtractObservation(std::ifstream& f_stream, unsigned int dimension);
-  static IndividualObservations CreateIndividualObs(const RealDataSettings& ds, ReadData::VectorType& time_points,
+  static IndividualObservations CreateIndividualObs(const RealDataSettings& ds, int id, ReadData::VectorType& time_points,
     std::vector<ReadData::VectorType>& landmarks, std::vector<ReadData::VectorType>& cognitive_scores);
   static int CountLineNumber(std::ifstream& file);
 

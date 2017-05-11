@@ -6,13 +6,13 @@ from scalar import Univariate
 from scalar import Multivariate
 import utils
 
-def PlotFinalOutput(output_path, observations_path, type):
-    PlotAndSelectPatientCurvesWithData(output_path, type, utils.readInput(observations_path))
+def PlotFinalOutput(output_pop_path, output_ind_path, observations_path, type):
+    PlotAndSelectPatientCurvesWithData(output_pop_path, output_ind_path, type, utils.readInput(observations_path))
 
     plt.show(block = True)
 
-def PlotAndSelectPatientCurvesWithData(filename, type, map_list):
-    values = PlotPatientCurves(filename, type, False, True, map_list)
+def PlotAndSelectPatientCurvesWithData(output_pop_path, output_ind_path, type, map_list):
+    values = PlotPatientCurves(output_pop_path, output_ind_path, type, False, True, map_list)
     plt.pause(3)
 
     def update(patient_id):
@@ -63,12 +63,11 @@ def PlotAndSelectPatientCurvesWithData(filename, type, map_list):
 
     plt.plot(block = True)
 
-def PlotPatientCurves(filename, type, isVisible, hasObservations, map_list):
+def PlotPatientCurves(output_pop_path, output_ind_path, type, isVisible, hasObservations, map_list):
     if type == "Univariate":
-        return Univariate.PlotPatientCurvesUnivariate(filename, isVisible, hasObservations, map_list)
+        return Univariate.PlotPatientCurvesUnivariate(output_pop_path, output_ind_path, isVisible, hasObservations, map_list)
     elif type == "Multivariate":
-        return Multivariate.PlotPatientCurvesMultivariate(filename, isVisible, hasObservations, map_list)
-
+        return Multivariate.PlotPatientCurvesMultivariate(output_pop_path, output_ind_path, isVisible, hasObservations, map_list)
 
 def UserMessages(value):
     if value == "hold" or value == "h" or value == "pause" or value == "p":

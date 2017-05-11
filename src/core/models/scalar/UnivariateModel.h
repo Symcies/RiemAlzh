@@ -73,6 +73,8 @@ class UnivariateModel : public AbstractModel {
   
   /// Save the final parameters and realizations into a file
   virtual void SaveFinalState(const Realizations& reals, const Observations& obs);
+  virtual void SavePopulationFile();
+  virtual void SaveIndividualsFile(const Realizations &reals, const Observations &obs);
   
 
 private:

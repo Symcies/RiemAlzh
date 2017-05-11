@@ -36,7 +36,7 @@ Observations ReadData::ReadObservations(const RealDataSettings &ds)
 
     /// If we changed subject
     if(new_subject_id != current_subject_id) {
-      IndividualObservations individual = CreateIndividualObs(ds, time_points, landmarks, cognitive_scores);
+      IndividualObservations individual = CreateIndividualObs(ds, current_subject_id, time_points, landmarks, cognitive_scores);
       obs.AddIndividualData(individual);
 
       current_subject_id = new_subject_id;
@@ -58,15 +58,16 @@ Observations ReadData::ReadObservations(const RealDataSettings &ds)
       cognitive_scores.push_back(new_obs);
     }
   } //end while
-  IndividualObservations individual = CreateIndividualObs(ds, time_points, landmarks, cognitive_scores);
+  IndividualObservations individual = CreateIndividualObs(ds, current_subject_id, time_points, landmarks, cognitive_scores);
   obs.AddIndividualData(individual);
 
   return obs;
 }
 
-IndividualObservations ReadData::CreateIndividualObs(const RealDataSettings& ds, ReadData::VectorType& time_points,
+IndividualObservations ReadData::CreateIndividualObs(const RealDataSettings& ds, int id, ReadData::VectorType& time_points,
 std::vector<ReadData::VectorType>& landmarks, std::vector<ReadData::VectorType>& cognitive_scores){
-    IndividualObservations individual(time_points);
+
+    IndividualObservations individual(time_points, id);
     if(ds.LandmarkPresence()) {
       individual.AddLandmarks(landmarks);
     }

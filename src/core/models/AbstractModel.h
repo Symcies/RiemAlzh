@@ -124,6 +124,8 @@ public:
   
   /// Save the final parameters and realizations into a file
   virtual void SaveFinalState(const Realizations& reals, const Observations& obs) = 0;
+  virtual void SavePopulationFile() = 0;
+  virtual void SaveIndividualsFile(const Realizations &reals, const Observations &obs) = 0;
 
 protected:
 

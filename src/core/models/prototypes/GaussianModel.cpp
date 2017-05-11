@@ -178,7 +178,7 @@ Observations GaussianModel::SimulateData(io::SimulatedDataSettings &data_setting
     time_points.sort();
     individual_obs_date_.push_back(time_points);
     
-    IndividualObservations indiv_obs(time_points);
+    IndividualObservations indiv_obs(time_points, i);
     std::vector<VectorType> cognitive_scores; 
     
     for(size_t j = 0; j < time_points.size(); ++j) {
@@ -327,10 +327,11 @@ void GaussianModel::SaveCurrentState(unsigned int IterationNumber, const Realiza
   // We'll see later on what we need
 }
 
-void GaussianModel::SaveFinalState(const Realizations &reals, const Observations& obs) {
-  
-}
+void GaussianModel::SaveFinalState(const Realizations &reals, const Observations& obs) {}
 
+void GaussianModel::SavePopulationFile() {}
+
+void GaussianModel::SaveIndividualsFile(const Realizations &reals, const Observations& obs) {}
 
 
 

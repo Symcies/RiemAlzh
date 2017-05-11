@@ -241,13 +241,16 @@ void GaussianMixtureModel::DisplayOutputs(const Realizations &reals) {
   
 }
 
-void GaussianMixtureModel::SaveCurrentState(unsigned int IterationNumber, const Realizations &reals) {
+void GaussianMixtureModel::SaveCurrentState(unsigned int iteration_number, const Realizations &reals) {
   
 }
 
-void GaussianMixtureModel::SaveFinalState(const Realizations &reals, const Observations& obs) {
-  
-}
+void GaussianMixtureModel::SaveFinalState(const Realizations &reals, const Observations& obs) {}
+
+void GaussianMixtureModel::SavePopulationFile() {}
+
+void GaussianMixtureModel::SaveIndividualsFile(const Realizations &reals, const Observations& obs) {}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

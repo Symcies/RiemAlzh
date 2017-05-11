@@ -18,7 +18,7 @@ public:
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  IndividualObservations(VectorType time_points);
+  IndividualObservations(VectorType time_points, int id);
   ~IndividualObservations();
 
   IndividualObservations(const IndividualObservations &);

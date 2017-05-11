@@ -12,7 +12,8 @@ MultivariateModel::MultivariateModel(io::ModelSettings &model_settings)
   indep_sources_num_ = model_settings.GetIndependentSourcesNumber();
   output_file_name_ = model_settings.GetOutputFileName();
   std::remove((GV::BUILD_DIR + output_file_name_ ).c_str());
-  std::remove((GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ ).c_str());
+  std::remove((GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_pop").c_str());
+  std::remove((GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_ind").c_str());
   acceptance_ratio_to_display_ = model_settings.GetAcceptanceRatioToDisplay();
 }
 
@@ -386,7 +387,7 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
     individual_time_points_.push_back(transformed_time_points);
 
     /// Simulate the data base on the time-points
-    IndividualObservations indiv_obs(time_points);
+    IndividualObservations indiv_obs(time_points, i);
     std::vector<VectorType> cognitive_scores;
     for(size_t j = 0; j < time_points.size(); ++j)
     {
@@ -588,70 +589,86 @@ void MultivariateModel::SaveCurrentState(unsigned int iter_num, const Realizatio
 }
 
 void MultivariateModel::SaveFinalState(const Realizations &reals, const Observations &obs) {
-  std::ofstream log_file;
+  SavePopulationFile();
+  SaveIndividualsFile(reals, obs);
 
-  for(auto i = obs.GetIds().begin(); i!= obs.GetIds().end(); i++){
-    std::cout << *i << " ";
-  }
-  log_file.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_, std::ofstream::out | std::ofstream::app);
+  
+}
 
+void MultivariateModel::SavePopulationFile(){
+  std::ofstream log_file_pop;
+
+  log_file_pop.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_pop", std::ofstream::out | std::ofstream::app);
+
+  log_file_pop << "Noise " << noise_->GetVariance() << std::endl;
   auto block_g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
-  auto tau = rand_var_.GetRandomVariable("Tau");
-  auto ksi = rand_var_.GetRandomVariable("Ksi");
-  log_file << "Noise G TauMean KsiMean NumReal ";
+  log_file_pop << "G " << block_g << std::endl;
+  auto tau = rand_var_.GetRandomVariable("Tau")->GetParameter("Mean");
+  log_file_pop << "TauMean " << tau << std::endl;
+  auto ksi = rand_var_.GetRandomVariable("Ksi")->GetParameter("Mean");
+  log_file_pop << "KsiMean " << ksi << std::endl;
+  log_file_pop << "Deltas ";
   for (int i = 0; i<deltas_.size(); i++){
-    log_file << "Delta" << i << " ";
+    log_file_pop << deltas_[i] << " ";
   }
-  log_file << std::endl;
-  log_file << noise_->GetVariance() << " "
-           << block_g << " " << tau->GetParameter("Mean") << " "
-           << ksi->GetParameter("Mean") << " "
-           << space_shifts_.get_column(0).size() << " ";
-  for (int i = 0; i<deltas_.size(); i++){
-    log_file << deltas_[i] << " ";
+  log_file_pop << std::endl;
+
+}
+
+void MultivariateModel::SaveIndividualsFile(const Realizations &reals, const Observations &obs){
+  std::ofstream log_file_ind;
+
+  log_file_ind.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_ind", std::ofstream::out | std::ofstream::app);
+
+  // First part of file
+  log_file_ind << "Tau Ksi W" << std::endl;
+  log_file_ind << "1 1 " << deltas_.size() << std::endl;
+
+  // Second part of file
+  // Label management
+  log_file_ind << "id Tau Ksi ";
+  for (int i = 0; i < deltas_.size(); i++) {
+    log_file_ind << "W" << i << " ";
   }
-  log_file << std::endl;
+  log_file_ind << std::endl;
 
-  // In order to avoid creating arrays of vectors, we will have to manage number and vector results in two loops
-  std::vector<std::string> number_values = {"Tau", "Ksi"};
+  std::vector<std::string> val_realization = {"Tau", "Ksi"};
 
-  int num_col = number_values.size() + deltas_.size() + 1;
-  int num_row = reals.at(number_values[0]).size();
+  int num_col = val_realization.size() + deltas_.size() + 1;
+  int num_row = reals.at(val_realization[0]).size();
+  std::cout << num_col << "  " << num_row;
   double realisations[num_row][num_col];
 
-  log_file << "id "; //Labels management
-  for (int j = 0; j < obs.GetIds().size(); j++){
+  // Id
+  for (int j = 0; j < obs.GetNumberOfSubjects(); j++){
     realisations[j][0] = obs.GetId(j);
   }
 
-  for (int i = 0; i < num_col - deltas_.size(); i++) {
-    std::string var = number_values[i];
-    log_file << var << " "; //Labels management
+  // Paramètres de realisation
+  for (int i = 0; i < num_col - deltas_.size() - 1; i++) {
+    std::string var = val_realization[i];
     for (int j = 0; j < reals.at(var).size(); j++) {
       realisations[j][1 + i] = reals.at(var)[j];
     }
   }
-  // We add the space shifts
+
+  // Space shifts
   for (int i = 0; i < deltas_.size(); i++) {
-    log_file << "W" << i << " "; //Labels management
     for (int j = 0; j < space_shifts_.get_row(i).size(); j++) {
-      realisations[j][1 + number_values.size() + i] = space_shifts_(i, j);
+      realisations[j][1 + val_realization.size() + i] = space_shifts_(i, j);
     }
   }
 
-  log_file << std::endl; //Labels management
-  //Inversion
+  // Inversion: Going from row to columns
   for (int i = 0; i < num_row; i++) {
     for (int j = 0; j < num_col; j++) {
-      log_file << realisations[i][j] << " ";
+      log_file_ind << realisations[i][j] << " ";
     }
-    log_file << std::endl;
+    log_file_ind << std::endl;
   }
 
-  log_file.close();
-  
+  log_file_ind.close();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Method(s) :

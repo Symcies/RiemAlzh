@@ -27,6 +27,6 @@ def readInput(path_to_folder):
         score = score_file.readline()
         if id not in dict_patients:
             dict_patients[id] = PatientObservation(id)
-        dict_patients[id].add_observation(float(age), score.split())
+        dict_patients[id].add_observation(float(age), score.split(','))
 
     return dict_patients

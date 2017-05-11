@@ -4,10 +4,12 @@
 /// Constructor(s) / Destructor :
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-IndividualObservations::IndividualObservations(VectorType time_points)
+IndividualObservations::IndividualObservations(VectorType time_points, int id)
 {
   time_points_ = time_points;
   time_points_num_ = time_points_.size();
+
+  id_ = id;
 
   landmarks_presence_ = false;
   cog_score_presence_ = false;

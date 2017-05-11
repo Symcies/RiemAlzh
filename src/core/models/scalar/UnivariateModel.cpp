@@ -9,7 +9,8 @@ UnivariateModel::UnivariateModel(io::ModelSettings &model_settings)
 {
   output_file_name_ = model_settings.GetOutputFileName();
   std::remove((GV::BUILD_DIR + output_file_name_ ).c_str());
-  std::remove((GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ ).c_str());
+  std::remove((GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_pop").c_str());
+  std::remove((GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_ind").c_str());
   acceptance_ratio_to_display_ = model_settings.GetAcceptanceRatioToDisplay();
 }
 
@@ -253,7 +254,7 @@ Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_setti
     individual_time_points_.push_back(transformed_time_points);
 
     /// Simulate the data base on the time-points
-    IndividualObservations indiv_obs(time_points);
+    IndividualObservations indiv_obs(time_points, i);
     std::vector<VectorType> cog_scores;
     for(size_t j = 0; j < time_points.size(); ++j)
     {
@@ -389,7 +390,6 @@ void UnivariateModel::SetPreviousLogLikelihood(VectorType &log_likelihood,
 /// Outputs
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//TODO: what is the use of the parameter?
 void UnivariateModel::DisplayOutputs(const Realizations &AR)
 {
   auto block_p = rand_var_.GetRandomVariable("P")->GetParameter("Mean");
@@ -446,51 +446,71 @@ void UnivariateModel::SaveCurrentState(unsigned int iter_num, const Realizations
 
 
 void UnivariateModel::SaveFinalState(const Realizations &reals, const Observations &obs) {
-  std::ofstream log_file;
+  SavePopulationFile();
+  SaveIndividualsFile(reals, obs);
+}
 
-  log_file.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ , std::ofstream::out | std::ofstream::app);
+void UnivariateModel::SavePopulationFile(){
+  std::ofstream log_file_pop;
 
+  log_file_pop.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_pop", std::ofstream::out | std::ofstream::app);
+
+  log_file_pop << "Noise " << noise_->GetVariance() << std::endl;
   auto block_p = rand_var_.GetRandomVariable("P")->GetParameter("Mean");
-  auto tau = rand_var_.GetRandomVariable("Tau");
-  auto ksi = rand_var_.GetRandomVariable("Ksi");
-  log_file << "Noise P TauMean TauVar KsiMean KsiVar" << std::endl;
-  log_file << noise_->GetVariance() << " "
-           << block_p << " " << tau->GetParameter("Mean") << " "
-           << tau->GetParameter("Variance") << " "
-           << ksi->GetParameter("Mean") << " "
-           << ksi->GetParameter("Variance") << std::endl;
+  log_file_pop << "P " << block_p << std::endl;
+  auto taum = rand_var_.GetRandomVariable("Tau")->GetParameter("Mean");
+  log_file_pop << "TauMean " << taum << std::endl;
+  auto tauv = rand_var_.GetRandomVariable("Tau")->GetParameter("Variance");
+  log_file_pop << "TauVar " << tauv << std::endl;
+  auto ksi = rand_var_.GetRandomVariable("Ksi")->GetParameter("Mean");
+  log_file_pop << "KsiMean " << ksi << std::endl;
+  auto ksiv = rand_var_.GetRandomVariable("Ksi")->GetParameter("Variance");
+  log_file_pop << "KsiVar " << ksiv << std::endl;
+}
 
-  // In order to avoid creating arrays of vectors, we will have to manage number and vector results in two loops
-  std::vector<std::string> number_values = {"Tau", "Ksi"};
+void UnivariateModel::SaveIndividualsFile(const Realizations &reals, const Observations &obs){
+  std::ofstream log_file_ind;
 
-  int num_col = number_values.size();
-  int num_row = reals.at(number_values[0]).size();
+  log_file_ind.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_ind", std::ofstream::out | std::ofstream::app);
+
+  // First part of file
+  log_file_ind << "Tau Ksi" << std::endl;
+  log_file_ind << "1 1" << std::endl;
+
+  // Second part of file
+  // Label management
+  log_file_ind << "id Tau Ksi" << std::endl;
+
+  std::vector<std::string> val_realization = {"Tau", "Ksi"};
+
+  int num_col = val_realization.size() + 1;
+  int num_row = reals.at(val_realization[0]).size();
+  std::cout << num_col << "  " << num_row;
   double realisations[num_row][num_col];
 
-  log_file << "id "; //Labels management
-  for (int j = 0; j < obs.GetIds().size(); j++){
+  // Id
+  for (int j = 0; j < obs.GetNumberOfSubjects(); j++){
     realisations[j][0] = obs.GetId(j);
   }
 
-  for(int i = 0; i < number_values.size(); i++) {
-    std::string var = number_values[i];
-    log_file << var << " ";
-    for(int j = 0; j < reals.at(var).size(); j++){
+  // Paramètres de realisation
+  for (int i = 0; i < num_col - 1; i++) {
+    std::string var = val_realization[i];
+    for (int j = 0; j < reals.at(var).size(); j++) {
       realisations[j][1 + i] = reals.at(var)[j];
     }
   }
-  log_file << std::endl;
 
-  for(int i = 0; i<num_row; i++){
-    for(int j = 0; j < num_col; j++){
-      log_file << realisations[i][j] << " ";
+  // Inversion: Going from row to columns
+  for (int i = 0; i < num_row; i++) {
+    for (int j = 0; j < num_col; j++) {
+      log_file_ind << realisations[i][j] << " ";
     }
-    log_file << std::endl;
+    log_file_ind << std::endl;
   }
 
-  log_file.close();
+  log_file_ind.close();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Method(s) :

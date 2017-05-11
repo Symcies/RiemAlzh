@@ -402,7 +402,7 @@ Observations FastNetworkModel::SimulateData(io::SimulatedDataSettings& data_sett
     individual_time_points_.push_back(transformed_time_points);
     
     /// Simulate the data base on the time-points
-    IndividualObservations indiv_obs(time_points);
+    IndividualObservations indiv_obs(time_points, i);
     std::vector<VectorType> landmarks;
     for(size_t j = 0; j < time_points.size(); ++j)
     {
@@ -688,10 +688,11 @@ void FastNetworkModel::SaveCurrentState(unsigned int iter_num, const Realization
   */
 }
 
-void FastNetworkModel::SaveFinalState(const Realizations &reals, const Observations& obs) {
-  
-}
+void FastNetworkModel::SaveFinalState(const Realizations &reals, const Observations& obs) {}
 
+void FastNetworkModel::SavePopulationFile() {}
+
+void FastNetworkModel::SaveIndividualsFile(const Realizations &reals, const Observations& obs) {}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :
