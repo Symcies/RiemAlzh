@@ -1,25 +1,16 @@
-#ifndef _MeshworkModel_h
-#define _MeshworkModel_h
+#pragma once
 
 #include "AbstractModel.h"
 
 class MeshworkModel : public AbstractModel{
 public:
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-  /// typedef :
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Constructor(s) / Destructor :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   MeshworkModel(io::ModelSettings& model_settings);
   ~MeshworkModel();
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Encapsulation method(s) :
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Other method(s) :
@@ -41,7 +32,7 @@ public:
   virtual void UpdateRandomVariables(const SufficientStatisticsVector& stoch_sufficient_stats);
   
   /// Simulate data according to the model
-  virtual Observations SimulateData(io::DataSettings& data_settings);
+  virtual Observations SimulateData(io::SimulatedDataSettings& data_settings);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
   virtual std::vector<MiniBlock> GetSamplerBlocks() const;
@@ -49,6 +40,9 @@ public:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Log-likelihood related method(s) :
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  /// Initialize the loglikelihood vector of the model
+  virtual void InitializeLogLikelihood(const Observations& obs);
   
   /// Compute the log likelihood of the model
   virtual VectorType ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info);
@@ -71,8 +65,10 @@ public:
   virtual void DisplayOutputs(const Realizations& reals);
 
   /// Save the data into a file
-  virtual void SaveData(unsigned int IterationNumber, const Realizations& reals);
+  virtual void SaveCurrentState(unsigned int IterationNumber, const Realizations& reals);
 
+  /// Save the final parameters and realizations into a file
+  virtual void SaveFinalState(const Realizations& reals);
   
 protected:
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +95,9 @@ protected:
 
   /// Compute the block p0 * exp(delta_k)
   void ComputeBlock();
+  
+  /// Get the type of the sampler block
+  int GetType(const MiniBlock& block_info);
 
   /// Compute the parallel curve
   VectorType ComputeParallelCurve(int indiv_num, int obs_num);
@@ -139,13 +138,16 @@ protected:
   MatrixType space_shifts_;
 
   /// Real time of observation of each individual
-  std::vector<VectorType> indiv_obs_date_;
+  std::vector<VectorType> individual_obs_date_;
 
   /// Time reparametrization of each individual
-  std::vector<VectorType> indiv_time_points_;
+  std::vector<VectorType> individual_time_points_;
 
   /// Block1 corresponds to p0 * exp(Delta)
   VectorType block1_;
+  
+  /// Last log-likelihood computed - vector of individual
+  VectorType last_loglikelihood_;
 
 
 private:
@@ -156,4 +158,3 @@ private:
 };
 
 
-#endif //_MeshworkModel_h
