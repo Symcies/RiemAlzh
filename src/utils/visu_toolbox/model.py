@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 
 from scalar import Univariate
 from scalar import Multivariate
-import utils
+import utils.FileUtils
+import utils.MathUtils
 
 def PlotFinalOutput(output_pop_path, output_ind_path, observations_path, type):
-    PlotAndSelectPatientCurvesWithData(output_pop_path, output_ind_path, type, utils.readInput(observations_path))
+    PlotAndSelectPatientCurvesWithData(output_pop_path, output_ind_path, type, utils.FileUtils.readInput(observations_path))
 
     plt.show(block = True)
 
@@ -47,7 +48,7 @@ def PlotAndSelectPatientCurvesWithData(output_pop_path, output_ind_path, type, m
 
     while True:
         value = raw_input("Get patient?")
-        if utils.IsInt(value):
+        if utils.MathUtils.IsInt(value):
             if int(value) < len(values[0]) and int(value)>-1:
                 update(int(value))
             else:
@@ -72,7 +73,7 @@ def PlotPatientCurves(output_pop_path, output_ind_path, type, isVisible, hasObse
 def UserMessages(value):
     if value == "hold" or value == "h" or value == "pause" or value == "p":
         duration = input("How long do you want to hold the display (in sec)?")
-        if utils.IsInt(duration):
+        if utils.MathUtils.IsInt(duration):
             plt.pause(int(duration))
         return 1
     if value == "exit" or value == "quit" or value == "q":

@@ -1,16 +1,9 @@
-from PatientObservation import PatientObservation
+from utils.PatientObservation import PatientObservation
 
 path_id = "group.csv"
 path_ages = "X.csv"
 path_scores = "Y.csv"
 path = "/Users/clementine.fourrier/RiemAlzh/examples/scalar_models/univariate_model/data/CognitiveScores/MCI_Univar/"
-
-def IsInt(s):
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
 
 def readInput(path_to_folder):
     id_file = open(path_to_folder + path_id, 'r')

@@ -9,7 +9,6 @@ import math
 def PlotPatientCurvesMultivariate(filename_pop, filename_ind, isVisible, hasObservations, observationsMap):
     plt.ion()
     pop_labels = read_population_parameters(filename_pop)
-    print pop_labels
 
     # Extraction of average variables
     f_ind = open(filename_ind, 'r')
@@ -79,8 +78,6 @@ def PlotPatientCurvesMultivariate(filename_pop, filename_ind, isVisible, hasObse
                 real_Y_k = []
                 for val in observationsMap[id_line[i]].obs.values():
                     real_Y_k.append(val[k])
-                print observationsMap[id_line[i]].obs.values()
-                print real_Y_k
                 point, = splot.plot(real_X, real_Y_k, color = colors[k][0], linestyle = ' ', marker = '+', visible = isVisible)
                 points.append(point)
 
