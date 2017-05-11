@@ -39,13 +39,13 @@ void MeshworkModel::Initialize(const Observations& obs)
 {
   /// Data-related attributes
   subjects_tot_num_  = obs.GetNumberOfSubjects();
-  indiv_obs_date_    = obs.GetObservations();
-  indiv_time_points_ = obs.GetObservations();
+  individual_obs_date_    = obs.GetObservations();
+  individual_time_points_ = obs.GetObservations();
   obs_tot_num_       = obs.GetTotalNumberOfObservations();
   sum_obs_           = obs.GetTotalSumOfLandmarks();
 
   /// Population variables
-  noise_ = std::make_shared<GaussianRandomVariable>( 0.0, 0.01 );
+  noise_ = std::make_shared<GaussianRandomVariable>( rv_params_.at("noise").first[0], rv_params_.at("noise").first[1] );
 
   rand_var_.AddRandomVariable("P", "Gaussian", rv_params_.at("P").first);
   asso_num_real_per_rand_var_["P"] = control_points_nb_;
@@ -88,14 +88,14 @@ void MeshworkModel::InitializeValidationDataParameters(const io::SimulatedDataSe
                                                        const io::ModelSettings &model_settings) {
 
   
-    // TODO : Check which one has to be updated --> Some (a lot) are initialized in the constructor
+  // TODO : Check which one has to be updated --> Some (a lot) are initialized in the constructor
   // DO AN ASSERT : manifold_dim_ = data_settings.GetDimensionOfSimulatedObservations();
   indep_components_nb_ = model_settings.GetIndependentSourcesNumber();
   last_loglikelihood_.set_size(subjects_tot_num_);
   
   /// Population variables
   rand_var_.AddRandomVariable("P", "Gaussian", rv_params_.at("P").first);
-  asso_num_real_per_rand_var_["P"] = 1;
+  asso_num_real_per_rand_var_["P"] = control_points_nb_;
 
   for(int i = 1; i < control_points_nb_; ++i)
   {
@@ -135,7 +135,7 @@ void MeshworkModel::UpdateModel(const Realizations &reals, const MiniBlock& bloc
   bool compute_space_shift = false;
   bool compute_block = false;
 
-  bool indiv_only = (type > -1);
+  bool individual_only = (type > -1);
 
   for(auto it = names.begin(); it != names.end(); ++it)
   {
@@ -151,7 +151,7 @@ void MeshworkModel::UpdateModel(const Realizations &reals, const MiniBlock& bloc
       }
       else if(name == "P")
       {
-          indiv_only = false;
+          individual_only  = false;
           compute_thickness = true;
           compute_basis = true;
           compute_a = true;
@@ -161,7 +161,7 @@ void MeshworkModel::UpdateModel(const Realizations &reals, const MiniBlock& bloc
       }
       else if(name == "Delta")
       {
-          indiv_only = false;
+          individual_only  = false;
           compute_delta = true;
           compute_basis = true;
           compute_a = true;
@@ -171,7 +171,7 @@ void MeshworkModel::UpdateModel(const Realizations &reals, const MiniBlock& bloc
       }
       else if(name == "Beta")
       {
-          indiv_only = false;
+          individual_only  = false;
           compute_a = true;
           compute_space_shift = true;
           continue;
@@ -182,7 +182,7 @@ void MeshworkModel::UpdateModel(const Realizations &reals, const MiniBlock& bloc
       }
       else if(name == "All")
       {
-          indiv_only = false;
+          individual_only  = false;
           ComputeSubjectTimePoint(reals, -1);
 
           compute_thickness = true;
@@ -199,7 +199,7 @@ void MeshworkModel::UpdateModel(const Realizations &reals, const MiniBlock& bloc
       }
   }
 
-  if(indiv_only)          ComputeSubjectTimePoint(reals, type);
+  if(individual_only )    ComputeSubjectTimePoint(reals, type);
   if(compute_thickness)   ComputeThicknesses(reals);
   if(compute_delta)       ComputeDeltas(reals);
   if(compute_basis)       ComputeOrthonormalBasis();
@@ -328,14 +328,13 @@ void MeshworkModel::UpdateRandomVariables(const SufficientStatisticsVector &stoc
 
   /// Update Delta_k : Mean
   const ScalarType * iter_s10 = stoch_sufficient_stats[9].memptr();
-  for(size_t i = 0; i < control_points_nb_ - 1; ++i){
-      rand_var_.UpdateRandomVariable("Delta#" + std::to_string(i+1), {{"Mean", iter_s10[i]}});
+  for(size_t i = 1; i < control_points_nb_; ++i){
+      rand_var_.UpdateRandomVariable("Delta#" + std::to_string(i), {{"Mean", iter_s10[i-1]}});
   }
 }
 
 Observations MeshworkModel::SimulateData(io::SimulatedDataSettings &data_settings)
 {
-  
   individual_obs_date_.clear();
   individual_time_points_.clear();
   
@@ -360,25 +359,27 @@ Observations MeshworkModel::SimulateData(io::SimulatedDataSettings &data_setting
   /// Simulate the data
   std::random_device RD;
   std::mt19937 rand_num_gen(RD());
-  std::uniform_int_distribution<int> Uni(data_settings.GetMinimumNumberOfObservations(), data_settings.GetMaximumNumberOfObservations());
+  std::uniform_int_distribution<int> unif_distrib(data_settings.GetMinimumNumberOfObservations(), data_settings.GetMaximumNumberOfObservations());
   UniformRandomVariable time_points_num(60, 95);
-  GaussianRandomVariable noise(0, noise_->GetVariance());
 
   /// Simulate the data
   Observations obs;
   for(int i = 0; i < subjects_tot_num_; ++i)
   {
     /// Get a random number of timepoints and sort them
-    VectorType timepoints_vec = time_points_num.Samples(Uni(rand_num_gen));
-    timepoints_vec.sort();
-    indiv_time_points_.push_back(timepoints_vec);
-
+    VectorType time_points = time_points_num.Samples(unif_distrib(rand_num_gen));
+    time_points.sort();
+    individual_time_points_.push_back(time_points);    
+    VectorType transformed_time_points = exp(reals.at("Ksi")(i)) * (time_points - reals.at("Tau")(i) );
+    individual_time_points_.push_back(transformed_time_points);
+    
+    
     /// Simulate the data base on the time-points
-    IndividualObservations indiv_obs(timepoints_vec);
+    IndividualObservations indiv_obs(time_points);
     std::vector<VectorType> landmarks;
-    for(size_t j = 0; j < timepoints_vec.size(); ++j)
+    for(size_t j = 0; j < time_points.size(); ++j)
     {
-      landmarks.push_back(ComputeParallelCurve(i, j) + noise.Samples(manifold_dim_));
+      landmarks.push_back(ComputeParallelCurve(i, j) + noise_->Samples(manifold_dim_));
     }
 
     indiv_obs.AddLandmarks(landmarks);
@@ -387,9 +388,6 @@ Observations MeshworkModel::SimulateData(io::SimulatedDataSettings &data_setting
 
   /// Initialize the observation and model attributes
   obs.InitializeGlobalAttributes();
-  indiv_obs_date_ = obs.GetObservations();
-  sum_obs_           = obs.GetTotalSumOfLandmarks();
-  obs_tot_num_     = obs.GetTotalNumberOfObservations();
 
   return obs;
 }
@@ -398,67 +396,38 @@ Observations MeshworkModel::SimulateData(io::SimulatedDataSettings &data_setting
 std::vector<AbstractModel::MiniBlock> MeshworkModel::GetSamplerBlocks()
 const
 {
-  int pop_type = -1;
-  int nb_beta = 3;
-  int nb_delta = 0;
-  int nb_p = 5;
-
-
-  std::vector<SamplerBlock> blocks;
+  int population_type = -1;
+  std::vector<MiniBlock> blocks;
 
 
   /// Insert P;
   MiniBlock block_p;
-
   for(size_t i = 0; i < control_points_nb_; ++i)
-  {
-      block_p.push_back(std::make_pair("P", i));
-      //P.clear();
-  }
-  blocks.push_back(std::make_pair(pop_type, block_p));
-
-
+      block_p.push_back(std::tuple<int, std::string, int>(population_type, "P", i));
+  blocks.push_back(block_p);
+  
   /// Insert Beta_k
-  /*
-  MiniBlock Beta;
-  int BetaModulo = (int)indep_components_nb_*(manifold_dim_ - 1) /nb_beta;
-  for(size_t i = 0; i < indep_components_nb_*(manifold_dim_ - 1); ++i)
-  {
-      Beta.push_back(std::make_pair("Beta#" + std::to_string(i), 0));
-      bool HingeCondition = (i%BetaModulo == 0 && i != 0);
-      bool FinalCondition = (i == indep_components_nb_*(manifold_dim_ - 1) - 1);
-      if(FinalCondition || HingeCondition)
-      {
-          blocks.push_back(std::make_pair(pop_type, Beta));
-          Beta.clear();
-      }
-  }
-   */
   MiniBlock block_beta;
   for(size_t i = 0; i < indep_components_nb_*(manifold_dim_ - 1); ++i)
-  {
-      block_beta.push_back(std::make_pair("Beta#" + std::to_string(i), 0));
-  }
-  blocks.push_back(std::make_pair(pop_type, block_beta));
+    block_beta.push_back(std::tuple<int, std::string, int>(population_type, "Beta#" + std::to_string(i), 0));
+  blocks.push_back(block_beta);
 
   /// Insert Delta_k
   MiniBlock block_delta;
   for(size_t i = 1; i < control_points_nb_; ++i)
-  {
-      block_delta.push_back(std::make_pair("Delta#" + std::to_string(i), 0));
-  }
-  blocks.push_back(std::make_pair(pop_type, block_delta));
+      block_delta.push_back(std::tuple<int, std::string, int>(population_type, "Delta#" + std::to_string(i), 0));
+  blocks.push_back(block_delta);
 
   /// Individual variables
   for(size_t i = 0; i < subjects_tot_num_; ++i)
   {
       MiniBlock indiv_block;
-      indiv_block.push_back(std::make_pair("Ksi", i));
-      indiv_block.push_back(std::make_pair("Tau", i));
+      indiv_block.push_back(std::tuple<int, std::string, int>(i, "Ksi", i));
+      indiv_block.push_back(std::tuple<int, std::string, int>(i, "Tau", i));
       for(size_t j = 0; j < indep_components_nb_; ++j)
-          indiv_block.push_back(std::make_pair("S#" + std::to_string(j), i));
+            indiv_block.push_back(std::tuple<int, std::string, int>(i, "S#" + std::to_string(j), i));
 
-      blocks.push_back(std::make_pair(i, indiv_block));
+      blocks.push_back(indiv_block);
   }
 
 
@@ -470,21 +439,23 @@ const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
   
 void MeshworkModel::InitializeLogLikelihood(const Observations &obs) {
-    // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+
+  last_loglikelihood_.set_size(subjects_tot_num_);
+  ScalarType * l = last_loglikelihood_.memptr();
+  
+  for(size_t i = 0; i < subjects_tot_num_; ++i) 
+    l[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
 }
 
 
 AbstractModel::VectorType MeshworkModel::ComputeLogLikelihood(const Observations &obs, const MiniBlock& block_info)
 {
-  int type = std::get<0>(block_info[0]);
+  int type = GetType(block_info);
   
   if(type == -1) {
     VectorType loglikelihood(subjects_tot_num_);
     ScalarType *l_ptr = loglikelihood.memptr();
+    
     for (size_t i = 0; i < subjects_tot_num_; ++i)
       l_ptr[i] = ComputeIndividualLogLikelihood(obs.GetSubjectObservations(i), i);
 
@@ -497,40 +468,52 @@ AbstractModel::VectorType MeshworkModel::ComputeLogLikelihood(const Observations
 ScalarType MeshworkModel::ComputeIndividualLogLikelihood(const IndividualObservations& obs, const int subject_num)
 {
   /// Get the data
-  double log_likelihood = 0;
-  auto num_time_points = obs.GetNumberOfTimePoints();
+  ScalarType log_likelihood = 0;
+  auto time_points_num = obs.GetNumberOfTimePoints();
 
 #pragma omp parallel for reduction(+:log_likelihood)
-  for(size_t i = 0; i < num_time_points; ++i)
+  for(size_t i = 0; i < time_points_num; ++i)
   {
       auto& it = obs.GetLandmark(i);
-      VectorType parallel_curve = ComputeParallelCurve(indiv_num, i);
-      log_likelihood += (it - parallel_curve).squared_magnitude();
+      VectorType parallel_curve2 = ComputeParallelCurve(subject_num, i);
+      log_likelihood += (it - parallel_curve2).squared_magnitude();
   }
 
   log_likelihood /= -2*noise_->GetVariance();
-  log_likelihood -= num_time_points * log(2 * noise_->GetVariance() * M_PI) / 2.0;
+  log_likelihood -= time_points_num * log(2 * noise_->GetVariance() * M_PI) / 2.0;
 
   return log_likelihood;
 }
 
 ScalarType MeshworkModel::GetPreviousLogLikelihood(const MiniBlock &block_info) {
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+
+  int type = GetType(block_info);
+  
+  if (type == -1) {
+    return last_loglikelihood_.sum();
+  }
+  else if (type >= 0 && type <= last_loglikelihood_.size()) {
+    return last_loglikelihood_(type);
+  }
+  else {
+    std::cerr << "there is something wrong with the type";
+  }
 }
 
 
 void MeshworkModel::SetPreviousLogLikelihood(VectorType &log_likelihood,
                                             const MiniBlock &block_info) {
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
   
+  int type = GetType(block_info);
+  
+  if (type == -1) {
+    last_loglikelihood_ = log_likelihood;
+  }  else if (type >= 0 && type <= last_loglikelihood_.size()) {
+    last_loglikelihood_(type) = log_likelihood.sum();
+  }
+  else {
+    std::cerr << "there is something wrong with the type";
+  }
 }
 
 
@@ -567,7 +550,7 @@ void MeshworkModel::DisplayOutputs(const Realizations &reals)
 
 void MeshworkModel::SaveCurrentState(unsigned int iter_num, const Realizations &reals)
 {
-
+  /*
   std::ofstream outputs;
   std::string file_name = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/Meshwork/Parameters" + std::to_string(iter_num) + ".txt";
   outputs.open(file_name, std::ofstream::out | std::ofstream::trunc);
@@ -633,10 +616,10 @@ void MeshworkModel::SaveCurrentState(unsigned int iter_num, const Realizations &
       }
       outputs << std::endl;
   }
-
+  */
 }
 
-voir MeshworkModel::SaveFinalState(const Realizations &reals) {
+void MeshworkModel::SaveFinalState(const Realizations &reals) {
   // TODO TODO TODO TODO TODO 
   // TODO TODO TODO TODO TODO 
   // TODO TODO TODO TODO TODO 
@@ -651,19 +634,19 @@ void MeshworkModel::ComputeSubjectTimePoint(const Realizations &reals, const int
 {
   if(indiv_num != -1)
   {
-      double acc_factor = exp(reals.at("Ksi", indiv_num));
-      double time_shift = reals.at("Tau", indiv_num);
-      indiv_time_points_[indiv_num] = acc_factor * (indiv_obs_date_[indiv_num] - time_shift);
+      ScalarType acc_factor = exp(reals.at("Ksi", indiv_num));
+      ScalarType time_shift = reals.at("Tau", indiv_num);
+      individual_time_points_[indiv_num] = acc_factor * (individual_obs_date_[indiv_num] - time_shift);
   }
   else
   {
 
       for(size_t i = 0; i < subjects_tot_num_; ++i)
       {
-          double acc_factor = exp(reals.at("Ksi")(i));
-          double time_shift = reals.at("Tau")(i);
+          ScalarType acc_factor = exp(reals.at("Ksi")(i));
+          ScalarType time_shift = reals.at("Tau")(i);
 
-          indiv_time_points_[i] = acc_factor * (indiv_obs_date_[i] - time_shift);
+          individual_time_points_[i] = acc_factor * (individual_obs_date_[i] - time_shift);
       }
   }
 }
@@ -676,9 +659,7 @@ void MeshworkModel::ComputeDeltas(const Realizations &reals)
 
 #pragma omp parallel for
   for(size_t i = 1; i < control_points_nb_; ++i)
-  {
       d[i] = reals.at("Delta#" + std::to_string(i), 0);
-  }
 
   deltas_ = interpolation_matrix_ * invert_kernel_matrix_ * delta;
 }
@@ -691,11 +672,9 @@ void MeshworkModel::ComputeThicknesses(const Realizations &reals)
 
 void MeshworkModel::ComputeOrthonormalBasis()
 {
-      /// Get the data
-  auto v0 = rand_var_.GetRandomVariable("Ksi")->GetParameter("Mean");
-  v0 = exp(v0);
-
-
+  /// Get the data
+  auto v0 = exp(rand_var_.GetRandomVariable("Ksi")->GetParameter("Mean"));
+  
   VectorType u_vec(manifold_dim_);
   ScalarType * t = thickenesses_.memptr();
   ScalarType * d = deltas_.memptr();
@@ -703,12 +682,8 @@ void MeshworkModel::ComputeOrthonormalBasis()
 
 #pragma omp simd
   for(int i = 0; i < manifold_dim_; ++i)
-  {
-      u[i] = v0 / (t[i] * t[i])* exp(-d[i]);
-  }
-
-
-
+      u[i] = v0 * exp(d[i]) / (t[i] * t[i]);
+  
 
   /// Compute the initial pivot vector u
   double norm = u_vec.magnitude();
@@ -721,8 +696,7 @@ void MeshworkModel::ComputeOrthonormalBasis()
   for(size_t i = 0; i < manifold_dim_; ++i){
       final_mat2(i, i ) += 1;
   }
-
-
+  
   orthog_basis_ = final_mat2;
 }
 
@@ -764,18 +738,35 @@ void MeshworkModel::ComputeBlock()
 
 #pragma omp simd
   for(size_t i = 0; i < manifold_dim_; ++i){
-      b[i] = 1 / (t[i] * exp(d[i]));
+      b[i] = t[i] * exp(d[i]);
   }
 }
 
 int MeshworkModel::GetType(const MiniBlock &block_info) {
+  int type = std::get<0>(block_info[0]);
   
+  for(auto it = block_info.begin(); it != block_info.end(); ++it) {
+    
+    int class_number = std::get<0>(*it);
+    std::string real_name = std::get<1>(*it);
+    int real_number = std::get<2>(*it);
+    
+    if(real_name == "P" or real_name == "Delta" or real_name == "Beta") {
+      return -1;
+    }
+    if(type != real_number) {
+      return -1;
+    }
+    
+  }
+  
+  return type;
 }
 
 
 AbstractModel::VectorType MeshworkModel::ComputeParallelCurve(int indiv_num, int obs_num)
 {
-  double time_point = indiv_time_points_[indiv_num](obs_num);
+  double time_point = individual_time_points_[indiv_num](obs_num);
 
   VectorType parallel_curve(manifold_dim_);
 
@@ -785,9 +776,8 @@ AbstractModel::VectorType MeshworkModel::ComputeParallelCurve(int indiv_num, int
   ScalarType * b = block1_.memptr();
   ScalarType * w = space_shifts_.get_column(indiv_num).memptr();
 
-  for(size_t i = 0; i < manifold_dim_; ++i){
-      p[i] = t[i] * exp( w[i] / (t[i]*exp(d[i])) + d[i] - time_point/t[i]);
-  }
+  for(size_t i = 0; i < manifold_dim_; ++i)
+      p[i] = t[i] * exp( w[i] / b[i] + d[i] - time_point/t[i]);
 
   return parallel_curve;
 }

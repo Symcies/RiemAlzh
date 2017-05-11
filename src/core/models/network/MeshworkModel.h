@@ -145,6 +145,9 @@ protected:
 
   /// Block1 corresponds to p0 * exp(Delta)
   VectorType block1_;
+  
+  /// Last log-likelihood computed - vector of individual
+  VectorType last_loglikelihood_;
 
 
 private:
