@@ -7,25 +7,22 @@ import utils.input_management as im
 
 matplotlib.use('tkagg')
 
-fig = plt.figure()
-splot = fig.add_subplot(111)
 
-
-def plot_curves(filename_pop, filename_ind, observations):
+def plot_curves(filename_pop, filename_ind, observations, splot):
     plt.ion()
 
     pop_labels = im.read_population_parameters(filename_pop)
     number_param, param_dict = im.read_individual_parameters(filename_ind)
 
-    plot_mean_curve(pop_labels)
-    return plot_indiv_curves(param_dict, observations, pop_labels)
+    plot_mean_curve(pop_labels, splot)
+    return plot_indiv_curves(param_dict, observations, pop_labels, splot)
 
 
 def f(t, p, v0, t0):
     return 1/(1+(math.exp(-p))*math.exp(-v0*(t-t0)))
 
 
-def plot_mean_curve(pop_labels):
+def plot_mean_curve(pop_labels, splot):
     # Creation of X values
     X = numpy.linspace(40, 110, 70)
     # Mean
@@ -35,7 +32,7 @@ def plot_mean_curve(pop_labels):
     splot.plot(X, aver_Y, 'r', linewidth=1, visible = True)
 
 
-def plot_indiv_curves(param_dict, observations, pop_labels):
+def plot_indiv_curves(param_dict, observations, pop_labels, splot):
     color = numpy.random.rand(1, 3)
 
     # Individual curves

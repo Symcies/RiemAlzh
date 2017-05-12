@@ -9,7 +9,10 @@ import utils.math
 
 
 def plot(output_pop_path, output_ind_path, observations_path, type):
-    list_lines, list_points = plot_whole_model(output_pop_path, output_ind_path, type, obs.extract_observations(observations_path))
+    fig = plt.figure()
+    splot = fig.add_subplot(111)
+
+    list_lines, list_points = plot_whole_model(output_pop_path, output_ind_path, type, obs.extract_observations(observations_path), splot)
     plt.pause(3)
 
     while True:
@@ -29,11 +32,11 @@ def plot(output_pop_path, output_ind_path, observations_path, type):
     plt.plot(block = True)
 
 
-def plot_whole_model(output_pop_path, output_ind_path, type, map_list):
+def plot_whole_model(output_pop_path, output_ind_path, type, map_list, splot):
     if type == "Univariate":
-        return univariate.plot_curves(output_pop_path, output_ind_path, map_list)
+        return univariate.plot_curves(output_pop_path, output_ind_path, map_list, splot)
     elif type == "Multivariate":
-        return multivariate.plot_curves(output_pop_path, output_ind_path, map_list)
+        return multivariate.plot_curves(output_pop_path, output_ind_path, map_list, splot)
 
 
 def plot_patient(patient_id, list_lines, list_points, type):

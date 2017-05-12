@@ -8,11 +8,9 @@ matplotlib.use('tkagg')
 
 
 colors = []
-fig = plt.figure()
-splot = fig.add_subplot(111)
 
 
-def plot_curves(filename_pop, filename_ind, observations):
+def plot_curves(filename_pop, filename_ind, observations, splot):
     plt.ion()
     
     pop_labels = im.read_population_parameters(filename_pop)
@@ -20,15 +18,15 @@ def plot_curves(filename_pop, filename_ind, observations):
 
     init_colors(int(number_param["w"]))
 
-    plot_mean_curve(number_param, pop_labels)
-    return plot_indiv_curves(param_dict, observations, pop_labels, number_param)
+    plot_mean_curve(number_param, pop_labels, splot)
+    return plot_indiv_curves(param_dict, observations, pop_labels, number_param, splot)
 
 
 def f(t, g, delta, w, v0, t0):
     return 1 / (1 + g*math.exp((-w*math.pow(g*math.exp(-delta)+1,2)/g*math.exp(-delta)) - delta - v0*(t - t0)))
 
 
-def plot_mean_curve(number_param, pop_labels):
+def plot_mean_curve(number_param, pop_labels, splot):
     # Creation of X values
     X = numpy.linspace(50, 110, 90)
     aver_Y = [[] for _ in xrange(int(number_param["w"]))]
@@ -40,7 +38,7 @@ def plot_mean_curve(number_param, pop_labels):
         splot.plot(X, aver_Y[k], color=colors[k][0], linewidth=1, visible=True)
 
 
-def plot_indiv_curves(param_dict, observations, pop_labels, number_param):
+def plot_indiv_curves(param_dict, observations, pop_labels, number_param, splot):
     # Individual curves
     X = numpy.linspace(50, 110, 90)
     list_lines = []
