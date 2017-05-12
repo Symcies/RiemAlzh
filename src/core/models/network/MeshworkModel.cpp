@@ -619,12 +619,16 @@ void MeshworkModel::SaveCurrentState(unsigned int iter_num, const Realizations &
   */
 }
 
-void MeshworkModel::SaveFinalState(const Realizations &reals) {
+void MeshworkModel::SaveFinalState(const Realizations &reals, const Observations& obs) {
   // TODO TODO TODO TODO TODO 
   // TODO TODO TODO TODO TODO 
   // TODO TODO TODO TODO TODO 
 }
 
+
+void MeshworkModel::SavePopulationFile() {}
+
+void MeshworkModel::SaveIndividualsFile(const Realizations &reals, const Observations& obs) {}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :

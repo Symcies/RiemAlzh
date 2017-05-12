@@ -593,10 +593,11 @@ void NetworkModel::SaveCurrentState(unsigned int iter_num, const Realizations &r
 }
 
 
-void NetworkModel::SaveFinalState(const Realizations &reals) {
-  
-}
+void NetworkModel::SaveFinalState(const Realizations &reals, const Observations& obs) {}
 
+void NetworkModel::SavePopulationFile() {}
+
+void NetworkModel::SaveIndividualsFile(const Realizations &reals, const Observations& obs) {}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :

@@ -474,12 +474,10 @@ void UnivariateModel::SaveIndividualsFile(const Realizations &reals, const Obser
   log_file_ind.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_ind", std::ofstream::out | std::ofstream::app);
 
   // First part of file
-  log_file_ind << "Tau Ksi" << std::endl;
-  log_file_ind << "1 1" << std::endl;
+  log_file_ind << "id Tau Ksi" << std::endl;
+  log_file_ind << "1 1 1" << std::endl;
 
   // Second part of file
-  // Label management
-  log_file_ind << "id Tau Ksi" << std::endl;
 
   std::vector<std::string> val_realization = {"Tau", "Ksi"};
 

@@ -621,16 +621,16 @@ void MultivariateModel::SaveIndividualsFile(const Realizations &reals, const Obs
   log_file_ind.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_ind", std::ofstream::out | std::ofstream::app);
 
   // First part of file
-  log_file_ind << "Tau Ksi W" << std::endl;
-  log_file_ind << "1 1 " << deltas_.size() << std::endl;
+  log_file_ind << "id Tau Ksi W" << std::endl;
+  log_file_ind << "1 1 1 " << deltas_.size() << std::endl;
 
   // Second part of file
-  // Label management
+/*  // Label management
   log_file_ind << "id Tau Ksi ";
   for (int i = 0; i < deltas_.size(); i++) {
     log_file_ind << "W" << i << " ";
   }
-  log_file_ind << std::endl;
+  log_file_ind << std::endl;*/
 
   std::vector<std::string> val_realization = {"Tau", "Ksi"};
 
