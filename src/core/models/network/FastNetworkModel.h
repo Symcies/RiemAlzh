@@ -68,7 +68,6 @@ public:
   virtual void SaveCurrentState(unsigned int IterationNumber, const Realizations& R);
 
   /// Save the final parameters and realizations into a file
-  virtual void SaveFinalState(const Realizations& reals, const Observations& obs);
   virtual void SavePopulationFile();
   virtual void SaveIndividualsFile(const Realizations &reals, const Observations &obs);
 
