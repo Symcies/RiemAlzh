@@ -47,18 +47,9 @@ class Univariate:
         return 1/(1+(math.exp(-p))*math.exp(-v0*(t-t0)))
 
     def plot_mean(self):
-        plt.ion()
         self.aver_line[0].set_visible(not self.aver_line[0].get_visible())
-        plt.pause(0.0001)
-        plt.ioff()
 
     def plot_patients(self, list_patients_id, with_obs):
-        plt.ion()
-
         for i in list_patients_id:
             self.list_lines[i].set_visible(not self.list_lines[i].get_visible())
             self.list_points[i].set_visible(with_obs)
-
-        plt.pause(0.0001)
-
-        plt.ioff()

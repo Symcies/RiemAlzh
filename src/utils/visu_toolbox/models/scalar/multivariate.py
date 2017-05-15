@@ -61,25 +61,15 @@ class Multivariate:
         return 1 / (1 + g*math.exp((-w*math.pow(g*math.exp(-delta)+1,2)/g*math.exp(-delta)) - delta - v0*(t - t0)))
 
     def plot_mean(self):
-        plt.ion()
-        print self.aver_lines
         for i in range(len(self.aver_lines)):
             self.aver_lines[i][0].set_visible(not self.aver_lines[i][0].get_visible())
             plt.pause(0.0001)
-        plt.ioff()
 
     def plot_patients(self, list_patients_id, with_obs):
-        plt.ion()
-        print "in plot patient"
         for i in list_patients_id:
             for j in range(len(self.aver_lines)):
                 self.list_lines[i][j].set_visible(not self.list_lines[i][j].get_visible())
                 self.list_points[i][0].set_visible(with_obs)
-
-        plt.pause(0.0001)
-
-        plt.ioff()
-        print "before end"
 
     def init_colors(self, n):
         for k in range(n):
