@@ -1,6 +1,7 @@
 import argparse
 
 from utils import ui_management
+from visu import Visu
 
 def main():
     parser = argparse.ArgumentParser(description='Displays the curves for the different individuals')
@@ -14,7 +15,12 @@ def main():
                         help='type of the model')
 
     args = vars(parser.parse_args())
-    ui_management.plot(args['p'], args['i'], args['o'], args['t'])
+    visu = Visu(args['t'], args['p'], args['i'], args['o'])
+    visu.init_model()
+    visu.plot_mean()
+    visu.plot_patients([10, 11, 130], True)
+    visu.hold_plot()
+
 
 if __name__ == '__main__':
     main()
