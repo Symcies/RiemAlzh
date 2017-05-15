@@ -19,6 +19,10 @@ def extract_observations(path_to_folder):
             dict_patients[id] = PatientObservation(id)
         dict_patients[id].add_observation(float(age), score.split(','))
 
+    id_file.close()
+    age_file.close()
+    score_file.close()
+
     return dict_patients
 
 
@@ -76,5 +80,6 @@ def read_individual_parameters(filename):
             for i in range(number_param[param]):
                 indiv_param[param][i].append(float(line[ordered_params.index(param + str(i))]))
 
+    f_ind.close()
 
     return number_param, indiv_param

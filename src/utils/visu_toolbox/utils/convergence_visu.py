@@ -42,7 +42,7 @@ class convergence_visu:
             line_vec = line.split()
             for idx, item in enumerate(line_vec):
                 values[idx].append(item)
-
+        f.close()
 
         dict_convergence = {}
         for idx, item in enumerate(labels):
