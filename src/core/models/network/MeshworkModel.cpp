@@ -393,7 +393,7 @@ Observations MeshworkModel::SimulateData(io::SimulatedDataSettings &data_setting
 }
 
 
-std::vector<AbstractModel::MiniBlock> MeshworkModel::GetSamplerBlocks()
+std::vector<AbstractModel::MiniBlock> MeshworkModel::GetSamplerBlocks(unsigned int blocks_number)
 const
 {
   int population_type = -1;
@@ -683,7 +683,7 @@ void MeshworkModel::ComputeBlock()
 }
 
 int MeshworkModel::GetType(const MiniBlock &block_info) {
-  int type = std::get<0>(block_info[0]);
+  int type = std::get<2>(block_info[0]);
   
   for(auto it = block_info.begin(); it != block_info.end(); ++it) {
     

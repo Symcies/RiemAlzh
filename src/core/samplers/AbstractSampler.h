@@ -23,7 +23,7 @@ public:
   typedef typename LinearAlgebra<ScalarType>::VectorType VectorType;
   
   typedef std::vector<std::tuple<int, std::string, int>> MiniBlock;
-
+  typedef typename std::unordered_map<int, VectorType> IntVectorHash;
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////

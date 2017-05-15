@@ -415,7 +415,7 @@ Observations FastNetworkModel::SimulateData(io::SimulatedDataSettings& data_sett
 
 }
 
-std::vector<AbstractModel::MiniBlock> FastNetworkModel::GetSamplerBlocks() const
+std::vector<AbstractModel::MiniBlock> FastNetworkModel::GetSamplerBlocks(unsigned int blocks_number) const
 {
   int population_type = -1;
   std::vector<MiniBlock> blocks;
@@ -747,7 +747,7 @@ void FastNetworkModel::ComputeBlock2()
 
 
 int FastNetworkModel::GetType(const MiniBlock &block_info) { 
-  int type = std::get<0>(block_info[0]);
+  int type = std::get<2>(block_info[0]);
   
   for(auto it = block_info.begin(); it != block_info.end(); ++it) {
     

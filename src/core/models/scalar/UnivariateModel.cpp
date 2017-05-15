@@ -276,7 +276,7 @@ Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_setti
 
 }
 
-std::vector<AbstractModel::MiniBlock> UnivariateModel::GetSamplerBlocks() const
+std::vector<AbstractModel::MiniBlock> UnivariateModel::GetSamplerBlocks(unsigned int blocks_number) const
 {
   std::vector<MiniBlock> blocks;
 

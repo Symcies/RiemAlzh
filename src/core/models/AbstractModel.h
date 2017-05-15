@@ -90,7 +90,7 @@ public:
   virtual Realizations SimulateRealizations();
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
-  virtual std::vector<MiniBlock> GetSamplerBlocks() const = 0;
+  virtual std::vector<MiniBlock> GetSamplerBlocks(unsigned int blocks_number) const = 0;
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////

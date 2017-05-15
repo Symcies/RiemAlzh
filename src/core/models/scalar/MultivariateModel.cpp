@@ -407,39 +407,81 @@ Observations MultivariateModel::SimulateData(io::SimulatedDataSettings &data_set
 
 }
 
-std::vector<AbstractModel::MiniBlock> MultivariateModel::GetSamplerBlocks() const
+std::vector<AbstractModel::MiniBlock> MultivariateModel::GetSamplerBlocks(unsigned int blocks_number) const
 {
-
-  int population_type = -1;
   std::vector<MiniBlock> blocks;
+  
+  if(blocks_number == 0) {
+    int population_type = -1;
+    
 
-  /// Block G
-  MiniBlock g_block;
-  g_block.push_back(std::tuple<int, std::string, int>(population_type, "G", 0));
-  blocks.push_back(g_block);
+    /// Block G
+    MiniBlock g_block;
+    g_block.push_back(std::tuple<int, std::string, int>(population_type, "G", 0));
+    blocks.push_back(g_block);
 
-  /// Block Delta
-  MiniBlock delta_block;
-  for(size_t i = 1; i < manifold_dim_; ++i)
-    delta_block.push_back(std::tuple<int, std::string, int>(population_type, "Delta#" + std::to_string(i), 0));
-  blocks.push_back(delta_block);
+    /// Block Delta
+    MiniBlock delta_block;
+    for (size_t i = 1; i < manifold_dim_; ++i)
+      delta_block.push_back(std::tuple<int, std::string, int>(population_type, "Delta#" + std::to_string(i), 0));
+    blocks.push_back(delta_block);
 
-  /// Block beta
-  MiniBlock beta_block;
-  for(size_t i = 0; i < indep_sources_num_*(manifold_dim_ - 1); ++i)
-    beta_block.push_back(std::tuple<int, std::string, int>(population_type, "Beta#" + std::to_string(i), 0));
-  blocks.push_back(beta_block);
+    /// Block beta
+    MiniBlock beta_block;
+    for (size_t i = 0; i < indep_sources_num_ * (manifold_dim_ - 1); ++i)
+      beta_block.push_back(std::tuple<int, std::string, int>(population_type,
+                                                             "Beta#" + std::to_string(i),
+                                                             0));
+    blocks.push_back(beta_block);
 
-  /// Individual variables --> Each block corresponds to one individual with all his/her associated random variables
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-    MiniBlock indiv_block;
-    indiv_block.push_back(std::tuple<int, std::string, int>(i, "Ksi",i));
-    indiv_block.push_back(std::tuple<int, std::string, int>(i, "Tau",i));
-    for(size_t j = 0; j < indep_sources_num_; ++j)
-      indiv_block.push_back(std::tuple<int, std::string, int>(i, "S#" + std::to_string(j), i));
+    /// Individual variables --> Each block corresponds to one individual with all his/her associated random variables
+    for (size_t i = 0; i < subjects_tot_num_; ++i) {
+      MiniBlock indiv_block;
+      indiv_block.push_back(std::tuple<int, std::string, int>(i, "Ksi", i));
+      indiv_block.push_back(std::tuple<int, std::string, int>(i, "Tau", i));
+      for (size_t j = 0; j < indep_sources_num_; ++j)
+        indiv_block.push_back(std::tuple<int, std::string, int>(i, "S#" + std::to_string(j), i));
 
-    blocks.push_back(indiv_block);
+      blocks.push_back(indiv_block);
+    }
+  } else {
+    
+    /// Block G
+    MiniBlock g_block;
+    g_block.push_back(std::tuple<int, std::string, int>(0, "G", 0));
+    blocks.push_back(g_block);
+    
+    /// Block Delta
+    for (size_t i = 1; i < manifold_dim_; ++i) {
+      MiniBlock delta_block;
+      delta_block.push_back(std::tuple<int, std::string, int>(0, "Delta#" + std::to_string(i), 0));
+      blocks.push_back(delta_block);
+    }
+    
+    /// Block beta
+    for (size_t i = 0; i < indep_sources_num_ * (manifold_dim_ - 1); ++i) {
+      MiniBlock beta_block;
+      beta_block.push_back(std::tuple<int, std::string, int>(0, "Beta#" + std::to_string(i), 0));
+      blocks.push_back(beta_block);
+    }
+    
+    // Individual blocks
+    for (size_t i = 0; i < subjects_tot_num_; ++i) {
+      MiniBlock ksi_block;
+      ksi_block.push_back(std::tuple<int, std::string, int>(i, "Ksi", i));
+      blocks.push_back(ksi_block);
+      
+      MiniBlock tau_block;
+      tau_block.push_back(std::tuple<int, std::string, int>(i, "Tau", i));
+      blocks.push_back(tau_block);
+      
+      for (size_t j = 0; j < indep_sources_num_; ++j) {
+        MiniBlock s_block;
+        s_block.push_back(std::tuple<int, std::string, int>(i, "S#" + std::to_string(j), i));
+        blocks.push_back(s_block);  
+      }
+      
+    }
   }
 
   return blocks;
@@ -790,7 +832,7 @@ void MultivariateModel::ComputeBlock(const Realizations &reals)
 
 int MultivariateModel::GetType(const MiniBlock &block_info) {
   
-  int type = std::get<0>(block_info[0]);
+  int type = std::get<2>(block_info[0]);
   
   for(auto it = block_info.begin(); it != block_info.end(); ++it) {
     int class_number = std::get<0>(*it);
