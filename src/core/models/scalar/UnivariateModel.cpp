@@ -445,11 +445,6 @@ void UnivariateModel::SaveCurrentState(unsigned int iter_num, const Realizations
 }
 
 
-void UnivariateModel::SaveFinalState(const Realizations &reals, const Observations &obs) {
-  SavePopulationFile();
-  SaveIndividualsFile(reals, obs);
-}
-
 void UnivariateModel::SavePopulationFile(){
   std::ofstream log_file_pop;
 

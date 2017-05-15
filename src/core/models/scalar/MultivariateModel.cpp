@@ -588,12 +588,7 @@ void MultivariateModel::SaveCurrentState(unsigned int iter_num, const Realizatio
   }
 }
 
-void MultivariateModel::SaveFinalState(const Realizations &reals, const Observations &obs) {
-  SavePopulationFile();
-  SaveIndividualsFile(reals, obs);
 
-  
-}
 
 void MultivariateModel::SavePopulationFile(){
   std::ofstream log_file_pop;
@@ -608,7 +603,7 @@ void MultivariateModel::SavePopulationFile(){
   auto ksi = rand_var_.GetRandomVariable("Ksi")->GetParameter("Mean");
   log_file_pop << "KsiMean " << ksi << std::endl;
   log_file_pop << "Deltas ";
-  for (int i = 0; i<deltas_.size(); i++){
+  for (int i = 0; i < deltas_.size(); i++){
     log_file_pop << deltas_[i] << " ";
   }
   log_file_pop << std::endl;

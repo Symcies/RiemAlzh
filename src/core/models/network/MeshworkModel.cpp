@@ -375,7 +375,7 @@ Observations MeshworkModel::SimulateData(io::SimulatedDataSettings &data_setting
     
     
     /// Simulate the data base on the time-points
-    IndividualObservations indiv_obs(time_points);
+    IndividualObservations indiv_obs(time_points, i);
     std::vector<VectorType> landmarks;
     for(size_t j = 0; j < time_points.size(); ++j)
     {
@@ -550,85 +550,21 @@ void MeshworkModel::DisplayOutputs(const Realizations &reals)
 
 void MeshworkModel::SaveCurrentState(unsigned int iter_num, const Realizations &reals)
 {
-  /*
-  std::ofstream outputs;
-  std::string file_name = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/Meshwork/Parameters" + std::to_string(iter_num) + ".txt";
-  outputs.open(file_name, std::ofstream::out | std::ofstream::trunc);
-
-  /// Save the final noise variance
-  outputs << noise_->GetVariance() << std::endl;
-
-  /// Save the number of subjects, the manifold dimension, the number of sources, and, the number of control points
-  outputs << subjects_tot_num_ << ", " << manifold_dim_ << ", " << indep_components_nb_ << ", " << control_points_nb_ << std::endl;
-
-  /// Save the delta_mean -> First one being equal to 0 as the reference
-  outputs << 0 << ", ";
-  for(size_t i = 1; i < control_points_nb_; ++i)
-  {
-      outputs << rand_var_.GetRandomVariable("Delta#" + std::to_string(i))->GetParameter("Mean");
-      if(i != control_points_nb_ - 1) { outputs << ", "; }
-  }
-  outputs << std::endl;
-
-  /// Save the thicknesses
-  for(size_t i = 0; i < control_points_nb_; ++i)
-  {
-      outputs << reals.at("P", i);
-      if(i != control_points_nb_ - 1) { outputs << ", ";}
-  }
-  outputs << std::endl;
-
-  /// Save the tau
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-      outputs << reals.at("Tau", i) ;
-      if(i != subjects_tot_num_ - 1) { outputs << ", ";}
-  }
-  outputs << std::endl;
-
-  /// Save the ksi
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-      outputs << reals.at("Ksi", i) ;
-      if(i != subjects_tot_num_ - 1) { outputs << ", ";}
-  }
-
-      /// Save (S_i)
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-      for(size_t j = 0; j < indep_components_nb_; ++j)
-      {
-          outputs << reals.at("S#" + std::to_string(j))(i);
-          if(i != indep_components_nb_ - 1) { outputs << ", "; }
-      }
-      outputs << std::endl;
-  }
-
-  /// Save (W_i)
-  auto size_w = subjects_tot_num_;
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-      VectorType w = space_shifts_.get_column(i);
-      for(auto it = w.begin(); it != w.end(); ++it)
-      {
-          outputs << *it;
-          if(i != size_w - 1) { outputs << ", "; }
-      }
-      outputs << std::endl;
-  }
-  */
-}
-
-void MeshworkModel::SaveFinalState(const Realizations &reals, const Observations& obs) {
-  // TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO 
-  // TODO TODO TODO TODO TODO 
+  
 }
 
 
-void MeshworkModel::SavePopulationFile() {}
+void MeshworkModel::SavePopulationFile() {
+  
+}
 
-void MeshworkModel::SaveIndividualsFile(const Realizations &reals, const Observations& obs) {}
+
+void MeshworkModel::SaveIndividualsFile(const Realizations &reals, const Observations &obs) {
+  
+}
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :
