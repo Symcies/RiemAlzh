@@ -415,7 +415,7 @@ Observations FastNetworkModel::SimulateData(io::SimulatedDataSettings& data_sett
 
 }
 
-std::vector<AbstractModel::MiniBlock> FastNetworkModel::GetSamplerBlocks() const
+std::vector<AbstractModel::MiniBlock> FastNetworkModel::GetSamplerBlocks(unsigned int blocks_number) const
 {
   int population_type = -1;
   std::vector<MiniBlock> blocks;
@@ -576,117 +576,49 @@ void FastNetworkModel::DisplayOutputs(const Realizations& simulated_real)
 
 void FastNetworkModel::SaveCurrentState(unsigned int iter_num, const Realizations& simulated_real)
 {
-  /*
-  unsigned int indiv_tot_num = simulated_real.at("Tau").size();
-  std::ofstream outputs;
-  std::string file_name = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/Simulated/Parameters" + std::to_string(iter_num) + ".txt";
-  outputs.open(file_name, std::ofstream::out | std::ofstream::trunc);
 
-  /// Save the final noise variance
-  outputs << noise_->GetVariance() << std::endl;
-
- /// Save number of subject, Dimensions, number of Sources, number of control points
-  outputs << indiv_tot_num << ", " << manifold_dim_ << ", " << indep_components_nb_  << ", " << control_points_nb_ << std::endl;
-
-  /// Save p0, P0_mean and P0_var
-  auto p0 = rand_var_.GetRandomVariable("P");
-  outputs << simulated_real.at("P")(0) << ", " << p0->GetParameter("Mean") << ", " << p0->GetParameter("Variance") << std::endl;
-  // std::cout  << simulated_real.at("P")(0) << ", " << p0->GetParameter("Mean") << ", " << p0->GetParameter("Variance") << std::endl;
-
-  /// Save (ksi_i)
-  for(size_t i = 0; i < indiv_tot_num; ++i)
-  {
-      outputs << simulated_real.at("Ksi")(i);
-      if(i != indiv_tot_num - 1) { outputs << ", "; }
-  }
-  outputs << std::endl;
-
-  /// Save ksi_mean and ksi_Var
-  auto ksi = rand_var_.GetRandomVariable("Ksi");
-  outputs << ksi->GetParameter("Mean") << ", " << ksi->GetParameter("Variance") << std::endl;
-
-  /// Save v0
-  auto nu = rand_var_.GetRandomVariable("Nu");
-  outputs << nu->GetParameter("Mean") << std::endl;
-
-  /// Save (Tau_i)
-  for(size_t i = 0; i < indiv_tot_num; ++i)
-  {
-      outputs << simulated_real.at("Tau")(i);
-      if(i != indiv_tot_num - 1) { outputs << ", "; }
-  }
-  outputs << std::endl;
-
-  /// Save Tau_Mean and Tau_Var
-  auto tau = rand_var_.GetRandomVariable("Tau");
-  outputs << tau->GetParameter("Mean") << ", " << tau->GetParameter("Variance") << std::endl;
-
-  /// Save (Delta_tilde_k)
-  outputs << 0 << ", ";
-  for(size_t i = 1; i < control_points_nb_; ++i)
-  {
-      outputs << simulated_real.at("Delta#" + std::to_string(i))(0);
-      if(i != control_points_nb_ - 1) { outputs << ", "; }
-  }
-  outputs << std::endl;
-
-  /// Save (Delta_k)
-  outputs << 0 << ", ";
-  for(size_t i = 1; i < control_points_nb_; ++i)
-  {
-      std::string name = "Delta#" + std::to_string(i);
-      outputs << rand_var_.GetRandomVariable(name)->GetParameter("Mean");
-      if(i != control_points_nb_ - 1) { outputs << ", "; }
-  }
-  outputs << std::endl;
-
-  /// Save (Nu_k)
-  for(size_t i = 0; i < control_points_nb_; ++i)
-  {
-      outputs << simulated_real.at("Nu", i);
-      if(i != control_points_nb_ - 1) { outputs << ", "; }
-  }
-  outputs << std::endl;
-
-  /// Save (Nu_k_mean)
-  for(size_t i = 0; i < control_points_nb_; ++i)
-  {
-      outputs << rand_var_.GetRandomVariable("Nu")->GetParameter("Mean");
-      if(i != control_points_nb_ - 1) { outputs << ", "; }
-  }
-  outputs << std::endl;
-
-  /// Save (S_i)
-  for(size_t i = 0; i < indiv_tot_num; ++i)
-  {
-      for(size_t j = 0; j < indep_components_nb_; ++j)
-      {
-          outputs << simulated_real.at("S#" + std::to_string(j))(i);
-          if(i != indep_components_nb_ - 1) { outputs << ", "; }
-      }
-      outputs << std::endl;
-  }
-
-  /// Save (W_i)
-  auto size_w = subjects_tot_num_;
-  for(size_t i = 0; i < indiv_tot_num; ++i)
-  {
-      VectorType w_vec = space_shifts_.get_column(i);
-      for(auto it = w_vec.begin(); it != w_vec.end(); ++it)
-      {
-          outputs << *it;
-          if(i != size_w - 1) { outputs << ", "; }
-      }
-      outputs << std::endl;
-  }
-  */
 }
 
-void FastNetworkModel::SaveFinalState(const Realizations &reals, const Observations& obs) {}
 
-void FastNetworkModel::SavePopulationFile() {}
+void FastNetworkModel::SavePopulationFile() {
+  std::ofstream log_file;
+  
+  log_file.open(GV::BUILD_DIR + output_file_name_ + "_pop.txt", std::ofstream::out | std::ofstream::app);
+  
+  log_file << "Noise " << noise_->GetVariance() << std::endl;
+  
+  log_file << "Thickness " << init_pos_ << std::endl;
+  
+  log_file << "Delta ";
+  for (size_t i = 0; i < manifold_dim_; ++i) {
+    log_file << deltas_[i] << " ";
+  }
+  log_file << std::endl;
+  
+  log_file << "Nu ";
+  for (size_t i = 0; i < manifold_dim_; ++i) {
+    log_file << nus_[i] << " ";
+  }
+  log_file << std::endl;
+  
+}
 
-void FastNetworkModel::SaveIndividualsFile(const Realizations &reals, const Observations& obs) {}
+void FastNetworkModel::SaveIndividualsFile(const Realizations &reals, const Observations& obs) {
+  std::ofstream log_file;
+  
+  log_file.open(GV::BUILD_DIR + output_file_name_ + "_indiv.txt", std::ofstream::out | std::ofstream::app);
+  
+  log_file << "ID Tau Ksi W" << std::endl;
+  log_file << "1 1 1 " << manifold_dim_ << std::endl;
+  
+  for (size_t i = 0; i < subjects_tot_num_; ++i) {
+    log_file << obs.GetId(i) << " " << reals.at("Tau")(i) << " " << reals.at("Ksi")(i) << " ";
+    for (size_t j = 0; j < manifold_dim_; ++j) {
+      log_file << space_shifts_.get_column(i)(j) << " ";
+    }
+    log_file << std::endl;
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Method(s) :
@@ -815,7 +747,7 @@ void FastNetworkModel::ComputeBlock2()
 
 
 int FastNetworkModel::GetType(const MiniBlock &block_info) { 
-  int type = std::get<0>(block_info[0]);
+  int type = std::get<2>(block_info[0]);
   
   for(auto it = block_info.begin(); it != block_info.end(); ++it) {
     

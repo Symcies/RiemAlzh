@@ -90,7 +90,7 @@ public:
   virtual Realizations SimulateRealizations();
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
-  virtual std::vector<MiniBlock> GetSamplerBlocks() const = 0;
+  virtual std::vector<MiniBlock> GetSamplerBlocks(unsigned int blocks_number) const = 0;
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ public:
   virtual void SaveCurrentState(unsigned int iter_num, const Realizations& reals) = 0;
   
   /// Save the final parameters and realizations into a file
-  virtual void SaveFinalState(const Realizations& reals, const Observations& obs) = 0;
+  virtual void SaveFinalState(const Realizations& reals, const Observations& obs);
   virtual void SavePopulationFile() = 0;
   virtual void SaveIndividualsFile(const Realizations &reals, const Observations &obs) = 0;
 

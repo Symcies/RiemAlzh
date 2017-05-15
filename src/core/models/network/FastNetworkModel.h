@@ -35,7 +35,7 @@ public:
   virtual Observations SimulateData(io::SimulatedDataSettings& DS);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
-  virtual std::vector<MiniBlock> GetSamplerBlocks() const;
+  virtual std::vector<MiniBlock> GetSamplerBlocks(unsigned int blocks_number) const;
   
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Log-likelihood related method(s) :
@@ -68,7 +68,6 @@ public:
   virtual void SaveCurrentState(unsigned int IterationNumber, const Realizations& R);
 
   /// Save the final parameters and realizations into a file
-  virtual void SaveFinalState(const Realizations& reals, const Observations& obs);
   virtual void SavePopulationFile();
   virtual void SaveIndividualsFile(const Realizations &reals, const Observations &obs);
 

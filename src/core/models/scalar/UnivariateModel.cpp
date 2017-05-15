@@ -276,7 +276,7 @@ Observations UnivariateModel::SimulateData(io::SimulatedDataSettings &data_setti
 
 }
 
-std::vector<AbstractModel::MiniBlock> UnivariateModel::GetSamplerBlocks() const
+std::vector<AbstractModel::MiniBlock> UnivariateModel::GetSamplerBlocks(unsigned int blocks_number) const
 {
   std::vector<MiniBlock> blocks;
 
@@ -444,11 +444,6 @@ void UnivariateModel::SaveCurrentState(unsigned int iter_num, const Realizations
   }
 }
 
-
-void UnivariateModel::SaveFinalState(const Realizations &reals, const Observations &obs) {
-  SavePopulationFile();
-  SaveIndividualsFile(reals, obs);
-}
 
 void UnivariateModel::SavePopulationFile(){
   std::ofstream log_file_pop;

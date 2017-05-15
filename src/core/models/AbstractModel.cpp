@@ -30,3 +30,9 @@ Realizations AbstractModel::SimulateRealizations()
 {
   return rand_var_.SimulateRealizations(asso_num_real_per_rand_var_);
 }
+
+
+void AbstractModel::SaveFinalState(const Realizations &reals, const Observations &obs) {
+  SavePopulationFile();
+  SaveIndividualsFile(reals, obs);
+}
