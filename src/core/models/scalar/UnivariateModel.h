@@ -39,7 +39,7 @@ class UnivariateModel : public AbstractModel {
   virtual Observations SimulateData(io::SimulatedDataSettings& data_settings);
 
   /// Define the sampler block used in the gibbs sampler (should it be here?)
-  virtual std::vector<MiniBlock> GetSamplerBlocks() const;
+  virtual std::vector<MiniBlock> GetSamplerBlocks(unsigned int blocks_number) const;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Log-likelihood related method(s) :

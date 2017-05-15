@@ -26,7 +26,7 @@ BlockedGibbsSampler::~BlockedGibbsSampler()
 
 void BlockedGibbsSampler::InitializeSampler(std::shared_ptr<CandidateRandomVariables>& candidates, AbstractModel& model)
 {
-  blocks_ = model.GetSamplerBlocks();
+  blocks_ = model.GetSamplerBlocks(0);
   candidate_rand_var_ = candidates;
 }
 
@@ -71,10 +71,6 @@ void BlockedGibbsSampler::OneBlockSample(int block_num, Realizations& reals,
   model.UpdateModel(reals, cur_block_info_, cur_block_params_);
   VectorType computed_log_likelihood = ComputeLogLikelihood(model, obs);
   acceptation_ratio += computed_log_likelihood.sum();
-
-  
-  // TODO : TO ERASE
-  //std::cout << "   -  LL : " << computed_log_likelihood.sum() << " - " << GetPreviousLogLikelihood(model)  << std::endl;
   
   /// Compute the aceceptance ratio
   acceptation_ratio = exp(std::min(acceptation_ratio, 0.0));
@@ -88,13 +84,12 @@ void BlockedGibbsSampler::OneBlockSample(int block_num, Realizations& reals,
       ScalarType prev_real = std::get<2>(*it);
       reals.at(name, real_num) = prev_real;
     }
-
-    //std::cout << "     -  REJECT -  likelihood : " << GetPreviousLogLikelihood(model) << std::endl; 
+    
     model.UpdateModel(reals, cur_block_info_, cur_block_params_);
   }
       /// Acceptation : Candidate is accepted
   else {
-    //std::cout << "     -  ACCEPT -  likelihood : " << computed_log_likelihood.sum() << std::endl; 
+    
     UpdateLastLogLikelihood(model, computed_log_likelihood);
   }
   
@@ -122,10 +117,6 @@ ScalarType BlockedGibbsSampler::ComputePriorRatioAndUpdateRealizations(Realizati
     ScalarType candidate_real = candidate_rand_var.Sample();
 
     /// Calculate the acceptance ratio
-    /*
-    acceptance_ratio += cur_rand_var->LogLikelihood(candidate_real);
-    acceptance_ratio -= cur_rand_var->LogLikelihood(cur_real);
-    */
     ScalarType ok1 = cur_rand_var->LogLikelihood(candidate_real);
     ScalarType ok2 = cur_rand_var->LogLikelihood(cur_real);
     acceptance_ratio += ok1 - ok2;
@@ -134,8 +125,6 @@ ScalarType BlockedGibbsSampler::ComputePriorRatioAndUpdateRealizations(Realizati
     /// Update the NewRealizations
     reals.at(name_real, real_num) = candidate_real;
     
-    
-    //std::cout << "if " << cur_real - candidate_real << " > 0, then  "; 
   }
 
   return acceptance_ratio;

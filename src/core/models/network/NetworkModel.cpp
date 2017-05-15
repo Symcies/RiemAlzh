@@ -373,7 +373,7 @@ Observations NetworkModel::SimulateData(io::SimulatedDataSettings &data_settings
   return obs;
 }
 
-std::vector<AbstractModel::MiniBlock> NetworkModel::GetSamplerBlocks() const
+std::vector<AbstractModel::MiniBlock> NetworkModel::GetSamplerBlocks(unsigned int blocks_number) const
 {
   int population_type = -1;
 
@@ -709,7 +709,7 @@ void NetworkModel::ComputeBlock()
 }
 
 int NetworkModel::GetType(const MiniBlock &block_info) {
-  int type = std::get<0>(block_info[0]);
+  int type = std::get<2>(block_info[0]);
   
   for(auto it = block_info.begin(); it != block_info.end(); ++it) {
     

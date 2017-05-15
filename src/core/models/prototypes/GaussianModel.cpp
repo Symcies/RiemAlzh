@@ -198,7 +198,7 @@ Observations GaussianModel::SimulateData(io::SimulatedDataSettings &data_setting
   
 }
 
-std::vector<AbstractModel::MiniBlock> GaussianModel::GetSamplerBlocks() const {
+std::vector<AbstractModel::MiniBlock> GaussianModel::GetSamplerBlocks(unsigned int blocks_number) const {
   std::vector<MiniBlock> blocks;
   
   /// Blocks

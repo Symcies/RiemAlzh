@@ -172,7 +172,7 @@ Observations GaussianMixtureModel::SimulateData(io::SimulatedDataSettings &data_
   return all_obs;
 }
 
-std::vector<AbstractModel::MiniBlock> GaussianMixtureModel::GetSamplerBlocks() const {
+std::vector<AbstractModel::MiniBlock> GaussianMixtureModel::GetSamplerBlocks(unsigned int blocks_number) const {
   
   std::vector<MiniBlock> blocks;
   

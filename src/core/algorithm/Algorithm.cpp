@@ -142,7 +142,7 @@ void Algorithm::ComputeSimulationStep(const Observations& obs, int iter)
 
 void Algorithm::ComputeAcceptanceRatio(Realizations& prev_real_, int iter)
 {
-  for(auto it = realizations_->begin(); it != acceptance_ratio_.end(); ++it)
+  for(auto it = realizations_->begin(); it != realizations_->end(); ++it)
   {
       int key_var = it->first;
 
