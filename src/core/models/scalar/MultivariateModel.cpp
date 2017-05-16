@@ -599,7 +599,7 @@ void MultivariateModel::SaveCurrentState(unsigned int iter_num, const Realizatio
   std::ofstream log_file;
   
   if(!GV::TEST_RUN) {
-    log_file.open(GV::BUILD_DIR + output_file_name_ , std::ofstream::out | std::ofstream::app);
+    log_file.open(GV::BUILD_DIR + output_file_name_ + "c.txt" , std::ofstream::out | std::ofstream::app);
     auto g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
     auto tau = rand_var_.GetRandomVariable("Tau");
     auto ksi = rand_var_.GetRandomVariable("Ksi");
@@ -635,7 +635,7 @@ void MultivariateModel::SaveCurrentState(unsigned int iter_num, const Realizatio
 void MultivariateModel::SavePopulationFile(){
   std::ofstream log_file_pop;
 
-  log_file_pop.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_pop", std::ofstream::out | std::ofstream::app);
+  log_file_pop.open(GV::BUILD_DIR + output_file_name_ + "pop_params.txt", std::ofstream::out | std::ofstream::app);
 
   log_file_pop << "Noise " << noise_->GetVariance() << std::endl;
   auto block_g = rand_var_.GetRandomVariable("G")->GetParameter("Mean");
@@ -655,7 +655,7 @@ void MultivariateModel::SavePopulationFile(){
 void MultivariateModel::SaveIndividualsFile(const Realizations &reals, const Observations &obs){
   std::ofstream log_file_ind;
 
-  log_file_ind.open(GV::BUILD_DIR + "LastRealizationOf" + output_file_name_ + "_ind", std::ofstream::out | std::ofstream::app);
+  log_file_ind.open(GV::BUILD_DIR + output_file_name_ + "indiv_params.txt", std::ofstream::out | std::ofstream::app);
 
   // First part of file
   log_file_ind << "id Tau Ksi W" << std::endl;

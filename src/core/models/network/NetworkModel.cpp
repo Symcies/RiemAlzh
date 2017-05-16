@@ -4,7 +4,8 @@ NetworkModel::NetworkModel(io::ModelSettings &model_settings)
 {
   indep_components_nb_= model_settings.GetIndependentSourcesNumber();
   acceptance_ratio_to_display_ = model_settings.GetAcceptanceRatioToDisplay();
-
+  output_file_name_ = model_settings.GetOutputFileName();
+  
   std::string kernel_mat_path = model_settings.GetInvertKernelPath();
   std::string interp_mat_path = model_settings.GetInterpolationKernelPath();
 
@@ -16,6 +17,10 @@ NetworkModel::NetworkModel(io::ModelSettings &model_settings)
   thickenesses_.set_size(manifold_dim_);
   nus_.set_size(manifold_dim_);
   block1_.set_size(manifold_dim_);
+  
+  std::remove((GV::BUILD_DIR + output_file_name_ + "pop_params.txt").c_str());
+  std::remove((GV::BUILD_DIR + output_file_name_ + "indiv_params.txt").c_str());
+  std::remove((GV::BUILD_DIR + output_file_name_ + "convergence_params.txt").c_str());
 }
 
 NetworkModel::~NetworkModel()
@@ -523,82 +528,85 @@ void NetworkModel::DisplayOutputs(const Realizations &reals)
 void NetworkModel::SaveCurrentState(unsigned int iter_num, const Realizations &reals)
 {
   
-  /*
-  std::ofstream outputs;
-  std::string file_name = "/Users/igor.koval/Documents/Work/RiemAlzh/src/io/outputs/Network/Parameters" + std::to_string(iter_num) + ".txt";
-  outputs.open(file_name, std::ofstream::out | std::ofstream::trunc);
-
-  /// Save the final noise variance
-  outputs << noise_->GetVariance() << std::endl;
-
-  /// Save the number of subjects, the manifold dimension, the number of sources, and, the number of control points
-  outputs << subjects_tot_num_ << ", " << manifold_dim_ << ", " << indep_components_nb_ << ", " << control_points_nb_ << std::endl;
-
-  /// Save the thicknesses
-  for(size_t i = 0; i < control_points_nb_; ++i)
-  {
-      outputs << reals.at("P", i);
-      if(i != control_points_nb_ - 1) { outputs << ", ";}
+    std::ofstream log_file;
+  
+  if(!GV::TEST_RUN) {
+    log_file.open(GV::BUILD_DIR + output_file_name_ + "convergence_params.txt" , std::ofstream::out | std::ofstream::app );
+    
+    auto p     = rand_var_.GetRandomVariable("P");
+    auto nu    = rand_var_.GetRandomVariable("Nu");
+    auto tau   = rand_var_.GetRandomVariable("Tau");
+    auto ksi   = rand_var_.GetRandomVariable("Ksi");
+    auto beta  = rand_var_.GetRandomVariable("Beta#1")->GetParameter("Mean");
+    auto s     = rand_var_.GetRandomVariable("S#1")->GetParameter("Mean");
+    
+    
+    
+    if (iter_num == 0){
+      log_file << "iter Noise PMean PVar NuMean NuVar TauMean TauVar KsiMean KsiVar Beta#1 S#1" << std::endl;
+    }
+    
+    log_file << iter_num << " " << noise_->GetVariance() << " " 
+             << p->GetParameter("Mean")   << " " << p->GetParameter("Variance")   << " "
+             << nu->GetParameter("Mean")  << " " << nu->GetParameter("Variance")  << " "
+             << tau->GetParameter("Mean") << " " << tau->GetParameter("Variance") << " "
+             << ksi->GetParameter("Mean") << " " << ksi->GetParameter("Variance") << " "
+             << beta << " " << s << std::endl;
+             
+    
+    log_file.close();
   }
-  outputs << std::endl;
-
-  /// Save the velocity nu
-  for(size_t i = 0; i < control_points_nb_; ++i)
-  {
-      outputs << reals.at("Nu", i);
-      if(i != control_points_nb_ - 1) { outputs << ", ";}
-  }
-  outputs << std::endl;
-
-      /// Save the tau
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-      outputs << reals.at("Tau", i) ;
-      if(i != subjects_tot_num_ - 1) { outputs << ", ";}
-  }
-  outputs << std::endl;
-
-  /// Save the ksi
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-      outputs << reals.at("Ksi", i) ;
-      if(i != subjects_tot_num_ - 1) { outputs << ", ";}
+  else {
+    // TODO TODO TODO TODO TODO
+    // TODO TODO TODO TODO TODO
+    // TODO TODO TODO TODO TODO
   }
 
-  /// Save (S_i)
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-      for(size_t j = 0; j < indep_components_nb_; ++j)
-      {
-          outputs << reals.at("S#" + std::to_string(j))(i);
-          if(i != indep_components_nb_ - 1) { outputs << ", "; }
-      }
-      outputs << std::endl;
-  }
-
-  /// Save (W_i)
-  auto size_w = subjects_tot_num_;
-  for(size_t i = 0; i < subjects_tot_num_; ++i)
-  {
-      VectorType w = space_shifts_.get_column(i);
-      for(auto it = w.begin(); it != w.end(); ++it)
-      {
-          outputs << *it;
-          if(i != size_w - 1) { outputs << ", "; }
-      }
-      outputs << std::endl;
-  }
-
-  */
 }
 
 void NetworkModel::SavePopulationFile() {
+  std::ofstream log_file;
+  log_file.open(GV::BUILD_DIR + output_file_name_ + "pop_params.txt", std::ofstream::out | std::ofstream::app);
   
+  log_file << "Noise " << noise_->GetVariance() << std::endl;
+  
+  log_file << "P ";
+  for (size_t i = 0; i < manifold_dim_; ++i) {
+    log_file << thickenesses_[i] << " ";
+  }
+  log_file << std::endl;
+  
+  log_file << "Nu ";
+  for (size_t i = 0; i < manifold_dim_; ++i) {
+    log_file << nus_[i] << " ";
+  }
+  log_file << std::endl;
+  
+  log_file << "V0 " << exp(rand_var_.GetRandomVariable("Ksi")->GetParameter("Mean")) << std::endl;
+  
+  log_file << "T0 " << rand_var_.GetRandomVariable("Tau")->GetParameter("Mean") << std::endl;
+  
+  log_file.close();
 }
 
 
 void NetworkModel::SaveIndividualsFile(const Realizations &reals, const Observations &obs) {
+  std::ofstream log_file;
   
+  log_file.open(GV::BUILD_DIR + output_file_name_ + "indiv_params.txt", std::ofstream::out | std::ofstream::app);
+  
+  log_file << "ID Tau Ksi W" << std::endl;
+  log_file << "1 1 1 " << manifold_dim_ << std::endl;
+  
+  for (size_t i = 0; i < subjects_tot_num_; ++i) {
+    log_file << obs.GetId(i) << " " << reals.at("Tau")(i) << " " << reals.at("Ksi")(i) << " ";
+    for (size_t j = 0; j < manifold_dim_; ++j) {
+      log_file << space_shifts_.get_column(i)(j) << " ";
+    }
+    log_file << std::endl;
+  }
+  
+  log_file.close();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

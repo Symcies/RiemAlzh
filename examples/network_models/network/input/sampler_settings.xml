@@ -1,0 +1,15 @@
+<sampler-settings>
+
+  <sampler>
+    <type>Block</type>
+    <number-of-iterations>100</number-of-iterations>
+  </sampler>
+
+
+  <sampler>
+    <type>Block</type>
+    <number-of-iterations>100</number-of-iterations>
+  </sampler>
+
+
+</sampler-settings>

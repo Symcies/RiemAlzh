@@ -9,7 +9,8 @@ MeshworkModel::MeshworkModel(io::ModelSettings &model_settings)
 {
   indep_components_nb_= model_settings.GetIndependentSourcesNumber();
   acceptance_ratio_to_display_ = model_settings.GetAcceptanceRatioToDisplay();
-
+  output_file_name_ = model_settings.GetOutputFileName();
+  
   std::string kernel_mat_path = model_settings.GetInvertKernelPath();
   std::string interp_mat_path = model_settings.GetInterpolationKernelPath();
 
@@ -22,6 +23,9 @@ MeshworkModel::MeshworkModel(io::ModelSettings &model_settings)
   deltas_.set_size(manifold_dim_);
   block1_.set_size(manifold_dim_);
 
+  std::remove((GV::BUILD_DIR + output_file_name_ + "pop_params.txt").c_str());
+  std::remove((GV::BUILD_DIR + output_file_name_ + "indiv_params.txt").c_str());
+  std::remove((GV::BUILD_DIR + output_file_name_ + "convergence_params.txt").c_str());
 }
 
 MeshworkModel::~MeshworkModel()
@@ -550,17 +554,83 @@ void MeshworkModel::DisplayOutputs(const Realizations &reals)
 
 void MeshworkModel::SaveCurrentState(unsigned int iter_num, const Realizations &reals)
 {
+  /// It saves the random variables / realizations / whatever model parameters
+  /// Mainly needed for post processing
   
+  std::ofstream log_file;
+  
+  if(!GV::TEST_RUN) {
+    log_file.open(GV::BUILD_DIR + output_file_name_ + "convergence_params.txt" , std::ofstream::out | std::ofstream::app);
+    
+    auto p     = rand_var_.GetRandomVariable("P");
+    auto tau   = rand_var_.GetRandomVariable("Tau");
+    auto ksi   = rand_var_.GetRandomVariable("Ksi");
+    auto delta = rand_var_.GetRandomVariable("Delta#1")->GetParameter("Mean");
+    auto beta  = rand_var_.GetRandomVariable("Beta#1")->GetParameter("Mean");
+    auto s     = rand_var_.GetRandomVariable("S#1")->GetParameter("Mean");
+    
+    
+    if (iter_num == 0){
+      log_file << "iter Noise PMean PVar TauMean TauVar KsiMean KsiVar Delta#1 Beta#1 S#1" << std::endl;
+    }
+    
+    log_file << iter_num << " " << noise_->GetVariance() << " " 
+             << p->GetParameter("Mean") << " " << p->GetParameter("Variance") << " "
+             << tau->GetParameter("Mean") << " " << tau->GetParameter("Variance") << " "
+             << ksi->GetParameter("Mean") << " " << ksi->GetParameter("Variance") << " "
+             << delta << " " << beta << " " << s << std::endl;
+    
+    log_file.close();
+  }
+  else {
+    // TODO TODO TODO TODO TODO
+    // TODO TODO TODO TODO TODO
+    // TODO TODO TODO TODO TODO
+  }
 }
 
 
 void MeshworkModel::SavePopulationFile() {
+  std::ofstream log_file;
+  log_file.open(GV::BUILD_DIR + output_file_name_ + "pop_params.txt", std::ofstream::out | std::ofstream::app);
   
+  log_file << "Noise " << noise_->GetVariance() << std::endl;
+  
+  log_file << "P ";
+  for (size_t i = 0; i < manifold_dim_; ++i) {
+    log_file << thickenesses_[i] << " ";
+  }
+  log_file << std::endl;
+  
+  log_file << "Delta ";
+  for (size_t i = 0; i < manifold_dim_; ++i) {
+    log_file << deltas_[i] << " ";
+  }
+  log_file << std::endl;
+  
+  log_file << "V0 " << exp(rand_var_.GetRandomVariable("Ksi")->GetParameter("Mean")) << std::endl;
+  log_file << "T0 " << rand_var_.GetRandomVariable("Tau")->GetParameter("Mean") << std::endl;
+  
+  log_file.close();
 }
 
 
 void MeshworkModel::SaveIndividualsFile(const Realizations &reals, const Observations &obs) {
+  std::ofstream log_file;
+  log_file.open(GV::BUILD_DIR + output_file_name_ + "indiv_params.txt", std::ofstream::out | std::ofstream::app);
   
+  log_file << "ID Tau Ksi W" << std::endl;
+  log_file << "1 1 1 " << manifold_dim_ << std::endl;
+  
+  for (size_t i = 0; i < subjects_tot_num_; ++i) {
+    log_file << obs.GetId(i) << " " << reals.at("Tau")(i) << " " << reals.at("Ksi")(i) << " ";
+    for (size_t j = 0; j < manifold_dim_; ++j) {
+      log_file << space_shifts_.get_column(i)(j) << " ";
+    }
+    log_file << std::endl;
+  }
+  
+  log_file.close();
 }
 
 

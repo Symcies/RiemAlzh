@@ -1,22 +1,19 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-import scipy.io
+
 
 matplotlib.use('tkagg')
 
-from models.scalar.univariate import Univariate
-from models.scalar.multivariate import Multivariate
+from models.scalar.univariate     import Univariate
+from models.scalar.multivariate   import Multivariate
 
 from utils.input_management import read_individual_parameters, read_population_parameters, extract_observations
-from models.networks.fast_network import *
 
 class Visu:
     '''
     Documentation
     '''
-
-    #model_type = ""
 
     def __init__(self, type, population_params, individual_params, observations):
         self.fig = plt.figure()
@@ -33,20 +30,8 @@ class Visu:
         if self.model_type == "univariate":
             return Univariate(self.pop_params, self.indiv_params, self.observations, self.splot)
         elif self.model_type == "multivariate":
-            return Multivariate(self.pop_params, self.indiv_params, self.number_param, self.observations, self.splot)
-        elif self.model_type == "network":
-            def compute_vtk(self, kernel_size, file_name):
-                [Kxd, invKd] = make_matrices(self.dist_mat, self.ind_ctrl, kernel_size)
-                signals = compute_fast_network_signal(self.pop_params, self.indiv_params, -1, Kxd, invKd)
-                #write_vtk_file(self.data_mesh, signals, file_name)
+            return Multivariate()
 
-            def read_matlab_data(self, path_to_matlab_data):
-                mat = scipy.io.loadmat(path_to_matlab_data)
-                self.dist_mat = mat["DistMat"]
-                self.data_mesh = mat["data_mesh"]
-                self.mesh_points = self.data_mesh["pts_left"][0][0]
-                self.mesh_triangles = self.data_mesh["tri_left"][0][0]
-                self.ind_ctrl = np.hstack(mat["ind_ctrl"]) - 1
 
 
     def hist(self, variable_name, nb_beans):
@@ -64,15 +49,6 @@ class Visu:
         plt.show()
 
 
-
     ''' UTILS '''
-    #def list_pop_params(self):
-    #    list_var = []
-    #    for key, value in self.pop_params.iteritems():
-    #        list_var.append(key)
-    #    return list_var
-
-
-
-    ''' MODEL SPECIFIC FUNCTIONS '''
-
+    def print_population_params(self):
+        return [key for key, value in self.pop_params.iteritems()]

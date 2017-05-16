@@ -1,0 +1,119 @@
+<model-settings>
+
+  <!-- Type of the model : {Univariate, Multivariate, FastNetwork, MixedEffect} -->
+  <type>Meshwork</type>
+
+  <!-- Name of the outputs files -->
+  <output-name>examples/network_models/meshwork/output/</output-name>
+
+  <number-of-independent-sources>5</number-of-independent-sources>
+
+  <path-to-kernel-Kxd>/Users/igor.koval/Documents/Work/RiemAlzh/examples/network_models/meshwork/input/Kxd_16.csv</path-to-kernel-Kxd>
+  <path-to-kernel-invKd>/Users/igor.koval/Documents/Work/RiemAlzh/examples/network_models/meshwork/input/invKd_16.csv</path-to-kernel-invKd>
+
+  <variables>
+    <noise>
+      <name>noise</name>
+      <initial-parameters>
+        <mean>0.0</mean>
+        <variance>0.00001</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.0</mean>
+        <variance>0.001</variance>
+      </second-parameters>
+      <proposition-variance>0</proposition-variance>
+    </noise>
+
+    <P>
+      <name>P</name>
+      <initial-parameters>
+        <mean>1.95</mean>
+        <variance>0.001</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.03</mean>
+        <variance>0.00001</variance>
+      </second-parameters>
+      <proposition-variance>0.000001</proposition-variance>
+    </P>
+
+    <Delta>
+      <name>Delta</name>
+      <initial-parameters>
+        <mean>0</mean>
+        <variance>0.001</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.0002</mean>
+        <variance>0.001</variance>
+      </second-parameters>
+      <proposition-variance>0.000005</proposition-variance>
+    </Delta>
+
+    <Beta>
+      <name>Beta</name>
+      <initial-parameters>
+        <mean>0</mean>
+        <variance>0.01</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.001</mean>
+        <variance>0.01</variance>
+      </second-parameters>
+      <proposition-variance>0.000002</proposition-variance>
+    </Beta>
+
+
+    <Ksi>
+      <name>Ksi</name>
+      <initial-parameters>
+        <mean>0</mean>
+        <variance>0.0015</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>0.10</mean>
+        <variance>0.000004</variance>
+      </second-parameters>
+      <proposition-variance>0.00000005</proposition-variance>
+    </Ksi>
+
+    <Tau>
+      <name>Tau</name>
+      <initial-parameters>
+        <mean>68</mean>
+        <variance>0.025</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>70</mean>
+        <variance>25</variance>
+      </second-parameters>
+      <proposition-variance>0.005</proposition-variance>
+    </Tau>
+
+
+    <S>
+      <name>S</name>
+      <initial-parameters>
+        <mean>0</mean>
+        <variance>0.01</variance>
+      </initial-parameters>
+      <second-parameters>
+        <mean>85</mean>
+        <variance>25</variance>
+      </second-parameters>
+      <proposition-variance>0.005</proposition-variance>
+    </S>
+
+  </variables>
+
+  <acceptance-ratio-to-display>
+    <P>P</P>
+    <beta>Beta#1</beta>
+    <delta>Delta#1</delta>
+    <ksi>Ksi</ksi>
+    <tau>Tau</tau>
+    <tau>S#1</tau>
+  </acceptance-ratio-to-display>
+
+</model-settings>

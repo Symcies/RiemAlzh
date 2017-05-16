@@ -1,0 +1,50 @@
+<data-settings>
+
+  <!-- Defines if should read real data (true) of simulate data (false) -->
+  <data-type>true</data-type>
+
+
+  <!-- REAL DATA TO PROCESS -->
+  <real-data>
+    <folder-path>/Users/igor.koval/Documents/Work/RiemAlzh/examples/network_models/meshwork/input/MCIconvertAD/</folder-path>
+    <group-file>group.csv</group-file>
+    <timepoints-file>X.csv</timepoints-file>
+
+    <!-- Type of data to read : if nothing, then the file is not read -->
+    <observations>
+
+      <!-- Cognitive Scores attributes -->
+      <cognitive-scores>
+          <presence>no</presence>
+          <path-to-data>Y.csv</path-to-data>
+          <dimension>4</dimension>
+      </cognitive-scores>
+
+      <!-- Landmarks attributes -->
+      <landmarks>
+          <presence>yes</presence>
+          <path-to-data>Y.csv</path-to-data>
+          <dimension>1827</dimension>
+      </landmarks>
+
+    </observations>
+
+  </real-data>
+
+
+
+
+
+
+
+  <!-- SIMULATE DATA -->
+
+  <simulated-data>
+    <number-of-individuals>150</number-of-individuals>
+    <min-number-of-observations>4</min-number-of-observations>
+    <max-number-of-observations>6</max-number-of-observations>
+    <dimension>4</dimension>
+  </simulated-data>
+
+
+</data-settings>

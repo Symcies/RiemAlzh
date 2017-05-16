@@ -4,6 +4,7 @@ FastNetworkModel::FastNetworkModel(io::ModelSettings &MS)
 {
   indep_components_nb_ = MS.GetIndependentSourcesNumber();
   acceptance_ratio_to_display_ = MS.GetAcceptanceRatioToDisplay();
+  output_file_name_ = MS.GetOutputFileName();
   
   std::string kernel_matrix_path = MS.GetInvertKernelPath();
   std::string interp_matrix_path = MS.GetInterpolationKernelPath();
@@ -17,6 +18,10 @@ FastNetworkModel::FastNetworkModel(io::ModelSettings &MS)
   deltas_.set_size(manifold_dim_);
   block1_.set_size(manifold_dim_);
   block2_.set_size(manifold_dim_);
+  
+  std::remove((GV::BUILD_DIR + output_file_name_ + "pop_params.txt").c_str());
+  std::remove((GV::BUILD_DIR + output_file_name_ + "indiv_params.txt").c_str());
+  std::remove((GV::BUILD_DIR + output_file_name_ + "convergence_params.txt").c_str());
 }
 
 FastNetworkModel::~FastNetworkModel()
@@ -576,14 +581,48 @@ void FastNetworkModel::DisplayOutputs(const Realizations& simulated_real)
 
 void FastNetworkModel::SaveCurrentState(unsigned int iter_num, const Realizations& simulated_real)
 {
-
+  /// It saves the random variables / realizations / whatever model parameters
+  /// Mainly needed for post processing
+  
+  std::ofstream log_file;
+  
+  if(!GV::TEST_RUN) {
+    log_file.open(GV::BUILD_DIR + output_file_name_ + "convergence_params.txt" , std::ofstream::out | std::ofstream::app );
+    
+    auto p     = rand_var_.GetRandomVariable("P")->GetParameter("Mean");
+    auto tau   = rand_var_.GetRandomVariable("Tau");
+    auto ksi   = rand_var_.GetRandomVariable("Ksi");
+    auto delta = rand_var_.GetRandomVariable("Delta#1")->GetParameter("Mean");
+    auto beta  = rand_var_.GetRandomVariable("Beta#1")->GetParameter("Mean");
+    auto s     = rand_var_.GetRandomVariable("S#1")->GetParameter("Mean");
+    auto nu    = rand_var_.GetRandomVariable("Nu");
+    
+    
+    if (iter_num == 0){
+      log_file << "iter Noise Position TauMean TauVar KsiMean KsiVar Delta#1 Beta#1 S#1";
+      log_file << " NuMean NuVar" << std::endl;
+    }
+    
+    log_file << iter_num << " " << noise_->GetVariance() << " " << p << " " 
+             << tau->GetParameter("Mean") << " " << tau->GetParameter("Variance") << " "
+             << ksi->GetParameter("Mean") << " " << ksi->GetParameter("Variance") << " "
+             << delta << " " << beta << " " << s << " "
+             << nu->GetParameter("Mean") << " " << nu->GetParameter("Variance") << std::endl;
+    
+    log_file.close();
+  }
+  else {
+    // TODO TODO TODO TODO TODO
+    // TODO TODO TODO TODO TODO
+    // TODO TODO TODO TODO TODO
+  }
 }
 
 
 void FastNetworkModel::SavePopulationFile() {
   std::ofstream log_file;
   
-  log_file.open(GV::BUILD_DIR + output_file_name_ + "_pop.txt", std::ofstream::out | std::ofstream::app);
+  log_file.open(GV::BUILD_DIR + output_file_name_ + "pop_params.txt", std::ofstream::out | std::ofstream::app);
   
   log_file << "Noise " << noise_->GetVariance() << std::endl;
   
@@ -601,12 +640,15 @@ void FastNetworkModel::SavePopulationFile() {
   }
   log_file << std::endl;
   
+  // TODO : Add V0 et T0 -> Maybe not V0 as it is included in Nu
+  
+  log_file.close();
 }
 
 void FastNetworkModel::SaveIndividualsFile(const Realizations &reals, const Observations& obs) {
   std::ofstream log_file;
   
-  log_file.open(GV::BUILD_DIR + output_file_name_ + "_indiv.txt", std::ofstream::out | std::ofstream::app);
+  log_file.open(GV::BUILD_DIR + output_file_name_ + "indiv_params.txt", std::ofstream::out | std::ofstream::app);
   
   log_file << "ID Tau Ksi W" << std::endl;
   log_file << "1 1 1 " << manifold_dim_ << std::endl;
@@ -618,6 +660,8 @@ void FastNetworkModel::SaveIndividualsFile(const Realizations &reals, const Obse
     }
     log_file << std::endl;
   }
+  
+  log_file.close();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

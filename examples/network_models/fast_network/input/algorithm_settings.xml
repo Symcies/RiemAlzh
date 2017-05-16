@@ -1,0 +1,15 @@
+<algorithm-settings>
+
+  <!-- Comment -->
+  <max-iterations>20001</max-iterations>
+
+  <!-- Comment -->
+  <burn-in>13000</burn-in>
+
+  <!-- Comment -->
+  <step-size-to-display>500</step-size-to-display>
+
+  <!-- Comment -->
+  <step-size-to-save>100</step-size-to-save>
+
+</algorithm-settings>
