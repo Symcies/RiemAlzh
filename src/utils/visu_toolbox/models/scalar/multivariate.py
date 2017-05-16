@@ -2,9 +2,13 @@ import numpy
 import math
 import matplotlib
 import matplotlib.pyplot as plt
-from utils.ui_management import color_map
 
 matplotlib.use('tkagg')
+
+# brown1, dark green, light blue, purple,
+# dark blue,  pink, black, grey,  orange, light green
+color_map = ['#873D00' , '#007515', '#2436FF',
+             '#00AFFA', '#9900FF', '#DB57FF', '#000000', '#808080',  '#FF7300', '#00D426']
 
 class Multivariate:
     X = numpy.linspace(40, 110, 70)
@@ -48,6 +52,7 @@ class Multivariate:
                 for val in observations[param_dict["id"][0][i]].obs.values():
                     real_Y_k.append(val[k])
                 point, = splot.plot(real_X, real_Y_k, color = color_map[k], linestyle = ' ', marker = '+', visible = False)
+
                 points.append(point)
 
             self.list_lines.append(lines)
@@ -65,4 +70,4 @@ class Multivariate:
         for i in list_patients_id:
             for j in range(len(self.aver_lines)):
                 self.list_lines[i][j].set_visible(not self.list_lines[i][j].get_visible())
-                self.list_points[i][0].set_visible(with_obs)
+                self.list_points[i][j].set_visible(with_obs)

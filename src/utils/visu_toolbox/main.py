@@ -1,6 +1,5 @@
 import argparse
 
-from utils import ui_management
 from visu import Visu
 
 def main():
@@ -18,7 +17,7 @@ def main():
     visu = Visu(args['t'], args['p'], args['i'], args['o'])
     visu.init_model()
     visu.plot_mean()
-    visu.plot_patients([10], True)
+    visu.plot_patients([10, 20], True)
     visu.hold_plot()
 
 
