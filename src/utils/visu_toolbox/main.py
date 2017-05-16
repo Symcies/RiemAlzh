@@ -18,7 +18,7 @@ def main():
     visu = Visu(args['t'], args['p'], args['i'], args['o'])
     visu.init_model()
     visu.plot_mean()
-    visu.plot_patients([10, 11, 130], True)
+    visu.plot_patients([10], True)
     visu.hold_plot()
 
 

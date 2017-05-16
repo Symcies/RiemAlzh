@@ -2,12 +2,9 @@ import numpy
 import math
 import matplotlib
 import matplotlib.pyplot as plt
-import utils.input_management as im
+from utils.ui_management import color_map
 
 matplotlib.use('tkagg')
-
-colors = []
-
 
 class Multivariate:
     X = numpy.linspace(40, 110, 70)
@@ -15,7 +12,6 @@ class Multivariate:
     list_points = []
 
     def __init__(self, pop_params, indiv_param, number_param, observations, splot):
-        self.init_colors(int(number_param["w"]))
         self.aver_lines = []
         self.init_mean_curve(pop_params, number_param, splot)
         self.init_indiv_curves(indiv_param, observations, pop_params, number_param, splot)
@@ -29,7 +25,7 @@ class Multivariate:
                     self.f(x, pop_labels["g"][0], pop_labels["deltas"][k], 0, math.exp(pop_labels["ksimean"][0]),
                       pop_labels["taumean"][0]))
 
-            self.aver_lines.append(splot.plot(self.X, aver_Y[k], color=colors[k][0], linewidth=1, visible=True))
+            self.aver_lines.append(splot.plot(self.X, aver_Y[k], color=color_map[k], linewidth=1, visible=True))
 
     def init_indiv_curves(self, param_dict, observations, pop_labels, number_param, splot):
         for i in range(len(param_dict["id"][0])): #For patient i
@@ -45,13 +41,13 @@ class Multivariate:
                 Y = []
                 for x in self.X:
                     Y.append(self.f(x, pop_labels["g"][0], pop_labels["deltas"][k], param_dict["w"][k][i], v0, t0))
-                line, = splot.plot(self.X, Y, color = colors[k][0], linewidth=0.5, visible = False)
+                line, = splot.plot(self.X, Y, color = color_map[k], linewidth=1, visible = False)
                 lines.append(line)
 
                 real_Y_k = []
                 for val in observations[param_dict["id"][0][i]].obs.values():
                     real_Y_k.append(val[k])
-                point, = splot.plot(real_X, real_Y_k, color = colors[k][0], linestyle = ' ', marker = '+', visible = False)
+                point, = splot.plot(real_X, real_Y_k, color = color_map[k], linestyle = ' ', marker = '+', visible = False)
                 points.append(point)
 
             self.list_lines.append(lines)
@@ -70,8 +66,3 @@ class Multivariate:
             for j in range(len(self.aver_lines)):
                 self.list_lines[i][j].set_visible(not self.list_lines[i][j].get_visible())
                 self.list_points[i][0].set_visible(with_obs)
-
-    def init_colors(self, n):
-        for k in range(n):
-            color = numpy.random.rand(1, 3)
-            colors.append(color)

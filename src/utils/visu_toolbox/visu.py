@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import scipy.io
@@ -62,7 +61,6 @@ class Visu:
 
     def hold_plot(self):
         plt.show()
-
 
 
     ''' UTILS '''

@@ -2,6 +2,12 @@ import matplotlib
 matplotlib.use('tkagg')
 import matplotlib.pyplot as plt
 
+
+# brown1, dark green, light blue, purple,
+# dark blue,  pink, black, grey,  orange, light green
+color_map = ['#873D00' , '#007515', '#2436FF',
+             '#00AFFA', '#9900FF', '#DB57FF', '#000000', '#808080',  '#FF7300', '#00D426']
+
 import models.scalar.multivariate as multivariate
 import models.scalar.univariate as univariate
 import utils.input_management as obs
