@@ -18,6 +18,8 @@ def main():
     visu.init_model()
     visu.plot_mean()
     visu.plot_patients([10, 20], True)
+    visu.model.plot_stand_dev("tau")
+    visu.model.plot_stand_dev("ksi")
     visu.hold_plot()
 
 

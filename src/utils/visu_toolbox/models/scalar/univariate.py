@@ -9,15 +9,27 @@ class Univariate:
     list_points = []
 
     def __init__(self, pop_params, indiv_param, observations, splot):
+        self.std_dev_lines = {}
         self.init_mean_curve(pop_params, splot)
         self.init_indiv_curves(indiv_param, observations, pop_params, splot)
 
     def init_mean_curve(self, pop_labels, splot):
         # Mean
         aver_Y = []
+        aver_tau = [[],[]]
+        aver_ksi = [[],[]]
         for x in self.X:
             aver_Y.append(self.f(x, pop_labels["p"][0], math.exp(pop_labels["ksimean"][0]), pop_labels["taumean"][0]))
+            aver_tau[0].append(self.f(x, pop_labels["p"][0], math.exp(pop_labels["ksimean"][0]), pop_labels["taumean"][0] - math.sqrt(pop_labels["tauvar"][0])))
+            aver_tau[1].append(self.f(x, pop_labels["p"][0], math.exp(pop_labels["ksimean"][0]), pop_labels["taumean"][0] + math.sqrt(pop_labels["tauvar"][0])))
+            aver_ksi[0].append(self.f(x, pop_labels["p"][0], math.exp(pop_labels["ksimean"][0] - math.sqrt(pop_labels["ksivar"][0])), pop_labels["taumean"][0]))
+            aver_ksi[1].append(self.f(x, pop_labels["p"][0], math.exp(pop_labels["ksimean"][0] + math.sqrt(pop_labels["ksivar"][0])), pop_labels["taumean"][0]))
+
         self.aver_line = splot.plot(self.X, aver_Y, 'r', linewidth=1, visible = False)
+        self.std_dev_lines["tau"] = [splot.plot(self.X, aver_tau[0], 'g', linewidth=1, linestyle = '--', visible = False),
+                                     splot.plot(self.X, aver_tau[1], 'g', linewidth=1, linestyle = '--', visible = False)]
+        self.std_dev_lines["ksi"] = [splot.plot(self.X, aver_ksi[0], 'g', linewidth=1, linestyle = ':', visible = False),
+                                     splot.plot(self.X, aver_ksi[1], 'g', linewidth=1, linestyle = ':', visible = False)]
 
     def init_indiv_curves(self, param_dict, observations, pop_labels, splot):
         color = numpy.random.rand(1, 3)
@@ -48,6 +60,10 @@ class Univariate:
 
     def plot_mean(self):
         self.aver_line[0].set_visible(not self.aver_line[0].get_visible())
+
+    def plot_stand_dev(self, param):
+        self.std_dev_lines[param][0][0].set_visible(not self.std_dev_lines[param][0][0].get_visible())
+        self.std_dev_lines[param][1][0].set_visible(not self.std_dev_lines[param][1][0].get_visible())
 
     def plot_patients(self, list_patients_id, with_obs):
         for i in list_patients_id:

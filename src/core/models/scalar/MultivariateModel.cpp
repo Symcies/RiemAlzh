@@ -642,8 +642,12 @@ void MultivariateModel::SavePopulationFile(){
   log_file_pop << "G " << block_g << std::endl;
   auto tau = rand_var_.GetRandomVariable("Tau")->GetParameter("Mean");
   log_file_pop << "TauMean " << tau << std::endl;
+  auto tauv = rand_var_.GetRandomVariable("Tau")->GetParameter("Variance");
+  log_file_pop << "TauVar " << tauv << std::endl;
   auto ksi = rand_var_.GetRandomVariable("Ksi")->GetParameter("Mean");
   log_file_pop << "KsiMean " << ksi << std::endl;
+  auto ksiv = rand_var_.GetRandomVariable("Ksi")->GetParameter("Variance");
+  log_file_pop << "KsiVar " << ksiv << std::endl;
   log_file_pop << "Deltas ";
   for (int i = 0; i < deltas_.size(); i++){
     log_file_pop << deltas_[i] << " ";
