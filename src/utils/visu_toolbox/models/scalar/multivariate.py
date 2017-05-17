@@ -85,6 +85,13 @@ class Multivariate:
             self.aver_lines[i][0].set_visible(not self.aver_lines[i][0].get_visible())
             plt.pause(0.0001)
 
+
+    def plot_stand_dev(self, param):
+        for i in range(len(self.std_dev_lines[param])):
+            self.std_dev_lines[param][i][0][0].set_visible(not self.std_dev_lines[param][i][0][0].get_visible())
+            self.std_dev_lines[param][i][1][0].set_visible(not self.std_dev_lines[param][i][1][0].get_visible())
+            print self.std_dev_lines[param][i][1][0].get_visible()
+
     def plot_patients(self, list_patients_id, with_obs):
         for i in list_patients_id:
             for j in range(len(self.aver_lines)):
